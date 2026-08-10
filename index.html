@@ -52,8 +52,28 @@
             -webkit-text-fill-color: transparent;
         }
         body.light-mode .hero-slogan { color: #d97706; }
-        body.light-mode .btn { border-color: #d97706; color: #d97706; background: rgba(217,119,6,0.08); }
-        body.light-mode .btn:hover { background: rgba(217,119,6,0.15); box-shadow: 0 0 15px rgba(217,119,6,0.3); }
+        /* ✅ 浅色模式下 .btn 也使用项目框颜色 */
+        body.light-mode .btn { 
+            border-color: #d97706; 
+            color: #d97706; 
+            background: var(--bg-card); 
+        }
+        body.light-mode .btn:hover { 
+            background: rgba(30, 41, 59, 0.9); 
+            box-shadow: 0 0 15px rgba(217,119,6,0.3); 
+        }
+        /* ✅ 浅色模式下 .btn-alt 同样使用项目框颜色 */
+        body.light-mode .btn-alt { 
+            background: var(--bg-card); 
+            border-color: #d97706; 
+            color: #d97706; 
+        }
+        body.light-mode .btn-alt:hover { 
+            background: rgba(30, 41, 59, 0.9); 
+            border-color: #d97706; 
+            color: #d97706; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08); 
+        }
         body.light-mode .section-title { color: #1e293b; }
         body.light-mode .projects-wrapper { background: rgba(255,255,255,0.55); border-color: rgba(0,0,0,0.06); }
         body.light-mode .project-card { background: rgba(255,255,255,0.8); border-color: rgba(0,0,0,0.08); }
@@ -63,8 +83,6 @@
         body.light-mode .text-links a:hover { color: #d97706; }
         body.light-mode .text-links span { color: #94a3b8; }
         body.light-mode footer { border-color: rgba(0,0,0,0.08); color: #334155; }
-
-        /* 项目标题跟随背景变色 */
         body.light-mode .project-main-title { color: #1e293b; }
 
         body::before {
@@ -196,6 +214,8 @@
             gap: 1.5rem;
             margin-top: 1rem;
         }
+
+        /* ✅ 核心修改：.btn 去掉金色半透明，改为项目框颜色 var(--bg-card)，保留金色边框 */
         .btn {
             padding: 0.8rem 2rem;
             border-radius: 50px;
@@ -206,11 +226,24 @@
             display: inline-block;
             border: 1px solid var(--accent-gold);
             color: var(--accent-gold);
-            background: rgba(251,191,36,0.1);
+            background: var(--bg-card);
         }
         .btn:hover {
-            background: rgba(251,191,36,0.2);
+            background: rgba(30, 41, 59, 0.9);
             box-shadow: 0 0 15px rgba(251,191,36,0.4);
+        }
+
+        /* ✅ 核心修改：.btn-alt 保持项目框颜色，边框统一为金色（避免在金色背景下看不清） */
+        .btn-alt {
+            background: var(--bg-card);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+        .btn-alt:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
         }
 
         .projects-section { padding: 4rem 0 6rem; }
@@ -380,7 +413,6 @@
             .logo { font-size: 1.3rem; }
             .logo img { width: 32px; height: 32px; }
             
-            /* 手机端图片保持横排两张 */
             .images-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1rem;
@@ -442,7 +474,7 @@
             <div class="hero-slogan">有一份光，便发一份热</div>
             <div class="hero-actions">
                 <a href="Navigation.html" class="btn">ACG站点目录</a>
-                <a href="https://github.com/Heyue-org" class="btn" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
+                <a href="https://github.com/Heyue-org" class="btn btn-alt" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
             </div>
         </div>
     </header>
@@ -469,11 +501,11 @@
                         
                         <div class="future-annotations">
                             <div class="future-annotations">
-   <p>旨在收录免费提供二次元资源的网站，涵盖动漫、音声、游戏、轻小说等分类。</p>
-  <p>现提供 Excel 表格下载，也有该表格的在线文档，和只列举重点网站的网页，此项目定期维护。</p>
-  <p>点击图片可以放大查看详情。</p>
-  <p><a href="https://docs.google.com/spreadsheets/d/1wwj4RC_W1zDhI2dlt1NmsFE9DMUKGHs-02lwWbFe9Kk/edit?usp=sharing" target="_blank" rel="noopener noreferrer">📄 查看谷歌在线文档</a></p>
-</div>
+                                <p>旨在收录免费提供二次元资源的网站，涵盖动漫、音声、游戏、轻小说等分类。</p>
+                                <p>现提供 Excel 表格下载，也有该表格的在线文档，和只列举重点网站的网页，此项目定期维护。</p>
+                                <p>点击图片可以放大查看详情。</p>
+                                <p><a href="https://docs.google.com/spreadsheets/d/1wwj4RC_W1zDhI2dlt1NmsFE9DMUKGHs-02lwWbFe9Kk/edit?usp=sharing" target="_blank" rel="noopener noreferrer">📄 查看谷歌在线文档</a></p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -565,6 +597,3 @@
     <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
 </body>
 </html>
-
-
-
