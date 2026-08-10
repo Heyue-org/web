@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导航页面一键更新器</title>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --sub: #94a3b8; --gold: #fbbf24; --border: rgba(255,255,255,0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 2rem; }
+        .container { width: 100%; max-width: 640px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; }
+        h1 { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--gold); text-align: center; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.85rem; color: var(--sub); margin-bottom: 0.3rem; }
+        input { width: 100%; padding: 0.7rem 1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+        input:focus { border-color: var(--gold); }
+        input[type="file"] { padding: 0.5rem; cursor: pointer; }
+        button { width: 100%; padding: 0.8rem; background: var(--gold); color: #0f172a; border: none; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 0.5rem; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .log { margin-top: 1.5rem; padding: 1rem; background: var(--bg); border-radius: 8px; font-size: 0.8rem; line-height: 1.8; max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; display: none; border: 1px solid var(--border); }
+        .log .ok { color: #34d399; } .log .skip { color: var(--sub); } .log .warn { color: #f87171; }
+        .hint { font-size: 0.75rem; color: var(--sub); margin-top: 0.8rem; text-align: center; line-height: 1.6; }
+        .preview { font-size: 0.75rem; color: var(--gold); margin-top: 0.3rem; min-height: 1.2em; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🔧 导航页面一键更新器</h1>
+
+    <div class="form-group">
+        <label>① 选择要更新的 HTML 源文件</label>
+        <input type="file" id="fileInput" accept=".html,.htm">
+    </div>
+    
+    <div class="form-group">
+        <label>② 基础文件名 (Base Name)</label>
+        <input type="text" id="baseName" placeholder="例如: gal、anime、tools">
+        <div class="preview" id="namePreview"></div>
+    </div>
+
+    <div class="form-group">
+        <label>③ 页面显示标题</label>
+        <input type="text" id="pageTitle" placeholder="例如: GAL、动漫、实用工具">
+    </div>
+
+    <button id="runBtn" disabled>开始更新并下载</button>
+
+    <div class="log" id="logBox"></div>
+    <div class="hint">💡 输出文件与JSON数据文件将统一使用「基础文件名」<br>所有操作均在浏览器本地完成，不会上传任何文件</div>
+</div>
+
+<script>
+const fileInput = document.getElementById('fileInput');
+const baseNameInput = document.getElementById('baseName');
+const pageTitleInput = document.getElementById('pageTitle');
+const namePreview = document.getElementById('namePreview');
+const runBtn = document.getElementById('runBtn');
+const logBox = document.getElementById('logBox');
+
+let selectedFile = null;
+
+// ✅ 实时预览生成的文件名
+function updatePreview() {
+    const base = baseNameInput.value.trim().replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase();
+    if (base) {
+        namePreview.textContent = `📄 输出: ${base}.html  |  📊 数据: ${base}.json`;
+        namePreview.style.color = 'var(--gold)';
+    } else {
+        namePreview.textContent = '⚠️ 请输入有效的英文/数字基础名';
+        namePreview.style.color = '#f87171';
+    }
+    validate();
+}
+
+baseNameInput.addEventListener('input', updatePreview);
+pageTitleInput.addEventListener('input', validate);
+fileInput.addEventListener('change', e => {
+    selectedFile = e.target.files[0];
+    validate();
+});
+
+function validate() {
+    const base = baseNameInput.value.trim().replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase();
+    const title = pageTitleInput.value.trim();
+    runBtn.disabled = !(selectedFile && base && title);
+}
+
+// ==================== 核心补丁内容 ====================
+const EXTRA_CSS = `
+        /* ✅ 相关图标样式 */
+        .related-icons { display: inline-flex; gap: 6px; margin-left: 4px; align-items: center; }
+        .related-icon { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 4px; font-size: 0.85rem; cursor: default; opacity: 0.25; transition: all 0.3s; text-decoration: none !important; border-bottom: none !important; line-height: 1; }
+        .related-icon.active { opacity: 1; cursor: pointer; }
+        .related-icon.active:hover { transform: scale(1.15); }
+        .related-icon.icon-nav.active { background: rgba(251, 191, 36, 0.2); }
+        .related-icon.icon-tg.active { background: rgba(38, 166, 227, 0.2); color: #26a6e3; }
+        .related-icon.icon-gh svg { width: 14px; height: 14px; fill: var(--text-sub); transition: fill 0.3s; }
+        .related-icon.icon-gh.active svg { fill: var(--text-main); }
+        .related-icon.icon-gh.active { background: rgba(255, 255, 255, 0.12); }
+        [data-theme="light"] .related-icon.icon-gh.active { background: rgba(0, 0, 0, 0.08); }
+        [data-theme="light"] .related-icon.icon-gh.active svg { fill: #1e293b; }
+        .custom-links-row { display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; padding-left: 3.2rem; margin-top: 0.1rem; }`;
+
+const NEW_PARSE_RELATED = `
+        // ✅ 支持 [nav] [tg] [gh] 显式标签 + 无标签时自动识别（向后兼容）
+        function parseRelated(related) {
+            const result = { nav: null, tg: null, github: null, custom: [] };
+            if (!related) return result;
+            related.split('\\n').filter(Boolean).forEach(raw => {
+                const line = raw.trim();
+                if (!line) return;
+                const tagMatch = line.match(/^\\[(nav|tg|gh)\\](.+)$/i);
+                if (tagMatch) {
+                    const tag = tagMatch[1].toLowerCase();
+                    const url = tagMatch[2].trim();
+                    if (tag === 'nav') result.nav = url;
+                    else if (tag === 'tg') result.tg = url;
+                    else if (tag === 'gh') result.github = url;
+                    return;
+                }
+                const lower = line.toLowerCase();
+                if (lower.includes('t.me')) { if (!result.tg) result.tg = line; else result.custom.push(line); }
+                else if (lower.includes('github.com')) { if (!result.github) result.github = line; else result.custom.push(line); }
+                else if (!result.nav) { result.nav = line; }
+                else { result.custom.push(line); }
+            });
+            return result;
+        }`;
+
+const GH_SVG_LINE = `        const GH_SVG = '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';`;
+
+const ICON_RENDER_BLOCK = `
+                const rel = parseRelated(s.related);
+                const navIcon = rel.nav ? \`<a class="related-icon icon-nav active" href="\${rel.nav}" target="_blank" rel="noopener" title="导航/主页">📑</a>\` : \`<span class="related-icon icon-nav" title="无导航链接">📑</span>\`;
+                const tgIcon = rel.tg ? \`<a class="related-icon icon-tg active" href="\${rel.tg}" target="_blank" rel="noopener" title="Telegram">✈️</a>\` : \`<span class="related-icon icon-tg" title="无TG链接">✈️</span>\`;
+                const ghIcon = rel.github ? \`<a class="related-icon icon-gh active" href="\${rel.github}" target="_blank" rel="noopener" title="GitHub">\${GH_SVG}</a>\` : \`<span class="related-icon icon-gh" title="无GitHub链接">\${GH_SVG}</span>\`;
+                const iconsHtml = \`<span class="related-icons">\${navIcon}\${tgIcon}\${ghIcon}</span>\`;
+                const customLinksHtml = rel.custom.length > 0 ? \`<div class="custom-links-row">\${rel.custom.map(u => \`<a href="\${u}" target="_blank" rel="noopener">\${u}</a>\`).join('')}</div>\` : '';`;
+
+const LINKS_PANEL_HTML = `                    <div class="links-panel">
+                        <div class="link-row"><span class="link-label">网址</span>\${urlLink}</div>
+                        <div class="link-row"><span class="link-label">相关</span>\${iconsHtml}</div>
+                        \${customLinksHtml}
+                    </div>`;
+
+// ==================== 替换引擎 ====================
+function safeReplace(html, pattern, replacement, logs, label) {
+    const before = html;
+    const after = html.replace(pattern, replacement);
+    if (after !== before) { logs.push(`<span class="ok">✅ ${label}</span>`); return after; }
+    logs.push(`<span class="skip">⏭️ ${label} (未匹配或已是最新)</span>`);
+    return html;
+}
+
+function downloadFile(content, filename) {
+    const blob = new Blob([content], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+// ==================== 主流程 ====================
+runBtn.addEventListener('click', async () => {
+    // ✅ 统一从 Base Name 派生所有文件名
+    const base = baseNameInput.value.trim().replace(/[^a-zA-Z0-9_-]/g, '').toLowerCase();
+    const title = pageTitleInput.value.trim();
+    const outputName = `${base}.html`;
+    const jsonName = `${base}.json`;
+    const themeKey = `${base}_nav_theme`;
+    const logs = [];
+
+    logBox.style.display = 'block';
+    logBox.innerHTML = '<span class="skip">⏳ 读取文件中...</span>';
+    runBtn.disabled = true;
+
+    try {
+        const text = await selectedFile.text();
+        let html = text;
+
+        logs.push(`<span class="ok">📄 源文件: ${selectedFile.name}</span>`);
+        logs.push(`<span class="ok">🎯 目标: ${outputName} → ${jsonName}</span>`);
+        logs.push('');
+
+        html = safeReplace(html, /<title>[^<]*<\/title>/, `<title>${title} - ACG资源分类导航 - 合月亭</title>`, logs, '更新 &lt;title&gt;');
+        html = safeReplace(html, /<div class="page-title">[^<]*<\/div>/, `<div class="page-title">${title}</div>`, logs, '更新 page-title');
+        html = safeReplace(html, /const DATA_FILE = ['"][^'"]*['"];/, `const DATA_FILE = './${jsonName}';`, logs, `DATA_FILE → ${jsonName}`);
+        html = safeReplace(html, /const THEME_KEY = ['"][^'"]*['"];/, `const THEME_KEY = '${themeKey}';`, logs, `THEME_KEY → ${themeKey}`);
+
+        if (!html.includes('.related-icons')) {
+            html = safeReplace(html, /\s*<\/style>/, `\n${EXTRA_CSS}\n    </style>`, logs, '注入图标 CSS');
+        } else { logs.push('<span class="skip">⏭️ 图标 CSS 已存在</span>'); }
+
+        html = safeReplace(html, /\/\/ ✅.*?function parseRelated[\s\S]*?return result;\s*\}/, NEW_PARSE_RELATED.trim(), logs, '更新 parseRelated');
+        if (!html.includes('[nav|tg|gh]')) {
+            html = safeReplace(html, /function parseRelated\(related\)\s*\{[\s\S]*?return result;\s*\}/, NEW_PARSE_RELATED.trim(), logs, '更新 parseRelated (无标记版)');
+        }
+
+        if (!html.includes('const GH_SVG')) {
+            html = safeReplace(html, /(function parseRelated[\s\S]*?return result;\s*\})/, `$1\n\n${GH_SVG_LINE}`, logs, '注入 GH_SVG');
+        } else { logs.push('<span class="skip">⏭️ GH_SVG 已存在</span>'); }
+
+        if (html.includes('const relatedLink = s.related')) {
+            html = safeReplace(html, /\s*const relatedLink = s\.related[\s\S]*?: '—';/, '', logs, '移除旧版 relatedLink');
+            html = safeReplace(html, /(const urlLink = s\.url[\s\S]*?: '—';)/, `$1\n${ICON_RENDER_BLOCK}`, logs, '注入图标渲染逻辑');
+            html = safeReplace(html, /<div class="links-panel">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/, LINKS_PANEL_HTML.trim(), logs, '更新 links-panel 模板');
+        } else if (html.includes('parseRelated(s.related)')) {
+            logs.push('<span class="skip">⏭️ 图标渲染已是最新版</span>');
+        } else { logs.push('<span class="warn">⚠️ 未找到 renderCards 中的 related 渲染代码</span>'); }
+
+        html = safeReplace(html, /\.link-row\s*\{([^}]*)align-items:\s*baseline/, '.link-row {$1align-items: center', logs, '修复 .link-row 垂直对齐');
+        if (!html.includes('.custom-links-row { padding-left: 0')) {
+            html = safeReplace(html, /(@media \(max-width: 600px\) \{[\s\S]*?)(\})/, `$1\n            .custom-links-row { padding-left: 0; }\n$2`, logs, '添加移动端适配');
+        }
+
+        logBox.innerHTML = logs.join('\n');
+        logBox.scrollTop = logBox.scrollHeight;
+
+        downloadFile(html, outputName);
+        logs.push('');
+        logs.push(`<span class="ok">🎉 完成！已下载: ${outputName}</span>`);
+        logBox.innerHTML = logs.join('\n');
+        logBox.scrollTop = logBox.scrollHeight;
+
+    } catch (err) {
+        logs.push(`<span class="warn">❌ 错误: ${err.message}</span>`);
+        logBox.innerHTML = logs.join('\n');
+    } finally {
+        runBtn.disabled = false;
+    }
+});
+</script>
+</body>
+</html>

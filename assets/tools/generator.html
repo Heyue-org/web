@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档转JS数据生成器</title>
+    <style>
+        :root { --bg: #f5f7fa; --card: #fff; --primary: #2563eb; --border: #e5e7eb; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); padding: 20px; color: #333; line-height: 1.6; }
+        .container { max-width: 900px; margin: 0 auto; display: grid; gap: 20px; }
+        h1 { font-size: 1.5rem; margin-bottom: 10px; text-align: center; }
+        .card { background: var(--card); padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
+        textarea { width: 100%; min-height: 160px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; resize: vertical; font-family: Consolas, Monaco, monospace; font-size: 13px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
+        textarea:focus { border-color: var(--primary); }
+        button { background: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        .output-area { position: relative; }
+        .copy-btn { position: absolute; top: 12px; right: 12px; padding: 4px 12px; font-size: 12px; background: #eee; color: #333; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; z-index: 10; }
+        .copy-btn:hover { background: #ddd; }
+        pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; margin: 0; min-height: 120px; white-space: pre-wrap; word-break: break-all; }
+        .hint { font-size: 12px; color: #888; margin-top: 6px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h1>📋 文档转 JS 数据生成器</h1>
+        <label for="input">粘贴文档内容（支持 Excel / WPS / 网页表格复制）</label>
+        <textarea id="input" placeholder="网站名称&#9;网址&#9;相关网址1&#9;相关网址2&#9;备注&#10;佩可爱动漫&#9;https://ani.pekolove.net/&#9;https://peko.love/&#9;https://t.me/pekolovegroup&#9;在线"></textarea>
+        <div class="hint">💡 自动识别所有中间列为相关网址；最右侧非空列为备注；含中文的链接自动过滤；多链接以换行分隔。</div>
+        <button onclick="generate()">⚡ 生成代码</button>
+    </div>
+
+    <div class="card output-area">
+        <button class="copy-btn" onclick="copyCode()">复制</button>
+        <pre id="output">// 生成的代码将显示在这里...</pre>
+    </div>
+</div>
+
+<script>
+    let lastResults = [];
+
+    function hasChinese(str) {
+        return /[\u4e00-\u9fa5]/.test(str);
+    }
+
+    function cleanSingleUrl(url) {
+        if (!url) return '';
+        url = url.trim().replace(/^["'\s]+|["'\s]+$/g, '');
+        if (!url || hasChinese(url)) return '';
+        if (/^https?:\/\//i.test(url)) return url;
+        return '';
+    }
+
+    function extractRelatedAndNote(cols) {
+        const middleCols = cols.slice(2);
+
+        // 从右往左找第一个非空值作为 note
+        let note = '';
+        let noteIndex = -1;
+        for (let i = middleCols.length - 1; i >= 0; i--) {
+            const val = (middleCols[i] || '').trim();
+            if (val) {
+                note = val;
+                noteIndex = i;
+                break;
+            }
+        }
+
+        // 收集所有 related 候选列
+        const relatedCandidates = [];
+        for (let i = 0; i < middleCols.length; i++) {
+            const val = (middleCols[i] || '').trim();
+            if (!val) continue;
+            // note 列如果是纯文本则跳过，是URL则保留
+            if (i === noteIndex && !/^https?:\/\//i.test(val)) continue;
+            relatedCandidates.push(val);
+        }
+
+        // 展开、清洗、去重
+        const allParts = relatedCandidates
+            .flatMap(c => c.split(/[|,、\s]+/))
+            .filter(Boolean);
+        const validUrls = allParts.map(cleanSingleUrl).filter(Boolean);
+        // ✅ 改动：分隔符从 ' | ' 改为 '\n'
+        const related = [...new Set(validUrls)].join('\n');
+
+        return { related, note };
+    }
+
+    function generate() {
+        const raw = document.getElementById('input').value.trim();
+        if (!raw) { alert('请先粘贴内容'); return; }
+
+        const lines = raw.split(/\r?\n/).filter(l => l.trim() !== '');
+        const results = [];
+
+        const firstLineLower = lines[0].toLowerCase();
+        const startIndex = (firstLineLower.includes('名称') || firstLineLower.includes('网址') || firstLineLower.includes('name')) ? 1 : 0;
+
+        for (let i = startIndex; i < lines.length; i++) {
+            const cols = lines[i].split('\t');
+            const name = (cols[0] || '').trim();
+            const url = cleanSingleUrl(cols[1]);
+
+            if (!name || !url) continue;
+
+            const { related, note } = extractRelatedAndNote(cols);
+
+            results.push({
+                name: name,
+                url: url,
+                related: related,
+                note: note,
+                problem: "",
+                excellent: false
+            });
+        }
+
+        if (results.length === 0) {
+            document.getElementById('output').textContent = '// ⚠️ 未解析到有效数据，请检查输入格式是否为 Tab 分隔';
+            lastResults = [];
+            return;
+        }
+
+        lastResults = results;
+        document.getElementById('output').textContent = JSON.stringify(results, null, 2);
+    }
+
+    function copyCode() {
+        const text = document.getElementById('output').textContent;
+        if (!text || text.startsWith('// ⚠️')) { alert('没有可复制的内容'); return; }
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = '✅ 已复制';
+            setTimeout(() => btn.textContent = '复制', 1500);
+        }).catch(() => {
+            const range = document.createRange();
+            range.selectNodeContents(document.getElementById('output'));
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.execCommand('copy');
+            sel.removeAllRanges();
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = '✅ 已复制';
+            setTimeout(() => btn.textContent = '复制', 1500);
+        });
+    }
+</script>
+
+</body>
+</html>
