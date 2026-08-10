@@ -17,7 +17,6 @@
             --top-bar-bg: rgba(15, 23, 42, 0.6);
             --input-bg: rgba(30, 41, 59, 0.8);
         }
-
         [data-theme="light"] {
             --bg-dark: #f1f5f9;
             --bg-card: rgba(255, 255, 255, 0.85);
@@ -30,9 +29,7 @@
             --top-bar-bg: rgba(255, 255, 255, 0.7);
             --input-bg: rgba(255, 255, 255, 0.9);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
             background: var(--bg-dark);
@@ -41,7 +38,6 @@
             min-height: 100vh;
             transition: background 0.3s, color 0.3s;
         }
-
         body::before {
             content: '';
             position: fixed;
@@ -55,11 +51,9 @@
             pointer-events: none;
             transition: background 0.3s;
         }
-
         [data-theme="light"] body::before {
             background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, transparent 70%);
         }
-
         .top-bar {
             padding: 1.5rem 2rem;
             border-bottom: 1px solid var(--border-color);
@@ -67,7 +61,6 @@
             backdrop-filter: blur(5px);
             transition: background 0.3s, border-color 0.3s;
         }
-
         .top-bar-inner {
             max-width: 1200px;
             margin: 0 auto;
@@ -75,12 +68,7 @@
             align-items: center;
             justify-content: space-between;
         }
-
-        .top-bar-left {
-            display: flex;
-            align-items: center;
-        }
-
+        .top-bar-left { display: flex; align-items: center; }
         .logo {
             display: flex;
             align-items: center;
@@ -93,7 +81,6 @@
             white-space: nowrap;
             transition: color 0.3s;
         }
-
         .logo img {
             width: 36px;
             height: 36px;
@@ -102,7 +89,6 @@
             border: 1px solid var(--accent-gold);
             transition: border-color 0.3s;
         }
-
         .v-line {
             width: 3px;
             height: 36px;
@@ -113,7 +99,6 @@
             border-radius: 2px;
             transition: background 0.3s;
         }
-
         .page-title {
             font-size: 2.6rem;
             font-weight: 600;
@@ -123,7 +108,6 @@
             text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
             transition: color 0.3s, text-shadow 0.3s;
         }
-
         .theme-toggle {
             background: none;
             border: 1px solid var(--border-color);
@@ -139,12 +123,7 @@
             justify-content: center;
             flex-shrink: 0;
         }
-
-        .theme-toggle:hover {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-        }
-
+        .theme-toggle:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
         .divider {
             max-width: 1200px;
             margin: 0 auto;
@@ -153,7 +132,6 @@
             opacity: 0.4;
             transition: background 0.3s;
         }
-
         .sub-header {
             max-width: 1200px;
             margin: 1.5rem auto 0;
@@ -162,22 +140,9 @@
             justify-content: space-between;
             align-items: center;
         }
-
-        .back-link {
-            color: var(--text-sub);
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.3s;
-        }
-
+        .back-link { color: var(--text-sub); text-decoration: none; font-size: 0.95rem; transition: color 0.3s; }
         .back-link:hover { color: var(--accent-gold); }
-
-        .site-count {
-            color: var(--text-sub);
-            font-size: 0.85rem;
-            transition: color 0.3s;
-        }
-
+        .site-count { color: var(--text-sub); font-size: 0.85rem; transition: color 0.3s; }
         .toolbar {
             max-width: 1200px;
             margin: 1rem auto 0;
@@ -187,7 +152,6 @@
             align-items: center;
             flex-wrap: wrap;
         }
-
         .search-box {
             flex: 1;
             min-width: 200px;
@@ -200,9 +164,7 @@
             outline: none;
             transition: all 0.3s;
         }
-
         .search-box:focus { border-color: var(--accent-gold); }
-
         .sort-select {
             padding: 0.6rem 1rem;
             background: var(--input-bg);
@@ -214,7 +176,6 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
         .grid {
             max-width: 1200px;
             margin: 0 auto;
@@ -223,7 +184,6 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
         }
-
         .site-card {
             position: relative;
             background: var(--bg-card);
@@ -235,17 +195,12 @@
             flex-direction: column;
             gap: 0.5rem;
         }
-
         .site-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
             border-color: rgba(251, 191, 36, 0.4);
         }
-
-        [data-theme="light"] .site-card:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-        }
-
+        [data-theme="light"] .site-card:hover { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); }
         .badge-excellent {
             position: absolute;
             top: 0;
@@ -260,9 +215,7 @@
             line-height: 1.4;
             transition: background 0.3s;
         }
-
         [data-theme="dark"] .badge-excellent { color: #0f172a; }
-
         .site-name {
             font-size: 1.05rem;
             font-weight: 700;
@@ -273,7 +226,6 @@
             white-space: nowrap;
             transition: color 0.3s;
         }
-
         .links-toggle {
             display: flex;
             align-items: center;
@@ -285,16 +237,9 @@
             padding: 0.2rem 0;
             transition: opacity 0.3s, color 0.3s;
         }
-
         .links-toggle:hover { opacity: 0.8; }
-
-        .links-toggle .arrow {
-            transition: transform 0.3s;
-            font-size: 0.7rem;
-        }
-
+        .links-toggle .arrow { transition: transform 0.3s; font-size: 0.7rem; }
         .links-toggle.open .arrow { transform: rotate(90deg); }
-
         .links-panel {
             display: none;
             flex-direction: column;
@@ -304,23 +249,20 @@
             margin-top: 0.2rem;
             transition: border-color 0.3s;
         }
-
         .links-panel.show { display: flex; }
-
         .link-row {
             font-size: 0.82rem;
             display: flex;
             gap: 0.5rem;
-            align-items: baseline;
+            align-items: center;
+            flex-wrap: wrap;
         }
-
         .link-label {
             color: var(--text-sub);
             flex-shrink: 0;
             font-size: 0.75rem;
             transition: color 0.3s;
         }
-
         .link-row a {
             color: var(--accent-gold);
             text-decoration: none;
@@ -328,50 +270,52 @@
             word-break: break-all;
             transition: border-color 0.3s, color 0.3s;
         }
-
         .link-row a:hover { border-bottom-style: solid; }
-
-        .meta-row {
+        .related-icons {
+            display: inline-flex;
+            gap: 6px;
+            margin-left: 4px;
+            align-items: center;
+        }
+        .related-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: default;
+            opacity: 0.25;
+            transition: all 0.3s;
+            text-decoration: none !important;
+            border-bottom: none !important;
+            line-height: 1;
+        }
+        .related-icon.active { opacity: 1; cursor: pointer; }
+        .related-icon.active:hover { transform: scale(1.15); }
+        .related-icon.icon-nav.active { background: rgba(251, 191, 36, 0.2); }
+        .related-icon.icon-tg.active { background: rgba(38, 166, 227, 0.2); color: #26a6e3; }
+        .related-icon.icon-gh svg { width: 14px; height: 14px; fill: var(--text-sub); transition: fill 0.3s; }
+        .related-icon.icon-gh.active svg { fill: var(--text-main); }
+        .related-icon.icon-gh.active { background: rgba(255, 255, 255, 0.12); }
+        [data-theme="light"] .related-icon.icon-gh.active { background: rgba(0, 0, 0, 0.08); }
+        [data-theme="light"] .related-icon.icon-gh.active svg { fill: #1e293b; }
+        .custom-links-row {
             display: flex;
-            gap: 0.8rem;
-            font-size: 0.82rem;
-            line-height: 1.5;
+            flex-wrap: wrap;
+            gap: 0.3rem 0.8rem;
+            padding-left: 3.2rem;
+            margin-top: 0.1rem;
         }
-
+        .meta-row { display: flex; gap: 0.8rem; font-size: 0.82rem; line-height: 1.5; }
         .meta-item { flex: 1; min-width: 0; }
-
-        .meta-label {
-            color: var(--text-sub);
-            font-size: 0.75rem;
-            margin-bottom: 0.1rem;
-            transition: color 0.3s;
-        }
-
+        .meta-label { color: var(--text-sub); font-size: 0.75rem; margin-bottom: 0.1rem; transition: color 0.3s; }
         .meta-value { word-break: break-all; }
-
-        .meta-value.problem {
-            color: #f87171 !important;
-            font-weight: 700 !important;
-            text-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
-        }
-
-        [data-theme="light"] .meta-value.problem {
-            color: #dc2626 !important;
-            text-shadow: none;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 4rem 0;
-            color: var(--text-sub);
-            grid-column: 1 / -1;
-            transition: color 0.3s;
-        }
-
-        @media (max-width: 900px) {
-            .grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
+        .meta-value.problem { color: #f87171 !important; font-weight: 700 !important; text-shadow: 0 0 8px rgba(248, 113, 113, 0.4); }
+        [data-theme="light"] .meta-value.problem { color: #dc2626 !important; text-shadow: none; }
+        .loading { text-align: center; padding: 4rem 0; color: var(--text-sub); grid-column: 1 / -1; transition: color 0.3s; }
+        @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 600px) {
             .top-bar { padding: 1rem 1.2rem; }
             .logo { font-size: 2rem; }
@@ -381,6 +325,7 @@
             .sub-header, .toolbar, .grid { padding-left: 1.2rem; padding-right: 1.2rem; }
             .grid { grid-template-columns: 1fr; }
             .theme-toggle { padding: 0.4rem 0.6rem; font-size: 1rem; }
+            .custom-links-row { padding-left: 0; }
         }
     </style>
 </head>
@@ -398,12 +343,10 @@
         </div>
     </div>
     <div class="divider"></div>
-
     <div class="sub-header">
         <a href="../../navigation.html" class="back-link">← 返回分类导航</a>
         <span class="site-count" id="siteCount"></span>
     </div>
-
     <div class="toolbar">
         <input type="text" class="search-box" id="searchInput" placeholder="搜索站点名称、备注或链接...">
         <select class="sort-select" id="sortSelect">
@@ -411,7 +354,6 @@
             <option value="name">按名称排序 (A-Z)</option>
         </select>
     </div>
-
     <div class="grid" id="cardContainer">
         <div class="loading">加载中...</div>
     </div>
@@ -431,9 +373,7 @@
         }
 
         const savedTheme = localStorage.getItem(THEME_KEY);
-        if (savedTheme) {
-            applyTheme(savedTheme);
-        }
+        if (savedTheme) applyTheme(savedTheme);
 
         themeBtn.addEventListener('click', () => {
             const current = htmlEl.getAttribute('data-theme');
@@ -443,6 +383,46 @@
         function getPinyin(str) {
             if (!str) return '';
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        }
+
+        const GH_SVG = '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
+
+        // ✅ 支持 [nav] [tg] [gh] 显式标签 + 无标签时自动识别（向后兼容）
+        function parseRelated(related) {
+            const result = { nav: null, tg: null, github: null, custom: [] };
+            if (!related) return result;
+
+            related.split('\n').filter(Boolean).forEach(raw => {
+                const line = raw.trim();
+                if (!line) return;
+
+                // 检查是否有显式标签
+                const tagMatch = line.match(/^\[(nav|tg|gh)\](.+)$/i);
+                if (tagMatch) {
+                    const tag = tagMatch[1].toLowerCase();
+                    const url = tagMatch[2].trim();
+                    if (tag === 'nav') result.nav = url;
+                    else if (tag === 'tg') result.tg = url;
+                    else if (tag === 'gh') result.github = url;
+                    return;
+                }
+
+                // 无标签 → 自动识别（向后兼容旧数据）
+                const lower = line.toLowerCase();
+                if (lower.includes('t.me')) {
+                    if (!result.tg) result.tg = line;
+                    else result.custom.push(line);
+                } else if (lower.includes('github.com')) {
+                    if (!result.github) result.github = line;
+                    else result.custom.push(line);
+                } else if (!result.nav) {
+                    result.nav = line;
+                } else {
+                    result.custom.push(line);
+                }
+            });
+
+            return result;
         }
 
         function renderCards(sites) {
@@ -457,8 +437,32 @@
 
             container.innerHTML = sites.map(s => {
                 const excellentBadge = s.excellent ? '<span class="badge-excellent">优秀</span>' : '';
-                const urlLink = s.url ? `<a href="${s.url}" target="_blank" rel="noopener">${s.url}</a>` : '—';
-                const relatedLink = s.related ? `<a href="${s.related}" target="_blank" rel="noopener">${s.related}</a>` : '—';
+                const urlLink = s.url
+                    ? `<a href="${s.url}" target="_blank" rel="noopener">${s.url}</a>`
+                    : '—';
+
+                const rel = parseRelated(s.related);
+
+                const navIcon = rel.nav
+                    ? `<a class="related-icon icon-nav active" href="${rel.nav}" target="_blank" rel="noopener" title="导航/主页">📑</a>`
+                    : `<span class="related-icon icon-nav" title="无导航链接">📑</span>`;
+
+                const tgIcon = rel.tg
+                    ? `<a class="related-icon icon-tg active" href="${rel.tg}" target="_blank" rel="noopener" title="Telegram">✈️</a>`
+                    : `<span class="related-icon icon-tg" title="无TG链接">✈️</span>`;
+
+                const ghIcon = rel.github
+                    ? `<a class="related-icon icon-gh active" href="${rel.github}" target="_blank" rel="noopener" title="GitHub">${GH_SVG}</a>`
+                    : `<span class="related-icon icon-gh" title="无GitHub链接">${GH_SVG}</span>`;
+
+                const iconsHtml = `<span class="related-icons">${navIcon}${tgIcon}${ghIcon}</span>`;
+
+                const customLinksHtml = rel.custom.length > 0
+                    ? `<div class="custom-links-row">${rel.custom.map(u =>
+                        `<a href="${u}" target="_blank" rel="noopener">${u}</a>`
+                      ).join('')}</div>`
+                    : '';
+
                 const problemHtml = s.problem
                     ? `<span class="meta-value problem" style="color:#f87171;font-weight:700;">${s.problem}</span>`
                     : '<span style="color:var(--text-sub)">暂无</span>';
@@ -471,8 +475,13 @@
                         <span class="arrow">▶</span> 查看链接
                     </div>
                     <div class="links-panel">
-                        <div class="link-row"><span class="link-label">网址</span>${urlLink}</div>
-                        <div class="link-row"><span class="link-label">相关</span>${relatedLink}</div>
+                        <div class="link-row">
+                            <span class="link-label">网址</span>${urlLink}
+                        </div>
+                        <div class="link-row">
+                            <span class="link-label">相关</span>${iconsHtml}
+                        </div>
+                        ${customLinksHtml}
                     </div>
                     <div class="meta-row">
                         <div class="meta-item">
