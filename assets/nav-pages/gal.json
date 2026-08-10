@@ -1,525 +1,530 @@
-<!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GAL - ACG资源分类导航 - 合月亭</title>
-    <style>
-        :root {
-            --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --accent-gold: #fbbf24;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --danger: #f87171;
-            --excellent: #34d399;
-            --top-bar-bg: rgba(15, 23, 42, 0.6);
-            --input-bg: rgba(30, 41, 59, 0.8);
-        }
-
-        [data-theme="light"] {
-            --bg-dark: #f1f5f9;
-            --bg-card: rgba(255, 255, 255, 0.85);
-            --text-main: #1e293b;
-            --text-sub: #64748b;
-            --accent-gold: #d97706;
-            --border-color: rgba(0, 0, 0, 0.08);
-            --danger: #dc2626;
-            --excellent: #059669;
-            --top-bar-bg: rgba(255, 255, 255, 0.7);
-            --input-bg: rgba(255, 255, 255, 0.9);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-main);
-            line-height: 1.6;
-            min-height: 100vh;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: -20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 70%);
-            z-index: -1;
-            pointer-events: none;
-            transition: background 0.3s;
-        }
-
-        [data-theme="light"] body::before {
-            background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, transparent 70%);
-        }
-
-        .top-bar {
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--border-color);
-            background: var(--top-bar-bg);
-            backdrop-filter: blur(5px);
-            transition: background 0.3s, border-color 0.3s;
-        }
-
-        .top-bar-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .top-bar-left {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: var(--text-main);
-            font-size: 2.4rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            white-space: nowrap;
-            transition: color 0.3s;
-        }
-
-        .logo img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--accent-gold);
-            transition: border-color 0.3s;
-        }
-
-        .v-line {
-            width: 3px;
-            height: 36px;
-            background: var(--text-main);
-            margin: 0 1.5rem;
-            opacity: 0.9;
-            flex-shrink: 0;
-            border-radius: 2px;
-            transition: background 0.3s;
-        }
-
-        .page-title {
-            font-size: 2.6rem;
-            font-weight: 600;
-            color: var(--accent-gold);
-            letter-spacing: 2px;
-            white-space: nowrap;
-            text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
-            transition: color 0.3s, text-shadow 0.3s;
-        }
-
-        .theme-toggle {
-            background: none;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.5rem 0.8rem;
-            cursor: pointer;
-            font-size: 1.2rem;
-            line-height: 1;
-            color: var(--text-main);
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .theme-toggle:hover {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-        }
-
-        .divider {
-            max-width: 1200px;
-            margin: 0 auto;
-            height: 1px;
-            background: linear-gradient(to right, transparent, var(--accent-gold), transparent);
-            opacity: 0.4;
-            transition: background 0.3s;
-        }
-
-        .sub-header {
-            max-width: 1200px;
-            margin: 1.5rem auto 0;
-            padding: 0 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .back-link {
-            color: var(--text-sub);
-            text-decoration: none;
-            font-size: 0.95rem;
-            transition: color 0.3s;
-        }
-
-        .back-link:hover { color: var(--accent-gold); }
-
-        .site-count {
-            color: var(--text-sub);
-            font-size: 0.85rem;
-            transition: color 0.3s;
-        }
-
-        .toolbar {
-            max-width: 1200px;
-            margin: 1rem auto 0;
-            padding: 0 2rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-box {
-            flex: 1;
-            min-width: 200px;
-            padding: 0.6rem 1rem;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-main);
-            font-size: 0.9rem;
-            outline: none;
-            transition: all 0.3s;
-        }
-
-        .search-box:focus { border-color: var(--accent-gold); }
-
-        .sort-select {
-            padding: 0.6rem 1rem;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-main);
-            font-size: 0.9rem;
-            outline: none;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem 4rem;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .site-card {
-            position: relative;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 1.2rem 1.4rem;
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s, background 0.3s;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .site-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            border-color: rgba(251, 191, 36, 0.4);
-        }
-
-        [data-theme="light"] .site-card:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-        }
-
-        .badge-excellent {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--excellent);
-            color: #fff;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 0 10px 0 8px;
-            letter-spacing: 1px;
-            line-height: 1.4;
-            transition: background 0.3s;
-        }
-
-        [data-theme="dark"] .badge-excellent { color: #0f172a; }
-
-        .site-name {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--text-main);
-            padding-right: 3rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            transition: color 0.3s;
-        }
-
-        .links-toggle {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.8rem;
-            color: var(--accent-gold);
-            cursor: pointer;
-            user-select: none;
-            padding: 0.2rem 0;
-            transition: opacity 0.3s, color 0.3s;
-        }
-
-        .links-toggle:hover { opacity: 0.8; }
-
-        .links-toggle .arrow {
-            transition: transform 0.3s;
-            font-size: 0.7rem;
-        }
-
-        .links-toggle.open .arrow { transform: rotate(90deg); }
-
-        .links-panel {
-            display: none;
-            flex-direction: column;
-            gap: 0.3rem;
-            padding: 0.4rem 0;
-            border-top: 1px dashed var(--border-color);
-            margin-top: 0.2rem;
-            transition: border-color 0.3s;
-        }
-
-        .links-panel.show { display: flex; }
-
-        .link-row {
-            font-size: 0.82rem;
-            display: flex;
-            gap: 0.5rem;
-            align-items: baseline;
-        }
-
-        .link-label {
-            color: var(--text-sub);
-            flex-shrink: 0;
-            font-size: 0.75rem;
-            transition: color 0.3s;
-        }
-
-        .link-row a {
-            color: var(--accent-gold);
-            text-decoration: none;
-            border-bottom: 1px dashed rgba(251, 191, 36, 0.4);
-            word-break: break-all;
-            transition: border-color 0.3s, color 0.3s;
-        }
-
-        .link-row a:hover { border-bottom-style: solid; }
-
-        .meta-row {
-            display: flex;
-            gap: 0.8rem;
-            font-size: 0.82rem;
-            line-height: 1.5;
-        }
-
-        .meta-item { flex: 1; min-width: 0; }
-
-        .meta-label {
-            color: var(--text-sub);
-            font-size: 0.75rem;
-            margin-bottom: 0.1rem;
-            transition: color 0.3s;
-        }
-
-        .meta-value { word-break: break-all; }
-
-        .meta-value.problem {
-            color: #f87171 !important;
-            font-weight: 700 !important;
-            text-shadow: 0 0 8px rgba(248, 113, 113, 0.4);
-        }
-
-        [data-theme="light"] .meta-value.problem {
-            color: #dc2626 !important;
-            text-shadow: none;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 4rem 0;
-            color: var(--text-sub);
-            grid-column: 1 / -1;
-            transition: color 0.3s;
-        }
-
-        @media (max-width: 900px) {
-            .grid { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 600px) {
-            .top-bar { padding: 1rem 1.2rem; }
-            .logo { font-size: 2rem; }
-            .logo img { width: 30px; height: 30px; }
-            .v-line { height: 28px; margin: 0 1rem; width: 2px; }
-            .page-title { font-size: 2.2rem; }
-            .sub-header, .toolbar, .grid { padding-left: 1.2rem; padding-right: 1.2rem; }
-            .grid { grid-template-columns: 1fr; }
-            .theme-toggle { padding: 0.4rem 0.6rem; font-size: 1rem; }
-        }
-    </style>
-</head>
-<body>
-    <div class="top-bar">
-        <div class="top-bar-inner">
-            <div class="top-bar-left">
-                <a href="../index.html" class="logo">
-                    <img src="../assets/css/images/biglogo.png" alt="合月亭">合月亭
-                </a>
-                <div class="v-line"></div>
-                <div class="page-title">GAL</div>
-            </div>
-            <button class="theme-toggle" id="themeToggle" title="切换日/夜模式">🌙</button>
-        </div>
-    </div>
-    <div class="divider"></div>
-
-    <div class="sub-header">
-        <a href="../navigation.html" class="back-link">← 返回分类导航</a>
-        <span class="site-count" id="siteCount"></span>
-    </div>
-
-    <div class="toolbar">
-        <input type="text" class="search-box" id="searchInput" placeholder="搜索站点名称、备注或链接...">
-        <select class="sort-select" id="sortSelect">
-            <option value="default">默认排序</option>
-            <option value="name">按名称排序 (A-Z)</option>
-        </select>
-    </div>
-
-    <div class="grid" id="cardContainer">
-        <div class="loading">加载中...</div>
-    </div>
-
-    <script>
-        const DATA_FILE = './gal.json';
-        let allSites = [];
-
-        const THEME_KEY = 'gal_nav_theme';
-        const htmlEl = document.documentElement;
-        const themeBtn = document.getElementById('themeToggle');
-
-        function applyTheme(theme) {
-            htmlEl.setAttribute('data-theme', theme);
-            themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
-            localStorage.setItem(THEME_KEY, theme);
-        }
-
-        const savedTheme = localStorage.getItem(THEME_KEY);
-        if (savedTheme) {
-            applyTheme(savedTheme);
-        }
-
-        themeBtn.addEventListener('click', () => {
-            const current = htmlEl.getAttribute('data-theme');
-            applyTheme(current === 'dark' ? 'light' : 'dark');
-        });
-
-        function getPinyin(str) {
-            if (!str) return '';
-            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-        }
-
-        function renderCards(sites) {
-            const container = document.getElementById('cardContainer');
-            const countEl = document.getElementById('siteCount');
-            countEl.textContent = `共 ${sites.length} 个站点`;
-
-            if (sites.length === 0) {
-                container.innerHTML = '<div class="loading">未找到匹配的站点</div>';
-                return;
-            }
-
-            container.innerHTML = sites.map(s => {
-                const excellentBadge = s.excellent ? '<span class="badge-excellent">优秀</span>' : '';
-                const urlLink = s.url ? `<a href="${s.url}" target="_blank" rel="noopener">${s.url}</a>` : '—';
-                const relatedLink = s.related ? `<a href="${s.related}" target="_blank" rel="noopener">${s.related}</a>` : '—';
-                const problemHtml = s.problem
-                    ? `<span class="meta-value problem" style="color:#f87171;font-weight:700;">${s.problem}</span>`
-                    : '<span style="color:var(--text-sub)">暂无</span>';
-
-                return `
-                <div class="site-card">
-                    ${excellentBadge}
-                    <div class="site-name" title="${s.name}">${s.name}</div>
-                    <div class="links-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
-                        <span class="arrow">▶</span> 查看链接
-                    </div>
-                    <div class="links-panel">
-                        <div class="link-row"><span class="link-label">网址</span>${urlLink}</div>
-                        <div class="link-row"><span class="link-label">相关</span>${relatedLink}</div>
-                    </div>
-                    <div class="meta-row">
-                        <div class="meta-item">
-                            <div class="meta-label">备注</div>
-                            <div class="meta-value">${s.note || '—'}</div>
-                        </div>
-                        <div class="meta-item">
-                            <div class="meta-label">问题</div>
-                            <div class="meta-value">${problemHtml}</div>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-        }
-
-        function filterAndSort() {
-            const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-            const sortMode = document.getElementById('sortSelect').value;
-
-            let filtered = allSites.filter(s => {
-                if (!keyword) return true;
-                const searchText = [s.name, s.note, s.url, s.related, s.problem].join(' ').toLowerCase();
-                return searchText.includes(keyword);
-            });
-
-            if (sortMode === 'name') {
-                filtered.sort((a, b) => getPinyin(a.name).localeCompare(getPinyin(b.name)));
-            }
-
-            renderCards(filtered);
-        }
-
-        document.getElementById('searchInput').addEventListener('input', filterAndSort);
-        document.getElementById('sortSelect').addEventListener('change', filterAndSort);
-
-        (async () => {
-            try {
-                const res = await fetch(DATA_FILE);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                allSites = await res.json();
-                renderCards(allSites);
-            } catch (e) {
-                document.getElementById('cardContainer').innerHTML =
-                    `<div class="loading" style="color:var(--danger)">数据加载失败: ${e.message}<br>请检查 ${DATA_FILE} 是否存在且格式正确</div>`;
-            }
-        })();
-    </script>
-    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
-</body>
-</html>
+[
+  {
+    "name": "05的资源小站",
+    "url": "https://05fx.022016.xyz/",
+    "related": "发布页 | github",
+    "note": "挂载OneDrive",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "0721galgame",
+    "url": "https://nn0721.icu/",
+    "related": "",
+    "note": "库存不多",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "2DFan",
+    "url": "https://www.2dfan.com/",
+    "related": "",
+    "note": "新作资讯/下载 | 翻墙 | 论坛 | 会员积分制",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "ACG游戏",
+    "url": "https://acggw.me",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "EROLABS工口实验室",
+    "url": "https://galgame.ero-labs.tech/",
+    "related": "",
+    "note": "知名台湾游戏工作室官网",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "GalgameBox",
+    "url": "https://galgamebox.com/",
+    "related": "",
+    "note": "需登录",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Galgamex",
+    "url": "https://www.galgamex.net/",
+    "related": "",
+    "note": "需开启NSFW",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Gal领域",
+    "url": "https://galgame.zone/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Koyso",
+    "url": "https://koyso.to/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "LyCorisGal",
+    "url": "https://www.lycorisgal.com/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "NekoGAL",
+    "url": "https://www.nekogal.com/",
+    "related": "",
+    "note": "需登录 | 需回复",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "nutaku",
+    "url": "https://www.nutaku.net/home/",
+    "related": "",
+    "note": "需翻墙 | 国外在线黄油",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Nysoure",
+    "url": "https://res.nyne.dev/",
+    "related": "",
+    "note": "翻墙",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Otomi Games",
+    "url": "https://otomi-games.com/",
+    "related": "",
+    "note": "翻墙",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Sharotto",
+    "url": "https://www.sharotto.com/",
+    "related": "wiki",
+    "note": "需登录下载 | 每日限次",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Sharotto 喵源领域",
+    "url": "https://www.sharotto.com/",
+    "related": "旧站",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Shionlib 书音的图书馆",
+    "url": "https://shionlib.com",
+    "related": "github",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Singureo",
+    "url": "https://www.singureo.com/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "TouchGal",
+    "url": "https://www.touchgal.ink/",
+    "related": "发布页 | Discord",
+    "note": "需登录 | 需开启NSFW可见",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "YAAS",
+    "url": "https://alist-public.imoutoheaven.org/",
+    "related": "",
+    "note": "批量下载专用",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "沧水的网盘",
+    "url": "https://pan.cangshui.net/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "初音的青葱",
+    "url": "https://www.fufugal.com/",
+    "related": "",
+    "note": "含网盘",
+    "problem": "登录系统故障",
+    "excellent": false
+  },
+  {
+    "name": "达のgalgame资源站",
+    "url": "https://file.bakadax.top/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "稻荷",
+    "url": "https://inarigal.com/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "二次元天空",
+    "url": "https://yuanzkong.github.io/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "绯月ScarletMoon",
+    "url": "https://bbs.kfmax.com/",
+    "related": "",
+    "note": "需挂梯 | 需登录",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "宮代千紗",
+    "url": "https://gdqs.org/",
+    "related": "",
+    "note": "需登录",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "玖黎ACG",
+    "url": "https://jiuliacg.com/",
+    "related": "",
+    "note": "需登录 | 需回复",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "鲲Galgame",
+    "url": "https://www.kungal.com/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "莉斯坦ACG",
+    "url": "https://www.singureo.com/",
+    "related": "",
+    "note": "配有详全的教程和工具和车万专区",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "量子ACG",
+    "url": "https://lzacg.cc/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "猫猫网盘",
+    "url": "https://catcat.cloud/",
+    "related": "",
+    "note": "",
+    "problem": "性能依托",
+    "excellent": false
+  },
+  {
+    "name": "喵普拉斯",
+    "url": "https://www.neko-plus.net/forums/10",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "绮梦ACG",
+    "url": "https://game.acgs.one/",
+    "related": "",
+    "note": "",
+    "problem": "直链暂时无法使用",
+    "excellent": false
+  },
+  {
+    "name": "青桔网",
+    "url": "https://x.qingju.org/zh-CN",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "绅仕天堂",
+    "url": "https://www.chgal.com/",
+    "related": "备用",
+    "note": "",
+    "problem": "数据库异常",
+    "excellent": false
+  },
+  {
+    "name": "失落小站",
+    "url": "https://www.shinnku.com/",
+    "related": "",
+    "note": "翻墙",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "天炎境",
+    "url": "https://theskyflame.pages.dev/",
+    "related": "",
+    "note": "停更",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "小鳥遊暁の会员制餐厅",
+    "url": "https://t-satoru.top/",
+    "related": "TG",
+    "note": "仅移动端资源",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "萤之光",
+    "url": "https://yinghu.netlify.app/",
+    "related": "永久域名1 | 永久域名2",
+    "note": "归档已停产/分发的独立游戏",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "月谣",
+    "url": "https://www.sayafx.top/",
+    "related": "github",
+    "note": "网盘分流+自建存储",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "宅方社",
+    "url": "https://www.zfsya.com/game",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "梓澪の妙妙屋",
+    "url": "https://zi6.cc/",
+    "related": "zi0.cc | zi1.cc | gal.games | get.galgame.ing",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "青桔网",
+    "url": "https://www.qingju.org/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "芯幻次元",
+    "url": "https://acg.la/",
+    "related": "TG",
+    "note": "积分制",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Hentai-Share",
+    "url": "http://hentai-share.com",
+    "related": "",
+    "note": "国外网盘 | 漫画 | 游戏 | 动画",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "H萌Galgame",
+    "url": "https://hmgal.com/",
+    "related": "发布页 | discord",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "pinnpinn",
+    "url": "http://www.pinnpinn.com/",
+    "related": "",
+    "note": "类似2dh",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "MikuGame",
+    "url": "https://mikugame.icu/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "ACG港湾",
+    "url": "https://www.acggw.one",
+    "related": "",
+    "note": "UI舒适简洁",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "天游二次元",
+    "url": "https://cn.tiangal.com/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "灵梦御所",
+    "url": "https://blog.reimu.net",
+    "related": "",
+    "note": "需要老手带",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "四叶草与雏菊的GAL小站",
+    "url": "https://g.杏铃.top",
+    "related": "",
+    "note": "需登录 | 需回复",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "次元茶馆（网盘）",
+    "url": "https://pan.cycg.xyz/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "真红小站",
+    "url": "https://shinnku.com/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "梓澪の妙妙屋",
+    "url": "http://zi0.cc/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "紫缘社",
+    "url": "https://galzy.moe/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "0721_Galgame",
+    "url": "https://nn0721.icu/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "追寻繁星的少年（百度贴吧）",
+    "url": "https://tieba.baidu.com/f?ie=utf-8&kw=追寻繁星的少年",
+    "related": "",
+    "note": "最神同时最麻烦的",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "ACG嘤嘤怪",
+    "url": "https://acgyyg.ru/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "桃花源",
+    "url": "https://peach.sslswwdx.top/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "芯幻",
+    "url": "https://xhcyra.com/",
+    "related": "",
+    "note": "需注册",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "天游二次元",
+    "url": "https://cn.tiangal.com/",
+    "related": "",
+    "note": "资源站/情报站 | 检索系统不佳",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "维咔VikACG",
+    "url": "https://www.vikacg.com/post",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "IGG GAMES",
+    "url": "http://igg-games.com/list-game.html",
+    "related": "",
+    "note": "BT | 英文 | 游戏",
+    "problem": "性能依托",
+    "excellent": false
+  },
+  {
+    "name": "GGBases",
+    "url": "https://www.ggbases.com/",
+    "related": "",
+    "note": "h游 | 磁链为主 | 需翻墙",
+    "problem": "",
+    "excellent": false
+  }
+]
