@@ -150,14 +150,12 @@
             opacity: 0.3;
         }
 
-        /* ========== ✅ 施工提示框：右侧3/10空间的8/10宽度 ========== */
+        /* ========== ✅ 施工提示框 ========== */
         .construction-notice {
             position: fixed;
             top: 50%;
-            /* 右侧3/10区域起始位置 = 70vw，居中偏移 = (30vw * 0.8) / 2 = 12vw → 70+12=82vw中心点 */
             right: calc(100vw - 82vw);
             transform: translateY(-50%);
-            /* 宽度 = 30vw × 0.8 = 24vw */
             width: 24vw;
             padding: 2rem 1.5rem;
             background: rgba(15, 23, 42, 0.85);
@@ -242,7 +240,6 @@
             .tag-link { padding: 0.6rem 1.4rem; font-size: 1rem; }
             .section-divider { margin: 2rem auto; }
 
-            /* ✅ 手机端提示框自适应：不再用vw固定，改为居中底部显示 */
             .construction-notice {
                 top: auto;
                 bottom: 1.5rem;
@@ -287,24 +284,24 @@
         <div class="section-label">— 资源站 —</div>
         <div class="tags-grid">
             <a href="assets/nav-pages/gal.html" class="tag-link">GAL</a>
-            <a href="voice_music.html" class="tag-link">音声/音乐</a>
-            <a href="comic_illustration.html" class="tag-link">漫画/插画/本子</a>
-            <a href="comprehensive.html" class="tag-link">综合资源站</a>
-            <a href="gal_info.html" class="tag-link">GAL情报/入正</a>
-            <a href="light_novel.html" class="tag-link">轻小说</a>
-            <a href="anime.html" class="tag-link">动漫</a>
-            <a href="mmd.html" class="tag-link">MMD</a>
+            <a href="assets/nav-pages/voice_music.html" class="tag-link">音声/音乐</a>
+            <a href="assets/nav-pages/comic_illustration.html" class="tag-link">漫画/插画/本子</a>
+            <a href="assets/nav-pages/hub.html" class="tag-link">综合资源站</a>
+            <a href="assets/nav-pages/gal-info.html" class="tag-link">GAL情报/入正</a>
+            <a href="assets/nav-pages/ln.html" class="tag-link">轻小说</a>
+            <a href="assets/nav-pages/anime.html" class="tag-link">动漫</a>
+            <a href="assets/nav-pages/mmd.html" class="tag-link">MMD</a>
         </div>
 
         <div class="section-divider"></div>
 
         <div class="section-label">— 工具 —</div>
         <div class="tags-grid">
-            <a href="wiki.html" class="tag-link">WIKI</a>
-            <a href="acg_nav.html" class="tag-link">二次元导航站</a>
-            <a href="tools.html" class="tag-link">工具</a>
-            <a href="yinglingdian.html" class="tag-link">英灵殿</a>
-            <a href="search_engine.html" class="tag-link">搜索引擎</a>
+            <a href="assets/nav-pages/wiki.html" class="tag-link">WIKI</a>
+            <a href="assets/nav-pages/acg-nav.html" class="tag-link">二次元导航站</a>
+            <a href="assets/nav-pages/tools.html" class="tag-link">工具</a>
+            <a href="assets/nav-pages/valhalla.html" class="tag-link">英灵殿</a>
+            <a href="assets/nav-pages/search.html" class="tag-link">搜索引擎</a>
         </div>
     </div>
 
