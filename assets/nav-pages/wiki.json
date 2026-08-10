@@ -1,0 +1,90 @@
+[
+  {
+    "name": "Galgame Wiki",
+    "url": "https://www.galgame.it/",
+    "related": "",
+    "note": "GAL百科",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Sharotto",
+    "url": "https://www.sharotto.com/",
+    "related": "",
+    "note": "GALwiki 需登录下载 |每日限次",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "番组维基",
+    "url": "https://bgm.wiki/",
+    "related": "",
+    "note": "动漫WIKI",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "CN GAL资料站",
+    "url": "https://www.cngal.org/",
+    "related": "",
+    "note": "国产GALWIKI",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "视觉小说数据库",
+    "url": "https://vndb.org/",
+    "related": "",
+    "note": "国际galWIKI",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "GAL图书馆",
+    "url": "https://gallibrary.pw/",
+    "related": "",
+    "note": "WIKI",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Galgamer",
+    "url": "https://galgamer.moe/",
+    "related": "",
+    "note": "GAL资料/评鉴",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Acggame",
+    "url": "https://acgink.ink/",
+    "related": "",
+    "note": "不知道玩什么时当菜单看 收费",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "MyAnimeList",
+    "url": "https://myanimelist.net/",
+    "related": "",
+    "note": "英文日本动画数据库/评分",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "AniDB",
+    "url": "http://anidb.net",
+    "related": "",
+    "note": "英文 动画资料/评分",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "萌系御宅新闻速报",
+    "url": "http://otanews.livedoor.biz/",
+    "related": "",
+    "note": "动画类新闻",
+    "problem": "",
+    "excellent": false
+  }
+]

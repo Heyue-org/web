@@ -1,0 +1,74 @@
+[
+  {
+    "name": "GAL聚合搜索",
+    "url": "https://www.searchgal.top/",
+    "related": "",
+    "note": "一键搜索多个站点的游戏资源",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "以图搜图",
+    "url": "https://www.saucenao.cn/",
+    "related": "",
+    "note": "主搜插画，内置多个搜索引擎",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Google",
+    "url": "https://www.google.com",
+    "related": "",
+    "note": "普遍情况下先用这个",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Yandex",
+    "url": "https://yandex.com/",
+    "related": "",
+    "note": "穷途末路再来",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "二次元画像詳細検索",
+    "url": "https://ascii2d.net/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Search IQDB",
+    "url": "https://iqdb.org/",
+    "related": "",
+    "note": "穷途末路再来",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "trace.moe",
+    "url": "https://trace.moe/",
+    "related": "",
+    "note": "截图识番",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "搜图Bot酱",
+    "url": "https://soutubot.moe/",
+    "related": "https://github.com/lolishinshi/imsearch",
+    "note": "可局部搜图NH内的本子",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "VNS",
+    "url": "https://gal.saop.cc/",
+    "related": "https://github.com/AdingApkgg/vns/blob/gh-pages/README.md",
+    "note": "Gal资源索引",
+    "problem": "",
+    "excellent": false
+  }
+]

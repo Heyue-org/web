@@ -1,0 +1,42 @@
+[
+  {
+    "name": "轻之文库",
+    "url": "https://www.linovel.net/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "哩哔轻小说",
+    "url": "https://www.bilinovel.com/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "神凑轻小说文库",
+    "url": "https://m.shencou.com/",
+    "related": "",
+    "note": "",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "SF轻小说",
+    "url": "https://book.sfacg.com/?ref=clicli.com.cn",
+    "related": "",
+    "note": "国产网文",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "轻书架",
+    "url": "https://www.lightnovel.love/",
+    "related": "https://github.com/LightNovelShelf/Web",
+    "note": "https://github.com/LightNovelShelf/Web",
+    "problem": "",
+    "excellent": false
+  }
+]
