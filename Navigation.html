@@ -38,7 +38,6 @@
             pointer-events: none;
         }
 
-        /* ========== 顶栏 ========== */
         .top-bar {
             padding: 1.5rem 2rem;
             border-bottom: 1px solid var(--border-color);
@@ -50,6 +49,7 @@
             margin: 0 auto;
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
         }
         .top-bar-inner .logo {
             display: flex;
@@ -96,13 +96,70 @@
             opacity: 0.4;
         }
 
-        /* ========== 内容区 ========== */
+        .search-wrapper {
+            position: relative;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+        #nav-search {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            width: 180px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(6px);
+        }
+        #nav-search:focus {
+            width: 240px;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 10px rgba(251,191,36,0.2);
+        }
+        .search-results {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 280px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: none;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+        .search-results.active { display: block; }
+        .search-result-item {
+            padding: 0.7rem 1rem;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover {
+            background: rgba(251,191,36,0.1);
+            color: var(--accent-gold);
+        }
+        .search-result-item .result-type {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            margin-left: 0.5rem;
+            flex-shrink: 0;
+        }
+
         .content {
             max-width: 900px;
             margin: 0 auto;
             padding: 3rem 2rem 4rem;
         }
-
         .section-label {
             text-align: center;
             font-size: 1.1rem;
@@ -112,7 +169,6 @@
             margin-bottom: 1.5rem;
             text-transform: uppercase;
         }
-
         .tags-grid {
             display: flex;
             flex-wrap: wrap;
@@ -141,7 +197,6 @@
             transform: translateY(-3px);
             box-shadow: 0 4px 15px rgba(251, 191, 36, 0.2);
         }
-
         .section-divider {
             max-width: 600px;
             margin: 2.5rem auto;
@@ -150,43 +205,6 @@
             opacity: 0.3;
         }
 
-        /* ========== ✅ 施工提示框 ========== */
-        .construction-notice {
-            position: fixed;
-            top: 50%;
-            right: calc(100vw - 82vw);
-            transform: translateY(-50%);
-            width: 24vw;
-            padding: 2rem 1.5rem;
-            background: rgba(15, 23, 42, 0.85);
-            border: 1px solid var(--accent-gold);
-            border-radius: 16px;
-            backdrop-filter: blur(12px);
-            z-index: 999;
-            pointer-events: none;
-            user-select: none;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        }
-        .construction-notice .notice-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.8rem;
-            display: block;
-        }
-        .construction-notice .notice-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent-gold);
-            margin-bottom: 0.6rem;
-            letter-spacing: 2px;
-        }
-        .construction-notice .notice-desc {
-            font-size: 0.9rem;
-            color: var(--text-sub);
-            line-height: 1.6;
-        }
-
-        /* ========== 浅色模式 ========== */
         body.light-mode {
             background-color: #f8fafc;
             color: #1e293b;
@@ -216,15 +234,18 @@
             color: #d97706;
             box-shadow: 0 4px 15px rgba(217, 119, 6, 0.15);
         }
-        body.light-mode .construction-notice {
-            background: rgba(248, 250, 252, 0.9);
-            border-color: #d97706;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        body.light-mode #nav-search {
+            background: rgba(255,255,255,0.8);
+            border-color: rgba(0,0,0,0.08);
+            color: #1e293b;
         }
-        body.light-mode .construction-notice .notice-title { color: #d97706; }
-        body.light-mode .construction-notice .notice-desc { color: #64748b; }
+        body.light-mode .search-results {
+            background: #f8fafc;
+            border-color: rgba(0,0,0,0.08);
+        }
+        body.light-mode .search-result-item { color: #334155; border-color: rgba(0,0,0,0.05); }
+        body.light-mode .search-result-item:hover { background: rgba(217,119,6,0.08); color: #d97706; }
 
-        /* ========== 响应式 ========== */
         @media (max-width: 600px) {
             .top-bar { padding: 1rem 1.2rem; }
             .top-bar-inner .logo { font-size: 1.8rem; }
@@ -235,37 +256,18 @@
                 text-align: center;
                 line-height: 1.3;
             }
+            .search-wrapper { margin-left: 0; width: 100%; margin-top: 0.8rem; }
+            #nav-search { width: 100%; }
+            #nav-search:focus { width: 100%; }
+            .search-results { width: 100%; right: auto; left: 0; }
             .content { padding: 2rem 1.2rem 3rem; }
             .tags-grid { gap: 0.8rem; }
             .tag-link { padding: 0.6rem 1.4rem; font-size: 1rem; }
             .section-divider { margin: 2rem auto; }
-
-            .construction-notice {
-                top: auto;
-                bottom: 1.5rem;
-                right: 50%;
-                transform: translateX(50%);
-                width: calc(100vw - 3rem);
-                max-width: 400px;
-                padding: 1.2rem 1rem;
-                border-radius: 12px;
-            }
-            .construction-notice .notice-icon { font-size: 1.8rem; margin-bottom: 0.4rem; }
-            .construction-notice .notice-title { font-size: 0.95rem; margin-bottom: 0.3rem; }
-            .construction-notice .notice-desc { font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
-
-    <!-- ✅ 施工提示框 -->
-    <div class="construction-notice">
-        <span class="notice-icon">🚧</span>
-        <div class="notice-title">页面施工中</div>
-        <div class="notice-desc">本页面正在施工<br>打不开是正常的</div>
-    </div>
-
-    <!-- 顶栏 -->
     <div class="top-bar">
         <div class="top-bar-inner">
             <a href="index.html" class="logo">
@@ -274,12 +276,15 @@
             </a>
             <div class="v-line"></div>
             <div class="page-title">ACG资源分类导航</div>
+            <div class="search-wrapper">
+                <input type="text" id="nav-search" placeholder="检索资源/工具..." autocomplete="off">
+                <div id="search-results" class="search-results"></div>
+            </div>
         </div>
     </div>
 
     <div class="divider"></div>
 
-    <!-- 内容区 -->
     <div class="content">
         <div class="section-label">— 资源站 —</div>
         <div class="tags-grid">
@@ -304,6 +309,57 @@
             <a href="assets/nav-pages/search.html" class="tag-link">搜索引擎</a>
         </div>
     </div>
+
+    <script>
+    (() => {
+      const searchInput = document.getElementById('nav-search');
+      const resultsBox = document.getElementById('search-results');
+      const navData = [
+        { "name": "gal", "label": "GAL", "type": "resource" },
+        { "name": "voice_music", "label": "音声/音乐", "type": "resource" },
+        { "name": "comic_illustration", "label": "漫画/插画/本子", "type": "resource" },
+        { "name": "hub", "label": "综合资源站", "type": "resource" },
+        { "name": "gal-info", "label": "GAL情报/入正", "type": "resource" },
+        { "name": "ln", "label": "轻小说", "type": "resource" },
+        { "name": "anime", "label": "动漫", "type": "resource" },
+        { "name": "mmd", "label": "MMD", "type": "resource" },
+        { "name": "wiki", "label": "WIKI", "type": "tool" },
+        { "name": "acg-nav", "label": "二次元导航站", "type": "tool" },
+        { "name": "tools", "label": "工具", "type": "tool" },
+        { "name": "valhalla", "label": "英灵殿", "type": "tool" },
+        { "name": "search", "label": "搜索引擎", "type": "tool" }
+      ];
+
+      searchInput.addEventListener('input', () => {
+        const keyword = searchInput.value.trim().toLowerCase();
+        if (!keyword) {
+          resultsBox.classList.remove('active');
+          return;
+        }
+        const matched = navData.filter(item =>
+          item.label.toLowerCase().includes(keyword) ||
+          item.name.toLowerCase().includes(keyword)
+        );
+        if (matched.length === 0) {
+          resultsBox.innerHTML = '<div class="search-result-item" style="color:var(--text-sub);justify-content:center;">无匹配结果</div>';
+        } else {
+          resultsBox.innerHTML = matched.map(item => `
+            <a href="./assets/nav-pages/${item.name}.html" class="search-result-item">
+              ${item.label}
+              <span class="result-type">${item.type === 'resource' ? '资源站' : '工具'}</span>
+            </a>
+          `).join('');
+        }
+        resultsBox.classList.add('active');
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-wrapper')) {
+          resultsBox.classList.remove('active');
+        }
+      });
+    })();
+    </script>
 
     <script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
 </body>
