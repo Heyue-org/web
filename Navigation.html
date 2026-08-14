@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACG资源分类导航 - 合月亭</title>
+    <title>ACG资源站点导航 - 合月亭</title>
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -323,8 +323,8 @@
     <a class="sidebar-link" data-json="assets/nav-pages/wiki.json" data-label="WIKI">WIKI</a>
     <a class="sidebar-link" data-json="assets/nav-pages/acg-nav.json" data-label="二次元导航站">二次元导航站</a>
     <a class="sidebar-link" data-json="assets/nav-pages/tools.json" data-label="工具">工具</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/valhalla.json" data-label="英灵殿">英灵殿</a>
     <a class="sidebar-link" data-json="assets/nav-pages/search.json" data-label="搜索引擎">搜索引擎</a>
+    <a class="sidebar-link" data-json="assets/nav-pages/valhalla.json" data-label="英灵殿">英灵殿</a>
    </nav>
 
         <!-- Main Content -->
@@ -379,7 +379,6 @@
         // ========== Data & Rendering ==========
         const GH_SVG = '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
 
-        // ✅ 全局缓存：key=jsonPath, value=sites[]
         const globalCache = {};
         let allSites = [];          // 当前视图的数据（单分类 or 全局）
         let isGlobalSearch = false; // 是否处于全局搜索模式
@@ -443,7 +442,6 @@
                     ? `<span class="meta-value problem">${s.problem}</span>`
                     : '<span style="color:var(--text-sub)">暂无</span>';
 
-                // ✅ 全局搜索时显示来源分类标签
                 const categoryTag = isGlobalSearch && s._category
                     ? `<span style="position:absolute;top:0;left:0;background:rgba(251,191,36,0.15);color:var(--accent-gold);font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:10px 0 8px 0;letter-spacing:0.5px;">${s._category}</span>`
                     : '';
@@ -473,7 +471,6 @@
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
         }
 
-        // ✅ 核心改动：搜索时判断是全局还是单分类
         function filterAndSort() {
             const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
             const sortMode = document.getElementById('sortSelect').value;
@@ -507,7 +504,6 @@
         document.getElementById('searchInput').addEventListener('input', filterAndSort);
         document.getElementById('sortSelect').addEventListener('change', filterAndSort);
 
-        // ✅ 预取所有JSON到全局缓存
         async function preloadAllCategories() {
             const links = document.querySelectorAll('.sidebar-link[data-json]');
             const fetchPromises = Array.from(links).map(async (link) => {
@@ -518,7 +514,6 @@
                     const res = await fetch(jsonPath);
                     if (!res.ok) return;
                     const data = await res.json();
-                    // 给每条数据打上分类标签，供全局搜索时显示
                     globalCache[jsonPath] = data.map(item => ({ ...item, _category: label }));
                 } catch (e) {
                     console.warn(`预加载失败: ${jsonPath}`, e);
