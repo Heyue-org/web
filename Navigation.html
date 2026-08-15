@@ -167,7 +167,7 @@
             outline: none; cursor: pointer; transition: all 0.3s;
         }
 
-        /* ===== Card Grid (from gal.html) ===== */
+        /* ===== Card Grid ===== */
         .grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
         }
@@ -264,6 +264,34 @@
             background: rgba(0,0,0,0.5); z-index: 299;
         }
 
+        /* ===== Rating Stars ===== */
+        .rating-row {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-top: 0.3rem; padding-top: 0.4rem;
+            border-top: 1px dashed var(--border-color);
+        }
+        .rating-label {
+            color: var(--text-sub); font-size: 0.75rem; flex-shrink: 0;
+        }
+        .stars {
+            display: inline-flex; gap: 2px; cursor: pointer;
+        }
+        .star {
+            font-size: 1rem; color: var(--border-color);
+            transition: color 0.2s, transform 0.15s; user-select: none;
+        }
+        .star.active { color: var(--accent-gold); }
+        .star:hover { transform: scale(1.2); }
+        .rating-info {
+            font-size: 0.75rem; color: var(--text-sub); margin-left: auto;
+            white-space: nowrap;
+        }
+        .rating-info .score-val {
+            color: var(--accent-gold); font-weight: 700;
+        }
+        .stars.disabled { cursor: default; opacity: 0.6; }
+        .stars.disabled .star:hover { transform: none; }
+
         /* ===== Responsive ===== */
         @media (max-width: 900px) {
             .grid { grid-template-columns: repeat(2, 1fr); }
@@ -309,23 +337,23 @@
     <div class="layout">
         <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
-    <div class="sidebar-section-label">— 资源站 —</div>
-    <a class="sidebar-link active" data-json="assets/nav-pages/gal.json" data-label="GAL">GAL</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/voice_music.json" data-label="音声/音乐">音声/音乐</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/comic_illustration.json" data-label="漫画/插画/本子">漫画/插画/本子</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/hub.json" data-label="综合资源站">综合资源站</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/gal-info.json" data-label="GAL情报/入正">GAL情报/入正</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/ln.json" data-label="轻小说">轻小说</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/anime.json" data-label="动漫">动漫</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/mmd.json" data-label="MMD">MMD</a>
+            <div class="sidebar-section-label">— 资源站 —</div>
+            <a class="sidebar-link active" data-json="assets/nav-pages/gal.json" data-label="GAL">GAL</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/voice_music.json" data-label="音声/音乐">音声/音乐</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/comic_illustration.json" data-label="漫画/插画/本子">漫画/插画/本子</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/hub.json" data-label="综合资源站">综合资源站</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/gal-info.json" data-label="GAL情报/入正">GAL情报/入正</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/ln.json" data-label="轻小说">轻小说</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/anime.json" data-label="动漫">动漫</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/mmd.json" data-label="MMD">MMD</a>
 
-    <div class="sidebar-section-label" style="margin-top:1rem;">— 工具 —</div>
-    <a class="sidebar-link" data-json="assets/nav-pages/wiki.json" data-label="WIKI">WIKI</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/acg-nav.json" data-label="二次元导航站">二次元导航站</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/tools.json" data-label="工具">工具</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/search.json" data-label="搜索引擎">搜索引擎</a>
-    <a class="sidebar-link" data-json="assets/nav-pages/valhalla.json" data-label="英灵殿">英灵殿</a>
-   </nav>
+            <div class="sidebar-section-label" style="margin-top:1rem;">— 工具 —</div>
+            <a class="sidebar-link" data-json="assets/nav-pages/wiki.json" data-label="WIKI">WIKI</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/acg-nav.json" data-label="二次元导航站">二次元导航站</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/tools.json" data-label="工具">工具</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/search.json" data-label="搜索引擎">搜索引擎</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/valhalla.json" data-label="英灵殿">英灵殿</a>
+        </nav>
 
         <!-- Main Content -->
         <main class="main-content">
@@ -346,61 +374,178 @@
         </main>
     </div>
 
-        <script>
+    <script>
     (() => {
+        // ========== Config ==========
+        var API_BASE = 'https://heyue-rating-worker.heyue-rating-api.workers.dev';
+
         // ========== Theme ==========
-        const THEME_KEY = 'heyue_nav_theme';
-        const htmlEl = document.documentElement;
-        const themeBtn = document.getElementById('themeToggle');
+        var THEME_KEY = 'heyue_nav_theme';
+        var htmlEl = document.documentElement;
+        var themeBtn = document.getElementById('themeToggle');
 
         function applyTheme(theme) {
             htmlEl.setAttribute('data-theme', theme);
             themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
             localStorage.setItem(THEME_KEY, theme);
         }
-        const saved = localStorage.getItem(THEME_KEY);
+        var saved = localStorage.getItem(THEME_KEY);
         if (saved) applyTheme(saved);
-        themeBtn.addEventListener('click', () => {
+        themeBtn.addEventListener('click', function() {
             applyTheme(htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         });
 
         // ========== Mobile Sidebar ==========
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const menuBtn = document.getElementById('mobileMenuBtn');
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        var menuBtn = document.getElementById('mobileMenuBtn');
 
         function toggleSidebar(open) {
             sidebar.classList.toggle('open', open);
             overlay.classList.toggle('active', open);
         }
-        menuBtn.addEventListener('click', () => toggleSidebar(true));
-        overlay.addEventListener('click', () => toggleSidebar(false));
+        menuBtn.addEventListener('click', function() { toggleSidebar(true); });
+        overlay.addEventListener('click', function() { toggleSidebar(false); });
 
         // ========== Data & Rendering ==========
-        const GH_SVG = '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
+        var GH_SVG = '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
 
-        const globalCache = {};
-        let allSites = [];          // 当前视图的数据（单分类 or 全局）
-        let isGlobalSearch = false; // 是否处于全局搜索模式
-        let currentJsonPath = '';
-        let currentLabel = '';
+        var globalCache = {};
+        var allSites = [];
+        var isGlobalSearch = false;
+        var currentJsonPath = '';
+        var currentLabel = '';
+
+        // Rating state
+        var ratingCache = {};
+        var ratedKeys = new Set();
+
+        function getRatingKey(site) {
+            return 'site:' + (site.name || '') + '_' + (site.url || '').replace(/\s+/g, '_');
+        }
+
+        function fetchRating(key) {
+            if (ratingCache[key]) return Promise.resolve(ratingCache[key]);
+            return fetch(API_BASE + '/rating?key=' + encodeURIComponent(key))
+                .then(function(res) { return res.ok ? res.json() : { score: 0, count: 0 }; })
+                .then(function(data) { ratingCache[key] = data; return data; })
+                .catch(function() { return { score: 0, count: 0 }; });
+        }
+
+        function submitRating(key, score, starsEl, infoEl) {
+            if (ratedKeys.has(key)) return;
+            starsEl.classList.add('disabled');
+            fetch(API_BASE + '/rate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: key, score: score })
+            })
+            .then(function(res) {
+                if (!res.ok) throw new Error('fail');
+                return res.json();
+            })
+            .then(function(data) {
+                ratingCache[key] = data;
+                ratedKeys.add(key);
+                updateRatingDisplay(starsEl, infoEl, data);
+            })
+            .catch(function(e) {
+                console.warn('rating submit failed:', e);
+                starsEl.classList.remove('disabled');
+            });
+        }
+
+        function updateRatingDisplay(starsEl, infoEl, data) {
+            var rounded = Math.round(data.score);
+            var starSpans = starsEl.querySelectorAll('.star');
+            for (var i = 0; i < starSpans.length; i++) {
+                if (i < rounded) starSpans[i].classList.add('active');
+                else starSpans[i].classList.remove('active');
+            }
+            infoEl.innerHTML = '<span class="score-val">' + data.score + '</span> (' + data.count + ')';
+        }
+
+        function buildRatingHtml(site) {
+            var key = getRatingKey(site);
+            var stars = '';
+            for (var i = 1; i <= 5; i++) {
+                stars += '<span class="star" data-val="' + i + '">\u2605</span>';
+            }
+            return '<div class="rating-row" data-rating-key="' + key + '">'
+                + '<span class="rating-label">\u8BC4\u5206</span>'
+                + '<div class="stars" data-key="' + key + '">' + stars + '</div>'
+                + '<span class="rating-info">\u52A0\u8F7D\u4E2D...</span>'
+                + '</div>';
+        }
+
+        function bindRatingEvents() {
+            var allStars = document.querySelectorAll('.stars[data-key]');
+            for (var idx = 0; idx < allStars.length; idx++) {
+                (function(starsEl) {
+                    var key = starsEl.getAttribute('data-key');
+                    var infoEl = starsEl.nextElementSibling;
+                    var starSpans = starsEl.querySelectorAll('.star');
+
+                    if (ratingCache[key]) {
+                        updateRatingDisplay(starsEl, infoEl, ratingCache[key]);
+                    } else {
+                        fetchRating(key).then(function(data) {
+                            updateRatingDisplay(starsEl, infoEl, data);
+                        });
+                    }
+
+                    if (ratedKeys.has(key)) {
+                        starsEl.classList.add('disabled');
+                        return;
+                    }
+
+                    for (var j = 0; j < starSpans.length; j++) {
+                        (function(star) {
+                            star.addEventListener('mouseenter', function() {
+                                if (starsEl.classList.contains('disabled')) return;
+                                var val = parseInt(star.getAttribute('data-val'));
+                                for (var k = 0; k < starSpans.length; k++) {
+                                    if (k < val) starSpans[k].classList.add('active');
+                                    else starSpans[k].classList.remove('active');
+                                }
+                            });
+                            star.addEventListener('click', function() {
+                                if (starsEl.classList.contains('disabled')) return;
+                                var val = parseInt(star.getAttribute('data-val'));
+                                submitRating(key, val, starsEl, infoEl);
+                            });
+                        })(starSpans[j]);
+                    }
+
+                    starsEl.addEventListener('mouseleave', function() {
+                        if (starsEl.classList.contains('disabled')) return;
+                        var cached = ratingCache[key];
+                        var rounded = cached ? Math.round(cached.score) : 0;
+                        for (var k = 0; k < starSpans.length; k++) {
+                            if (k < rounded) starSpans[k].classList.add('active');
+                            else starSpans[k].classList.remove('active');
+                        }
+                    });
+                })(allStars[idx]);
+            }
+        }
 
         function parseRelated(related) {
-            const result = { nav: null, tg: null, github: null, custom: [] };
+            var result = { nav: null, tg: null, github: null, custom: [] };
             if (!related) return result;
-            related.split('\n').filter(Boolean).forEach(raw => {
-                const line = raw.trim();
+            related.split('\n').filter(Boolean).forEach(function(raw) {
+                var line = raw.trim();
                 if (!line) return;
-                const tagMatch = line.match(/^\[(nav|tg|gh)\](.+)$/i);
+                var tagMatch = line.match(/^\[(nav|tg|gh)\](.+)$/i);
                 if (tagMatch) {
-                    const tag = tagMatch[1].toLowerCase();
-                    const url = tagMatch[2].trim();
+                    var tag = tagMatch[1].toLowerCase();
+                    var url = tagMatch[2].trim();
                     if (tag === 'nav') result.nav = url;
                     else if (tag === 'tg') result.tg = url;
                     else if (tag === 'gh') result.github = url;
                     return;
                 }
-                const lower = line.toLowerCase();
+                var lower = line.toLowerCase();
                 if (lower.includes('t.me')) { if (!result.tg) result.tg = line; else result.custom.push(line); }
                 else if (lower.includes('github.com')) { if (!result.github) result.github = line; else result.custom.push(line); }
                 else if (!result.nav) { result.nav = line; }
@@ -410,60 +555,61 @@
         }
 
         function renderCards(sites) {
-            const container = document.getElementById('cardContainer');
-            const countEl = document.getElementById('siteCount');
-            countEl.textContent = `共 ${sites.length} 个站点`;
+            var container = document.getElementById('cardContainer');
+            var countEl = document.getElementById('siteCount');
+            countEl.textContent = '\u5171 ' + sites.length + ' \u4E2A\u7AD9\u70B9';
 
             if (sites.length === 0) {
-                container.innerHTML = '<div class="loading">未找到匹配的站点</div>';
+                container.innerHTML = '<div class="loading">\u672A\u627E\u5230\u5339\u914D\u7684\u7AD9\u70B9</div>';
                 return;
             }
 
-            container.innerHTML = sites.map(s => {
-                const excellentBadge = s.excellent ? '<span class="badge-excellent">优秀</span>' : '';
-                const urlLink = s.url
-                    ? `<a href="${s.url}" target="_blank" rel="noopener">${s.url}</a>` : '—';
-                const rel = parseRelated(s.related);
+            container.innerHTML = sites.map(function(s) {
+                var excellentBadge = s.excellent ? '<span class="badge-excellent">\u4F18\u79C0</span>' : '';
+                var urlLink = s.url
+                    ? '<a href="' + s.url + '" target="_blank" rel="noopener">' + s.url + '</a>' : '\u2014';
+                var rel = parseRelated(s.related);
 
-                const navIcon = rel.nav
-                    ? `<a class="related-icon icon-nav active" href="${rel.nav}" target="_blank" rel="noopener" title="导航/主页">📑</a>`
-                    : `<span class="related-icon icon-nav" title="无导航链接">📑</span>`;
-                const tgIcon = rel.tg
-                    ? `<a class="related-icon icon-tg active" href="${rel.tg}" target="_blank" rel="noopener" title="Telegram">✈️</a>`
-                    : `<span class="related-icon icon-tg" title="无TG链接">✈️</span>`;
-                const ghIcon = rel.github
-                    ? `<a class="related-icon icon-gh active" href="${rel.github}" target="_blank" rel="noopener" title="GitHub">${GH_SVG}</a>`
-                    : `<span class="related-icon icon-gh" title="无GitHub链接">${GH_SVG}</span>`;
+                var navIcon = rel.nav
+                    ? '<a class="related-icon icon-nav active" href="' + rel.nav + '" target="_blank" rel="noopener" title="\u5BFC\u822A/\u4E3B\u9875">\uD83D\uDCD1</a>'
+                    : '<span class="related-icon icon-nav" title="\u65E0\u5BFC\u822A\u94FE\u63A5">\uD83D\uDCD1</span>';
+                var tgIcon = rel.tg
+                    ? '<a class="related-icon icon-tg active" href="' + rel.tg + '" target="_blank" rel="noopener" title="Telegram">\u2708\uFE0F</a>'
+                    : '<span class="related-icon icon-tg" title="\u65E0TG\u94FE\u63A5">\u2708\uFE0F</span>';
+                var ghIcon = rel.github
+                    ? '<a class="related-icon icon-gh active" href="' + rel.github + '" target="_blank" rel="noopener" title="GitHub">' + GH_SVG + '</a>'
+                    : '<span class="related-icon icon-gh" title="\u65E0GitHub\u94FE\u63A5">' + GH_SVG + '</span>';
 
-                const iconsHtml = `<span class="related-icons">${navIcon}${tgIcon}${ghIcon}</span>`;
-                const customLinksHtml = rel.custom.length > 0
-                    ? `<div class="custom-links-row">${rel.custom.map(u => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`).join('')}</div>` : '';
-                const problemHtml = s.problem
-                    ? `<span class="meta-value problem">${s.problem}</span>`
-                    : '<span style="color:var(--text-sub)">暂无</span>';
+                var iconsHtml = '<span class="related-icons">' + navIcon + tgIcon + ghIcon + '</span>';
+                var customLinksHtml = rel.custom.length > 0
+                    ? '<div class="custom-links-row">' + rel.custom.map(function(u) { return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>'; }).join('') + '</div>' : '';
+                var problemHtml = s.problem
+                    ? '<span class="meta-value problem">' + s.problem + '</span>'
+                    : '<span style="color:var(--text-sub)">\u6682\u65E0</span>';
 
-                const categoryTag = isGlobalSearch && s._category
-                    ? `<span style="position:absolute;top:0;left:0;background:rgba(251,191,36,0.15);color:var(--accent-gold);font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:10px 0 8px 0;letter-spacing:0.5px;">${s._category}</span>`
+                var categoryTag = isGlobalSearch && s._category
+                    ? '<span style="position:absolute;top:0;left:0;background:rgba(251,191,36,0.15);color:var(--accent-gold);font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:10px 0 8px 0;letter-spacing:0.5px;">' + s._category + '</span>'
                     : '';
 
-                return `
-                <div class="site-card">
-                    ${categoryTag}${excellentBadge}
-                    <div class="site-name" title="${s.name}">${s.name}</div>
-                    <div class="links-toggle" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('show')">
-                        <span class="arrow">▶</span> 查看链接
-                    </div>
-                    <div class="links-panel">
-                        <div class="link-row"><span class="link-label">网址</span>${urlLink}</div>
-                        <div class="link-row"><span class="link-label">相关</span>${iconsHtml}</div>
-                        ${customLinksHtml}
-                    </div>
-                    <div class="meta-row">
-                        <div class="meta-item"><div class="meta-label">备注</div><div class="meta-value">${s.note || '—'}</div></div>
-                        <div class="meta-item"><div class="meta-label">问题</div><div class="meta-value">${problemHtml}</div></div>
-                    </div>
-                </div>`;
+                return '<div class="site-card">'
+                    + categoryTag + excellentBadge
+                    + '<div class="site-name" title="' + s.name + '">' + s.name + '</div>'
+                    + '<div class="links-toggle" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'show\')">'
+                    + '<span class="arrow">\u25B6</span> \u67E5\u770B\u94FE\u63A5</div>'
+                    + '<div class="links-panel">'
+                    + '<div class="link-row"><span class="link-label">\u7F51\u5740</span>' + urlLink + '</div>'
+                    + '<div class="link-row"><span class="link-label">\u76F8\u5173</span>' + iconsHtml + '</div>'
+                    + customLinksHtml
+                    + '</div>'
+                    + '<div class="meta-row">'
+                    + '<div class="meta-item"><div class="meta-label">\u5907\u6CE8</div><div class="meta-value">' + (s.note || '\u2014') + '</div></div>'
+                    + '<div class="meta-item"><div class="meta-label">\u95EE\u9898</div><div class="meta-value">' + problemHtml + '</div></div>'
+                    + '</div>'
+                    + buildRatingHtml(s)
+                    + '</div>';
             }).join('');
+
+            bindRatingEvents();
         }
 
         function getPinyin(str) {
@@ -472,30 +618,28 @@
         }
 
         function filterAndSort() {
-            const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
-            const sortMode = document.getElementById('sortSelect').value;
-            const titleEl = document.getElementById('categoryTitle');
+            var keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+            var sortMode = document.getElementById('sortSelect').value;
+            var titleEl = document.getElementById('categoryTitle');
 
-            // 有搜索词 → 全局搜索；无搜索词 → 回到当前分类
             if (keyword) {
                 isGlobalSearch = true;
-                titleEl.textContent = `🔍 全局搜索结果`;
-                // 合并所有已缓存的分类数据
-                const allData = Object.values(globalCache).flat();
-                let filtered = allData.filter(s => {
+                titleEl.textContent = '\uD83D\uDD0D \u5168\u5C40\u641C\u7D22\u7ED3\u679C';
+                var allData = Object.values(globalCache).flat();
+                var filtered = allData.filter(function(s) {
                     return [s.name, s.note, s.url, s.related, s.problem, s._category]
                         .join(' ').toLowerCase().includes(keyword);
                 });
                 if (sortMode === 'name') {
-                    filtered.sort((a, b) => getPinyin(a.name).localeCompare(getPinyin(b.name)));
+                    filtered.sort(function(a, b) { return getPinyin(a.name).localeCompare(getPinyin(b.name)); });
                 }
                 renderCards(filtered);
             } else {
                 isGlobalSearch = false;
                 titleEl.textContent = currentLabel;
-                let filtered = [...allSites];
+                var filtered = allSites.slice();
                 if (sortMode === 'name') {
-                    filtered.sort((a, b) => getPinyin(a.name).localeCompare(getPinyin(b.name)));
+                    filtered.sort(function(a, b) { return getPinyin(a.name).localeCompare(getPinyin(b.name)); });
                 }
                 renderCards(filtered);
             }
@@ -504,29 +648,28 @@
         document.getElementById('searchInput').addEventListener('input', filterAndSort);
         document.getElementById('sortSelect').addEventListener('change', filterAndSort);
 
-        async function preloadAllCategories() {
-            const links = document.querySelectorAll('.sidebar-link[data-json]');
-            const fetchPromises = Array.from(links).map(async (link) => {
-                const jsonPath = link.dataset.json;
-                const label = link.dataset.label;
-                if (!jsonPath || globalCache[jsonPath]) return;
-                try {
-                    const res = await fetch(jsonPath);
-                    if (!res.ok) return;
-                    const data = await res.json();
-                    globalCache[jsonPath] = data.map(item => ({ ...item, _category: label }));
-                } catch (e) {
-                    console.warn(`预加载失败: ${jsonPath}`, e);
-                }
+        function preloadAllCategories() {
+            var links = document.querySelectorAll('.sidebar-link[data-json]');
+            var fetchPromises = Array.from(links).map(function(link) {
+                var jsonPath = link.dataset.json;
+                var label = link.dataset.label;
+                if (!jsonPath || globalCache[jsonPath]) return Promise.resolve();
+                return fetch(jsonPath)
+                    .then(function(res) { return res.ok ? res.json() : null; })
+                    .then(function(data) {
+                        if (data) globalCache[jsonPath] = data.map(function(item) { return Object.assign({}, item, { _category: label }); });
+                    })
+                    .catch(function(e) { console.warn('preload failed: ' + jsonPath, e); });
             });
-            await Promise.all(fetchPromises);
-            console.log(`✅ 全局索引就绪，共缓存 ${Object.keys(globalCache).length} 个分类`);
+            return Promise.all(fetchPromises).then(function() {
+                console.log('Global index ready, cached ' + Object.keys(globalCache).length + ' categories');
+            });
         }
 
-        async function loadCategory(jsonPath, label) {
-            const container = document.getElementById('cardContainer');
-            const titleEl = document.getElementById('categoryTitle');
-            const searchInput = document.getElementById('searchInput');
+        function loadCategory(jsonPath, label) {
+            var container = document.getElementById('cardContainer');
+            var titleEl = document.getElementById('categoryTitle');
+            var searchInput = document.getElementById('searchInput');
 
             currentLabel = label;
             titleEl.textContent = label;
@@ -535,40 +678,42 @@
             allSites = [];
 
             if (!jsonPath) {
-                container.innerHTML = `<div class="loading">「${label}」的 JSON 数据路径尚未配置<br>请在 sidebar-link 的 data-json 属性中填写对应 .json 文件路径</div>`;
+                container.innerHTML = '<div class="loading">\u300C' + label + '\u300D\u7684 JSON \u6570\u636E\u8DEF\u5F84\u5C1A\u672A\u914D\u7F6E<br>\u8BF7\u5728 sidebar-link \u7684 data-json \u5C5E\u6027\u4E2D\u586B\u5199\u5BF9\u5E94 .json \u6587\u4EF6\u8DEF\u5F84</div>';
                 document.getElementById('siteCount').textContent = '';
                 return;
             }
 
-            container.innerHTML = '<div class="loading">加载中...</div>';
+            container.innerHTML = '<div class="loading">\u52A0\u8F7D\u4E2D...</div>';
 
-            // 优先从缓存读取
             if (globalCache[jsonPath]) {
-                allSites = globalCache[jsonPath].map(item => {
-                    // 去掉 _category 避免污染单分类视图
-                    const copy = { ...item };
+                allSites = globalCache[jsonPath].map(function(item) {
+                    var copy = Object.assign({}, item);
                     delete copy._category;
                     return copy;
                 });
                 renderCards(allSites);
             } else {
-                try {
-                    const res = await fetch(jsonPath);
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                    allSites = await res.json();
-                    renderCards(allSites);
-                } catch (e) {
-                    container.innerHTML = `<div class="loading" style="color:var(--danger)">数据加载失败: ${e.message}<br>请检查 ${jsonPath} 是否存在且格式正确</div>`;
-                    document.getElementById('siteCount').textContent = '';
-                }
+                fetch(jsonPath)
+                    .then(function(res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.json();
+                    })
+                    .then(function(data) {
+                        allSites = data;
+                        renderCards(allSites);
+                    })
+                    .catch(function(e) {
+                        container.innerHTML = '<div class="loading" style="color:var(--danger)">\u6570\u636E\u52A0\u8F7D\u5931\u8D25: ' + e.message + '<br>\u8BF7\u68C0\u67E5 ' + jsonPath + ' \u662F\u5426\u5B58\u5728\u4E14\u683C\u5F0F\u6B63\u786E</div>';
+                        document.getElementById('siteCount').textContent = '';
+                    });
             }
         }
 
-        // ========== Sidebar Navigation ==========
-        const links = document.querySelectorAll('.sidebar-link');
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                links.forEach(l => l.classList.remove('active'));
+        // Sidebar Navigation
+        var links = document.querySelectorAll('.sidebar-link');
+        links.forEach(function(link) {
+            link.addEventListener('click', function() {
+                links.forEach(function(l) { l.classList.remove('active'); });
                 link.classList.add('active');
                 currentJsonPath = link.dataset.json;
                 loadCategory(currentJsonPath, link.dataset.label);
@@ -576,19 +721,14 @@
             });
         });
 
-        // ========== Init ==========
-        (async () => {
-            // 后台预加载所有分类数据（不阻塞首屏）
-            preloadAllCategories();
-
-            // 立即加载默认分类
-            const firstLink = document.querySelector('.sidebar-link.active');
-            if (firstLink) {
-                currentJsonPath = firstLink.dataset.json;
-                currentLabel = firstLink.dataset.label;
-                loadCategory(currentJsonPath, currentLabel);
-            }
-        })();
+        // Init
+        preloadAllCategories();
+        var firstLink = document.querySelector('.sidebar-link.active');
+        if (firstLink) {
+            currentJsonPath = firstLink.dataset.json;
+            currentLabel = firstLink.dataset.label;
+            loadCategory(currentJsonPath, currentLabel);
+        }
     })();
     </script>
     <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
