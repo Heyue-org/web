@@ -1,0 +1,178 @@
+[
+  {
+    "name": "7-zip",
+    "url": "https://7-zip.org/download.html",
+    "related": "",
+    "note": "PC",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "WinRAR",
+    "url": "https://www.rarlab.com/download.htm",
+    "related": "",
+    "note": "PC",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Bandzip",
+    "url": "https://cn.bandisoft.com/bandizip/",
+    "related": "",
+    "note": "PC",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Zarchiver",
+    "url": "https://www.zdevs.ru/en/za/apk.html",
+    "related": "",
+    "note": "建议国内访问",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "解压专家",
+    "url": "https://apps.apple.com/cn/app/id1400133654",
+    "related": "",
+    "note": "iOS",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "LZ4",
+    "url": "https://github.com/lz4/lz4",
+    "related": "",
+    "note": "常用于加密",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Locale.Emulator",
+    "url": "https://xupefei.github.io/Locale-Emulator/",
+    "related": "",
+    "note": "乱码转区",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "NTLEA",
+    "url": "http://ntlea.codeplex.com/",
+    "related": "",
+    "note": "乱码转区",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Tyranor",
+    "url": "https://www.tyranoremu.com/",
+    "related": "",
+    "note": "多引擎gal模拟器 安卓端",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "ARKRPG",
+    "url": "https://arkrpg.tech/",
+    "related": "",
+    "note": "RPG引擎模拟器 iOS端",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "ONScripter",
+    "url": "https://ogapee.github.io/www/onscripter.html",
+    "related": "",
+    "note": "ONS引擎模拟器 全平台",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Kirikiroid2",
+    "url": "https://github.com/zeas2/Kirikiroid2",
+    "related": "",
+    "note": "Kirikir引擎模拟器，建议去用176号Issues提到的分支",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Winlator",
+    "url": "https://winlator.org/",
+    "related": "",
+    "note": "安卓运行winx86_64程序",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "Foobar2000",
+    "url": "https://www.foobar2000.org/",
+    "related": "",
+    "note": "助听器预定",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "PotPlayer",
+    "url": "https://potplayer.tv/",
+    "related": "",
+    "note": "调教有一定门槛",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "MT管理器",
+    "url": "https://mt2.cn/",
+    "related": "",
+    "note": "Android 平台文件管理/逆向修改器",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "VC++运行库",
+    "url": "https://learn.microsoft.com/zh-cn/cpp/windows/latest-supported-vc-redist?view=msvc-170",
+    "related": "",
+    "note": "环境修复工具",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": ".NET 框架",
+    "url": "https://dotnet.microsoft.com/zh-cn/download",
+    "related": "",
+    "note": "环境修复工具",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "DirectX_Repair",
+    "url": "https://gitcode.com/Premium-Resources/fb832",
+    "related": "",
+    "note": "环境修复工具",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "IDM",
+    "url": "https://www.internetdownloadmanager.com/",
+    "related": "",
+    "note": "多线程下载器 要钱，可以去吾爱破解论坛找破解版",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "qBittorrent EE",
+    "url": "https://github.com/c0re100/qBittorrent-Enhanced-Edition",
+    "related": "",
+    "note": "BT下载器",
+    "problem": "",
+    "excellent": false
+  },
+  {
+    "name": "v2rayN",
+    "url": "https://github.com/2dust/v2rayN",
+    "related": "",
+    "note": "Win的Xray图形化代理客户端",
+    "problem": "",
+    "excellent": false
+  }
+]
