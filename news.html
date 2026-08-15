@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>站点公告 - 合月亭</title>
+    <title>公告 - 合月亭</title>
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -215,6 +215,15 @@
             font-size: 1.05rem; line-height: 2;
             color: #cbd5e1; white-space: pre-wrap;
         }
+        .lb-content a {
+            color: var(--accent-gold);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            transition: opacity 0.2s;
+        }
+        .lb-content a:hover {
+            opacity: 0.8;
+        }
         @media (max-width: 600px) {
             .top-bar { padding: 1rem 1.2rem; }
             .top-bar-inner .logo { font-size: 2rem; }
@@ -241,7 +250,7 @@
                 合月亭
             </a>
             <div class="v-line"></div>
-            <div class="page-title">站点公告</div>
+            <div class="page-title">公告</div>
         </div>
     </div>
     <div class="divider"></div>
@@ -258,6 +267,19 @@
             </div>
             <div class="notice-title">绝赞呕吐代码中</div>
             <div class="notice-summary">由于这是一个新开的项目，很多功能和页面都是能用就端上来了，不过我们会尽快完善</div>
+        </div>
+
+        <div class="notice-card" tabindex="0" role="button"
+             data-tag="其他" data-tag-class="new" data-date="2026-08-15"
+             data-title="合月亭资源站点收集榜 · 使用反馈调研"
+             data-full="为了让项目更贴合大家的实际使用需求，我们发起了一次简短的反馈调研。&#10;&#10;👉 &lt;a href=&quot;https://wj.qq.com/s2/26044921/15f1/&quot; target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;&gt;点击填写问卷&lt;/a&gt;&#10;&#10;预计耗时 0.5-2 分钟，你的每一条意见都会直接影响后续的收录标准与页面优化方向。感谢支持！">
+            <span class="arrow">&rarr;</span>
+            <div class="notice-header">
+                <span class="tag new">其它</span>
+                <span class="date">2026-08-15</span>
+            </div>
+            <div class="notice-title">合月亭资源站点收集榜 · 使用反馈调研</div>
+            <div class="notice-summary">为了让项目更贴合实际需求，诚邀各位填写反馈问卷（约0.5-2分钟）</div>
         </div>
     </div>
 
@@ -277,6 +299,12 @@
 
             let isAnimating = false;
             let triggerCard = null;
+
+            function decodeHTMLEntities(str) {
+                const textarea = document.createElement('textarea');
+                textarea.innerHTML = str;
+                return textarea.value;
+            }
 
             list.addEventListener('click', e => {
                 const card = e.target.closest('.notice-card');
@@ -300,7 +328,7 @@
                     '<span class="tag lb-tag ' + tagClass + '">' + card.dataset.tag + '</span>' +
                     '<div class="lb-title">' + card.dataset.title + '</div>' +
                     '<div class="lb-date">' + card.dataset.date + '</div>' +
-                    '<div class="lb-content">' + card.dataset.full + '</div>';
+                    '<div class="lb-content">' + decodeHTMLEntities(card.dataset.full) + '</div>';
 
                 overlay.classList.add('active');
                 panel.classList.add('active');
