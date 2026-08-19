@@ -1,155 +1,379 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文档转JS数据生成器</title>
-    <style>
-        :root { --bg: #f5f7fa; --card: #fff; --primary: #2563eb; --border: #e5e7eb; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); padding: 20px; color: #333; line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; display: grid; gap: 20px; }
-        h1 { font-size: 1.5rem; margin-bottom: 10px; text-align: center; }
-        .card { background: var(--card); padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
-        textarea { width: 100%; min-height: 160px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; resize: vertical; font-family: Consolas, Monaco, monospace; font-size: 13px; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
-        textarea:focus { border-color: var(--primary); }
-        button { background: var(--primary); color: white; border: none; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
-        .output-area { position: relative; }
-        .copy-btn { position: absolute; top: 12px; right: 12px; padding: 4px 12px; font-size: 12px; background: #eee; color: #333; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; z-index: 10; }
-        .copy-btn:hover { background: #ddd; }
-        pre { background: #1e1e1e; color: #d4d4d4; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 13px; margin: 0; min-height: 120px; white-space: pre-wrap; word-break: break-all; }
-        .hint { font-size: 12px; color: #888; margin-top: 6px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Execl数据导出</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg: #0f172a; --card: #1e293b; --border: #334155;
+    --text: #e2e8f0; --text-dim: #94a3b8;
+    --accent: #38bdf8; --accent-hover: #0ea5e9;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; display: flex;
+    justify-content: center; align-items: flex-start; padding: 40px 20px;
+  }
+  .container {
+    width: 100%; max-width: 860px; background: var(--card);
+    border: 1px solid var(--border); border-radius: 16px;
+    padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,.4);
+  }
+  h1 { font-size: 1.6rem; margin-bottom: 8px; color: var(--accent); }
+  .subtitle { color: var(--text-dim); font-size: .9rem; margin-bottom: 28px; }
+  #dropZone {
+    border: 2px dashed var(--border); border-radius: 12px;
+    padding: 48px 20px; text-align: center; cursor: pointer;
+    transition: all .2s; color: var(--text-dim); font-size: 1rem;
+  }
+  #dropZone:hover, #dropZone.dragover {
+    border-color: var(--accent); background: rgba(56,189,248,.06); color: var(--accent);
+  }
+  #fileInput { display: none; }
+  #sheetPanel { display: none; margin-top: 24px; }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .panel-title { font-size: 1rem; font-weight: 600; }
+  .btn-group { display: flex; gap: 8px; }
+  .btn-sm {
+    padding: 5px 14px; font-size: .8rem; border: 1px solid var(--border);
+    background: transparent; color: var(--text-dim); border-radius: 6px;
+    cursor: pointer; transition: all .15s;
+  }
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+  .sheet-list { border: 1px solid var(--border); border-radius: 10px; padding: 6px; max-height: 300px; overflow: auto; }
+  .sheet-item {
+    display: flex; align-items: center; padding: 10px 14px;
+    border-radius: 8px; cursor: pointer; transition: background .15s; user-select: none;
+  }
+  .sheet-item:hover { background: rgba(255,255,255,.04); }
+  .sheet-item input[type="checkbox"] {
+    accent-color: var(--accent); margin-right: 12px; width: 16px; height: 16px; cursor: pointer;
+  }
+  .sheet-name { font-size: .88rem; line-height: 1.4; word-break: break-all; }
+  .sheet-count { color: var(--accent); margin-left: 6px; font-size: .8rem; }
+  .export-bar { display: flex; align-items: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .btn-primary {
+    padding: 12px 32px; background: var(--accent); color: #0f172a;
+    border: none; border-radius: 10px; font-size: .95rem;
+    font-weight: 700; cursor: pointer; transition: background .2s;
+  }
+  .btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+  .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+  #statsText { color: var(--text-dim); font-size: .85rem; }
+  #previewArea { display: none; margin-top: 24px; }
+  .preview-label { font-size: .85rem; color: var(--text-dim); margin-bottom: 8px; }
+  #previewCode {
+    background: #0f172a; border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: .78rem; line-height: 1.6; color: #a5f3fc;
+    max-height: 360px; overflow: auto; white-space: pre-wrap; word-break: break-all;
+  }
+</style>
 </head>
 <body>
-
 <div class="container">
-    <div class="card">
-        <h1>📋 文档转 JS 数据生成器</h1>
-        <label for="input">粘贴文档内容（支持 Excel / WPS / 网页表格复制）</label>
-        <textarea id="input" placeholder="网站名称&#9;网址&#9;相关网址1&#9;相关网址2&#9;备注&#10;佩可爱动漫&#9;https://ani.pekolove.net/&#9;https://peko.love/&#9;https://t.me/pekolovegroup&#9;在线"></textarea>
-        <div class="hint">💡 自动识别所有中间列为相关网址；最右侧非空列为备注；含中文的链接自动过滤；多链接以换行分隔。</div>
-        <button onclick="generate()">⚡ 生成代码</button>
-    </div>
+  <h1>Execl数据导出</h1>
+  <p class="subtitle">上传 Excel → 选择工作表 → 预览 / 批量导出标准化 JSON</p>
+  <p class="subtitle" style="margin-top:-18px;font-size:.78rem;">支持 Excel 超链接、普通 URL、HYPERLINK() 公式；related 输出为真实链接字符串</p>
 
-    <div class="card output-area">
-        <button class="copy-btn" onclick="copyCode()">复制</button>
-        <pre id="output">// 生成的代码将显示在这里...</pre>
+  <div id="dropZone">📁 点击或拖拽上传 .xlsx / .xls / .xlsm 文件</div>
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.xlsm">
+
+  <div id="sheetPanel">
+    <div class="panel-header">
+      <span class="panel-title">工作表列表</span>
+      <div class="btn-group">
+        <button class="btn-sm" id="selectAll">全选</button>
+        <button class="btn-sm" id="deselectAll">取消全选</button>
+      </div>
     </div>
+    <div class="sheet-list" id="sheetList"></div>
+    <div class="export-bar">
+      <button class="btn-primary" id="exportBtn" disabled>🚀 导出选中工作表</button>
+      <span id="statsText"></span>
+    </div>
+  </div>
+
+  <div id="previewArea">
+    <div class="preview-label">📋 自动预览（前 20 条）</div>
+    <pre id="previewCode"></pre>
+  </div>
 </div>
 
 <script>
-    let lastResults = [];
+const dropZone       = document.getElementById('dropZone');
+const fileInput      = document.getElementById('fileInput');
+const sheetPanel     = document.getElementById('sheetPanel');
+const sheetList      = document.getElementById('sheetList');
+const selectAllBtn   = document.getElementById('selectAll');
+const deselectAllBtn = document.getElementById('deselectAll');
+const exportBtn      = document.getElementById('exportBtn');
+const statsText      = document.getElementById('statsText');
+const previewArea    = document.getElementById('previewArea');
+const previewCode    = document.getElementById('previewCode');
 
-    function hasChinese(str) {
-        return /[\u4e00-\u9fa5]/.test(str);
+let workbook = null;
+const parsedSheets = {};
+
+const FILE_MAP = {
+  '二次元导航站': 'acg-nav', '动漫': 'anime', 'GAL资源站': 'gal',
+  'GAL资讯_正版购买': 'gal-info', '综合资源站': 'hub', 'MMD': 'mmd',
+  '搜索引擎': 'search', '工具': 'tools', '英灵殿': 'valhalla',
+  '音声_音乐': 'voice_music', 'WIKI': 'wiki'
+};
+
+function getOutputFileName(sheetName) {
+  return FILE_MAP[sheetName.trim()] || 'unknown_sheet';
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+
+async function handleFile(file) {
+  const buf = await file.arrayBuffer();
+  workbook = XLSX.read(buf, {
+    type: 'array',
+    cellStyles: false,
+    cellNF: false,
+    cellHTML: false,
+    cellFormula: true,
+    cellText: true
+  });
+  for (const k in parsedSheets) delete parsedSheets[k];
+  renderSheetList();
+}
+
+/* ========== URL 提取 ========== */
+function extractUrl(ws, rowIdx, colIdx) {
+  if (colIdx === undefined || colIdx < 0) return '';
+  const addr = XLSX.utils.encode_cell({ r: rowIdx, c: colIdx });
+  const cell = ws[addr];
+  if (!cell) return '';
+
+  // ① cell.l.Target（Excel 右键超链接 / .xlsx 格式）
+  if (cell.l && cell.l.Target) {
+    const target = String(cell.l.Target).trim();
+    if (/^(https?|ftp):\/\//i.test(target)) return target;
+  }
+
+  // ② 单元格文本本身就是 URL
+  const text = String(cell.w ?? cell.v ?? '').trim();
+  if (/^(https?|ftp):\/\//i.test(text)) return text;
+
+  // ③ =HYPERLINK("url","text") 公式
+  if (cell.f) {
+    const match = String(cell.f).match(/HYPERLINK\s*\(\s*["']((?:[^"'\\]|\\.)+)["']\s*[,;]/i);
+    if (match) {
+      const formulaUrl = match[1].trim();
+      if (/^(https?|ftp):\/\//i.test(formulaUrl)) return formulaUrl;
+    }
+  }
+
+  return '';
+}
+
+/* ========== 纯文本提取 ========== */
+function extractText(ws, rowIdx, colIdx) {
+  if (colIdx === undefined || colIdx < 0) return '';
+  const addr = XLSX.utils.encode_cell({ r: rowIdx, c: colIdx });
+  const cell = ws[addr];
+  return cell ? String(cell.w ?? cell.v ?? '').trim() : '';
+}
+
+/* ========== 核心解析 ========== */
+function parseSheet(sheetName) {
+  const ws = workbook.Sheets[sheetName];
+  if (!ws || !ws['!ref']) return [];
+
+  const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '', blankrows: true });
+
+  let headerRowIdx = -1;
+  for (let i = 0; i < Math.min(raw.length, 20); i++) {
+    if (raw[i] && raw[i].some(c => String(c).trim() === '网站名称')) { headerRowIdx = i; break; }
+  }
+  if (headerRowIdx === -1) return [];
+
+  const headers = raw[headerRowIdx].map(h => String(h).trim());
+
+  const OUTPUT_KEYS = ['网站名称', '网址', '备注', '问题', 'UID', 'logo'];
+  const ANCHOR_KEYS = ['相关网址', '相关链接', '备用链接', '其他链接'];
+
+  const colMap = {};
+  OUTPUT_KEYS.forEach(k => { const idx = headers.indexOf(k); if (idx !== -1) colMap[k] = idx; });
+  if (colMap['网站名称'] === undefined) return [];
+
+  let anchorColIdx = -1;
+  for (const ak of ANCHOR_KEYS) {
+    const idx = headers.indexOf(ak);
+    if (idx !== -1) { anchorColIdx = idx; break; }
+  }
+
+  const outputCols = new Set(Object.values(colMap));
+  const urlColIdx = colMap['网址'];
+  const extraUrlCols = [];
+  const extraSet = new Set();
+
+  if (urlColIdx !== undefined) {
+    for (let c = urlColIdx + 1; c < headers.length; c++) {
+      if (outputCols.has(c)) break;
+      if (!extraSet.has(c)) { extraSet.add(c); extraUrlCols.push(c); }
+    }
+  }
+
+  if (anchorColIdx !== -1) {
+    for (let c = anchorColIdx; c < headers.length; c++) {
+      if (outputCols.has(c)) break;
+      if (!extraSet.has(c)) { extraSet.add(c); extraUrlCols.push(c); }
+    }
+  }
+
+  extraUrlCols.sort((a, b) => a - b);
+
+  const results = [];
+  for (let r = headerRowIdx + 1; r < raw.length; r++) {
+    if (!raw[r]) continue;
+
+    const siteName = extractText(ws, r, colMap['网站名称']);
+    if (!siteName) continue;
+
+    const mainUrl = extractUrl(ws, r, colMap['网址']);
+
+    const relatedLinks = [];
+    const seen = new Set();
+    if (mainUrl) seen.add(mainUrl);
+
+    extraUrlCols.forEach(c => {
+      const u = extractUrl(ws, r, c);
+      if (u && !seen.has(u)) {
+        seen.add(u);
+        relatedLinks.push(u);
+      }
+    });
+
+    results.push({
+      name:    siteName,
+      url:     mainUrl || '',
+      related: relatedLinks.join(','),
+      remark:  extractText(ws, r, colMap['备注']),
+      issue:   extractText(ws, r, colMap['问题']),
+      uid:     extractText(ws, r, colMap['UID']),
+      logo:    colMap['logo'] !== undefined
+                 ? (extractUrl(ws, r, colMap['logo']) || extractText(ws, r, colMap['logo']))
+                 : ''
+    });
+  }
+  return results;
+}
+
+/* ========== 预览 ========== */
+let previewTimer = null;
+
+function updatePreview() {
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(() => {
+    const selected = getSelectedSheets();
+    if (!selected.length) { previewArea.style.display = 'none'; return; }
+
+    const preview = [];
+    for (const name of selected) {
+      const data = parsedSheets[name] || (parsedSheets[name] = parseSheet(name));
+      preview.push(...data.slice(0, 5));
+      if (preview.length >= 20) break;
     }
 
-    function cleanSingleUrl(url) {
-        if (!url) return '';
-        url = url.trim().replace(/^["'\s]+|["'\s]+$/g, '');
-        if (!url || hasChinese(url)) return '';
-        if (/^https?:\/\//i.test(url)) return url;
-        return '';
-    }
+    previewCode.textContent = JSON.stringify(preview.slice(0, 20), null, 2);
+    previewArea.style.display = 'block';
+  }, 0);
+}
 
-    function extractRelatedAndNote(cols) {
-        const middleCols = cols.slice(2);
+/* ========== UI ========== */
+function renderSheetList() {
+  sheetList.innerHTML = '';
+  const skipNames = ['说明', 'readme', 'about', '前言'];
 
-        // 从右往左找第一个非空值作为 note
-        let note = '';
-        let noteIndex = -1;
-        for (let i = middleCols.length - 1; i >= 0; i--) {
-            const val = (middleCols[i] || '').trim();
-            if (val) {
-                note = val;
-                noteIndex = i;
-                break;
-            }
-        }
+  workbook.SheetNames.forEach(name => {
+    if (skipNames.some(s => name.toLowerCase().includes(s))) return;
+    if (!parsedSheets[name]) parsedSheets[name] = parseSheet(name);
 
-        // 收集所有 related 候选列
-        const relatedCandidates = [];
-        for (let i = 0; i < middleCols.length; i++) {
-            const val = (middleCols[i] || '').trim();
-            if (!val) continue;
-            // note 列如果是纯文本则跳过，是URL则保留
-            if (i === noteIndex && !/^https?:\/\//i.test(val)) continue;
-            relatedCandidates.push(val);
-        }
+    const item = document.createElement('label');
+    item.className = 'sheet-item';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.value = name; cb.checked = true;
+    cb.addEventListener('change', updateState);
 
-        // 展开、清洗、去重
-        const allParts = relatedCandidates
-            .flatMap(c => c.split(/[|,、\s]+/))
-            .filter(Boolean);
-        const validUrls = allParts.map(cleanSingleUrl).filter(Boolean);
-        // ✅ 改动：分隔符从 ' | ' 改为 '\n'
-        const related = [...new Set(validUrls)].join('\n');
+    const span = document.createElement('span');
+    span.className = 'sheet-name';
+    const outName = getOutputFileName(name);
+    span.innerHTML = `${name} <span style="color:var(--text-dim)">→</span> ${outName}.json<span class="sheet-count">(${parsedSheets[name].length})</span>`;
 
-        return { related, note };
-    }
+    item.appendChild(cb); item.appendChild(span);
+    sheetList.appendChild(item);
+  });
 
-    function generate() {
-        const raw = document.getElementById('input').value.trim();
-        if (!raw) { alert('请先粘贴内容'); return; }
+  sheetPanel.style.display = 'block';
+  previewArea.style.display = 'none';
+  updateState();
+}
 
-        const lines = raw.split(/\r?\n/).filter(l => l.trim() !== '');
-        const results = [];
+function getSelectedSheets() {
+  return [...sheetList.querySelectorAll('input:checked')].map(cb => cb.value);
+}
 
-        const firstLineLower = lines[0].toLowerCase();
-        const startIndex = (firstLineLower.includes('名称') || firstLineLower.includes('网址') || firstLineLower.includes('name')) ? 1 : 0;
+function updateState() {
+  const n = getSelectedSheets().length;
+  exportBtn.disabled = n === 0;
+  statsText.textContent = `已选 ${n} / ${sheetList.children.length} 个工作表`;
+  updatePreview();
+}
 
-        for (let i = startIndex; i < lines.length; i++) {
-            const cols = lines[i].split('\t');
-            const name = (cols[0] || '').trim();
-            const url = cleanSingleUrl(cols[1]);
+selectAllBtn.addEventListener('click', () => {
+  sheetList.querySelectorAll('input').forEach(cb => cb.checked = true); updateState();
+});
+deselectAllBtn.addEventListener('click', () => {
+  sheetList.querySelectorAll('input').forEach(cb => cb.checked = false); updateState();
+});
 
-            if (!name || !url) continue;
+exportBtn.addEventListener('click', async () => {
+  const selected = getSelectedSheets();
+  if (!selected.length) return;
+  exportBtn.disabled = true;
 
-            const { related, note } = extractRelatedAndNote(cols);
+  let total = 0;
+  const allExported = [];
 
-            results.push({
-                name: name,
-                url: url,
-                related: related,
-                note: note,
-                problem: "",
-                excellent: false
-            });
-        }
+  for (const name of selected) {
+    const data = parsedSheets[name] || (parsedSheets[name] = parseSheet(name));
+    total += data.length;
+    allExported.push(...data);
 
-        if (results.length === 0) {
-            document.getElementById('output').textContent = '// ⚠️ 未解析到有效数据，请检查输入格式是否为 Tab 分隔';
-            lastResults = [];
-            return;
-        }
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = getOutputFileName(name) + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    await sleep(300);
+  }
 
-        lastResults = results;
-        document.getElementById('output').textContent = JSON.stringify(results, null, 2);
-    }
+  previewCode.textContent = JSON.stringify(allExported.slice(0, 20), null, 2);
+  previewArea.style.display = 'block';
 
-    function copyCode() {
-        const text = document.getElementById('output').textContent;
-        if (!text || text.startsWith('// ⚠️')) { alert('没有可复制的内容'); return; }
-        navigator.clipboard.writeText(text).then(() => {
-            const btn = document.querySelector('.copy-btn');
-            btn.textContent = '✅ 已复制';
-            setTimeout(() => btn.textContent = '复制', 1500);
-        }).catch(() => {
-            const range = document.createRange();
-            range.selectNodeContents(document.getElementById('output'));
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-            document.execCommand('copy');
-            sel.removeAllRanges();
-            const btn = document.querySelector('.copy-btn');
-            btn.textContent = '✅ 已复制';
-            setTimeout(() => btn.textContent = '复制', 1500);
-        });
-    }
+  statsText.textContent = `✅ 已导出 ${selected.length} 个文件，共 ${total} 条记录`;
+  exportBtn.disabled = false;
+  updateState();
+});
 </script>
-
 </body>
 </html>
