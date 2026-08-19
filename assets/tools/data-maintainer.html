@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 数据维护器 - 合月亭</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-card-solid: #1e293b;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent-gold: #fbbf24;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --green: #34d399;
+            --green-bg: rgba(52, 211, 153, 0.1);
+            --green-border: rgba(52, 211, 153, 0.3);
+            --red: #f87171;
+            --red-bg: rgba(248, 113, 113, 0.1);
+            --red-border: rgba(248, 113, 113, 0.3);
+            --blue: #60a5fa;
+            --blue-bg: rgba(96, 165, 250, 0.1);
+            --blue-border: rgba(96, 165, 250, 0.3);
+            --orange: #fb923c;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .top-bar {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .top-bar h1 {
+            font-size: 1.4rem; font-weight: 700;
+            color: var(--accent-gold); letter-spacing: 2px;
+        }
+        .top-bar .subtitle {
+            font-size: 0.8rem; color: var(--text-sub);
+            margin-left: 1rem;
+        }
+        .container {
+            max-width: 1200px; margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ===== Upload Section ===== */
+        .upload-section {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1.5rem; margin-bottom: 1.5rem;
+        }
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px; padding: 2rem;
+            text-align: center; cursor: pointer;
+            transition: all 0.3s; position: relative;
+            min-height: 140px; display: flex;
+            flex-direction: column; align-items: center;
+            justify-content: center;
+        }
+        .upload-zone:hover { border-color: var(--accent-gold); background: rgba(251, 191, 36, 0.05); }
+        .upload-zone.loaded {
+            border-color: var(--green); border-style: solid;
+            background: var(--green-bg);
+        }
+        .upload-zone .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .upload-zone .label {
+            font-size: 1rem; font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        .upload-zone .hint {
+            font-size: 0.8rem; color: var(--text-sub);
+        }
+        .upload-zone .file-info {
+            margin-top: 0.5rem; font-size: 0.8rem;
+            color: var(--green); font-weight: 600;
+        }
+        .upload-zone input[type="file"] {
+            position: absolute; inset: 0;
+            opacity: 0; cursor: pointer;
+        }
+
+        /* ===== Compare Button ===== */
+        .compare-btn {
+            display: block; width: 100%; max-width: 300px;
+            margin: 0 auto 2rem; padding: 0.8rem 2rem;
+            background: var(--accent-gold); color: #0f172a;
+            border: none; border-radius: 8px;
+            font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        .compare-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
+        .compare-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* ===== Summary ===== */
+        .summary-bar {
+            display: none; grid-template-columns: repeat(4, 1fr);
+            gap: 1rem; margin-bottom: 1.5rem;
+        }
+        .summary-bar.show { display: grid; }
+        .summary-item {
+            padding: 1rem; border-radius: 10px;
+            text-align: center; border: 1px solid;
+        }
+        .summary-item .num {
+            font-size: 1.8rem; font-weight: 800;
+            line-height: 1.2;
+        }
+        .summary-item .desc {
+            font-size: 0.8rem; color: var(--text-sub);
+            margin-top: 0.2rem;
+        }
+        .summary-added { background: var(--green-bg); border-color: var(--green-border); }
+        .summary-added .num { color: var(--green); }
+        .summary-removed { background: var(--red-bg); border-color: var(--red-border); }
+        .summary-removed .num { color: var(--red); }
+        .summary-modified { background: var(--blue-bg); border-color: var(--blue-border); }
+        .summary-modified .num { color: var(--blue); }
+        .summary-unchanged { background: rgba(148, 163, 184, 0.1); border-color: rgba(148, 163, 184, 0.2); }
+        .summary-unchanged .num { color: var(--text-sub); }
+
+        /* ===== Tabs ===== */
+        .tabs {
+            display: none; gap: 0; margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .tabs.show { display: flex; }
+        .tab-btn {
+            padding: 0.7rem 1.5rem; background: none;
+            border: none; color: var(--text-sub);
+            font-size: 0.95rem; cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s; font-weight: 600;
+        }
+        .tab-btn:hover { color: var(--text-main); }
+        .tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
+        .tab-btn .badge {
+            display: inline-block; padding: 0.1rem 0.5rem;
+            border-radius: 10px; font-size: 0.75rem;
+            margin-left: 0.4rem; font-weight: 700;
+        }
+        .tab-btn.tab-added .badge { background: var(--green-bg); color: var(--green); }
+        .tab-btn.tab-removed .badge { background: var(--red-bg); color: var(--red); }
+        .tab-btn.tab-modified .badge { background: var(--blue-bg); color: var(--blue); }
+
+        /* ===== Batch Actions ===== */
+        .batch-actions {
+            display: none; align-items: center;
+            gap: 0.8rem; margin-bottom: 1rem;
+            padding: 0.6rem 1rem; border-radius: 8px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-color);
+        }
+        .batch-actions.show { display: flex; }
+        .batch-actions .label {
+            font-size: 0.85rem; color: var(--text-sub);
+            margin-right: auto;
+        }
+        .batch-btn {
+            padding: 0.4rem 1rem; border-radius: 6px;
+            font-size: 0.82rem; font-weight: 600;
+            cursor: pointer; border: 1px solid;
+            transition: all 0.2s; background: none;
+        }
+        .batch-btn.accept-all {
+            color: var(--green); border-color: var(--green-border);
+        }
+        .batch-btn.accept-all:hover { background: var(--green-bg); }
+        .batch-btn.reject-all {
+            color: var(--red); border-color: var(--red-border);
+        }
+        .batch-btn.reject-all:hover { background: var(--red-bg); }
+
+        /* ===== Diff Items ===== */
+        .diff-section { display: none; }
+        .diff-section.active { display: block; }
+        .diff-empty {
+            text-align: center; padding: 3rem;
+            color: var(--text-sub); font-size: 0.95rem;
+        }
+        .diff-item {
+            background: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: 10px; margin-bottom: 0.8rem;
+            overflow: hidden; transition: border-color 0.3s;
+        }
+        .diff-item.accepted { border-color: var(--green-border); }
+        .diff-item.rejected { border-color: var(--red-border); opacity: 0.6; }
+        .diff-item-header {
+            display: flex; align-items: center;
+            padding: 0.8rem 1.2rem; cursor: pointer;
+            gap: 0.8rem; user-select: none;
+        }
+        .diff-item-header:hover { background: rgba(255,255,255,0.03); }
+        .diff-item .expand-arrow {
+            font-size: 0.7rem; color: var(--text-sub);
+            transition: transform 0.2s; flex-shrink: 0;
+        }
+        .diff-item.expanded .expand-arrow { transform: rotate(90deg); }
+        .diff-item .item-name {
+            font-weight: 700; font-size: 0.95rem;
+            flex: 1; min-width: 0; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap;
+        }
+        .diff-item .item-uid {
+            font-size: 0.75rem; color: var(--text-sub);
+            font-family: 'Fira Code', 'Consolas', monospace;
+            flex-shrink: 0;
+        }
+        .diff-item .status-badge {
+            padding: 0.2rem 0.7rem; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 700;
+            flex-shrink: 0; letter-spacing: 0.5px;
+        }
+        .status-badge.pending { background: rgba(148, 163, 184, 0.15); color: var(--text-sub); }
+        .status-badge.accept { background: var(--green-bg); color: var(--green); }
+        .status-badge.reject { background: var(--red-bg); color: var(--red); }
+        .diff-item-body {
+            display: none; padding: 0 1.2rem 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .diff-item.expanded .diff-item-body { display: block; }
+
+        /* ===== Field Diff ===== */
+        .field-diff {
+            display: grid; grid-template-columns: 80px 1fr 1fr;
+            gap: 0; font-size: 0.82rem;
+            margin-top: 0.5rem; border-radius: 6px;
+            overflow: hidden; border: 1px solid var(--border-color);
+        }
+        .field-diff .fd-header {
+            background: rgba(255,255,255,0.05);
+            padding: 0.4rem 0.6rem; font-weight: 700;
+            font-size: 0.75rem; color: var(--text-sub);
+        }
+        .field-diff .fd-label {
+            padding: 0.4rem 0.6rem; font-weight: 600;
+            color: var(--text-sub); background: rgba(255,255,255,0.02);
+            border-top: 1px solid var(--border-color);
+            display: flex; align-items: center;
+        }
+        .field-diff .fd-old, .field-diff .fd-new {
+            padding: 0.4rem 0.6rem; word-break: break-all;
+            border-top: 1px solid var(--border-color);
+        }
+        .fd-old.changed { background: var(--red-bg); }
+        .fd-new.changed { background: var(--green-bg); }
+        .fd-old.empty { color: var(--text-sub); font-style: italic; }
+        .fd-new.empty { color: var(--text-sub); font-style: italic; }
+
+        /* ===== New Item Preview ===== */
+        .preview-card {
+            margin-top: 0.5rem; padding: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px; font-size: 0.82rem;
+            border: 1px solid var(--border-color);
+        }
+        .preview-row {
+            display: flex; gap: 0.5rem;
+            padding: 0.2rem 0;
+        }
+        .preview-row .pk {
+            color: var(--text-sub); font-weight: 600;
+            min-width: 60px; flex-shrink: 0;
+        }
+        .preview-row .pv { word-break: break-all; }
+
+        /* ===== Extra Fields Notice ===== */
+        .extra-fields {
+            margin-top: 0.5rem; padding: 0.5rem 0.8rem;
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px dashed rgba(251, 191, 36, 0.3);
+            border-radius: 6px; font-size: 0.78rem;
+            color: var(--orange);
+        }
+
+        /* ===== Item Action Buttons ===== */
+        .item-actions {
+            display: flex; gap: 0.5rem;
+            margin-top: 0.8rem; padding-top: 0.6rem;
+            border-top: 1px dashed var(--border-color);
+        }
+        .item-btn {
+            padding: 0.4rem 1.2rem; border-radius: 6px;
+            font-size: 0.82rem; font-weight: 600;
+            cursor: pointer; border: 1px solid;
+            transition: all 0.2s; background: none;
+        }
+        .item-btn.btn-accept { color: var(--green); border-color: var(--green-border); }
+        .item-btn.btn-accept:hover { background: var(--green-bg); }
+        .item-btn.btn-accept.active { background: var(--green); color: #fff; border-color: var(--green); }
+        .item-btn.btn-reject { color: var(--red); border-color: var(--red-border); }
+        .item-btn.btn-reject:hover { background: var(--red-bg); }
+        .item-btn.btn-reject.active { background: var(--red); color: #fff; border-color: var(--red); }
+
+        /* ===== Export Section ===== */
+        .export-section {
+            display: none; margin-top: 2rem;
+            padding: 1.5rem; border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+        }
+        .export-section.show { display: block; }
+        .export-section h3 {
+            font-size: 1.1rem; color: var(--accent-gold);
+            margin-bottom: 1rem;
+        }
+        .export-stats {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem; margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+        .export-stat {
+            padding: 0.6rem; border-radius: 6px;
+            background: rgba(255,255,255,0.03);
+            text-align: center;
+        }
+        .export-stat .es-num {
+            font-size: 1.4rem; font-weight: 800;
+        }
+        .export-stat .es-label {
+            font-size: 0.75rem; color: var(--text-sub);
+        }
+        .export-btn {
+            display: block; width: 100%; padding: 0.8rem;
+            background: var(--green); color: #fff;
+            border: none; border-radius: 8px;
+            font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+        .export-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(52, 211, 153, 0.3); }
+        .export-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+        .export-warn {
+            margin-top: 0.5rem; padding: 0.5rem 0.8rem;
+            background: var(--red-bg); border: 1px solid var(--red-border);
+            border-radius: 6px; font-size: 0.82rem; color: var(--red);
+            display: none;
+        }
+        .export-warn.show { display: block; }
+
+        /* ===== No Change Banner ===== */
+        .no-change-banner {
+            display: none; text-align: center;
+            padding: 2rem; margin-bottom: 1.5rem;
+            background: var(--green-bg);
+            border: 1px solid var(--green-border);
+            border-radius: 12px;
+        }
+        .no-change-banner.show { display: block; }
+        .no-change-banner .big { font-size: 2rem; margin-bottom: 0.5rem; }
+        .no-change-banner .msg { color: var(--green); font-weight: 600; font-size: 1.1rem; }
+
+        /* ===== Settings Row ===== */
+        .settings-row {
+            display: flex; gap: 1rem; align-items: center;
+            margin-bottom: 1.5rem; flex-wrap: wrap;
+            padding: 0.8rem 1rem; border-radius: 8px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+        .settings-row label {
+            display: flex; align-items: center;
+            gap: 0.4rem; cursor: pointer;
+            color: var(--text-sub);
+        }
+        .settings-row input[type="checkbox"] {
+            accent-color: var(--accent-gold);
+        }
+
+        @media (max-width: 768px) {
+            .upload-section { grid-template-columns: 1fr; }
+            .summary-bar { grid-template-columns: repeat(2, 1fr); }
+            .container { padding: 1rem; }
+            .top-bar { padding: 0.8rem 1rem; }
+            .top-bar h1 { font-size: 1.1rem; }
+            .top-bar .subtitle { display: none; }
+            .field-diff { grid-template-columns: 60px 1fr 1fr; font-size: 0.75rem; }
+            .export-stats { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div style="display:flex;align-items:center;">
+            <h1>JSON 数据维护器</h1>
+            <span class="subtitle">呃呃</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Settings -->
+        <div class="settings-row">
+            <strong style="color:var(--text-main);">设置：</strong>
+            <label>
+                <input type="checkbox" id="matchByName" checked>
+                无UID时用名称匹配
+            </label>
+            <label>
+                <input type="checkbox" id="caseSensitive">
+                区分大小比较
+            </label>
+            <label>
+                <input type="checkbox" id="preserveAllExtras" checked>
+                保留原始文件独有字段
+            </label>
+        </div>
+
+        <!-- Upload -->
+        <div class="upload-section">
+            <div class="upload-zone" id="origZone">
+                <div class="icon">📁</div>
+                <div class="label">原始 JSON 文件</div>
+                <div class="hint">包含加工数据的版本（以此为基础合并）</div>
+                <div class="file-info" id="origInfo"></div>
+                <input type="file" accept=".json" id="origFile">
+            </div>
+            <div class="upload-zone" id="newZone">
+                <div class="icon">📋</div>
+                <div class="label">新导出 JSON 文件</div>
+                <div class="hint">从表格导出的最新版本</div>
+                <div class="file-info" id="newInfo"></div>
+                <input type="file" accept=".json" id="newFile">
+            </div>
+        </div>
+
+        <!-- Compare Button -->
+        <button class="compare-btn" id="compareBtn" disabled>开始对比</button>
+
+        <!-- No Change Banner -->
+        <div class="no-change-banner" id="noChangeBanner">
+            <div class="big">✅</div>
+            <div class="msg">两个文件完全一致，无需合并</div>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-bar" id="summaryBar">
+            <div class="summary-item summary-added">
+                <div class="num" id="sumAdded">0</div>
+                <div class="desc">新增条目</div>
+            </div>
+            <div class="summary-item summary-removed">
+                <div class="num" id="sumRemoved">0</div>
+                <div class="desc">移除条目</div>
+            </div>
+            <div class="summary-item summary-modified">
+                <div class="num" id="sumModified">0</div>
+                <div class="desc">变更条目</div>
+            </div>
+            <div class="summary-item summary-unchanged">
+                <div class="num" id="sumUnchanged">0</div>
+                <div class="desc">未变更</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="tabsBar">
+            <button class="tab-btn tab-added active" data-tab="added">
+                🟢 新增 <span class="badge" id="tabAddedBadge">0</span>
+            </button>
+            <button class="tab-btn tab-removed" data-tab="removed">
+                🔴 移除 <span class="badge" id="tabRemovedBadge">0</span>
+            </button>
+            <button class="tab-btn tab-modified" data-tab="modified">
+                🔵 变更 <span class="badge" id="tabModifiedBadge">0</span>
+            </button>
+        </div>
+
+        <!-- Batch Actions -->
+        <div class="batch-actions" id="batchActions">
+            <span class="label">批量操作当前分类：</span>
+            <button class="batch-btn accept-all" id="batchAcceptAll">✓ 全部接受</button>
+            <button class="batch-btn reject-all" id="batchRejectAll">✕ 全部拒绝</button>
+        </div>
+
+        <!-- Diff Sections -->
+        <div class="diff-section active" id="sectionAdded"></div>
+        <div class="diff-section" id="sectionRemoved"></div>
+        <div class="diff-section" id="sectionModified"></div>
+
+        <!-- Export -->
+        <div class="export-section" id="exportSection">
+            <h3>📦 合并导出</h3>
+            <div class="export-stats" id="exportStats"></div>
+            <div class="export-warn" id="exportWarn"></div>
+            <button class="export-btn" id="exportBtn">下载合并后的 JSON</button>
+        </div>
+    </div>
+
+    <script>
+    (() => {
+        // ===== State =====
+        var origData = null;
+        var newData = null;
+        var diffResult = null;
+        var currentTab = 'added';
+
+        // Decisions: { added: {key: 'accept'|'reject'}, removed: {key: ...}, modified: {key: ...} }
+        var decisions = { added: {}, removed: {}, modified: {} };
+
+        // ===== File Loading =====
+        var origFileInput = document.getElementById('origFile');
+        var newFileInput = document.getElementById('newFile');
+        var origZone = document.getElementById('origZone');
+        var newZone = document.getElementById('newZone');
+        var origInfo = document.getElementById('origInfo');
+        var newInfo = document.getElementById('newInfo');
+        var compareBtn = document.getElementById('compareBtn');
+
+        function loadJson(file, callback) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var data = JSON.parse(e.target.result);
+                    if (!Array.isArray(data)) {
+                        alert('JSON 文件必须是数组格式（[...]）');
+                        return;
+                    }
+                    callback(data, file.name);
+                } catch (err) {
+                    alert('JSON 解析失败: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        origFileInput.addEventListener('change', function(e) {
+            if (!e.target.files[0]) return;
+            loadJson(e.target.files[0], function(data, name) {
+                origData = data;
+                origZone.classList.add('loaded');
+                origInfo.textContent = '✓ ' + name + ' (' + data.length + ' 条)';
+                checkReady();
+            });
+        });
+
+        newFileInput.addEventListener('change', function(e) {
+            if (!e.target.files[0]) return;
+            loadJson(e.target.files[0], function(data, name) {
+                newData = data;
+                newZone.classList.add('loaded');
+                newInfo.textContent = '✓ ' + name + ' (' + data.length + ' 条)';
+                checkReady();
+            });
+        });
+
+        function checkReady() {
+            compareBtn.disabled = !(origData && newData);
+        }
+
+        // ===== Comparison =====
+        compareBtn.addEventListener('click', function() {
+            if (!origData || !newData) return;
+            diffResult = compareData(origData, newData);
+            decisions = { added: {}, removed: {}, modified: {} };
+            renderResults();
+        });
+
+        function getKey(item) {
+            if (item.uid && String(item.uid).trim()) {
+                return 'uid:' + String(item.uid).trim();
+            }
+            if (document.getElementById('matchByName').checked && item.name) {
+                return 'name:' + String(item.name).trim();
+            }
+            return null;
+        }
+
+        function normalizeVal(v) {
+            if (v === null || v === undefined) return '';
+            if (typeof v === 'string') return v.trim();
+            return v;
+        }
+
+        function valsEqual(a, b) {
+            var na = normalizeVal(a);
+            var nb = normalizeVal(b);
+            if (na === nb) return true;
+            if (na === '' && nb === '') return true;
+            if (!document.getElementById('caseSensitive').checked) {
+                if (typeof na === 'string' && typeof nb === 'string') {
+                    return na.toLowerCase() === nb.toLowerCase();
+                }
+            }
+            return String(na) === String(nb);
+        }
+
+        function getBaseFields() {
+            // Collect all base fields from both datasets
+            var fields = {};
+            var knownFields = ['name', 'url', 'related', 'remark', 'issue', 'logo', 'uid'];
+            knownFields.forEach(function(f) { fields[f] = true; });
+            return Object.keys(fields);
+        }
+
+        function compareData(orig, newD) {
+            var origMap = {};
+            var newMap = {};
+            var origKeys = [];
+            var newKeys = [];
+
+            orig.forEach(function(item) {
+                var key = getKey(item);
+                if (key) {
+                    origMap[key] = item;
+                    origKeys.push(key);
+                }
+            });
+
+            newD.forEach(function(item) {
+                var key = getKey(item);
+                if (key) {
+                    newMap[key] = item;
+                    newKeys.push(key);
+                }
+            });
+
+            var added = [];
+            var removed = [];
+            var modified = [];
+            var unchanged = 0;
+
+            // Find added (in new but not in orig)
+            newKeys.forEach(function(key) {
+                if (!origMap[key]) {
+                    added.push({ key: key, item: newMap[key] });
+                }
+            });
+
+            // Find removed (in orig but not in new)
+            origKeys.forEach(function(key) {
+                if (!newMap[key]) {
+                    removed.push({ key: key, item: origMap[key] });
+                }
+            });
+
+            // Find modified or unchanged
+            var baseFields = ['name', 'url', 'related', 'remark', 'issue', 'logo', 'uid'];
+            // Also discover any additional base fields present in new data
+            newKeys.forEach(function(key) {
+                if (!origMap[key]) return; // added, already handled
+                var origItem = origMap[key];
+                var newItem = newMap[key];
+                var changes = {};
+                var hasChange = false;
+
+                // Compare all fields present in either item (excluding _ prefixed internal fields)
+                var allFields = {};
+                Object.keys(origItem).forEach(function(f) { if (f[0] !== '_') allFields[f] = true; });
+                Object.keys(newItem).forEach(function(f) { if (f[0] !== '_') allFields[f] = true; });
+
+                Object.keys(allFields).forEach(function(field) {
+                    if (field === 'uid') return; // UID is the match key, skip
+                    var oldVal = origItem[field];
+                    var newVal = newItem[field];
+                    if (!valsEqual(oldVal, newVal)) {
+                        changes[field] = { old: normalizeVal(oldVal), new: normalizeVal(newVal) };
+                        hasChange = true;
+                    }
+                });
+
+                // Check for extra fields in original (not in new)
+                var extraInOrig = [];
+                Object.keys(origItem).forEach(function(f) {
+                    if (f[0] === '_') return;
+                    if (!(f in newItem) && normalizeVal(origItem[f]) !== '') {
+                        extraInOrig.push(f);
+                    }
+                });
+
+                if (hasChange) {
+                    modified.push({
+                        key: key,
+                        origItem: origItem,
+                        newItem: newItem,
+                        changes: changes,
+                        extraInOrig: extraInOrig
+                    });
+                } else {
+                    unchanged++;
+                }
+            });
+
+            return { added: added, removed: removed, modified: modified, unchanged: unchanged };
+        }
+
+        // ===== Rendering =====
+        function renderResults() {
+            var r = diffResult;
+
+            // Show/hide no-change banner
+            var noChanges = r.added.length === 0 && r.removed.length === 0 && r.modified.length === 0;
+            document.getElementById('noChangeBanner').classList.toggle('show', noChanges);
+
+            // Summary
+            var sumBar = document.getElementById('summaryBar');
+            sumBar.classList.toggle('show', !noChanges);
+            document.getElementById('sumAdded').textContent = r.added.length;
+            document.getElementById('sumRemoved').textContent = r.removed.length;
+            document.getElementById('sumModified').textContent = r.modified.length;
+            document.getElementById('sumUnchanged').textContent = r.unchanged;
+
+            // Tabs
+            var tabsBar = document.getElementById('tabsBar');
+            tabsBar.classList.toggle('show', !noChanges);
+            document.getElementById('tabAddedBadge').textContent = r.added.length;
+            document.getElementById('tabRemovedBadge').textContent = r.removed.length;
+            document.getElementById('tabModifiedBadge').textContent = r.modified.length;
+
+            // Batch actions
+            document.getElementById('batchActions').classList.toggle('show', !noChanges);
+
+            // Render each section
+            renderAddedSection();
+            renderRemovedSection();
+            renderModifiedSection();
+
+            // Export
+            document.getElementById('exportSection').classList.toggle('show', !noChanges);
+            if (!noChanges) updateExportPreview();
+
+            // Hide compare button after first compare
+            compareBtn.style.display = 'none';
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            var div = document.createElement('div');
+            div.textContent = String(str);
+            return div.innerHTML;
+        }
+
+        function displayVal(v) {
+            var s = normalizeVal(v);
+            if (s === '' || s === null || s === undefined) return '<span style="color:var(--text-sub);font-style:italic">(空)</span>';
+            return escapeHtml(s);
+        }
+
+        function keyLabel(key) {
+            if (key.startsWith('uid:')) return key.slice(4);
+            if (key.startsWith('name:')) return key.slice(5);
+            return key;
+        }
+
+        // ===== Added Section =====
+        function renderAddedSection() {
+            var container = document.getElementById('sectionAdded');
+            if (diffResult.added.length === 0) {
+                container.innerHTML = '<div class="diff-empty">🎉 没有新增条目</div>';
+                return;
+            }
+            var html = '';
+            diffResult.added.forEach(function(entry, idx) {
+                var id = 'added_' + idx;
+                var decision = decisions.added[entry.key] || 'pending';
+                var item = entry.item;
+                html += '<div class="diff-item ' + (decision !== 'pending' ? decision + 'd' : '') + '" data-id="' + id + '" data-category="added" data-key="' + escapeHtml(entry.key) + '">'
+                    + '<div class="diff-item-header" onclick="toggleExpand(this)">'
+                    + '<span class="expand-arrow">▶</span>'
+                    + '<span class="item-name">' + escapeHtml(item.name || '未命名') + '</span>'
+                    + '<span class="item-uid">' + escapeHtml(keyLabel(entry.key)) + '</span>'
+                    + '<span class="status-badge ' + decision + '">' + (decision === 'accept' ? '✓ 接受' : decision === 'reject' ? '✕ 拒绝' : '待审批') + '</span>'
+                    + '</div>'
+                    + '<div class="diff-item-body">'
+                    + renderPreview(item)
+                    + '<div class="item-actions">'
+                    + '<button class="item-btn btn-accept ' + (decision === 'accept' ? 'active' : '') + '" onclick="setDecision(\'added\',\'' + escapeHtml(entry.key) + '\',\'accept\',this)">✓ 接受（添加到合并结果）</button>'
+                    + '<button class="item-btn btn-reject ' + (decision === 'reject' ? 'active' : '') + '" onclick="setDecision(\'added\',\'' + escapeHtml(entry.key) + '\',\'reject\',this)">✕ 拒绝（不添加）</button>'
+                    + '</div></div></div>';
+            });
+            container.innerHTML = html;
+        }
+
+        // ===== Removed Section =====
+        function renderRemovedSection() {
+            var container = document.getElementById('sectionRemoved');
+            if (diffResult.removed.length === 0) {
+                container.innerHTML = '<div class="diff-empty">🎉 没有移除条目</div>';
+                return;
+            }
+            var html = '';
+            diffResult.removed.forEach(function(entry, idx) {
+                var id = 'removed_' + idx;
+                var decision = decisions.removed[entry.key] || 'pending';
+                var item = entry.item;
+
+                // Check for extra fields in original
+                var extraFields = Object.keys(item).filter(function(f) {
+                    return f[0] !== '_' && normalizeVal(item[f]) !== '';
+                });
+
+                html += '<div class="diff-item ' + (decision !== 'pending' ? decision + 'd' : '') + '" data-id="' + id + '" data-category="removed" data-key="' + escapeHtml(entry.key) + '">'
+                    + '<div class="diff-item-header" onclick="toggleExpand(this)">'
+                    + '<span class="expand-arrow">▶</span>'
+                    + '<span class="item-name">' + escapeHtml(item.name || '未命名') + '</span>'
+                    + '<span class="item-uid">' + escapeHtml(keyLabel(entry.key)) + '</span>'
+                    + '<span class="status-badge ' + decision + '">' + (decision === 'accept' ? '✓ 移除' : decision === 'reject' ? '✕ 保留' : '待审批') + '</span>'
+                    + '</div>'
+                    + '<div class="diff-item-body">'
+                    + renderPreview(item)
+                    + (extraFields.length > 0 ? '<div class="extra-fields">⚠️ 此条目包含 ' + extraFields.length + ' 个字段，移除后将丢失这些数据</div>' : '')
+                    + '<div class="item-actions">'
+                    + '<button class="item-btn btn-accept ' + (decision === 'accept' ? 'active' : '') + '" onclick="setDecision(\'removed\',\'' + escapeHtml(entry.key) + '\',\'accept\',this)">✓ 确认移除</button>'
+                    + '<button class="item-btn btn-reject ' + (decision === 'reject' ? 'active' : '') + '" onclick="setDecision(\'removed\',\'' + escapeHtml(entry.key) + '\',\'reject\',this)">✕ 保留此条目</button>'
+                    + '</div></div></div>';
+            });
+            container.innerHTML = html;
+        }
+
+        // ===== Modified Section =====
+        function renderModifiedSection() {
+            var container = document.getElementById('sectionModified');
+            if (diffResult.modified.length === 0) {
+                container.innerHTML = '<div class="diff-empty">🎉 没有变更条目</div>';
+                return;
+            }
+            var html = '';
+            diffResult.modified.forEach(function(entry, idx) {
+                var id = 'modified_' + idx;
+                var decision = decisions.modified[entry.key] || 'pending';
+
+                // Build field diff table
+                var fieldHtml = '<div class="field-diff">'
+                    + '<div class="fd-header">字段</div><div class="fd-header">原始值</div><div class="fd-header">新值</div>';
+                var changeFields = Object.keys(entry.changes);
+                changeFields.forEach(function(field) {
+                    var c = entry.changes[field];
+                    var oldEmpty = (normalizeVal(c.old) === '');
+                    var newEmpty = (normalizeVal(c.new) === '');
+                    fieldHtml += '<div class="fd-label">' + escapeHtml(field) + '</div>'
+                        + '<div class="fd-old changed' + (oldEmpty ? ' empty' : '') + '">' + displayVal(c.old) + '</div>'
+                        + '<div class="fd-new changed' + (newEmpty ? ' empty' : '') + '">' + displayVal(c.new) + '</div>';
+                });
+                fieldHtml += '</div>';
+
+                var extraHtml = '';
+                if (entry.extraInOrig && entry.extraInOrig.length > 0 && document.getElementById('preserveAllExtras').checked) {
+                    extraHtml = '<div class="extra-fields">🛡️ 保留字段（原始文件独有，合并时自动保留）：' + entry.extraInOrig.map(escapeHtml).join('、') + '</div>';
+                }
+
+                html += '<div class="diff-item ' + (decision !== 'pending' ? decision + 'd' : '') + '" data-id="' + id + '" data-category="modified" data-key="' + escapeHtml(entry.key) + '">'
+                    + '<div class="diff-item-header" onclick="toggleExpand(this)">'
+                    + '<span class="expand-arrow">▶</span>'
+                    + '<span class="item-name">' + escapeHtml(entry.newItem.name || entry.origItem.name || '未命名') + '</span>'
+                    + '<span class="item-uid">' + escapeHtml(keyLabel(entry.key)) + ' · ' + changeFields.length + '处变更</span>'
+                    + '<span class="status-badge ' + decision + '">' + (decision === 'accept' ? '✓ 更新' : decision === 'reject' ? '✕ 保留原值' : '待审批') + '</span>'
+                    + '</div>'
+                    + '<div class="diff-item-body">'
+                    + fieldHtml
+                    + extraHtml
+                    + '<div class="item-actions">'
+                    + '<button class="item-btn btn-accept ' + (decision === 'accept' ? 'active' : '') + '" onclick="setDecision(\'modified\',\'' + escapeHtml(entry.key) + '\',\'accept\',this)">✓ 接受更新</button>'
+                    + '<button class="item-btn btn-reject ' + (decision === 'reject' ? 'active' : '') + '" onclick="setDecision(\'modified\',\'' + escapeHtml(entry.key) + '\',\'reject\',this)">✕ 保留原值</button>'
+                    + '</div></div></div>';
+            });
+            container.innerHTML = html;
+        }
+
+        function renderPreview(item) {
+            var fields = ['name', 'uid', 'url', 'related', 'remark', 'issue', 'logo'];
+            var rows = '';
+            fields.forEach(function(f) {
+                var v = normalizeVal(item[f]);
+                if (v !== '' && v !== null && v !== undefined) {
+                    rows += '<div class="preview-row"><span class="pk">' + f + '</span><span class="pv">' + escapeHtml(v) + '</span></div>';
+                }
+            });
+            return '<div class="preview-card">' + rows + '</div>';
+        }
+
+        // ===== Interactions =====
+        window.toggleExpand = function(header) {
+            var item = header.closest('.diff-item');
+            item.classList.toggle('expanded');
+        };
+
+        window.setDecision = function(category, key, decision, btn) {
+            decisions[category][key] = decision;
+            // Re-render the affected section
+            if (category === 'added') renderAddedSection();
+            else if (category === 'removed') renderRemovedSection();
+            else if (category === 'modified') renderModifiedSection();
+            updateExportPreview();
+        };
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var tab = btn.dataset.tab;
+                currentTab = tab;
+                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                document.querySelectorAll('.diff-section').forEach(function(s) { s.classList.remove('active'); });
+                document.getElementById('section' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+            });
+        });
+
+        // Batch actions
+        document.getElementById('batchAcceptAll').addEventListener('click', function() {
+            var list = diffResult[currentTab];
+            list.forEach(function(entry) {
+                decisions[currentTab][entry.key] = 'accept';
+            });
+            rerenderCurrentTab();
+            updateExportPreview();
+        });
+
+        document.getElementById('batchRejectAll').addEventListener('click', function() {
+            var list = diffResult[currentTab];
+            list.forEach(function(entry) {
+                decisions[currentTab][entry.key] = 'reject';
+            });
+            rerenderCurrentTab();
+            updateExportPreview();
+        });
+
+        function rerenderCurrentTab() {
+            if (currentTab === 'added') renderAddedSection();
+            else if (currentTab === 'removed') renderRemovedSection();
+            else if (currentTab === 'modified') renderModifiedSection();
+        }
+
+        // ===== Merge & Export =====
+        function buildMergedData() {
+            var result = [];
+            var origMap = {};
+            var newMap = {};
+
+            origData.forEach(function(item) {
+                var key = getKey(item);
+                if (key) origMap[key] = item;
+            });
+            newData.forEach(function(item) {
+                var key = getKey(item);
+                if (key) newMap[key] = item;
+            });
+
+            var preserveExtras = document.getElementById('preserveAllExtras').checked;
+
+            // Process each original item
+            origData.forEach(function(origItem) {
+                var key = getKey(origItem);
+                if (!key) {
+                    // Items without key are kept as-is
+                    result.push(origItem);
+                    return;
+                }
+
+                if (!newMap[key]) {
+                    // This item was removed from new
+                    var removedDecision = decisions.removed[key];
+                    if (removedDecision === 'accept') {
+                        // Confirmed removal: skip
+                        return;
+                    } else {
+                        // Default: keep (pending or reject)
+                        result.push(origItem);
+                        return;
+                    }
+                }
+
+                // Item exists in both
+                var newItem = newMap[key];
+                var modifiedDecision = decisions.modified[key];
+                if (modifiedDecision === 'accept') {
+                    // Accept update: use new data, preserve extra fields from original
+                    var merged = Object.assign({}, newItem);
+                    if (preserveExtras) {
+                        Object.keys(origItem).forEach(function(f) {
+                            if (!(f in newItem) && f[0] !== '_') {
+                                merged[f] = origItem[f];
+                            }
+                        });
+                    }
+                    result.push(merged);
+                } else {
+                    // Keep original (pending or reject)
+                    result.push(origItem);
+                }
+            });
+
+            // Process added items
+            diffResult.added.forEach(function(entry) {
+                var addedDecision = decisions.added[entry.key];
+                if (addedDecision === 'accept') {
+                    result.push(entry.item);
+                }
+                // Default: don't add (pending or reject)
+            });
+
+            return result;
+        }
+
+        function updateExportPreview() {
+            var merged = buildMergedData();
+            var statsEl = document.getElementById('exportStats');
+            var warnEl = document.getElementById('exportWarn');
+
+            // Count decisions
+            var pendingCount = 0;
+            var acceptedCount = 0;
+            var rejectedCount = 0;
+            ['added', 'removed', 'modified'].forEach(function(cat) {
+                diffResult[cat].forEach(function(entry) {
+                    var d = decisions[cat][entry.key];
+                    if (d === 'accept') acceptedCount++;
+                    else if (d === 'reject') rejectedCount++;
+                    else pendingCount++;
+                });
+            });
+
+            statsEl.innerHTML = '<div class="export-stat"><div class="es-num" style="color:var(--text-main)">' + merged.length + '</div><div class="es-label">合并后总条目</div></div>'
+                + '<div class="export-stat"><div class="es-num" style="color:var(--green)">' + acceptedCount + '</div><div class="es-label">已审批（接受）</div></div>'
+                + '<div class="export-stat"><div class="es-num" style="color:var(--orange)">' + pendingCount + '</div><div class="es-label">待审批（默认保留原值/不添加）</div></div>';
+
+            if (pendingCount > 0) {
+                warnEl.textContent = '⚠️ 还有 ' + pendingCount + ' 项未审批。未审批项将按默认处理：新增项不添加，移除项保留，变更项保留原值。';
+                warnEl.classList.add('show');
+            } else {
+                warnEl.classList.remove('show');
+            }
+        }
+
+        document.getElementById('exportBtn').addEventListener('click', function() {
+            var merged = buildMergedData();
+            var jsonStr = JSON.stringify(merged, null, 2);
+            var blob = new Blob([jsonStr], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            // Generate filename with timestamp
+            var now = new Date();
+            var ts = now.getFullYear()
+                + String(now.getMonth() + 1).padStart(2, '0')
+                + String(now.getDate()).padStart(2, '0')
+                + '_'
+                + String(now.getHours()).padStart(2, '0')
+                + String(now.getMinutes()).padStart(2, '0');
+            a.download = 'merged_' + ts + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+    })();
+    </script>
+</body>
+</html>
