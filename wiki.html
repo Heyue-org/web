@@ -3,532 +3,1013 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>合月亭-打造最好的ACG地图与指南</title>
+    <title>合月亭 Wiki</title>
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --accent-gold: #fbbf24;
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bg-color: #f8fafc; --sidebar-bg: #fff; --text-main: #334155;
+            --text-sub: #64748b; --accent-color: #d97706; --border-color: #e2e8f0;
+            --hover-bg: #f1f5f9; --code-bg: #f1f5f9; --danger: #ef4444; --success: #22c55e;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            line-height: 1.6;
-            overflow-x: hidden;
-            background-image: url('assets/css/images/beijing.webp');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            transition: background 0.4s ease, color 0.4s ease;
-        }
-        body.dark-mode { background-image: none; background-color: var(--bg-dark); }
-        body.light-mode { background-image: none; background-color: #f8fafc; color: #1e293b; }
-        body.light-mode nav { background: rgba(248,250,252,0.85); border-color: rgba(0,0,0,0.08); }
-        body.light-mode .logo { color: #1e293b; }
-        body.light-mode .nav-link { color: #64748b; }
-        body.light-mode .nav-link:hover { color: #d97706; }
-        body.light-mode .nav-v-line { background: #1e293b; opacity: 0.2; }
-        body.light-mode .icon-btn { color: #1e293b; }
-        body.light-mode .icon-btn:hover { color: #d97706; }
-        body.light-mode .hero h1 {
-            background: linear-gradient(to right, #1e293b, #475569);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        body.light-mode .hero-slogan { color: #d97706; }
-        body.light-mode .btn { border-color: #d97706; color: #d97706; background: var(--bg-card); }
-        body.light-mode .btn:hover { background: rgba(30,41,59,0.9); box-shadow: 0 0 15px rgba(217,119,6,0.3); }
-        body.light-mode .btn-alt { background: var(--bg-card); border-color: #d97706; color: #d97706; }
-        body.light-mode .btn-alt:hover { background: rgba(30,41,59,0.9); border-color: #d97706; color: #d97706; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
-        body.light-mode .section-title { color: #1e293b; }
-        body.light-mode .projects-wrapper { background: rgba(255,255,255,0.55); border-color: rgba(0,0,0,0.06); }
-        body.light-mode .project-card { background: rgba(255,255,255,0.8); border-color: rgba(0,0,0,0.08); }
-        body.light-mode .future-annotations { color: #64748b; }
-        body.light-mode .future-annotations a { color: #d97706; }
-        body.light-mode .text-links { color: #334155; }
-        body.light-mode .text-links a { color: #334155; }
-        body.light-mode .text-links a:hover { color: #d97706; }
-        body.light-mode .text-links span { color: #94a3b8; }
-        body.light-mode footer { border-color: rgba(0,0,0,0.08); color: #334155; }
-        body.light-mode .project-main-title { color: #1e293b; }
-        body.light-mode .doc-link-box { border-color: #d97706; color: #d97706; background: rgba(217,119,6,0.08); }
-        body.light-mode .doc-link-box:hover { background: rgba(217,119,6,0.18); box-shadow: 0 0 12px rgba(217,119,6,0.25); }
-        .btn-download {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.7rem 1.6rem;
-            border: 1px solid var(--accent-gold);
-            border-radius: 10px;
-            color: var(--accent-gold);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 600;
-            background: rgba(251,191,36,0.08);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .btn-download svg { width: 20px; height: 20px; flex-shrink: 0; }
-        .btn-download:hover {
-            background: rgba(251,191,36,0.2);
-            box-shadow: 0 0 16px rgba(251,191,36,0.3);
-            transform: translateY(-2px);
-        }
-        body.light-mode .btn-download {
-            border-color: #d97706;
-            color: #d97706;
-            background: rgba(217,119,6,0.08);
-        }
-        body.light-mode .btn-download:hover {
-            background: rgba(217,119,6,0.2);
-            box-shadow: 0 0 16px rgba(217,119,6,0.3);
-        }
-        body::before {
-            content: '';
-            position: fixed;
-            top: -20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 800px;
-            background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
-            z-index: -1;
-            pointer-events: none;
-        }
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1.5rem 2rem;
-            z-index: 100;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(15,23,42,0.6);
-            backdrop-filter: blur(8px);
-        }
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-main);
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-        .logo img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid var(--accent-gold);
-        }
-        .nav-right { display: flex; align-items: center; gap: 0; }
-        .nav-link {
-            color: var(--text-sub);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            white-space: nowrap;
-            padding: 0 1.2rem;
-        }
-        .nav-link:hover { color: var(--accent-gold); }
-        .nav-v-line {
-            width: 1px;
-            height: 18px;
-            background: #ffffff;
-            opacity: 0.3;
-            flex-shrink: 0;
-        }
-        .icon-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            color: var(--text-main);
-            transition: transform 0.3s ease, color 0.3s ease;
-            cursor: pointer;
-            background: none;
-            border: none;
-            margin-left: 1.2rem;
-        }
-        .icon-btn:hover { color: var(--accent-gold); transform: scale(1.1); }
-        .icon-btn svg { width: 26px; height: 26px; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-        .hero {
-            height: 60vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding-top: 60px;
-        }
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero-slogan {
-            font-size: 1.5rem;
-            color: var(--accent-gold);
-            margin-bottom: 2rem;
-            font-weight: 300;
-            letter-spacing: 1px;
-            position: relative;
-            display: inline-block;
-        }
-        .hero-slogan::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 2px;
-            background: var(--accent-gold);
-            box-shadow: 0 0 10px var(--accent-gold);
-        }
-        .hero-actions { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; }
-        .btn {
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-            display: inline-block;
-            border: 1px solid var(--accent-gold);
-            color: var(--accent-gold);
-            background: var(--bg-card);
-        }
-        .btn:hover { background: rgba(30,41,59,0.9); box-shadow: 0 0 15px rgba(251,191,36,0.4); }
-        .btn-alt { background: var(--bg-card); border-color: var(--accent-gold); color: var(--accent-gold); }
-        .btn-alt:hover { background: rgba(30,41,59,0.9); border-color: var(--accent-gold); color: var(--accent-gold); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-        .projects-section { padding: 4rem 0 6rem; }
-        .projects-wrapper {
-            background: rgba(15,23,42,0.55);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 3rem 2rem;
-            backdrop-filter: blur(6px);
-        }
-        .section-title { text-align: center; font-size: 2rem; margin-bottom: 3rem; }
-        .projects-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
-        .project-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            transition: transform 0.3s, box-shadow 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-        .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-color: rgba(251,191,36,0.3); }
-        .project-header { margin-bottom: 1.5rem; text-align: center; }
-        .project-main-title { font-size: 1.5rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem; }
-        .images-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; margin-bottom: 2rem; }
-        .image-container { position: relative; cursor: pointer; border-radius: 12px; overflow: hidden; transition: transform 0.3s ease; }
-        .image-container:hover { transform: scale(1.02); }
-        .future-image { width: 100%; height: 312px; object-fit: cover; display: block; transition: transform 0.3s ease; }
-        .future-annotations { color: var(--text-sub); font-size: 1.1rem; line-height: 1.8; text-align: left; }
-        .doc-links-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.8rem; }
-        .doc-link-box {
-            display: inline-block;
-            padding: 0.5rem 1.2rem;
-            border: 1px solid var(--accent-gold);
-            border-radius: 8px;
-            color: var(--accent-gold);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            background: rgba(251,191,36,0.08);
-        }
-        .doc-link-box:hover { background: rgba(251,191,36,0.18); box-shadow: 0 0 12px rgba(251,191,36,0.25); }
-        .text-links { margin-top: 3rem; text-align: center; font-size: 0.95rem; color: #e2e8f0; }
-        .text-links a { color: #e2e8f0; text-decoration: none; transition: color 0.3s; margin: 0 0.5rem; }
-        .text-links a:hover { color: var(--accent-gold); }
-        .text-links span { color: #e2e8f0; margin: 0 0.5rem; }
-        footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border-color); color: #e2e8f0; font-size: 0.85rem; }
-        .image-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.45);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.3s ease;
-            backdrop-filter: blur(2px);
-        }
-        .image-modal.active { display: flex; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal-content { position: relative; max-width: 70vw; max-height: 70vh; animation: zoomIn 0.4s ease; }
-        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-image { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 50px rgba(0,0,0,0.5); }
-        .modal-close {
-            position: absolute;
-            top: -50px;
-            right: -10px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.5);
-            border-radius: 50%;
-            color: #fff;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        .modal-close:hover { background: rgba(255,255,255,0.3); transform: scale(1.1) rotate(90deg); }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Microsoft YaHei','PingFang SC',sans-serif; font-size:18px; background:var(--bg-color); color:var(--text-main); line-height:1.7; height:100vh; overflow:hidden; display:flex; }
 
-        /* ===== 移动端适配 ===== */
-        @media (max-width: 768px) {
-            .logo-text { display: none; }
-            .logo { gap: 0; }
-            .logo img { width: 32px; height: 32px; }
+        /* ===== Sidebar ===== */
+        .sidebar { width:280px; background:var(--sidebar-bg); border-right:1px solid var(--border-color); display:flex; flex-direction:column; height:100%; transition:transform .3s; z-index:100; flex-shrink:0; }
+        .sidebar-header { padding:1.2rem 1.5rem; border-bottom:1px solid var(--border-color); font-weight:700; font-size:1.2rem; color:var(--accent-color); display:flex; align-items:center; gap:10px; }
+        .sidebar-content { flex:1; overflow-y:auto; padding:.5rem 0; }
+        .toc-list { list-style:none; }
+        .toc-page-link { display:flex; justify-content:space-between; align-items:center; cursor:pointer; color:var(--text-main); font-weight:600; transition:all .2s; border-left:4px solid transparent; user-select:none; }
+        .toc-page-link:hover { background:var(--hover-bg); color:var(--accent-color); }
+        .toc-page-link.active { background:rgba(217,119,6,.08); color:var(--accent-color); border-left-color:var(--accent-color); }
+        .link-text { flex:1; padding:.7rem 1.5rem; }
+        .expand-arrow { font-size:.6rem; margin-right:1.5rem; padding:12px 8px 12px 20px; cursor:pointer; opacity:.6; transition:all .3s; display:inline-block; line-height:1; }
+        .expand-arrow:hover { opacity:1; }
+        .expand-arrow.open { transform:rotate(90deg); opacity:1; }
+        .sub-menu { display:none; background:rgba(0,0,0,.02); padding-bottom:.5rem; }
+        .sub-menu.visible { display:block; }
+        .toc-link { display:block; padding:.4rem 1.5rem .4rem 2.5rem; text-decoration:none; color:var(--text-sub); font-size:.9rem; transition:all .2s; }
+        .toc-link:hover { color:var(--accent-color); background:var(--hover-bg); }
+        .sidebar-edit-actions { padding:.8rem 1rem; border-top:1px solid var(--border-color); }
+        .btn-add-page { width:100%; padding:.5rem; border:1px dashed var(--accent-color); background:none; color:var(--accent-color); border-radius:6px; cursor:pointer; font-size:.85rem; font-weight:600; transition:all .2s; }
+        .btn-add-page:hover { background:rgba(217,119,6,.08); }
+        .edit-mode .toc-page-link { padding-right:.5rem; }
+        /* ★ FIX: 删除按钮默认完全不可交互，仅编辑模式下可见可点 */
+        .btn-delete-page { background:none; border:none; color:var(--danger); cursor:pointer; font-size:.8rem; padding:.3rem .5rem; border-radius:4px; flex-shrink:0; display:none; pointer-events:none; }
+        .edit-mode .btn-delete-page { display:inline-block; pointer-events:auto; opacity:.6; }
+        .btn-delete-page:hover { opacity:1; background:rgba(239,68,68,.1); }
 
-            .hero h1 { font-size: 2.5rem; }
-            .hero-slogan { font-size: 1.2rem; }
-            .hero-actions { flex-direction: column; width: 100%; padding: 0 2rem; }
-            .btn { width: 100%; text-align: center; }
+        /* ===== Main ===== */
+        .main-content { flex:1; overflow-y:auto; padding:3rem 4rem; scroll-behavior:smooth; background:var(--bg-color); min-width:0; }
+        .content-wrapper { max-width:1400px; margin:0 auto; background:#fff; padding:3rem; border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,.05); min-height:80vh; }
+        .content-wrapper.code-open { max-width:none; }
+        .wiki-page { display:none; animation:fadeIn .4s ease; }
+        .wiki-page.active { display:block; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        h1 { font-size:2.2rem; margin-bottom:.5rem; border-bottom:2px solid var(--border-color); padding-bottom:1rem; }
+        h2 { font-size:1.6rem; margin-top:2.5rem; margin-bottom:.8rem; }
+        h3 { font-size:1.3rem; margin-top:1.8rem; margin-bottom:.6rem; }
+        p { margin-bottom:1rem; text-align:justify; }
+        code { background:var(--code-bg); padding:.15rem .4rem; border-radius:4px; font-family:monospace; color:#d97706; font-size:.9em; }
+        pre { background:#1e293b; color:#e2e8f0; padding:1.2rem; border-radius:8px; overflow-x:auto; margin-bottom:1.2rem; }
+        img { max-width:100%; border-radius:8px; margin:1rem 0; }
 
-            /* 核心修改：让外框贴近屏幕边缘，内框紧凑 */
-            .container { padding: 0 0.5rem; }
-            .projects-section { padding: 2rem 0 3rem; }
-            .projects-wrapper {
-                padding: 1rem 0.6rem;
-                border-radius: 12px;
-            }
-            .section-title {
-                font-size: 1.4rem;
-                margin-bottom: 1.2rem;
-            }
-            .projects-grid { gap: 1rem; }
-            .project-card {
-                padding: 1rem 0.8rem;
-                border-radius: 10px;
-            }
-            .project-header { margin-bottom: 0.8rem; }
-            .project-main-title { font-size: 1.15rem; }
+        /* Meta Bar */
+        .meta-bar { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; font-size:.82rem; color:var(--text-sub); margin-bottom:2rem; padding-top:.5rem; }
+        .meta-author-tag { display:inline-flex; align-items:center; gap:.3rem; background:rgba(217,119,6,.1); color:var(--accent-color); padding:.15rem .7rem; border-radius:20px; font-weight:600; font-size:.78rem; }
 
-            /* 图片保持横排两列，缩小间距和高度 */
-            .images-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.6rem;
-                margin-bottom: 1rem;
-            }
-            .future-image { height: 120px; }
+        /* Author Tags Editor */
+        .author-tags-editor { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; }
+        .author-tag { display:inline-flex; align-items:center; gap:.3rem; background:rgba(217,119,6,.12); color:var(--accent-color); padding:.15rem .5rem .15rem .7rem; border-radius:20px; font-size:.78rem; font-weight:600; white-space:nowrap; animation:tagIn .2s ease; }
+        @keyframes tagIn { from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)} }
+        .author-tag .tag-remove { background:none; border:none; cursor:pointer; color:var(--accent-color); font-size:.7rem; padding:0 .2rem; border-radius:50%; line-height:1; opacity:.6; transition:all .15s; }
+        .author-tag .tag-remove:hover { opacity:1; background:rgba(217,119,6,.2); }
+        .author-input-row { display:flex; align-items:center; gap:.3rem; position:relative; }
+        .author-text-input { border:1px solid var(--border-color); border-radius:6px; padding:.2rem .5rem; font-size:.8rem; outline:none; font-family:inherit; width:130px; transition:border-color .2s; }
+        .author-text-input:focus { border-color:var(--accent-color); }
+        .member-suggestions { position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid var(--border-color); border-radius:6px; box-shadow:0 4px 12px rgba(0,0,0,.1); z-index:60; max-height:160px; overflow-y:auto; display:none; }
+        .member-suggestions.show { display:block; }
+        .member-suggestion-item { padding:.4rem .7rem; font-size:.82rem; cursor:pointer; transition:background .15s; }
+        .member-suggestion-item:hover,.member-suggestion-item.highlighted { background:var(--hover-bg); color:var(--accent-color); }
+        .member-suggestion-item.used { opacity:.4; pointer-events:none; }
 
-            .future-annotations {
-                font-size: 0.9rem;
-                line-height: 1.6;
-            }
-            .future-annotations p { margin-bottom: 0.3rem; }
+        /* ===== Editor Toolbar ===== */
+        .editor-toolbar { display:none; position:sticky; top:0; z-index:50; background:#fff; border:1px solid var(--border-color); border-radius:10px; padding:.4rem .6rem; margin-bottom:1.5rem; gap:.2rem; flex-wrap:wrap; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+        .editor-toolbar.show { display:flex; }
+        .toolbar-btn { background:none; border:1px solid transparent; border-radius:4px; padding:.3rem .6rem; cursor:pointer; font-size:.85rem; color:var(--text-main); transition:all .15s; font-weight:600; line-height:1; }
+        .toolbar-btn:hover { background:var(--hover-bg); border-color:var(--border-color); }
+        .toolbar-btn.active { background:var(--accent-color); border-color:var(--accent-color); color:#fff; }
+        .toolbar-sep { width:1px; height:20px; background:var(--border-color); margin:0 .3rem; }
+        .toolbar-label { font-size:.75rem; color:var(--text-sub); margin-left:auto; }
+        .toolbar-select { border:1px solid var(--border-color); border-radius:4px; padding:.22rem .3rem; font-size:.8rem; color:var(--text-main); background:#fff; cursor:pointer; outline:none; font-family:inherit; max-width:104px; }
+        .toolbar-select:hover { border-color:var(--accent-color); }
+        .toolbar-select option { font-size:.85rem; }
+        .color-picker-wrap { display:inline-flex; align-items:center; gap:.2rem; position:relative; }
+        .color-picker-wrap input[type=color] { width:24px; height:24px; border:1px solid var(--border-color); border-radius:4px; cursor:pointer; padding:0; background:none; }
+        .color-picker-wrap .color-label { font-size:.75rem; font-weight:600; color:var(--text-main); }
+        .editable-title { outline:none; border-bottom:2px dashed var(--accent-color); cursor:text; min-width:100px; }
+        .editable-body { outline:none; min-height:200px; border:1px dashed var(--border-color); border-radius:8px; padding:1rem; margin-top:.5rem; cursor:text; }
+        .editable-body:focus { border-color:var(--accent-color); }
+        .editable-body img { display:block; max-width:100%; }
 
-            .doc-links-row {
-                flex-direction: column;
-                gap: 0.5rem;
-                margin-top: 0.6rem;
-            }
-            .doc-link-box {
-                text-align: center;
-                padding: 0.4rem 0.8rem;
-                font-size: 0.85rem;
-            }
-            .btn-download {
-                padding: 0.55rem 1rem;
-                font-size: 0.85rem;
-                justify-content: center;
-            }
+        /* ===== 源码分栏 ===== */
+        .editor-split { display:grid; grid-template-columns:1fr; gap:.8rem; align-items:stretch; margin-top:.5rem; }
+        .editor-split.code-open { grid-template-columns:1fr 1fr; }
+        .editor-split .editable-body { min-width:0; margin-top:0; min-height:300px; }
+        .code-pane { display:none; min-width:0; flex-direction:column; border:1px dashed var(--border-color); border-radius:8px; overflow:hidden; background:#1e293b; }
+        .editor-split.code-open .code-pane { display:flex; }
+        .code-pane-header { display:flex; align-items:center; justify-content:space-between; padding:.4rem .7rem; background:#0f172a; color:#94a3b8; font-size:.72rem; font-weight:600; }
+        .code-pane textarea { flex:1; width:100%; min-width:0; border:none; outline:none; resize:none; background:#1e293b; color:#e2e8f0; font-family:'Consolas','Monaco',monospace; font-size:.78rem; line-height:1.5; padding:1rem; white-space:pre-wrap; overflow:auto; box-sizing:border-box; }
+        @media(max-width:768px) { .editor-split.code-open { grid-template-columns:1fr; } .editor-split .editable-body,.editor-split .code-pane { min-height:220px; } }
 
-            .icon-btn { width: 32px; height: 32px; }
-            .icon-btn svg { width: 22px; height: 22px; }
-            .nav-v-line { display: none; }
-            .nav-link { font-size: 0.9rem; padding: 0 0.8rem; }
-            .icon-btn { margin-left: 0.8rem; }
-            .modal-content { max-width: 90vw; max-height: 60vh; }
-            .text-links { margin-top: 1.5rem; }
+        /* ===== Top Controls ===== */
+        .top-controls { display:flex; align-items:center; gap:.8rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+        .mode-toggle { padding:.5rem 1.2rem; border-radius:6px; font-size:.85rem; font-weight:700; cursor:pointer; border:1px solid var(--border-color); background:#fff; color:var(--text-main); transition:all .2s; }
+        .mode-toggle.editing { background:var(--accent-color); color:#fff; border-color:var(--accent-color); }
+        .btn-save { padding:.5rem 1.2rem; border-radius:6px; font-size:.85rem; font-weight:700; cursor:pointer; border:none; background:var(--success); color:#fff; transition:all .2s; display:none; }
+        .btn-save:hover { opacity:.9; }
+        .btn-save.show { display:inline-block; }
+        .btn-export { padding:.5rem 1.2rem; border-radius:6px; font-size:.85rem; font-weight:600; cursor:pointer; border:1px solid var(--border-color); background:#fff; color:var(--text-sub); transition:all .2s; margin-left:auto; }
+        .btn-export:hover { border-color:var(--accent-color); color:var(--accent-color); }
+        .btn-manage-members { padding:.5rem 1rem; border-radius:6px; font-size:.8rem; font-weight:600; cursor:pointer; border:1px solid var(--border-color); background:#fff; color:var(--text-sub); transition:all .2s; display:none; }
+        .btn-manage-members.show { display:inline-block; }
+        .btn-manage-members:hover { border-color:var(--accent-color); color:var(--accent-color); }
+        .save-toast { position:fixed; bottom:2rem; right:2rem; background:var(--success); color:#fff; padding:.8rem 1.5rem; border-radius:8px; font-weight:600; font-size:.9rem; transform:translateY(100px); opacity:0; transition:all .3s; z-index:999; }
+        .save-toast.show { transform:translateY(0); opacity:1; }
+
+        /* ===== Modals ===== */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:500; justify-content:center; align-items:center; }
+        .modal-overlay.show { display:flex; }
+        .modal-box { background:#fff; border-radius:12px; padding:2rem; max-width:480px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,.15); animation:modalIn .25s ease; }
+        @keyframes modalIn { from{opacity:0;transform:scale(.95) translateY(10px)} to{opacity:1;transform:scale(1) translateY(0)} }
+        .modal-box h3 { margin-bottom:1rem; font-size:1.1rem; }
+        .modal-box p { margin-bottom:1.5rem; font-size:.9rem; color:var(--text-sub); }
+        .modal-actions { display:flex; gap:.8rem; justify-content:flex-end; }
+        .modal-btn { padding:.5rem 1.2rem; border-radius:6px; font-size:.85rem; font-weight:600; cursor:pointer; border:1px solid var(--border-color); background:#fff; color:var(--text-main); transition:all .2s; }
+        .modal-btn:hover { background:var(--hover-bg); }
+        .modal-btn.primary { background:var(--accent-color); color:#fff; border-color:var(--accent-color); }
+        .modal-btn.primary:hover { opacity:.9; }
+        .member-manager .modal-box { max-width:520px; }
+        .member-list { list-style:none; margin-bottom:1rem; max-height:250px; overflow-y:auto; }
+        .member-list li { display:flex; align-items:center; gap:.5rem; padding:.5rem .8rem; border-radius:6px; transition:background .2s; }
+        .member-list li:hover { background:var(--hover-bg); }
+        .member-list li .member-name { flex:1; font-size:.9rem; }
+        .member-list li .member-name-input { flex:1; font-size:.9rem; padding:.2rem .5rem; border:1px solid var(--accent-color); border-radius:4px; outline:none; font-family:inherit; }
+        .member-list li button { background:none; border:none; cursor:pointer; font-size:.8rem; padding:.2rem .4rem; border-radius:4px; }
+        .member-list li .btn-rename { color:var(--accent-color); }
+        .member-list li .btn-rename:hover { background:rgba(217,119,6,.1); }
+        .member-list li .btn-del-member { color:var(--danger); }
+        .member-list li .btn-del-member:hover { background:rgba(239,68,68,.1); }
+        .member-list li .btn-confirm-rename { color:var(--success); }
+        .member-list li .btn-confirm-rename:hover { background:rgba(34,197,94,.1); }
+        .add-member-row { display:flex; gap:.5rem; }
+        .add-member-row input { flex:1; padding:.4rem .7rem; border:1px solid var(--border-color); border-radius:6px; font-size:.85rem; outline:none; font-family:inherit; }
+        .add-member-row input:focus { border-color:var(--accent-color); }
+        .add-member-row button { padding:.4rem 1rem; border-radius:6px; border:none; background:var(--accent-color); color:#fff; font-size:.85rem; font-weight:600; cursor:pointer; }
+        .add-member-row button:hover { opacity:.9; }
+
+        /* Konami Hint */
+        .konami-hint { position:fixed; bottom:1rem; left:50%; transform:translateX(-50%); font-size:.7rem; color:var(--border-color); pointer-events:none; user-select:none; opacity:0; transition:opacity 1s; z-index:1; }
+        .konami-hint.flash { opacity:1; }
+
+        /* Mobile */
+        .mobile-menu-btn { display:none; position:fixed; top:1rem; left:1rem; z-index:200; background:var(--accent-color); color:white; border:none; padding:.5rem .8rem; border-radius:4px; cursor:pointer; font-size:1rem; }
+        .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.3); z-index:99; }
+        .sidebar-overlay.active { display:block; }
+        @media(max-width:768px) {
+            body { flex-direction:column; overflow:auto; height:auto; }
+            .sidebar { position:fixed; left:-280px; top:0; bottom:0; box-shadow:2px 0 10px rgba(0,0,0,.1); height:100vh; }
+            .sidebar.active { transform:translateX(280px); }
+            .main-content { padding:1rem; padding-top:4rem; }
+            .content-wrapper { padding:1.5rem; min-height:auto; }
+            .mobile-menu-btn { display:block; }
+            h1 { font-size:1.6rem; }
+            .editor-toolbar { position:static; }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <img src="https://avatars.githubusercontent.com/u/312074133?s=200&v=4" alt="合月亭 Logo">
-                <span class="logo-text">合月亭</span>
-            </a>
-            <div class="nav-right">
-                <a href="news.html" class="nav-link">公告</a>
-                <div class="nav-v-line"></div>
-                <a href="qq.html" class="nav-link">交流群</a>
-                <div class="nav-v-line"></div>
-                <a href="comments.html" class="nav-link">留言区</a>
-                <div class="nav-v-line"></div>
-                <button class="icon-btn" id="theme-toggle" title="切换背景模式" aria-label="切换背景模式">
-                    <svg id="icon-img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                        <polyline points="21 15 16 10 5 21"></polyline>
-                    </svg>
-                    <svg id="icon-moon" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="icon-sun" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
+
+<button class="mobile-menu-btn" id="mobileMenuBtn">☰ 目录</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="konami-hint" id="konamiHint">🎮 ↑↑↓↓←→←→BA</div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header"><span>📚 合月亭 Wiki</span></div>
+    <div class="sidebar-content"><ul class="toc-list" id="tocList"></ul></div>
+    <div class="sidebar-edit-actions" id="sidebarEditActions" style="display:none;">
+        <button class="btn-add-page" id="btnAddPage">＋ 新增分区页面</button>
+    </div>
+</aside>
+
+<main class="main-content" id="mainContent">
+    <div class="content-wrapper">
+        <div class="top-controls" id="topControls" style="display:none;">
+            <button class="mode-toggle" id="modeToggle" title="切换编辑/预览模式">✏️ 编辑模式</button>
+            <button class="btn-save" id="btnSave" title="保存当前页面 (Ctrl+S)">💾 保存</button>
+            <button class="btn-manage-members" id="btnManageMembers" title="管理团队成员列表">👥 成员管理</button>
+            <button class="btn-export" id="btnExport" title="导出为静态HTML文件">📤 导出HTML</button>
         </div>
-    </nav>
-    <header class="hero">
-        <div class="container">
-            <h1>合月亭project</h1>
-            <div class="hero-slogan">有一份光，便发一份热</div>
-            <div class="hero-actions">
-                <a href="Navigation.html" class="btn">ACG站点目录</a>
-                <a href="https://github.com/Heyue-org" class="btn btn-alt" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
+        <div class="editor-toolbar" id="editorToolbar">
+            <button class="toolbar-btn" data-cmd="bold" title="加粗 (Ctrl+B)"><b>B</b></button>
+            <button class="toolbar-btn" data-cmd="italic" title="斜体 (Ctrl+I)"><i>I</i></button>
+            <button class="toolbar-btn" data-cmd="underline" title="下划线 (Ctrl+U)"><u>U</u></button>
+            <button class="toolbar-btn" data-cmd="strikeThrough" title="删除线"><s>S</s></button>
+            <div class="toolbar-sep"></div>
+            <select class="toolbar-select" id="fontSizeSelect" title="字体大小">
+                <option value="">字号</option>
+                <option value="1">极小</option>
+                <option value="2">较小</option>
+                <option value="3">小</option>
+                <option value="4">标准</option>
+                <option value="5">大</option>
+                <option value="6">特大</option>
+                <option value="7">超大</option>
+            </select>
+            <select class="toolbar-select" id="fontFamilySelect" title="字体">
+                <option value="">字体</option>
+                <option value="SimSun" style="font-family:'SimSun'">宋体</option>
+                <option value="SimHei" style="font-family:'SimHei'">黑体</option>
+                <option value="Microsoft YaHei" style="font-family:'Microsoft YaHei'">微软雅黑</option>
+                <option value="KaiTi" style="font-family:'KaiTi'">楷体</option>
+                <option value="FangSong" style="font-family:'FangSong'">仿宋</option>
+                <option value="Arial" style="font-family:Arial">Arial</option>
+                <option value="Georgia" style="font-family:Georgia">Georgia</option>
+                <option value="Consolas" style="font-family:Consolas">Consolas</option>
+            </select>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" data-cmd="h2" title="二级标题">H2</button>
+            <button class="toolbar-btn" data-cmd="h3" title="三级标题">H3</button>
+            <button class="toolbar-btn" data-cmd="insertSection" title="选中文字设为章节，再点取消">§ 章节</button>
+            <div class="toolbar-sep"></div>
+            <div class="color-picker-wrap" title="选中文字后点击色块应用颜色">
+                <span class="color-label">A</span>
+                <input type="color" id="textColorPicker" value="#d97706" title="文字颜色">
             </div>
-        </div>
-    </header>
-    <section class="projects-section">
-        <div class="container">
-            <div class="projects-wrapper">
-                <h2 class="section-title">我们的项目</h2>
-                <div class="projects-grid">
-                    <div class="project-card">
-                        <div class="project-header">
-                            <h3 class="project-main-title">ACG免费资源站目录</h3>
-                        </div>
-                        <div class="images-grid">
-                            <div class="image-container" data-image="assets/css/images/wd1.webp">
-                                <img src="assets/css/images/wd1.webp" alt="项目展示一" class="future-image">
-                            </div>
-                            <div class="image-container" data-image="assets/css/images/wd2.webp">
-                                <img src="assets/css/images/wd2.webp" alt="项目展示二" class="future-image">
-                            </div>
-                        </div>
-                        <div class="future-annotations">
-                            <p>旨在收录免费提供二次元资源的网站，涵盖动漫、音声、游戏、轻小说等分类。</p>
-                            <p>现提供 Excel 表格下载，也有该表格的在线文档，和只列举重点网站的网页，此项目定期维护。</p>
-                            <p>点击图片可以放大查看详情。</p>
-                            <div class="doc-links-row">
-                                <a href="https://docs.google.com/spreadsheets/d/1wwj4RC_W1zDhI2dlt1NmsFE9DMUKGHs-02lwWbFe9Kk/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-download">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                    查看在线文档
-                                </a>
-                                <a href="https://github.com/Heyue-org/HYT_ACG-Site-Directory/releases/" class="btn-download">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                    下载文档
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="project-card">
-                        <div class="project-header">
-                            <h3 class="project-main-title">获取资源的正确姿势</h3>
-                        </div>
-                        <div class="images-grid">
-                        <div class="future-annotations">
-                            <p>提供Galgame相关下载、解密、解压、排故等教程</p>
-                            <p>///正在施工中///</p>
-                            <p>诚招编辑</p>
-                            <div class="doc-links-row">
-                                <a href="wiki.html" target="_blank" rel="noopener noreferrer" class="btn-download">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                    WIKI
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="color-picker-wrap" title="选中文字后点击色块应用背景高亮">
+                <span class="color-label">▨</span>
+                <input type="color" id="hiliteColorPicker" value="#fde68a" title="背景高亮色">
             </div>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" data-cmd="justifyLeft" title="左对齐">⇤ 左</button>
+            <button class="toolbar-btn" data-cmd="justifyCenter" title="居中对齐">⇔ 中</button>
+            <button class="toolbar-btn" data-cmd="justifyRight" title="右对齐">⇥ 右</button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" data-cmd="blockquote" title="引用块">❝ 引用</button>
+            <button class="toolbar-btn" data-cmd="hr" title="插入水平分隔线">— 分隔线</button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" data-cmd="insertImage" title="插入图片 (输入URL)">🖼 图片</button>
+            <button class="toolbar-btn" data-cmd="createLink" title="插入超链接">🔗 链接</button>
+            <button class="toolbar-btn" data-cmd="code" title="行内代码">&lt;/&gt;</button>
+            <button class="toolbar-btn" data-cmd="pre" title="代码块">Pre</button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" data-cmd="insertUnorderedList" title="无序列表">• List</button>
+            <button class="toolbar-btn" data-cmd="removeFormat" title="清除选中文字的格式">✕ 清除</button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="btnToggleCode" title="显示/隐藏 HTML 源码分栏（可查看并编辑源码）">🖥 源码</button>
+            <span class="toolbar-label">编辑中...</span>
         </div>
-    </section>
-    <div class="image-modal" id="imageModal">
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose">×</button>
-            <img src="" alt="放大图片" class="modal-image" id="modalImage">
+        <div id="pagesContainer"></div>
+    </div>
+</main>
+
+<div class="save-toast" id="saveToast">✅ 已保存</div>
+
+<!-- Save Confirm Modal -->
+<div class="modal-overlay" id="saveConfirmModal">
+    <div class="modal-box">
+        <h3>⚠️ 未保存的修改</h3>
+        <p>当前页面有未保存的编辑内容，是否保存后再退出？</p>
+        <div class="modal-actions">
+            <button class="modal-btn" id="btnDiscard">不保存</button>
+            <button class="modal-btn" id="btnCancelExit">取消</button>
+            <button class="modal-btn primary" id="btnSaveAndExit">保存并退出</button>
         </div>
     </div>
-     <div class="text-links">
-                <a href="Friend_Links.html">友情链接</a>
-                <span>|</span>
-                <a href="ContactDMCA.html">联系我们</a>
-            </div>
-    <footer>
-        <div class="container">
-            <p>&copy; 2024-2026 合月亭 (Heyue Pavilion). 本站内容采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh" target="_blank" rel="noopener noreferrer" style="color:var(--accent-gold);text-decoration:none;border-bottom:1px dashed var(--accent-gold);">CC BY-NC 4.0</a> 协议，禁止商业用途。</p>
+</div>
+
+<!-- Member Manager Modal -->
+<div class="modal-overlay member-manager" id="memberModal">
+    <div class="modal-box">
+        <h3>👥 团队成员管理</h3>
+        <p style="margin-bottom:.8rem;font-size:.8rem;color:var(--text-sub);">此列表仅用于署名时快捷填充，不影响已有页面署名。</p>
+        <ul class="member-list" id="memberList"></ul>
+        <div class="add-member-row">
+            <input type="text" id="newMemberInput" placeholder="输入新成员名称...">
+            <button id="btnAddMember">添加</button>
         </div>
-    </footer>
-    <script>
-        const toggleBtn = document.getElementById('theme-toggle');
-        const body = document.body;
-        const icons = {
-            img: document.getElementById('icon-img'),
-            moon: document.getElementById('icon-moon'),
-            sun: document.getElementById('icon-sun')
-        };
-        let mode = 0;
-        function showIcon(name) {
-            Object.values(icons).forEach(i => i.style.display = 'none');
-            icons[name].style.display = 'block';
+        <div class="modal-actions" style="margin-top:1rem;">
+            <button class="modal-btn primary" id="btnCloseMemberModal">关闭</button>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
+<script>
+(() => {
+    'use strict';
+
+    const PAGES_KEY = 'heyue_wiki_pages_v6';
+    const MEMBERS_KEY = 'heyue_wiki_members_v6';
+
+    const DEFAULT_MEMBERS = [
+        { id:'m1', name:'合月亭' }, { id:'m2', name:'Akari' },
+        { id:'m3', name:'Yuki' }, { id:'m4', name:'Mikan' },
+    ];
+
+    const DEFAULT_PAGES = [
+        { id:'page-intro', title:'项目简介', hasSub:false, subs:[], authors:['合月亭'], updated:new Date().toISOString(), content:'<p>欢迎来到合月亭 Wiki！</p>' },
+        { id:'page-download', title:'下载相关问题', hasSub:true, subs:[{id:'dl-install',label:'安装下载器'},{id:'dl-config',label:'配置加速'},{id:'dl-run',label:'开始下载'}], authors:['合月亭','Akari'], updated:new Date().toISOString(), content:'<section id="dl-install"><h2>安装下载器</h2><p>推荐使用 IDM / Motrix / aria2...</p></section><section id="dl-config"><h2>配置加速</h2><p>针对不同平台的加速方案...</p></section><section id="dl-run"><h2>开始下载</h2><p>如何正确获取下载链接...</p></section>' },
+        { id:'page-decrypt', title:'解密相关问题', hasSub:true, subs:[{id:'dec-tool',label:'解密工具'},{id:'dec-guide',label:'操作步骤'},{id:'dec-faq',label:'常见报错'}], authors:['Yuki','Mikan'], updated:new Date().toISOString(), content:'<section id="dec-tool"><h2>解密工具</h2><p>常用解密工具推荐...</p></section><section id="dec-guide"><h2>操作步骤</h2><p>完整解密流程...</p></section><section id="dec-faq"><h2>常见报错</h2><p>CRC校验失败等问题排查...</p></section>' },
+        { id:'page-unzip', title:'解压相关问题', hasSub:true, subs:[{id:'unzip-tool',label:'推荐软件'},{id:'unzip-encoding',label:'乱码处理'},{id:'unzip-split',label:'分卷解压'}], authors:['Mikan'], updated:new Date().toISOString(), content:'<section id="unzip-tool"><h2>推荐软件</h2><p>7-Zip / Bandizip...</p></section><section id="unzip-encoding"><h2>乱码处理</h2><p>日文文件名编码转换...</p></section><section id="unzip-split"><h2>分卷解压</h2><p>.part1.rar 处理...</p></section>' },
+        { id:'page-run', title:'运行相关问题', hasSub:true, subs:[{id:'run-locale',label:'区域模拟'},{id:'run-patch',label:'汉化补丁'},{id:'run-error',label:'启动报错'}], authors:['合月亭','Akari'], updated:new Date().toISOString(), content:'<section id="run-locale"><h2>区域模拟</h2><p>Locale Emulator...</p></section><section id="run-patch"><h2>汉化补丁</h2><p>挂载或替换汉化文件...</p></section><section id="run-error"><h2>启动报错</h2><p>DLL缺失、DirectX错误...</p></section>' },
+        { id:'page-tools', title:'GAL常用工具合集', hasSub:true, subs:[{id:'tools-trans',label:'翻译工具'},{id:'tools-extract',label:'资源提取'},{id:'tools-misc',label:'其他辅助'}], authors:['Akari','Yuki'], updated:new Date().toISOString(), content:'<section id="tools-trans"><h2>翻译工具</h2><p>屏幕翻译、OCR...</p></section><section id="tools-extract"><h2>资源提取</h2><p>CG/音乐提取...</p></section><section id="tools-misc"><h2>其他辅助</h2><p>存档管理...</p></section>' },
+        { id:'page-search', title:'寻找资源的逻辑', hasSub:true, subs:[{id:'search-engine',label:'搜索技巧'},{id:'search-site',label:'常用站点'},{id:'search-torrent',label:'种子追踪'}], authors:['Yuki'], updated:new Date().toISOString(), content:'<section id="search-engine"><h2>搜索引擎技巧</h2><p>高级搜索语法...</p></section><section id="search-site"><h2>常用站点</h2><p>资源站索引...</p></section><section id="search-torrent"><h2>种子追踪</h2><p>BT/磁力链接...</p></section>' },
+        { id:'page-glossary', title:'专业术语参考', hasSub:true, subs:[{id:'glossary-basic',label:'基础术语'},{id:'glossary-tech',label:'技术术语'},{id:'glossary-slang',label:'社区黑话'}], authors:['Mikan','合月亭'], updated:new Date().toISOString(), content:'<section id="glossary-basic"><h2>基础术语</h2><p>GAL、VN、ADV...</p></section><section id="glossary-tech"><h2>技术术语</h2><p>引擎、文件格式...</p></section><section id="glossary-slang"><h2>社区黑话</h2><p>拔作、废萌...</p></section>' },
+        { id:'page-faq', title:'常见问题 (FAQ)', hasSub:false, subs:[], authors:['合月亭'], updated:new Date().toISOString(), content:'<section id="faq"><h3>Q: 游戏打不开？</h3><p>A: 检查转区和运行库。</p><h3>Q: CRC错误？</h3><p>A: 重新下载该分卷。</p></section>' },
+    ];
+
+    let pages=[], members=[];
+    let isEditMode=false, currentPageId=null, hasUnsavedChanges=false;
+    let editorUnlocked=false;
+    let codeViewOpen=false;
+
+    // ===== Helpers =====
+    function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+    function formatTime(iso){if(!iso)return'—';const d=new Date(iso),p=n=>String(n).padStart(2,'0');return`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;}
+    function getAuthors(pg){if(Array.isArray(pg.authors))return pg.authors;if(pg.author)return[pg.author];return[];}
+
+    // ===== 格式白名单（只允许工具栏提供的格式，粘贴/编辑时清洗外部脏格式） =====
+    const ALLOWED_TAGS = new Set([
+        'P','DIV','BR','B','STRONG','I','EM','U','S','STRIKE','DEL',
+        'H1','H2','H3','H4','H5','H6','BLOCKQUOTE','UL','OL','LI','HR',
+        'CODE','PRE','A','IMG','FONT','SPAN','SECTION'
+    ]);
+    const ALLOWED_STYLES = new Set(['color','background-color','text-align','font-size','font-family']);
+    function sanitizeNode(root){
+        // 遍历所有元素，删除白名单外的标签（保留文字内容）与非法属性/样式
+        const els=[...root.querySelectorAll('*')];
+        for(const el of els){
+            if(!ALLOWED_TAGS.has(el.tagName)){
+                const parent=el.parentNode;
+                while(el.firstChild)parent.insertBefore(el.firstChild,el);
+                parent.removeChild(el);
+                continue;
+            }
+            // 清理属性：只保留 a[href]/img[src,alt]/section[id]/font[size,face,color]
+            for(const attr of[...el.attributes]){
+                const name=attr.name.toLowerCase();
+                const keepAttr=(el.tagName==='A'&&name==='href')
+                    ||(el.tagName==='IMG'&&(name==='src'||name==='alt'))
+                    ||(el.tagName==='SECTION'&&name==='id')
+                    ||(el.tagName==='FONT'&&(name==='size'||name==='face'||name==='color'));
+                if(!keepAttr)el.removeAttribute(attr.name);
+            }
+            // 清理 style：只保留白名单内的 CSS 属性
+            if(el.getAttribute('style')){
+                const kept=[];
+                for(const part of el.getAttribute('style').split(';')){
+                    const i=part.indexOf(':');
+                    if(i<0)continue;
+                    const prop=part.slice(0,i).trim().toLowerCase();
+                    const val=part.slice(i+1).trim();
+                    if(ALLOWED_STYLES.has(prop)&&val)kept.push(prop+':'+val);
+                }
+                if(kept.length)el.setAttribute('style',kept.join(';'));
+                else el.removeAttribute('style');
+            }
         }
-        function applyMode() {
-            body.classList.remove('light-mode', 'dark-mode');
-            if (mode === 1) body.classList.add('dark-mode');
-            if (mode === 2) body.classList.add('light-mode');
-            showIcon(mode === 0 ? 'img' : mode === 1 ? 'moon' : 'sun');
+        return root.innerHTML;
+    }
+    function pasteAsText(e){
+        e.preventDefault();
+        const body=document.querySelector('.editable-body');if(!body)return;
+        const cd=e.clipboardData||window.clipboardData;
+        const text=cd.getData('text/plain');
+        const html=cd.getData('text/html');
+        let insert;
+        if(html){
+            const tmp=document.createElement('div');tmp.innerHTML=html;
+            insert=sanitizeNode(tmp);
+        }else{
+            insert=text.split(/\r?\n/).map(l=>esc(l)||'<br>').join('<br>');
         }
-        toggleBtn.addEventListener('click', () => { mode = (mode + 1) % 3; applyMode(); });
-        applyMode();
-        const modal = document.getElementById('imageModal');
-        const modalImg = document.getElementById('modalImage');
-        const modalClose = document.getElementById('modalClose');
-        document.querySelectorAll('.image-container').forEach(container => {
-            container.addEventListener('click', function() {
-                modalImg.src = this.getAttribute('data-image');
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            });
+        document.execCommand('insertHTML',false,insert);
+        hasUnsavedChanges=true;
+        syncBodyToCode();
+    }
+
+    function extractSubs(html) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        const subs = [];
+        tmp.querySelectorAll('section[id]').forEach(sec => {
+            const h = sec.querySelector('h2,h3');
+            if (h) subs.push({ id: sec.id, label: h.textContent.trim() });
         });
-        modalClose.addEventListener('click', () => { modal.classList.remove('active'); document.body.style.overflow = 'auto'; });
-        modal.addEventListener('click', e => { if (e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = 'auto'; } });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('active')) { modal.classList.remove('active'); document.body.style.overflow = 'auto'; } });
-    </script>
-    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
+        tmp.querySelectorAll('h2[id],h3[id]').forEach(h => {
+            if (!tmp.querySelector(`section[id="${h.id}"]`)) {
+                subs.push({ id: h.id, label: h.textContent.trim() });
+            }
+        });
+        return subs;
+    }
+
+    // ===== Persistence =====
+    function loadData(){
+        try{const r=localStorage.getItem(PAGES_KEY);pages=r?JSON.parse(r):JSON.parse(JSON.stringify(DEFAULT_PAGES));}catch(e){pages=JSON.parse(JSON.stringify(DEFAULT_PAGES));}
+        try{const r=localStorage.getItem(MEMBERS_KEY);members=r?JSON.parse(r):JSON.parse(JSON.stringify(DEFAULT_MEMBERS));}catch(e){members=JSON.parse(JSON.stringify(DEFAULT_MEMBERS));}
+    }
+    function savePagesData(){localStorage.setItem(PAGES_KEY,JSON.stringify(pages));showToast();}
+    function saveMembersData(){localStorage.setItem(MEMBERS_KEY,JSON.stringify(members));}
+    function showToast(msg){const t=document.getElementById('saveToast');t.textContent=msg||'✅ 已保存';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+
+    function renderAuthorsDisplay(authors){
+        if(!authors.length)return'<span class="meta-author-tag">✍️ 匿名</span>';
+        return authors.map(a=>`<span class="meta-author-tag">✍️ ${esc(a)}</span>`).join(' ');
+    }
+
+    // ===== Builders（页面渲染与导出共用） =====
+    function buildPageHTML(pg,isActive=false){
+        return`<div id="${pg.id}" class="wiki-page${isActive?' active':''}" data-page-id="${pg.id}">
+            <h1 class="page-title-display">${esc(pg.title)}</h1>
+            <div class="meta-bar"><span class="meta-time">🕐 ${formatTime(pg.updated)}</span>${renderAuthorsDisplay(getAuthors(pg))}</div>
+            <div class="page-body-display">${pg.content}</div>
+        </div>`;
+    }
+    function buildTocItemHTML(pg,{isActive=false,deletable=true,idx=0}={}){
+        const subHtml=pg.hasSub&&pg.subs?.length?`<div class="sub-menu" data-submenu="${pg.id}">${pg.subs.map(s=>`<a href="#${s.id}" class="toc-link" data-anchor="${s.id}" data-parent="${pg.id}">${esc(s.label)}</a>`).join('')}</div>`:'';
+        const arrow=pg.hasSub?`<span class="expand-arrow" data-arrow="${pg.id}">▶</span>`:'';
+        const del=deletable?`<button class="btn-delete-page" data-del-idx="${idx}" title="删除此分区">✕</button>`:'';
+        return`<li class="toc-item"><div class="toc-page-link${isActive?' active':''}"><span class="link-text" data-nav="${pg.id}">${esc(pg.title)}</span>${arrow}${del}</div>${subHtml}</li>`;
+    }
+
+    // ===== Sidebar =====
+    function renderSidebar(){
+        document.getElementById('tocList').innerHTML=pages.map((pg,idx)=>buildTocItemHTML(pg,{isActive:pg.id===currentPageId,idx})).join('');
+    }
+
+    // ===== Pages =====
+    function renderPages(){
+        document.getElementById('pagesContainer').innerHTML=pages.map(pg=>buildPageHTML(pg,pg.id===currentPageId)).join('');
+    }
+
+    function switchPage(pageId){
+        currentPageId=pageId;
+        document.querySelectorAll('.wiki-page').forEach(p=>p.classList.remove('active'));
+        document.getElementById(pageId)?.classList.add('active');
+        document.querySelectorAll('.toc-page-link').forEach(l=>l.classList.remove('active'));
+        document.querySelector(`[data-nav="${pageId}"]`)?.closest('.toc-page-link')?.classList.add('active');
+        document.getElementById('mainContent').scrollTop=0;
+        if(window.innerWidth<=768)toggleSidebar(false);
+        if(isEditMode)enterEditModeForCurrentPage();
+    }
+
+    // ===== ★ Konami Code Gate (FIXED) =====
+    // 使用 e.code 作为主匹配（不受输入法影响），e.key 作为 fallback
+    // 序列: ↑↑↓↓←→←→BA
+    const KONAMI_SEQ = [
+        'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
+        'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
+        'KeyB','KeyA'
+    ];
+    // e.key fallback map (覆盖中英文输入法下的各种返回值)
+    const KEY_FALLBACK = {
+        'ArrowUp':['ArrowUp','Up','↑'],
+        'ArrowDown':['ArrowDown','Down','↓'],
+        'ArrowLeft':['ArrowLeft','Left','←'],
+        'ArrowRight':['ArrowRight','Right','→'],
+        'KeyB':['KeyB','b','B'],
+        'KeyA':['KeyA','a','A']
+    };
+    let konamiIdx = 0;
+
+    function matchKey(expectedCode, e) {
+        // 优先匹配 e.code（物理键位，不受输入法影响）
+        if (e.code === expectedCode) return true;
+        // fallback: 匹配 e.key 的所有可能值
+        const fallbacks = KEY_FALLBACK[expectedCode];
+        if (fallbacks && fallbacks.includes(e.key)) return true;
+        return false;
+    }
+
+    window.addEventListener('keydown', function konamiListener(e) {
+        if (editorUnlocked) return;
+
+        // 忽略修饰键单独按下
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+        if (matchKey(KONAMI_SEQ[konamiIdx], e)) {
+            konamiIdx++;
+            if (konamiIdx === KONAMI_SEQ.length) {
+                unlockEditor();
+                konamiIdx = 0;
+            }
+        } else {
+            // 按错：如果当前键是序列开头则从1开始，否则归零
+            konamiIdx = matchKey(KONAMI_SEQ[0], e) ? 1 : 0;
+        }
+    });
+
+    function unlockEditor() {
+        editorUnlocked = true;
+        document.getElementById('topControls').style.display = 'flex';
+        const hint = document.getElementById('konamiHint');
+        hint.textContent = '🔓 编辑器已解锁';
+        hint.classList.add('flash');
+        setTimeout(() => hint.classList.remove('flash'), 2000);
+        showToast('🎮 编辑器已解锁');
+    }
+
+    // ===== Edit Mode =====
+    function toggleEditMode(){
+        if(!isEditMode){
+            isEditMode=true;hasUnsavedChanges=false;
+            document.getElementById('modeToggle').textContent='👁 预览模式';
+            document.getElementById('modeToggle').classList.add('editing');
+            document.getElementById('btnSave').classList.add('show');
+            document.getElementById('btnManageMembers').classList.add('show');
+            document.getElementById('editorToolbar').classList.add('show');
+            document.getElementById('sidebarEditActions').style.display='block';
+            document.body.classList.add('edit-mode');
+            enterEditModeForCurrentPage();
+        }else{
+            if(hasUnsavedChanges)document.getElementById('saveConfirmModal').classList.add('show');
+            else doExitEditMode();
+        }
+    }
+
+    function doExitEditMode(){
+        isEditMode=false;hasUnsavedChanges=false;
+        document.getElementById('modeToggle').textContent='✏️ 编辑模式';
+        document.getElementById('modeToggle').classList.remove('editing');
+        document.getElementById('btnSave').classList.remove('show');
+        document.getElementById('btnManageMembers').classList.remove('show');
+        document.getElementById('editorToolbar').classList.remove('show');
+        document.getElementById('sidebarEditActions').style.display='none';
+        document.body.classList.remove('edit-mode');
+        document.querySelector('.content-wrapper')?.classList.remove('code-open');
+        renderPages();
+        if(currentPageId)document.getElementById(currentPageId)?.classList.add('active');
+    }
+
+    // ===== 源码分栏同步 =====
+    function getEditableBody(){return document.querySelector('.editable-body');}
+    // 把 HTML 按块级标签换行（行内标签保持紧凑，避免同步回正文时在字间塞空格）
+    function formatHTMLForDisplay(html){
+        const block=/<\s*(\/?(?:section|h[1-6]|p|div|blockquote|ul|ol|li|hr|pre|br)(?:\s|>))/gi;
+        return html.replace(block,(m)=>'\n'+m);
+    }
+    function syncBodyToCode(){
+        const body=getEditableBody(),code=document.getElementById('codeBody');
+        if(body&&code)code.value=formatHTMLForDisplay(body.innerHTML).replace(/^\n/,'');
+    }
+    function syncCodeToBody(){
+        const body=getEditableBody(),code=document.getElementById('codeBody');
+        if(!body||!code)return;
+        const caret={start:code.selectionStart,end:code.selectionEnd};
+        body.innerHTML=code.value;
+        // 保持 code 焦点与光标，避免左右跳
+        code.focus();code.setSelectionRange(caret.start,caret.end);
+        syncFormatState();
+    }
+    function toggleCodeView(){
+        codeViewOpen=!codeViewOpen;
+        const split=document.querySelector('.editor-split');
+        const wrapper=document.querySelector('.content-wrapper');
+        const btn=document.getElementById('btnToggleCode');
+        if(!split)return;
+        if(codeViewOpen){
+            split.classList.add('code-open');
+            if(wrapper)wrapper.classList.add('code-open');
+            syncBodyToCode();btn.classList.add('active');
+        }else{
+            split.classList.remove('code-open');
+            if(wrapper)wrapper.classList.remove('code-open');
+            btn.classList.remove('active');
+        }
+    }
+
+    // ===== Author Tags Editor =====
+    function buildAuthorTagsEditor(currentAuthors){
+        const tags=currentAuthors.map(a=>`<span class="author-tag" data-author="${esc(a)}">${esc(a)}<button class="tag-remove" data-remove="${esc(a)}" title="移除署名">✕</button></span>`).join('');
+        return`<div class="author-tags-editor" id="authorTagsEditor">
+            <span style="font-size:.82rem;color:var(--text-sub);margin-right:.2rem;">✍️</span>
+            ${tags}
+            <div class="author-input-row">
+                <input type="text" class="author-text-input" id="authorTextInput" placeholder="输入或选择成员..." autocomplete="off" title="输入名字回车添加，或从下拉列表选择">
+                <div class="member-suggestions" id="memberSuggestions"></div>
+            </div>
+        </div>`;
+    }
+
+    function enterEditModeForCurrentPage(){
+        if(!isEditMode||!currentPageId)return;
+        const pageEl=document.getElementById(currentPageId);
+        const pg=pages.find(p=>p.id===currentPageId);
+        if(!pageEl||!pg)return;
+        const currentAuthors=getAuthors(pg);
+        pageEl.querySelector('.page-title-display').innerHTML=`<div class="editable-title" contenteditable="true" spellcheck="false">${esc(pg.title)}</div>`;
+        pageEl.querySelector('.meta-bar').innerHTML=`<span class="meta-time">🕐 ${formatTime(pg.updated)}</span>${buildAuthorTagsEditor(currentAuthors)}`;
+        pageEl.querySelector('.page-body-display').innerHTML=`
+            <div class="editor-split${codeViewOpen?' code-open':''}">
+                <div class="editable-body" contenteditable="true" spellcheck="false">${pg.content}</div>
+                <div class="code-pane">
+                    <div class="code-pane-header"><span>HTML 源码</span><span class="code-hint">两边同步编辑</span></div>
+                    <textarea id="codeBody" spellcheck="false" wrap="soft"></textarea>
+                </div>
+            </div>`;
+        pageEl.querySelector('.editable-title').addEventListener('input',()=>{hasUnsavedChanges=true;});
+        const bodyEl=pageEl.querySelector('.editable-body');
+        const codeEl=pageEl.querySelector('#codeBody');
+        bodyEl.addEventListener('input',()=>{hasUnsavedChanges=true;syncBodyToCode();});
+        bodyEl.addEventListener('paste',e=>{pasteAsText(e);});
+        codeEl.addEventListener('input',()=>{hasUnsavedChanges=true;syncCodeToBody();});
+        codeEl.value=bodyEl.innerHTML;
+        // 进入编辑时同步 wrapper 铺满状态与源码按钮高亮
+        const wrapper=document.querySelector('.content-wrapper');
+        if(wrapper)wrapper.classList.toggle('code-open',codeViewOpen);
+        document.getElementById('btnToggleCode')?.classList.toggle('active',codeViewOpen);
+        bindAuthorTagsEvents();
+    }
+
+    function bindAuthorTagsEvents(){
+        const editor=document.getElementById('authorTagsEditor');
+        const textInput=document.getElementById('authorTextInput');
+        const suggestions=document.getElementById('memberSuggestions');
+        if(!editor||!textInput||!suggestions)return;
+        let highlightIdx=-1;
+
+        editor.addEventListener('click',e=>{
+            const rb=e.target.closest('.tag-remove');
+            if(rb){rb.closest('.author-tag')?.remove();hasUnsavedChanges=true;updateSug();}
+        });
+
+        function getCurrentTags(){return[...editor.querySelectorAll('.author-tag')].map(t=>t.dataset.author);}
+
+        function showSuggestions(q){
+            const existing=getCurrentTags();
+            const filtered=members.filter(m=>!q||m.name.toLowerCase().includes(q.toLowerCase()));
+            // 无匹配时直接隐藏下拉，避免出现空白弹层
+            if(!filtered.length){suggestions.classList.remove('show');return;}
+            suggestions.innerHTML=filtered.map((m,i)=>{
+                const used=existing.includes(m.name);
+                return`<div class="member-suggestion-item${used?' used':''}${i===highlightIdx?' highlighted':''}" data-name="${esc(m.name)}">${esc(m.name)}${used?' ✓':''}</div>`;
+            }).join('');
+            suggestions.classList.add('show');
+        }
+        function updateSug(){if(suggestions.classList.contains('show'))showSuggestions(textInput.value.trim());}
+
+        function addTag(name){
+            if(!name.trim())return;
+            if(getCurrentTags().includes(name.trim()))return;
+            const html=`<span class="author-tag" data-author="${esc(name.trim())}">${esc(name.trim())}<button class="tag-remove" data-remove="${esc(name.trim())}" title="移除署名">✕</button></span>`;
+            editor.querySelector('.author-input-row').insertAdjacentHTML('beforebegin',html);
+            textInput.value='';suggestions.classList.remove('show');highlightIdx=-1;
+            hasUnsavedChanges=true;updateSug();
+        }
+
+        textInput.addEventListener('focus',()=>{highlightIdx=-1;showSuggestions(textInput.value.trim());});
+        textInput.addEventListener('input',()=>{highlightIdx=-1;showSuggestions(textInput.value.trim());});
+        textInput.addEventListener('blur',()=>{setTimeout(()=>suggestions.classList.remove('show'),200);});
+        textInput.addEventListener('keydown',e=>{
+            const items=suggestions.querySelectorAll('.member-suggestion-item:not(.used)');
+            if(e.key==='ArrowDown'){e.preventDefault();highlightIdx=Math.min(highlightIdx+1,items.length-1);showSuggestions(textInput.value.trim());}
+            else if(e.key==='ArrowUp'){e.preventDefault();highlightIdx=Math.max(highlightIdx-1,0);showSuggestions(textInput.value.trim());}
+            else if(e.key==='Enter'){e.preventDefault();if(highlightIdx>=0&&items[highlightIdx])addTag(items[highlightIdx].dataset.name);else if(textInput.value.trim())addTag(textInput.value.trim());}
+            else if(e.key==='Backspace'&&!textInput.value){const tags=editor.querySelectorAll('.author-tag');if(tags.length){tags[tags.length-1].remove();hasUnsavedChanges=true;updateSug();}}
+        });
+        suggestions.addEventListener('mousedown',e=>{const item=e.target.closest('.member-suggestion-item:not(.used)');if(item)addTag(item.dataset.name);});
+    }
+
+    function collectCurrentEdits(){
+        if(!currentPageId)return null;
+        const pageEl=document.getElementById(currentPageId);
+        const titleEdit=pageEl?.querySelector('.editable-title');
+        const bodyEdit=pageEl?.querySelector('.editable-body');
+        const tagsEditor=pageEl?.querySelector('#authorTagsEditor');
+        if(!titleEdit||!bodyEdit)return null;
+        const authors=tagsEditor?[...tagsEditor.querySelectorAll('.author-tag')].map(t=>t.dataset.author):[];
+        return{title:titleEdit.textContent.trim(),content:bodyEdit.innerHTML,authors};
+    }
+
+    // 把当前编辑内容写入数据模型（标题/正文/署名/子章节统一处理）。
+    // persist=true 时写 localStorage 并弹 toast；false 仅更新内存（导航/导出时用）。
+    function commitCurrentEdits(persist=true){
+        if(!currentPageId)return false;
+        const edits=collectCurrentEdits();if(!edits)return false;
+        const pg=pages.find(p=>p.id===currentPageId);if(!pg)return false;
+        pg.title=edits.title;
+        const tmp=document.createElement('div');tmp.innerHTML=edits.content;
+        pg.content=sanitizeNode(tmp);
+        pg.authors=edits.authors;delete pg.author;
+        pg.updated=new Date().toISOString();
+        const newSubs=extractSubs(pg.content);
+        if(newSubs.length>0){pg.hasSub=true;pg.subs=newSubs;}else{pg.hasSub=false;pg.subs=[];}
+        hasUnsavedChanges=false;
+        if(persist)savePagesData();
+        return true;
+    }
+
+    function saveCurrentPage(){
+        if(!commitCurrentEdits(true))return;
+        renderSidebar();
+        const pg=pages.find(p=>p.id===currentPageId);
+        if(pg){const mt=document.querySelector(`#${pg.id} .meta-time`);if(mt)mt.textContent=`🕐 ${formatTime(pg.updated)}`;}
+    }
+
+    // ===== Save Confirm Modal =====
+    document.getElementById('btnSaveAndExit').addEventListener('click',()=>{saveCurrentPage();document.getElementById('saveConfirmModal').classList.remove('show');doExitEditMode();});
+    document.getElementById('btnDiscard').addEventListener('click',()=>{document.getElementById('saveConfirmModal').classList.remove('show');hasUnsavedChanges=false;doExitEditMode();});
+    document.getElementById('btnCancelExit').addEventListener('click',()=>{document.getElementById('saveConfirmModal').classList.remove('show');});
+
+    // ===== Member Manager =====
+    function renderMemberList(){
+        document.getElementById('memberList').innerHTML=members.map((m,i)=>
+            `<li data-idx="${i}"><span class="member-name">${esc(m.name)}</span><button class="btn-rename" data-idx="${i}" title="重命名">✏️</button><button class="btn-del-member" data-idx="${i}" title="删除成员">🗑</button></li>`
+        ).join('');
+    }
+    document.getElementById('btnManageMembers').addEventListener('click',()=>{renderMemberList();document.getElementById('memberModal').classList.add('show');});
+    document.getElementById('btnCloseMemberModal').addEventListener('click',()=>{document.getElementById('memberModal').classList.remove('show');});
+    document.getElementById('btnAddMember').addEventListener('click',addMember);
+    document.getElementById('newMemberInput').addEventListener('keydown',e=>{if(e.key==='Enter')addMember();});
+    function addMember(){
+        const input=document.getElementById('newMemberInput');const name=input.value.trim();
+        if(!name)return;if(members.some(m=>m.name===name)){alert('该成员已存在');return;}
+        members.push({id:'m'+Date.now(),name});saveMembersData();input.value='';renderMemberList();
+    }
+    document.getElementById('memberList').addEventListener('click',function(e){
+        const rb=e.target.closest('.btn-rename'),cb=e.target.closest('.btn-confirm-rename'),db=e.target.closest('.btn-del-member');
+        if(rb){const i=parseInt(rb.dataset.idx),li=rb.closest('li');li.querySelector('.member-name').outerHTML=`<input type="text" class="member-name-input" value="${esc(members[i].name)}" data-idx="${i}">`;rb.outerHTML=`<button class="btn-confirm-rename" data-idx="${i}" title="确认修改">✔️</button>`;li.querySelector('.member-name-input').focus();}
+        if(cb){const i=parseInt(cb.dataset.idx),li=cb.closest('li'),nn=li.querySelector('.member-name-input').value.trim();if(nn){const on=members[i].name;members[i].name=nn;pages.forEach(pg=>{const a=getAuthors(pg);const idx=a.indexOf(on);if(idx!==-1){a[idx]=nn;pg.authors=a;delete pg.author;}});saveMembersData();savePagesData();}renderMemberList();}
+        if(db){const i=parseInt(db.dataset.idx);if(!confirm(`删除成员「${members[i].name}」？\n（已有页面署名不受影响）`))return;members.splice(i,1);saveMembersData();renderMemberList();}
+    });
+    document.getElementById('memberList').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('member-name-input')){document.querySelector(`.btn-confirm-rename[data-idx="${e.target.dataset.idx}"]`)?.click();}});
+
+    // ===== Add/Delete Pages =====
+    document.getElementById('btnAddPage').addEventListener('click',()=>{
+        const title=prompt('新分区名称：');if(!title?.trim())return;
+        // 先提交当前未保存内容，避免新增页面时丢失
+        if(isEditMode&&hasUnsavedChanges)commitCurrentEdits(false);
+        pages.push({id:'page-'+Date.now(),title:title.trim(),hasSub:false,subs:[],authors:[],updated:new Date().toISOString(),content:'<p>在此编写...</p>'});
+        savePagesData();renderSidebar();renderPages();switchPage(pages[pages.length-1].id);
+    });
+    function deletePage(idx){
+        if(pages.length<=1){alert('至少保留一个页面');return;}
+        if(!confirm(`删除「${pages[idx].title}」？`))return;
+        const rid=pages[idx].id;pages.splice(idx,1);savePagesData();renderSidebar();renderPages();
+        if(currentPageId===rid)switchPage(pages[0].id);
+    }
+
+    // ===== Toolbar Commands =====
+    // 选中文字设为/取消章节：选中文字成为章节标题，同步左侧目录锚点
+    function toggleSectionOnSelection(){
+        const body=document.querySelector('.editable-body');if(!body)return;
+        const sel=window.getSelection();
+        if(!sel.rangeCount||sel.isCollapsed){alert('请先用鼠标选中要设为章节的文字');return;}
+        const range=sel.getRangeAt(0);
+        const container=range.commonAncestorContainer;
+        const node=container.nodeType===1?container:container.parentElement;
+        const existing=node?.closest('section');
+        if(existing){
+            // 取消章节：解包 section，内部标题降级为普通段落（锚点随之消失）
+            const parent=existing.parentNode;
+            existing.querySelectorAll('h2,h3').forEach(h=>{
+                const p=document.createElement('p');
+                p.textContent=h.textContent;
+                h.replaceWith(p);
+            });
+            while(existing.firstChild)parent.insertBefore(existing.firstChild,existing);
+            parent.removeChild(existing);
+        }else{
+            // 设为章节：选中文字作为章节标题，包裹成带锚点 id 的 section
+            const text=range.toString().trim();
+            if(!text){alert('选中内容为空');return;}
+            const section=document.createElement('section');
+            section.id='sec-'+Date.now();
+            const h2=document.createElement('h2');
+            h2.textContent=text;
+            section.appendChild(h2);
+            range.deleteContents();
+            range.insertNode(section);
+            sel.removeAllRanges();
+            const r=document.createRange();r.selectNodeContents(section);sel.addRange(r);
+        }
+        // 立即持久化并刷新左侧目录锚点（saveCurrentPage 内部会 commit + renderSidebar）
+        saveCurrentPage();
+    }
+
+    document.getElementById('editorToolbar').addEventListener('click',function(e){
+        const btn=e.target.closest('.toolbar-btn');if(!btn)return;
+        if(btn.id==='btnToggleCode'){toggleCodeView();return;}
+        if(!btn.dataset.cmd)return;
+        const body=document.querySelector('.editable-body');if(!body)return;
+        body.focus();
+        const cmd=btn.dataset.cmd;
+        switch(cmd){
+            case'bold':document.execCommand('bold');break;
+            case'italic':document.execCommand('italic');break;
+            case'underline':document.execCommand('underline');break;
+            case'strikeThrough':document.execCommand('strikeThrough');break;
+            case'h2':document.execCommand('formatBlock',false,'<h2>');break;
+            case'h3':document.execCommand('formatBlock',false,'<h3>');break;
+            case'blockquote':document.execCommand('formatBlock',false,'<blockquote>');break;
+            case'justifyLeft':document.execCommand('justifyLeft');break;
+            case'justifyCenter':document.execCommand('justifyCenter');break;
+            case'justifyRight':document.execCommand('justifyRight');break;
+            case'hr':document.execCommand('insertHorizontalRule');break;
+            case'insertUnorderedList':document.execCommand('insertUnorderedList');break;
+            case'removeFormat':document.execCommand('removeFormat');break;
+            case'code':{const s=window.getSelection();document.execCommand('insertHTML',false,'<code>'+esc(s.toString()||'代码')+'</code>');break;}
+            case'pre':document.execCommand('insertHTML',false,'<pre>// code\n</pre><p></p>');break;
+            case'insertImage':{const u=prompt('图片URL：','https://');if(u&&u!=='https://')document.execCommand('insertHTML',false,`<img src="${esc(u)}" alt=""><p></p>`);break;}
+            case'createLink':{const h=prompt('链接URL：','https://');if(h&&h!=='https://')document.execCommand('createLink',false,h);break;}
+            case'insertSection':toggleSectionOnSelection();break;
+        }
+        hasUnsavedChanges=true;
+        syncBodyToCode();
+    });
+
+    // Text Color Picker
+    document.getElementById('textColorPicker').addEventListener('input', function(e){
+        const body=document.querySelector('.editable-body');if(!body)return;
+        body.focus();
+        document.execCommand('foreColor',false,e.target.value);
+        hasUnsavedChanges=true;
+        syncBodyToCode();
+    });
+
+    // Highlight Color Picker（背景高亮）
+    document.getElementById('hiliteColorPicker').addEventListener('input', function(e){
+        const body=document.querySelector('.editable-body');if(!body)return;
+        body.focus();
+        document.execCommand('hiliteColor',false,e.target.value);
+        hasUnsavedChanges=true;
+        syncBodyToCode();
+    });
+
+    // Font Size Select（字号 1-7）
+    document.getElementById('fontSizeSelect').addEventListener('change', function(e){
+        const body=document.querySelector('.editable-body');if(!body)return;
+        const v=e.target.value;
+        if(!v)return;
+        body.focus();
+        document.execCommand('fontSize',false,v);
+        hasUnsavedChanges=true;
+        syncBodyToCode();
+    });
+
+    // Font Family Select（字体）
+    document.getElementById('fontFamilySelect').addEventListener('change', function(e){
+        const body=document.querySelector('.editable-body');if(!body)return;
+        const v=e.target.value;
+        if(!v)return;
+        body.focus();
+        document.execCommand('fontName',false,v);
+        hasUnsavedChanges=true;
+        syncBodyToCode();
+    });
+
+    // ===== 选区变化时自动回显字号/字体 =====
+    function syncFormatState(){
+        if(!isEditMode)return;
+        const body=document.querySelector('.editable-body');if(!body)return;
+        const sel=window.getSelection();
+        if(!sel.rangeCount||sel.isCollapsed)return;
+        // 选区必须落在可编辑正文内
+        const anchor=sel.anchorNode;
+        const anchorEl=anchor&&(anchor.nodeType===1?anchor:anchor.parentElement);
+        if(!anchorEl||!body.contains(anchorEl))return;
+
+        let fs='',ff='';
+        try{fs=document.queryCommandValue('fontSize')||'';}catch(e){}
+        try{ff=document.queryCommandValue('fontName')||'';}catch(e){}
+
+        const fsSel=document.getElementById('fontSizeSelect');
+        const ffSel=document.getElementById('fontFamilySelect');
+        // 字号：queryCommandValue 返回 "1"~"7"（或空）
+        if(fsSel)fsSel.value=(/^[1-7]$/.test(fs))?fs:'';
+        // 字体：返回可能带引号，规范化后与选项匹配
+        if(ffSel){
+            const norm=String(ff).replace(/["']/g,'').trim().toLowerCase();
+            let matched=false;
+            for(const o of ffSel.options){
+                if(o.value&&o.value.toLowerCase()===norm){ffSel.value=o.value;matched=true;break;}
+            }
+            if(!matched)ffSel.value='';
+        }
+    }
+    document.addEventListener('selectionchange',syncFormatState);
+
+    // ===== Export =====
+    // 导出的静态页运行脚本（不含编辑能力，仅保留目录切换/移动端抽屉）
+    const EXPORT_RUNTIME_JS = `(()=>{
+        const sb=document.getElementById('sidebar'),ov=document.getElementById('sidebarOverlay'),
+              mb=document.getElementById('mobileMenuBtn'),mc=document.getElementById('mainContent');
+        function toggleSidebar(open){
+            const show=open!==undefined?open:!sb.classList.contains('active');
+            sb.classList.toggle('active',show);
+            ov.classList.toggle('active',show);
+        }
+        mb.onclick=()=>toggleSidebar();
+        ov.onclick=()=>toggleSidebar(false);
+        document.getElementById('tocList').onclick=function(e){
+            const ar=e.target.closest('.expand-arrow'),
+                  nt=e.target.closest('.link-text'),
+                  tl=e.target.closest('.toc-link');
+            if(ar){
+                e.stopPropagation();
+                const sm=ar.closest('.toc-page-link').nextElementSibling;
+                if(sm?.classList.contains('sub-menu')){sm.classList.toggle('visible');ar.classList.toggle('open');}
+                return;
+            }
+            if(nt){
+                const tid=nt.dataset.nav;
+                if(tid){
+                    document.querySelectorAll('.wiki-page').forEach(p=>p.classList.remove('active'));
+                    document.getElementById(tid)?.classList.add('active');
+                    document.querySelectorAll('.toc-page-link').forEach(l=>l.classList.remove('active'));
+                    nt.closest('.toc-page-link')?.classList.add('active');
+                    mc.scrollTop=0;
+                    if(innerWidth<=768)toggleSidebar(false);
+                }
+                return;
+            }
+            if(tl){
+                const pid=tl.dataset.parent;
+                if(pid){
+                    document.querySelectorAll('.wiki-page').forEach(p=>p.classList.remove('active'));
+                    document.getElementById(pid)?.classList.add('active');
+                    document.querySelectorAll('.toc-page-link').forEach(l=>l.classList.remove('active'));
+                    document.querySelector('[data-nav="'+pid+'"]')?.closest('.toc-page-link')?.classList.add('active');
+                }
+                requestAnimationFrame(()=>{
+                    const a=document.getElementById(tl.getAttribute('href')?.slice(1));
+                    if(a)a.scrollIntoView({behavior:'smooth',block:'start'});
+                });
+                if(innerWidth<=768)toggleSidebar(false);
+            }
+        };
+    })();`;
+
+    function buildExportHTML(){
+        // 编辑状态下先提交当前内容到内存模型（不写 localStorage）
+        if(isEditMode)commitCurrentEdits(false);
+        const ph=pages.map(pg=>buildPageHTML(pg,pg.id===currentPageId)).join('\n');
+        const th=pages.map(pg=>buildTocItemHTML(pg,{isActive:pg.id===currentPageId,deletable:false})).join('\n');
+        const css=document.querySelector('style').textContent;
+        return`<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>合月亭 Wiki</title>
+<style>${css}</style>
+</head>
+<body>
+<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header"><span>📚 合月亭 Wiki</span></div>
+    <div class="sidebar-content"><ul class="toc-list" id="tocList">${th}</ul></div>
+</aside>
+<main class="main-content" id="mainContent">
+    <div class="content-wrapper"><div id="pagesContainer">${ph}</div></div>
+</main>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"5824bbe371ce4eefbe8027cb86c0d0a6"}'><\/script>
+<script>${EXPORT_RUNTIME_JS}<\/script>
+</body>
+</html>`;
+    }
+
+    document.getElementById('btnExport').addEventListener('click',()=>{
+        const html=buildExportHTML();
+        const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');a.href=url;a.download='heyue-wiki-export.html';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    });
+
+    // ===== Sidebar Events =====
+    document.getElementById('tocList').addEventListener('click',function(e){
+        const del=e.target.closest('.btn-delete-page');
+        if(del){e.stopPropagation();deletePage(parseInt(del.dataset.delIdx));return;}
+        const ar=e.target.closest('.expand-arrow');
+        if(ar){e.stopPropagation();const sm=ar.closest('.toc-page-link').nextElementSibling;if(sm?.classList.contains('sub-menu')){sm.classList.toggle('visible');ar.classList.toggle('open');}return;}
+        const nt=e.target.closest('.link-text');
+        if(nt){
+            const pid=nt.dataset.nav;
+            if(pid){
+                // 切换前先提交未保存内容，防止丢失
+                if(isEditMode&&hasUnsavedChanges)commitCurrentEdits(false);
+                switchPage(pid);
+                const pl=nt.closest('.toc-page-link'),sm=pl?.nextElementSibling,ae=pl?.querySelector('.expand-arrow');
+                if(sm?.classList.contains('sub-menu')&&!sm.classList.contains('visible')){sm.classList.add('visible');if(ae)ae.classList.add('open');}
+            }
+            return;
+        }
+        const tl=e.target.closest('.toc-link');
+        if(tl){
+            const pid=tl.dataset.parent;
+            if(pid&&currentPageId!==pid){
+                if(isEditMode&&hasUnsavedChanges)commitCurrentEdits(false);
+                switchPage(pid);
+            }
+            requestAnimationFrame(()=>{const a=document.getElementById(tl.getAttribute('href')?.slice(1));if(a)a.scrollIntoView({behavior:'smooth',block:'start'});});
+            if(innerWidth<=768)toggleSidebar(false);
+        }
+    });
+
+    // ===== Mobile =====
+    function toggleSidebar(open){const sb=document.getElementById('sidebar'),ov=document.getElementById('sidebarOverlay');const a=open!==undefined?open:!sb.classList.contains('active');sb.classList.toggle('active',a);ov.classList.toggle('active',a);}
+    document.getElementById('mobileMenuBtn').addEventListener('click',()=>toggleSidebar());
+    document.getElementById('sidebarOverlay').addEventListener('click',()=>toggleSidebar(false));
+
+    // ===== Top Buttons =====
+    document.getElementById('modeToggle').addEventListener('click',toggleEditMode);
+    document.getElementById('btnSave').addEventListener('click',saveCurrentPage);
+    document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'&&isEditMode){e.preventDefault();saveCurrentPage();}});
+
+    // ===== Init =====
+    loadData();renderSidebar();renderPages();switchPage(pages[0]?.id||'page-intro');
+})();
+</script>
 </body>
 </html>
