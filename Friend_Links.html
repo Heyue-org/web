@@ -17,14 +17,43 @@ body{font-family:sans-serif;background:#f5f6f8;min-height:100vh}
 .grid{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
 .card{display:flex;align-items:center;gap:12px;background:#fff;border-radius:10px;padding:16px;text-decoration:none;color:#333;box-shadow:0 1px 3px rgba(0,0,0,.08);transition:transform .3s,box-shadow .3s}
 .card:hover{transform:translateY(-3px);box-shadow:0 5px 14px rgba(0,0,0,.12)}
-.card img{width:42px;height:42px;border-radius:8px}
-.card .name{font-weight:600;font-size:15px}
-.card .desc{font-size:12px;color:#999;margin-top:3px}
+
+/* ===== Logo 容器与图片适配逻辑 ===== */
+.card .logo-wrap {
+    /* 基础尺寸 42x42，允许宽度最多延长到 1.5 倍 (63px) */
+    width: 42px;
+    height: 42px;
+    max-width: 63px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card .logo-wrap img {
+    /* contain: 不裁剪、不变形，完整显示在容器内 */
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.card .info{min-width:0}
+.card .name{font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card .desc{font-size:12px;color:#999;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .divider{max-width:900px;margin:40px auto 24px;height:1px;background:linear-gradient(to right,transparent,#d0d0d0,transparent)}
 .apply-box{max-width:900px;margin:0 auto;text-align:center;color:#888;font-size:14px;line-height:1.9}
 .apply-box .apply-title{font-size:15px;color:#666;margin-bottom:10px}
 .apply-box pre{display:inline-block;text-align:left;background:#fff;border:1px solid #e8e8e8;border-radius:8px;padding:14px 24px;font-family:'Courier New',monospace;font-size:13px;color:#555;margin-top:6px}
-@media(max-width:600px){.top-bar{padding:.8rem 1rem}.top-bar-inner .logo{font-size:1.1rem}.top-bar-inner .logo img{width:26px;height:26px}.top-bar-inner .page-title{font-size:1.1rem}.content{padding:28px 14px 40px}.apply-box pre{padding:12px 16px;font-size:12px}}
+@media(max-width:600px){
+    .top-bar{padding:.8rem 1rem}
+    .top-bar-inner .logo{font-size:1.1rem}
+    .top-bar-inner .logo img{width:26px;height:26px}
+    .top-bar-inner .page-title{font-size:1.1rem}
+    .content{padding:28px 14px 40px}
+    .apply-box pre{padding:12px 16px;font-size:12px}
+    /* 移动端同步调整 logo 容器 */
+    .card .logo-wrap{width:36px;height:36px;max-width:54px}
+}
 </style>
 </head>
 <body>
@@ -43,41 +72,54 @@ body{font-family:sans-serif;background:#f5f6f8;min-height:100vh}
 <div class="content">
 <div class="grid">
   <a class="card" href="https://www.lycorisgal.com/" target="_blank">
-<img src="https://r2.lycorisgal.com/uploads/init/favicon.webp" alt="LyCorisGAL">
-<div><div class="name">LyCorisGAL</div><div class="desc">提供Galgame 下载、补丁下载等服务</div></div>
-</a>
-<a class="card" href="https://g.xn--8qvt52h.top/" target="_blank">
-<img src="https://g.xn--8qvt52h.top/assets/favicon-lsdnlph6.png" alt="">
-<div><div class="name">四叶草与雏菊</div><div class="desc">GAL网盘</div></div>
-</a>
-<a class="card" href="https://arkrpg.tech/" target="_blank">
-<img src="assets/css/images/200x200bb-75.webp" alt="ArkRPG">
-<div><div class="name">ArkRPG</div><div class="desc">在 iPhone / iPad 上体验 RPG Maker 游戏</div></div>
-</a>
-<a class="card" href="https://galbase.top/" target="_blank">
-<img src="assets/css/images/link/title_start.png" alt="GALBase">
-<div><div class="name">GALBase</div><div class="desc">ACG论坛</div></div>
-</a>
-<a class="card" href="https://www.sayafx.vip/" target="_blank">
-<img src="https://www.sayafx.vip/img/favicon.jpg" alt="月谣">
-<div><div class="name">月谣</div><div class="desc">免费的GALgame资源站</div></div>
-</a>
-<a class="card" href="https://srsg.moe/" target="_blank">
-<img src="https://img.srsg.moe/2021/06/01/c5b555e3b8a17.png" alt="白鹭学园">
-<div><div class="name">白鹭学园</div><div class="desc">一个动漫同好社区，著力于分享ACG相关信息</div></div>
-</a>
-<a class="card" href="https://www.acgdhz.com" target="_blank">
-<img src="https://www.acgdhz.com/favicon.ico" alt="ACG导航站">
-<div><div class="name">ACG导航站</div><div class="desc">专注ACG动漫、ACG游戏、ACG漫画</div></div>
-</a>
-<a class="card" href="https://www.singureo.com/" target="_blank">
-<img src="" alt="singureo">
-<div><div class="name">singureo</div><div class="desc">以Galgame为主的资源分享网站</div></div>
-</a>
-<a class="card" href="https://galnavi.top/" target="_blank">
-<img src="https://zgwwzjuqzifixegerouj.supabase.co/storage/v1/object/public/galnavi-assets/icon/favicon.png" alt="GALNAVI">
-<div><div class="name">GALNAVI</div><div class="desc">ACG 二次元资源导航网站</div></div>
-</a>
+    <div class="logo-wrap"><img src="https://r2.lycorisgal.com/uploads/init/favicon.webp" alt="LyCorisGAL"></div>
+    <div class="info"><div class="name">LyCorisGAL</div><div class="desc">提供Galgame 下载、补丁下载等服务</div></div>
+  </a>
+  <a class="card" href="https://g.xn--8qvt52h.top/" target="_blank">
+    <div class="logo-wrap"><img src="https://g.xn--8qvt52h.top/assets/favicon-lsdnlph6.png" alt=""></div>
+    <div class="info"><div class="name">四叶草与雏菊</div><div class="desc">GAL网盘</div></div>
+  </a>
+  <a class="card" href="https://arkrpg.tech/" target="_blank">
+    <div class="logo-wrap"><img src="https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/2a/69/f4/2a69f414-dfc9-be48-a290-512a0740e12e/Placeholder.mill/200x200bb-75.webp" alt="ArkRPG"></div>
+    <div class="info"><div class="name">ArkRPG</div><div class="desc">在 iPhone / iPad 上体验 RPG Maker 游戏</div></div>
+  </a>
+  <a class="card" href="https://galbase.top/" target="_blank">
+    <div class="logo-wrap"><img src="https://d3gal.dpdns.org/imgs/title_start.png" alt="GALBase"></div>
+    <div class="info"><div class="name">GALBase</div><div class="desc">ACG论坛</div></div>
+  </a>
+  <a class="card" href="https://www.sayafx.vip/" target="_blank">
+    <div class="logo-wrap"><img src="https://www.sayafx.vip/img/favicon.jpg" alt="月谣"></div>
+    <div class="info"><div class="name">月谣</div><div class="desc">免费的GALgame资源站</div></div>
+  </a>
+  <a class="card" href="https://srsg.moe/" target="_blank">
+    <div class="logo-wrap"><img src="https://img.srsg.moe/2021/06/01/c5b555e3b8a17.png" alt="白鹭学园"></div>
+    <div class="info"><div class="name">白鹭学园</div><div class="desc">一个动漫同好社区，著力于分享ACG相关信息</div></div>
+  </a>
+  <a class="card" href="https://www.acgdhz.com" target="_blank">
+    <div class="logo-wrap"><img src="https://www.acgdhz.com/favicon.ico" alt="ACG导航站"></div>
+    <div class="info"><div class="name">ACG导航站</div><div class="desc">专注ACG动漫、ACG游戏、ACG漫画</div></div>
+  </a>
+  <a class="card" href="https://www.singureo.com/" target="_blank">
+    <div class="logo-wrap"><img src="https://www.singureo.com/SingureoLogo.png" alt="singureo"></div>
+    <div class="info"><div class="name">莉斯坦ACG</div><div class="desc">以Galgame为主的资源分享网站</div></div>
+  </a>
+  <a class="card" href="https://galnavi.top/" target="_blank">
+    <div class="logo-wrap"><img src="https://zgwwzjuqzifixegerouj.supabase.co/storage/v1/object/public/galnavi-assets/icon/favicon.png" alt="GALNAVI"></div>
+    <div class="info"><div class="name">GALNAVI</div><div class="desc">ACG 二次元资源导航网站</div></div>
+  </a>
+  <!-- 模板卡片 -->
+  <a class="card" href="地址" target="_blank">
+    <div class="logo-wrap"><img src="LOGO" alt="名字"></div>
+    <div class="info"><div class="name">名字</div><div class="desc">简介</div></div>
+  </a>
+  <a class="card" href="地址" target="_blank">
+    <div class="logo-wrap"><img src="LOGO" alt="名字"></div>
+    <div class="info"><div class="name">名字</div><div class="desc">简介</div></div>
+  </a>
+  <a class="card" href="地址" target="_blank">
+    <div class="logo-wrap"><img src="LOGO" alt="名字"></div>
+    <div class="info"><div class="name">名字</div><div class="desc">简介</div></div>
+  </a>
 </div>
 
 <div class="divider"></div>
