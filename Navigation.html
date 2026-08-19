@@ -54,8 +54,6 @@
         [data-theme="light"] body::before {
             background: radial-gradient(circle, rgba(217,119,6,0.08) 0%, transparent 70%);
         }
-
-        /* ===== Top Bar ===== */
         .top-bar {
             padding: 1rem 2rem;
             border-bottom: 1px solid var(--border-color);
@@ -98,14 +96,10 @@
             justify-content: center; flex-shrink: 0;
         }
         .theme-toggle:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
-
-        /* ===== Layout: Sidebar + Content ===== */
         .layout {
             display: flex; flex: 1; max-width: 1400px;
             margin: 0 auto; width: 100%;
         }
-
-        /* ===== Sidebar ===== */
         .sidebar {
             width: var(--sidebar-w); flex-shrink: 0;
             border-right: 1px solid var(--border-color);
@@ -135,8 +129,6 @@
             color: var(--accent-gold);
             font-weight: 600;
         }
-
-        /* ===== Main Content ===== */
         .main-content {
             flex: 1; min-width: 0; padding: 1.5rem 2rem 4rem;
         }
@@ -166,8 +158,6 @@
             color: var(--text-main); font-size: 0.9rem;
             outline: none; cursor: pointer; transition: all 0.3s;
         }
-
-        /* ===== Grid Toggle Button ===== */
         .grid-toggle-btn {
             display: none;
             align-items: center; justify-content: center;
@@ -183,8 +173,6 @@
         }
         .grid-toggle-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
         .grid-toggle-btn.active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(251,191,36,0.1); }
-
-        /* ===== Card Grid ===== */
         .grid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
         }
@@ -200,27 +188,39 @@
             border-color: rgba(251,191,36,0.4);
         }
         [data-theme="light"] .site-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
-        .badge-excellent {
-            position: absolute; top: 0; right: 0;
-            background: var(--excellent); color: #fff;
-            font-size: 0.7rem; font-weight: 700;
-            padding: 2px 8px; border-radius: 0 10px 0 8px;
-            letter-spacing: 1px; line-height: 1.4;
+        .site-name-row {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding-right: 3rem; overflow: hidden;
         }
-        [data-theme="dark"] .badge-excellent { color: #0f172a; }
+        .site-logo {
+            width: 24px; height: 24px; border-radius: 4px;
+            object-fit: cover; flex-shrink: 0;
+            border: 1px solid var(--border-color);
+        }
         .site-name {
             font-size: 1.05rem; font-weight: 700; color: var(--text-main);
-            padding-right: 3rem; overflow: hidden;
-            text-overflow: ellipsis; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .links-toggle-row {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 0.5rem; padding: 0.2rem 0;
         }
         .links-toggle {
             display: flex; align-items: center; gap: 0.4rem;
             font-size: 0.8rem; color: var(--accent-gold);
-            cursor: pointer; user-select: none; padding: 0.2rem 0;
+            cursor: pointer; user-select: none; flex-shrink: 0;
         }
         .links-toggle:hover { opacity: 0.8; }
         .links-toggle .arrow { transition: transform 0.3s; font-size: 0.7rem; }
         .links-toggle.open .arrow { transform: rotate(90deg); }
+        .uid-inline {
+            font-size: 0.72rem; color: var(--text-sub);
+            font-family: 'Fira Code', 'Consolas', monospace;
+            letter-spacing: 0.5px; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+            min-width: 0;
+        }
+        .uid-inline .uid-val { color: var(--accent-gold); }
         .links-panel {
             display: none; flex-direction: column; gap: 0.3rem;
             padding: 0.4rem 0; border-top: 1px dashed var(--border-color); margin-top: 0.2rem;
@@ -269,8 +269,6 @@
             text-align: center; padding: 4rem 0;
             color: var(--text-sub); grid-column: 1 / -1;
         }
-
-        /* ===== Mobile Sidebar Toggle ===== */
         .mobile-menu-btn {
             display: none; background: none; border: 1px solid var(--border-color);
             border-radius: 8px; padding: 0.4rem 0.6rem; cursor: pointer;
@@ -281,8 +279,6 @@
             display: none; position: fixed; inset: 0;
             background: rgba(0,0,0,0.5); z-index: 299;
         }
-
-        /* ===== Rating Stars ===== */
         .rating-row {
             display: flex; align-items: center; gap: 0.5rem;
             margin-top: 0.3rem; padding-top: 0.4rem;
@@ -291,9 +287,7 @@
         .rating-label {
             color: var(--text-sub); font-size: 0.75rem; flex-shrink: 0;
         }
-        .stars {
-            display: inline-flex; gap: 2px; cursor: pointer;
-        }
+        .stars { display: inline-flex; gap: 2px; cursor: pointer; }
         .star {
             font-size: 1rem; color: var(--border-color);
             transition: color 0.2s, transform 0.15s; user-select: none;
@@ -309,8 +303,6 @@
         }
         .stars.disabled { cursor: default; opacity: 0.6; }
         .stars.disabled .star:hover { transform: none; }
-
-        /* ===== Responsive ===== */
         @media (max-width: 900px) {
             .grid { grid-template-columns: repeat(2, 1fr); }
         }
@@ -324,8 +316,6 @@
             }
             .sidebar.open { left: 0; }
             .sidebar-overlay.active { display: block; }
-
-            /* 顶栏移动端：左侧按钮紧贴边缘，右侧文字可溢出隐藏 */
             .top-bar { padding: 0.8rem 0.6rem; }
             .top-bar-inner { gap: 0.5rem; }
             .mobile-menu-btn { margin-right: 0.4rem; padding: 0.35rem 0.5rem; font-size: 1.1rem; }
@@ -334,32 +324,28 @@
             .v-line { height: 22px; margin: 0 0.5rem; width: 2px; }
             .page-title { font-size: 1.1rem; letter-spacing: 1px; overflow: hidden; text-overflow: ellipsis; }
             .theme-toggle { padding: 0.3rem 0.5rem; font-size: 1rem; }
-
             .main-content { padding: 1rem 0.6rem 3rem; }
             .toolbar { gap: 0.6rem; }
             .search-box { min-width: 0; padding: 0.5rem 0.8rem; font-size: 0.85rem; }
             .sort-select { padding: 0.5rem 0.6rem; font-size: 0.85rem; }
             .grid-toggle-btn { display: flex; }
-
-            /* 默认手机端2列，点击切换为3列 */
             .grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
             .grid.cols-3 { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
             .grid.cols-3 .site-card { padding: 0.8rem 0.7rem; }
-            .grid.cols-3 .site-name { font-size: 0.9rem; padding-right: 2rem; }
+            .grid.cols-3 .site-name { font-size: 0.9rem; }
+            .grid.cols-3 .site-logo { width: 20px; height: 20px; }
             .grid.cols-3 .links-toggle { font-size: 0.72rem; }
+            .grid.cols-3 .uid-inline { font-size: 0.62rem; }
             .grid.cols-3 .meta-row { font-size: 0.72rem; gap: 0.4rem; }
             .grid.cols-3 .meta-label { font-size: 0.65rem; }
             .grid.cols-3 .rating-row { gap: 0.3rem; }
             .grid.cols-3 .star { font-size: 0.8rem; }
             .grid.cols-3 .rating-info { font-size: 0.65rem; }
-            .grid.cols-3 .badge-excellent { font-size: 0.6rem; padding: 1px 5px; }
-
             .custom-links-row { padding-left: 0; }
         }
     </style>
 </head>
 <body>
-    <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-inner">
             <div style="display:flex;align-items:center;min-width:0;flex:1;">
@@ -373,11 +359,8 @@
             <button class="theme-toggle" id="themeToggle" title="切换日/夜模式">🌙</button>
         </div>
     </div>
-
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
     <div class="layout">
-        <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-section-label">— 资源站 —</div>
             <a class="sidebar-link active" data-json="assets/nav-pages/gal.json" data-label="GAL">GAL</a>
@@ -388,7 +371,6 @@
             <a class="sidebar-link" data-json="assets/nav-pages/ln.json" data-label="轻小说">轻小说</a>
             <a class="sidebar-link" data-json="assets/nav-pages/anime.json" data-label="动漫">动漫</a>
             <a class="sidebar-link" data-json="assets/nav-pages/mmd.json" data-label="MMD">MMD</a>
-
             <div class="sidebar-section-label" style="margin-top:1rem;">— 工具 —</div>
             <a class="sidebar-link" data-json="assets/nav-pages/wiki.json" data-label="WIKI">WIKI</a>
             <a class="sidebar-link" data-json="assets/nav-pages/acg-nav.json" data-label="二次元导航站">二次元导航站</a>
@@ -396,15 +378,13 @@
             <a class="sidebar-link" data-json="assets/nav-pages/search.json" data-label="搜索引擎">搜索引擎</a>
             <a class="sidebar-link" data-json="assets/nav-pages/valhalla.json" data-label="英灵殿">英灵殿</a>
         </nav>
-
-        <!-- Main Content -->
         <main class="main-content">
             <div class="content-header">
                 <div class="current-category" id="categoryTitle">GAL</div>
                 <span class="site-count" id="siteCount"></span>
             </div>
             <div class="toolbar">
-                <input type="text" class="search-box" id="searchInput" placeholder="搜索站点名称、备注或链接...">
+                <input type="text" class="search-box" id="searchInput" placeholder="搜索站点名称、备注或链接或UID...">
                 <select class="sort-select" id="sortSelect">
                     <option value="default">默认排序</option>
                     <option value="name">按名称排序 (A-Z)</option>
@@ -419,14 +399,12 @@
 
     <script>
     (() => {
-        // ========== Config ==========
         var API_BASE = 'https://heyue-rating-worker.heyue-rating-api.workers.dev';
 
         // ========== Theme ==========
         var THEME_KEY = 'heyue_nav_theme';
         var htmlEl = document.documentElement;
         var themeBtn = document.getElementById('themeToggle');
-
         function applyTheme(theme) {
             htmlEl.setAttribute('data-theme', theme);
             themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
@@ -442,7 +420,6 @@
         var sidebar = document.getElementById('sidebar');
         var overlay = document.getElementById('sidebarOverlay');
         var menuBtn = document.getElementById('mobileMenuBtn');
-
         function toggleSidebar(open) {
             sidebar.classList.toggle('open', open);
             overlay.classList.toggle('active', open);
@@ -450,12 +427,11 @@
         menuBtn.addEventListener('click', function() { toggleSidebar(true); });
         overlay.addEventListener('click', function() { toggleSidebar(false); });
 
-        // ========== Grid Toggle (Mobile) ==========
+        // ========== Grid Toggle ==========
         var GRID_COLS_KEY = 'heyue_nav_grid_cols';
         var gridToggleBtn = document.getElementById('gridToggleBtn');
         var cardContainer = document.getElementById('cardContainer');
         var currentCols = parseInt(localStorage.getItem(GRID_COLS_KEY)) || 2;
-
         function applyGridCols(cols) {
             currentCols = cols;
             localStorage.setItem(GRID_COLS_KEY, cols);
@@ -482,12 +458,11 @@
         var isGlobalSearch = false;
         var currentJsonPath = '';
         var currentLabel = '';
-
-        // Rating state
         var ratingCache = {};
         var ratedKeys = new Set();
 
         function getRatingKey(site) {
+            if (site.uid && site.uid.trim()) return 'uid:' + site.uid.trim();
             return 'site:' + (site.name || '') + '_' + (site.url || '').replace(/\s+/g, '_');
         }
 
@@ -507,19 +482,13 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ key: key, score: score })
             })
-            .then(function(res) {
-                if (!res.ok) throw new Error('fail');
-                return res.json();
-            })
+            .then(function(res) { if (!res.ok) throw new Error('fail'); return res.json(); })
             .then(function(data) {
                 ratingCache[key] = data;
                 ratedKeys.add(key);
                 updateRatingDisplay(starsEl, infoEl, data);
             })
-            .catch(function(e) {
-                console.warn('rating submit failed:', e);
-                starsEl.classList.remove('disabled');
-            });
+            .catch(function(e) { console.warn('rating submit failed:', e); starsEl.classList.remove('disabled'); });
         }
 
         function updateRatingDisplay(starsEl, infoEl, data) {
@@ -535,14 +504,11 @@
         function buildRatingHtml(site) {
             var key = getRatingKey(site);
             var stars = '';
-            for (var i = 1; i <= 5; i++) {
-                stars += '<span class="star" data-val="' + i + '">\u2605</span>';
-            }
+            for (var i = 1; i <= 5; i++) stars += '<span class="star" data-val="' + i + '">\u2605</span>';
             return '<div class="rating-row" data-rating-key="' + key + '">'
-                + '<span class="rating-label">\u8BC4\u5206</span>'
+                + '<span class="rating-label">评分</span>'
                 + '<div class="stars" data-key="' + key + '">' + stars + '</div>'
-                + '<span class="rating-info">\u52A0\u8F7D\u4E2D...</span>'
-                + '</div>';
+                + '<span class="rating-info">加载中...</span></div>';
         }
 
         function bindRatingEvents() {
@@ -552,20 +518,9 @@
                     var key = starsEl.getAttribute('data-key');
                     var infoEl = starsEl.nextElementSibling;
                     var starSpans = starsEl.querySelectorAll('.star');
-
-                    if (ratingCache[key]) {
-                        updateRatingDisplay(starsEl, infoEl, ratingCache[key]);
-                    } else {
-                        fetchRating(key).then(function(data) {
-                            updateRatingDisplay(starsEl, infoEl, data);
-                        });
-                    }
-
-                    if (ratedKeys.has(key)) {
-                        starsEl.classList.add('disabled');
-                        return;
-                    }
-
+                    if (ratingCache[key]) updateRatingDisplay(starsEl, infoEl, ratingCache[key]);
+                    else fetchRating(key).then(function(data) { updateRatingDisplay(starsEl, infoEl, data); });
+                    if (ratedKeys.has(key)) { starsEl.classList.add('disabled'); return; }
                     for (var j = 0; j < starSpans.length; j++) {
                         (function(star) {
                             star.addEventListener('mouseenter', function() {
@@ -583,7 +538,6 @@
                             });
                         })(starSpans[j]);
                     }
-
                     starsEl.addEventListener('mouseleave', function() {
                         if (starsEl.classList.contains('disabled')) return;
                         var cached = ratingCache[key];
@@ -597,83 +551,129 @@
             }
         }
 
-        function parseRelated(related) {
+        /**
+         * 解析 related 字段（终极防御版）
+         * 兼容: "url1,url2" / "\"url1\",\"url2\"" / url1,url2 等
+         */
+        function parseRelatedUrls(relatedField) {
+            if (!relatedField || typeof relatedField !== 'string' || !relatedField.trim()) return [];
+            var raw = relatedField.trim();
+            // 去掉首尾可能存在的引号
+            if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
+                raw = raw.slice(1, -1);
+            }
+            // 按逗号分割，清理每个URL
+            var urls = [];
+            var parts = raw.split(',');
+            for (var i = 0; i < parts.length; i++) {
+                var u = parts[i].trim().replace(/^["']+|["']+$/g, '');
+                if (u && /^https?:\/\//i.test(u)) urls.push(u);
+            }
+            // 去重
+            var seen = {};
+            return urls.filter(function(u) { if (seen[u]) return false; seen[u] = true; return true; });
+        }
+
+        /**
+         * 三个图标全部从 related 数组中独立匹配
+         */
+        function resolveIcons(relatedUrls) {
             var result = { nav: null, tg: null, github: null, custom: [] };
-            if (!related) return result;
-            related.split('\n').filter(Boolean).forEach(function(raw) {
-                var line = raw.trim();
-                if (!line) return;
-                var tagMatch = line.match(/^\[(nav|tg|gh)\](.+)$/i);
-                if (tagMatch) {
-                    var tag = tagMatch[1].toLowerCase();
-                    var url = tagMatch[2].trim();
-                    if (tag === 'nav') result.nav = url;
-                    else if (tag === 'tg') result.tg = url;
-                    else if (tag === 'gh') result.github = url;
-                    return;
+            var consumed = {};
+
+            for (var i = 0; i < relatedUrls.length; i++) {
+                var lower = relatedUrls[i].toLowerCase();
+                if (!result.tg && (lower.includes('t.me') || lower.includes('discord') || lower.includes('tg'))) {
+                    result.tg = relatedUrls[i];
+                    consumed[i] = true;
+                } else if (!result.github && lower.includes('github.com')) {
+                    result.github = relatedUrls[i];
+                    consumed[i] = true;
                 }
-                var lower = line.toLowerCase();
-                if (lower.includes('t.me')) { if (!result.tg) result.tg = line; else result.custom.push(line); }
-                else if (lower.includes('github.com')) { if (!result.github) result.github = line; else result.custom.push(line); }
-                else if (!result.nav) { result.nav = line; }
-                else { result.custom.push(line); }
-            });
+            }
+
+            for (var j = 0; j < relatedUrls.length; j++) {
+                if (!consumed[j]) {
+                    result.nav = relatedUrls[j];
+                    consumed[j] = true;
+                    break;
+                }
+            }
+
+            for (var k = 0; k < relatedUrls.length; k++) {
+                if (!consumed[k]) result.custom.push(relatedUrls[k]);
+            }
+
             return result;
         }
 
         function renderCards(sites) {
             var container = document.getElementById('cardContainer');
             var countEl = document.getElementById('siteCount');
-            countEl.textContent = '\u5171 ' + sites.length + ' \u4E2A\u7AD9\u70B9';
-
-            if (sites.length === 0) {
-                container.innerHTML = '<div class="loading">\u672A\u627E\u5230\u5339\u914D\u7684\u7AD9\u70B9</div>';
-                return;
-            }
+            countEl.textContent = '共 ' + sites.length + ' 个站点';
+            if (sites.length === 0) { container.innerHTML = '<div class="loading">未找到匹配的站点</div>'; return; }
 
             container.innerHTML = sites.map(function(s) {
-                var excellentBadge = s.excellent ? '<span class="badge-excellent">\u4F18\u79C0</span>' : '';
-                var urlLink = s.url
-                    ? '<a href="' + s.url + '" target="_blank" rel="noopener">' + s.url + '</a>' : '\u2014';
-                var rel = parseRelated(s.related);
+                var siteName = s.name || '未命名站点';
+                var primaryUrl = s.url || '';
+                var relatedUrls = parseRelatedUrls(s.related);
+                var rel = resolveIcons(relatedUrls);
+
+                // DEBUG: 取消注释下面这行可在Console看到解析结果
+                // console.log('DEBUG related:', JSON.stringify(s.related), '→ parsed:', relatedUrls, '→ icons:', rel);
+
+                var logoHtml = '';
+                if (s.logo && s.logo.trim()) {
+                    logoHtml = '<img class="site-logo" src="' + s.logo.trim() + '" alt="" onerror="this.style.display=\'none\'">';
+                }
+
+                var urlLink = primaryUrl
+                    ? '<a href="' + primaryUrl + '" target="_blank" rel="noopener">' + primaryUrl + '</a>' : '—';
 
                 var navIcon = rel.nav
-                    ? '<a class="related-icon icon-nav active" href="' + rel.nav + '" target="_blank" rel="noopener" title="\u5BFC\u822A/\u4E3B\u9875">\uD83D\uDCD1</a>'
-                    : '<span class="related-icon icon-nav" title="\u65E0\u5BFC\u822A\u94FE\u63A5">\uD83D\uDCD1</span>';
+                    ? '<a class="related-icon icon-nav active" href="' + rel.nav + '" target="_blank" rel="noopener" title="导航/主页">📑</a>'
+                    : '<span class="related-icon icon-nav" title="无导航链接">📑</span>';
                 var tgIcon = rel.tg
-                    ? '<a class="related-icon icon-tg active" href="' + rel.tg + '" target="_blank" rel="noopener" title="Telegram">\u2708\uFE0F</a>'
-                    : '<span class="related-icon icon-tg" title="\u65E0TG\u94FE\u63A5">\u2708\uFE0F</span>';
+                    ? '<a class="related-icon icon-tg active" href="' + rel.tg + '" target="_blank" rel="noopener" title="Telegram/Discord">✈️</a>'
+                    : '<span class="related-icon icon-tg" title="无TG/Discord链接">✈️</span>';
                 var ghIcon = rel.github
                     ? '<a class="related-icon icon-gh active" href="' + rel.github + '" target="_blank" rel="noopener" title="GitHub">' + GH_SVG + '</a>'
-                    : '<span class="related-icon icon-gh" title="\u65E0GitHub\u94FE\u63A5">' + GH_SVG + '</span>';
+                    : '<span class="related-icon icon-gh" title="无GitHub链接">' + GH_SVG + '</span>';
 
                 var iconsHtml = '<span class="related-icons">' + navIcon + tgIcon + ghIcon + '</span>';
                 var customLinksHtml = rel.custom.length > 0
                     ? '<div class="custom-links-row">' + rel.custom.map(function(u) { return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>'; }).join('') + '</div>' : '';
-                var problemHtml = s.problem
-                    ? '<span class="meta-value problem">' + s.problem + '</span>'
-                    : '<span style="color:var(--text-sub)">\u6682\u65E0</span>';
+
+                var problemHtml = s.issue
+                    ? '<span class="meta-value problem">' + s.issue + '</span>'
+                    : '<span style="color:var(--text-sub)">暂无</span>';
+
+                var uidInlineHtml = '';
+                if (s.uid && s.uid.trim()) {
+                    uidInlineHtml = '<span class="uid-inline">UID: <span class="uid-val">' + s.uid.trim() + '</span></span>';
+                }
 
                 var categoryTag = isGlobalSearch && s._category
                     ? '<span style="position:absolute;top:0;left:0;background:rgba(251,191,36,0.15);color:var(--accent-gold);font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:10px 0 8px 0;letter-spacing:0.5px;">' + s._category + '</span>'
                     : '';
 
                 return '<div class="site-card">'
-                    + categoryTag + excellentBadge
-                    + '<div class="site-name" title="' + s.name + '">' + s.name + '</div>'
-                    + '<div class="links-toggle" onclick="this.classList.toggle(\'open\');this.nextElementSibling.classList.toggle(\'show\')">'
-                    + '<span class="arrow">\u25B6</span> \u67E5\u770B\u94FE\u63A5</div>'
+                    + categoryTag
+                    + '<div class="site-name-row">' + logoHtml
+                    + '<div class="site-name" title="' + siteName + '">' + siteName + '</div></div>'
+                    + '<div class="links-toggle-row">'
+                    + '<div class="links-toggle" onclick="this.classList.toggle(\'open\');this.parentElement.nextElementSibling.classList.toggle(\'show\')">'
+                    + '<span class="arrow">▶</span> 查看链接</div>'
+                    + uidInlineHtml + '</div>'
                     + '<div class="links-panel">'
-                    + '<div class="link-row"><span class="link-label">\u7F51\u5740</span>' + urlLink + '</div>'
-                    + '<div class="link-row"><span class="link-label">\u76F8\u5173</span>' + iconsHtml + '</div>'
-                    + customLinksHtml
-                    + '</div>'
+                    + '<div class="link-row"><span class="link-label">网址</span>' + urlLink + '</div>'
+                    + '<div class="link-row"><span class="link-label">相关</span>' + iconsHtml + '</div>'
+                    + customLinksHtml + '</div>'
                     + '<div class="meta-row">'
-                    + '<div class="meta-item"><div class="meta-label">\u5907\u6CE8</div><div class="meta-value">' + (s.note || '\u2014') + '</div></div>'
-                    + '<div class="meta-item"><div class="meta-label">\u95EE\u9898</div><div class="meta-value">' + problemHtml + '</div></div>'
+                    + '<div class="meta-item"><div class="meta-label">备注</div><div class="meta-value">' + (s.remark || '—') + '</div></div>'
+                    + '<div class="meta-item"><div class="meta-label">问题</div><div class="meta-value">' + problemHtml + '</div></div>'
                     + '</div>'
-                    + buildRatingHtml(s)
-                    + '</div>';
+                    + buildRatingHtml(s) + '</div>';
             }).join('');
 
             bindRatingEvents();
@@ -688,26 +688,21 @@
             var keyword = document.getElementById('searchInput').value.trim().toLowerCase();
             var sortMode = document.getElementById('sortSelect').value;
             var titleEl = document.getElementById('categoryTitle');
-
             if (keyword) {
                 isGlobalSearch = true;
-                titleEl.textContent = '\uD83D\uDD0D \u5168\u5C40\u641C\u7D22\u7ED3\u679C';
+                titleEl.textContent = '🔍 全局搜索结果';
                 var allData = Object.values(globalCache).flat();
                 var filtered = allData.filter(function(s) {
-                    return [s.name, s.note, s.url, s.related, s.problem, s._category]
+                    return [s.name, s.remark, s.url, s.related, s.issue, s.uid, s._category]
                         .join(' ').toLowerCase().includes(keyword);
                 });
-                if (sortMode === 'name') {
-                    filtered.sort(function(a, b) { return getPinyin(a.name).localeCompare(getPinyin(b.name)); });
-                }
+                if (sortMode === 'name') filtered.sort(function(a, b) { return getPinyin(a.name).localeCompare(getPinyin(b.name)); });
                 renderCards(filtered);
             } else {
                 isGlobalSearch = false;
                 titleEl.textContent = currentLabel;
                 var filtered = allSites.slice();
-                if (sortMode === 'name') {
-                    filtered.sort(function(a, b) { return getPinyin(a.name).localeCompare(getPinyin(b.name)); });
-                }
+                if (sortMode === 'name') filtered.sort(function(a, b) { return getPinyin(a.name).localeCompare(getPinyin(b.name)); });
                 renderCards(filtered);
             }
         }
@@ -737,46 +732,31 @@
             var container = document.getElementById('cardContainer');
             var titleEl = document.getElementById('categoryTitle');
             var searchInput = document.getElementById('searchInput');
-
             currentLabel = label;
             titleEl.textContent = label;
             searchInput.value = '';
             isGlobalSearch = false;
             allSites = [];
-
             if (!jsonPath) {
-                container.innerHTML = '<div class="loading">\u300C' + label + '\u300D\u7684 JSON \u6570\u636E\u8DEF\u5F84\u5C1A\u672A\u914D\u7F6E<br>\u8BF7\u5728 sidebar-link \u7684 data-json \u5C5E\u6027\u4E2D\u586B\u5199\u5BF9\u5E94 .json \u6587\u4EF6\u8DEF\u5F84</div>';
+                container.innerHTML = '<div class="loading">「' + label + '」的 JSON 数据路径尚未配置<br>请在 sidebar-link 的 data-json 属性中填写对应 .json 文件路径</div>';
                 document.getElementById('siteCount').textContent = '';
                 return;
             }
-
-            container.innerHTML = '<div class="loading">\u52A0\u8F7D\u4E2D...</div>';
-
+            container.innerHTML = '<div class="loading">加载中...</div>';
             if (globalCache[jsonPath]) {
-                allSites = globalCache[jsonPath].map(function(item) {
-                    var copy = Object.assign({}, item);
-                    delete copy._category;
-                    return copy;
-                });
+                allSites = globalCache[jsonPath].map(function(item) { var copy = Object.assign({}, item); delete copy._category; return copy; });
                 renderCards(allSites);
             } else {
                 fetch(jsonPath)
-                    .then(function(res) {
-                        if (!res.ok) throw new Error('HTTP ' + res.status);
-                        return res.json();
-                    })
-                    .then(function(data) {
-                        allSites = data;
-                        renderCards(allSites);
-                    })
+                    .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+                    .then(function(data) { allSites = data; renderCards(allSites); })
                     .catch(function(e) {
-                        container.innerHTML = '<div class="loading" style="color:var(--danger)">\u6570\u636E\u52A0\u8F7D\u5931\u8D25: ' + e.message + '<br>\u8BF7\u68C0\u67E5 ' + jsonPath + ' \u662F\u5426\u5B58\u5728\u4E14\u683C\u5F0F\u6B63\u786E</div>';
+                        container.innerHTML = '<div class="loading" style="color:var(--danger)">数据加载失败: ' + e.message + '<br>请检查 ' + jsonPath + ' 是否存在且格式正确</div>';
                         document.getElementById('siteCount').textContent = '';
                     });
             }
         }
 
-        // Sidebar Navigation
         var links = document.querySelectorAll('.sidebar-link');
         links.forEach(function(link) {
             link.addEventListener('click', function() {
@@ -788,7 +768,6 @@
             });
         });
 
-        // Init
         preloadAllCategories();
         var firstLink = document.querySelector('.sidebar-link.active');
         if (firstLink) {
