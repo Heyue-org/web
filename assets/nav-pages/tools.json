@@ -1,0 +1,218 @@
+[
+  {
+    "name": "7-zip",
+    "url": "https://7-zip.org/download.html",
+    "related": "",
+    "remark": "PC",
+    "issue": "",
+    "uid": "0185",
+    "logo": ""
+  },
+  {
+    "name": "WinRAR",
+    "url": "https://www.rarlab.com/download.htm",
+    "related": "",
+    "remark": "PC",
+    "issue": "",
+    "uid": "0186",
+    "logo": ""
+  },
+  {
+    "name": "Bandzip",
+    "url": "https://cn.bandisoft.com/bandizip/",
+    "related": "",
+    "remark": "PC",
+    "issue": "",
+    "uid": "0187",
+    "logo": ""
+  },
+  {
+    "name": "Zarchiver",
+    "url": "https://www.zdevs.ru/en/za/apk.html",
+    "related": "",
+    "remark": "安卓",
+    "issue": "建议国内访问",
+    "uid": "0188",
+    "logo": ""
+  },
+  {
+    "name": "解压专家",
+    "url": "https://apps.apple.com/cn/app/id1400133654",
+    "related": "",
+    "remark": "iOS",
+    "issue": "",
+    "uid": "0189",
+    "logo": ""
+  },
+  {
+    "name": "LZ4",
+    "url": "https://github.com/lz4/lz4",
+    "related": "",
+    "remark": "常用于加密",
+    "issue": "",
+    "uid": "0190",
+    "logo": ""
+  },
+  {
+    "name": "Locale.Emulator",
+    "url": "https://xupefei.github.io/Locale-Emulator/",
+    "related": "https://github.com/xupefei/Locale-Emulator/releases,https://cloud.arisumika.top/s/qKHn",
+    "remark": "乱码转区",
+    "issue": "",
+    "uid": "0191",
+    "logo": ""
+  },
+  {
+    "name": "AppLocale",
+    "url": "",
+    "related": "https://cloud.arisumika.top/s/eYcO",
+    "remark": "乱码转区",
+    "issue": "",
+    "uid": "0192",
+    "logo": ""
+  },
+  {
+    "name": "NTLEA",
+    "url": "http://ntlea.codeplex.com/",
+    "related": "https://github.com/IshYume/ntlea-archive,https://cloud.arisumika.top/s/4DT1",
+    "remark": "乱码转区",
+    "issue": "",
+    "uid": "0193",
+    "logo": ""
+  },
+  {
+    "name": "LocaleSwitch",
+    "url": "",
+    "related": "https://cloud.arisumika.top/s/rJuy",
+    "remark": "乱码转区",
+    "issue": "",
+    "uid": "0194",
+    "logo": ""
+  },
+  {
+    "name": "Tyranor",
+    "url": "https://www.tyranoremu.com/",
+    "related": "",
+    "remark": "多引擎gal模拟器 安卓端",
+    "issue": "",
+    "uid": "0195",
+    "logo": ""
+  },
+  {
+    "name": "ARKRPG",
+    "url": "https://arkrpg.tech/",
+    "related": "",
+    "remark": "RPG引擎模拟器 iOS端",
+    "issue": "",
+    "uid": "0196",
+    "logo": ""
+  },
+  {
+    "name": "ONScripter",
+    "url": "https://ogapee.github.io/www/onscripter.html",
+    "related": "https://github.com/YuriSizuku/OnscripterYuri,https://apps.apple.com/cn/app/onsplayer/id1388250129",
+    "remark": "ONS引擎模拟器 全平台",
+    "issue": "",
+    "uid": "0197",
+    "logo": ""
+  },
+  {
+    "name": "Kirikiroid2",
+    "url": "https://github.com/zeas2/Kirikiroid2",
+    "related": "https://apps.apple.com/cn/app/xp3player/id1064060287,https://cloud.arisumika.top/s/OntK",
+    "remark": "Kirikir引擎模拟器，建议去用176号Issues提到的分支",
+    "issue": "",
+    "uid": "0198",
+    "logo": ""
+  },
+  {
+    "name": "Winlator",
+    "url": "https://winlator.org/",
+    "related": "https://github.com/brunodev85/winlator,https://cloud.arisumika.top/s/KpF7",
+    "remark": "安卓运行winx86_64程序",
+    "issue": "",
+    "uid": "0199",
+    "logo": ""
+  },
+  {
+    "name": "Foobar2000",
+    "url": "https://www.foobar2000.org/",
+    "related": "https://www.bilibili.com/opus/1101280157882122264",
+    "remark": "高级免费音频播放器，baka系列为二次元美化版",
+    "issue": "助听器预定",
+    "uid": "0200",
+    "logo": ""
+  },
+  {
+    "name": "PotPlayer",
+    "url": "https://potplayer.tv/",
+    "related": "",
+    "remark": "高级免费视频播放器",
+    "issue": "调教有一定门槛",
+    "uid": "0201",
+    "logo": ""
+  },
+  {
+    "name": "MT管理器",
+    "url": "https://mt2.cn/",
+    "related": "",
+    "remark": "Android 平台文件管理/逆向修改器",
+    "issue": "",
+    "uid": "0202",
+    "logo": ""
+  },
+  {
+    "name": "VC++运行库",
+    "url": "https://learn.microsoft.com/zh-cn/cpp/windows/latest-supported-vc-redist?view=msvc-170",
+    "related": "",
+    "remark": "",
+    "issue": "",
+    "uid": "0203",
+    "logo": ""
+  },
+  {
+    "name": ".NET 框架",
+    "url": "https://dotnet.microsoft.com/zh-cn/download",
+    "related": "",
+    "remark": "",
+    "issue": "",
+    "uid": "0204",
+    "logo": ""
+  },
+  {
+    "name": "DirectX_Repair",
+    "url": "https://gitcode.com/Premium-Resources/fb832",
+    "related": "https://blog.csdn.net/xiyang_1990/article/details/145011740,https://cloud.arisumika.top/s/GzC5",
+    "remark": "",
+    "issue": "",
+    "uid": "0205",
+    "logo": ""
+  },
+  {
+    "name": "IDM",
+    "url": "https://www.internetdownloadmanager.com/",
+    "related": "https://www.52pojie.cn/",
+    "remark": "多线程下载器 要钱，可以去吾爱破解论坛找破解版",
+    "issue": "",
+    "uid": "0206",
+    "logo": ""
+  },
+  {
+    "name": "qBittorrent EE",
+    "url": "https://github.com/c0re100/qBittorrent-Enhanced-Edition",
+    "related": "",
+    "remark": "BT下载器",
+    "issue": "",
+    "uid": "0207",
+    "logo": ""
+  },
+  {
+    "name": "v2rayN",
+    "url": "https://github.com/2dust/v2rayN",
+    "related": "",
+    "remark": "Win的Xray图形化代理客户端",
+    "issue": "",
+    "uid": "0208",
+    "logo": ""
+  }
+]

@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Galgame Wiki",
+    "url": "https://www.galgame.it/",
+    "related": "https://github.com/sombermengling/galgamewiki",
+    "remark": "GAL百科",
+    "issue": "",
+    "uid": "0215",
+    "logo": ""
+  },
+  {
+    "name": "Sharotto",
+    "url": "https://www.sharotto.com/",
+    "related": "",
+    "remark": "GALwiki 需登录下载 |每日限次",
+    "issue": "",
+    "uid": "0216",
+    "logo": ""
+  },
+  {
+    "name": "番组维基",
+    "url": "https://bgm.wiki/",
+    "related": "",
+    "remark": "动漫WIKI",
+    "issue": "",
+    "uid": "0217",
+    "logo": ""
+  },
+  {
+    "name": "CN GAL资料站",
+    "url": "https://www.cngal.org/",
+    "related": "",
+    "remark": "国产GALWIKI",
+    "issue": "",
+    "uid": "0218",
+    "logo": ""
+  },
+  {
+    "name": "视觉小说数据库",
+    "url": "https://vndb.org/",
+    "related": "",
+    "remark": "国际galWIKI",
+    "issue": "",
+    "uid": "0219",
+    "logo": ""
+  },
+  {
+    "name": "GAL图书馆",
+    "url": "https://gallibrary.pw/",
+    "related": "",
+    "remark": "WIKI",
+    "issue": "",
+    "uid": "0220",
+    "logo": ""
+  },
+  {
+    "name": "Galgamer",
+    "url": "https://galgamer.moe/",
+    "related": "",
+    "remark": "GAL资料/评鉴",
+    "issue": "",
+    "uid": "0221",
+    "logo": ""
+  },
+  {
+    "name": "Acggame",
+    "url": "https://acgink.ink/",
+    "related": "",
+    "remark": "不知道玩什么时当菜单看 收费",
+    "issue": "",
+    "uid": "0222",
+    "logo": ""
+  },
+  {
+    "name": "MyAnimeList",
+    "url": "https://myanimelist.net/",
+    "related": "",
+    "remark": "英文日本动画数据库/评分",
+    "issue": "",
+    "uid": "0223",
+    "logo": ""
+  },
+  {
+    "name": "AniDB",
+    "url": "http://anidb.net/",
+    "related": "",
+    "remark": "英文 动画资料/评分",
+    "issue": "",
+    "uid": "0224",
+    "logo": ""
+  },
+  {
+    "name": "萌系御宅新闻速报",
+    "url": "http://otanews.livedoor.biz/",
+    "related": "",
+    "remark": "动画类新闻",
+    "issue": "",
+    "uid": "0225",
+    "logo": ""
+  },
+  {
+    "name": "GalError",
+    "url": "https://www.galerror.top/",
+    "related": "",
+    "remark": "Galgame 报错解决百科",
+    "issue": "",
+    "uid": "0226",
+    "logo": ""
+  }
+]

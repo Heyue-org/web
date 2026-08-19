@@ -1,0 +1,128 @@
+[
+  {
+    "name": "げっちゅ屋",
+    "url": "http://www.getchu.com/",
+    "related": "http://dl.getchu.com/",
+    "remark": "日文/黄油售卖/情报",
+    "issue": "",
+    "uid": "0068",
+    "logo": ""
+  },
+  {
+    "name": "2DFan",
+    "url": "https://www.2dfan.com/",
+    "related": "",
+    "remark": "中文/攻略/介绍",
+    "issue": "",
+    "uid": "0069",
+    "logo": ""
+  },
+  {
+    "name": "bangumi",
+    "url": "http://bangumi.tv/game",
+    "related": "",
+    "remark": "中文/黄油情报/交流",
+    "issue": "",
+    "uid": "0070",
+    "logo": ""
+  },
+  {
+    "name": "巴哈姆特",
+    "url": "https://www.gamer.com.tw/",
+    "related": "",
+    "remark": "繁中、内容比较杂不统一",
+    "issue": "",
+    "uid": "0071",
+    "logo": ""
+  },
+  {
+    "name": "DL",
+    "url": "http://www.dlsite.com/pro/",
+    "related": "",
+    "remark": "黄油售卖/情报",
+    "issue": "",
+    "uid": "0072",
+    "logo": ""
+  },
+  {
+    "name": "Fanza game",
+    "url": "http://dlsoft.dmm.co.jp/",
+    "related": "",
+    "remark": "日文/黄油售卖/情报",
+    "issue": "",
+    "uid": "0073",
+    "logo": ""
+  },
+  {
+    "name": "Gyutto",
+    "url": "http://gyutto.com/",
+    "related": "",
+    "remark": "日文/黄油售卖/情报",
+    "issue": "",
+    "uid": "0074",
+    "logo": ""
+  },
+  {
+    "name": "Melonbooks（蜜瓜书店）",
+    "url": "http://www.melonbooks.com/index.php?main_page=index&category=0",
+    "related": "",
+    "remark": "日文/黄油售卖/情报",
+    "issue": "",
+    "uid": "0075",
+    "logo": ""
+  },
+  {
+    "name": "DiGiket / デジケット",
+    "url": "http://www.digiket.com/game/",
+    "related": "",
+    "remark": "日文/黄油售卖/情报",
+    "issue": "",
+    "uid": "0076",
+    "logo": ""
+  },
+  {
+    "name": "Holyseal ～聖封～",
+    "url": "http://holyseal.net/",
+    "related": "",
+    "remark": "日文/黄油攻略/补丁/情报",
+    "issue": "",
+    "uid": "0077",
+    "logo": ""
+  },
+  {
+    "name": "moeyo.com",
+    "url": "http://www.moeyo.com/",
+    "related": "",
+    "remark": "日文/手办周边情报",
+    "issue": "",
+    "uid": "0078",
+    "logo": ""
+  },
+  {
+    "name": "NTR BLOG",
+    "url": "http://ntrblog.com/",
+    "related": "",
+    "remark": "各种ntr作品情报",
+    "issue": "经过群友1:1投票结果选择保留",
+    "uid": "0079",
+    "logo": ""
+  },
+  {
+    "name": "アキバホビ一/AKIBA-HOBBY",
+    "url": "http://akibahobby.net/%20%20ï¼æ¥æ/æåå¨è¾¹ææ¥ï¼",
+    "related": "",
+    "remark": "东方/原神等二游周边贩售",
+    "issue": "",
+    "uid": "0080",
+    "logo": ""
+  },
+  {
+    "name": "Akiba☆Sofmap",
+    "url": "https://a.sofmap.com/",
+    "related": "",
+    "remark": "日文/各种周边的售卖/情报",
+    "issue": "",
+    "uid": "0081",
+    "logo": ""
+  }
+]

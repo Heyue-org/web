@@ -1,0 +1,83 @@
+[
+  {
+    "name": "ACG.RIP",
+    "url": "https://acg.rip/4",
+    "related": "",
+    "remark": "bt",
+    "issue": "",
+    "uid": "0083",
+    "logo": ""
+  },
+  {
+    "name": "ASMR Online",
+    "url": "https://asmr.one/",
+    "related": "",
+    "remark": "同人音声可在线/下载，wav/flac/MP3，需翻墙",
+    "issue": "",
+    "uid": "0084",
+    "logo": ""
+  },
+  {
+    "name": "漫音社",
+    "url": "http://www.acgjc.com/",
+    "related": "",
+    "remark": "主打音乐，但是也提供一些综合资源",
+    "issue": "",
+    "uid": "0085",
+    "logo": ""
+  },
+  {
+    "name": "hentai4daily",
+    "url": "https://hentai4daily.com/category/ht-audio-works-é³å£°ä½å/",
+    "related": "",
+    "remark": "仅下载",
+    "issue": "",
+    "uid": "0086",
+    "logo": ""
+  },
+  {
+    "name": "天使动漫",
+    "url": "https://www.tsdm39.com/forum.php",
+    "related": "",
+    "remark": "资源庞大、数据混杂，个人推荐用来下载音乐",
+    "issue": "",
+    "uid": "0087",
+    "logo": ""
+  },
+  {
+    "name": "鸟白岛演绎厅",
+    "url": "https://www.summerpockets.com/",
+    "related": "",
+    "remark": "ACG音乐论坛",
+    "issue": "",
+    "uid": "0088",
+    "logo": ""
+  },
+  {
+    "name": "Diverse Direct",
+    "url": "https://diverse.direct/",
+    "related": "",
+    "remark": "日文同人音乐情报/售卖 含实体",
+    "issue": "",
+    "uid": "0089",
+    "logo": ""
+  },
+  {
+    "name": "洛雪音乐LX Music",
+    "url": "https://github.com/lyswhut/lx-music-desktop",
+    "related": "",
+    "remark": "无损音乐下载",
+    "issue": "",
+    "uid": "0090",
+    "logo": ""
+  },
+  {
+    "name": "Foobar2000",
+    "url": "https://www.foobar2000.org/",
+    "related": "https://www.bilibili.com/opus/1101280157882122264",
+    "remark": "高级免费音频播放器，baka系列为二次元美化版",
+    "issue": "",
+    "uid": "0091",
+    "logo": ""
+  }
+]
