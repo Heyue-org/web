@@ -1,0 +1,119 @@
+{
+  "members": [
+    { "id": "m1", "name": "合月亭" },
+    { "id": "m2", "name": "Akari" },
+    { "id": "m3", "name": "Yuki" },
+    { "id": "m4", "name": "Mikan" }
+  ],
+  "pages": [
+    {
+      "id": "page-intro",
+      "title": "项目简介",
+      "hasSub": false,
+      "subs": [],
+      "authors": ["合月亭"],
+      "updated": "2024-01-01T00:00:00.000Z",
+      "content": "<p>欢迎来到合月亭 Wiki！</p>"
+    },
+    {
+      "id": "page-download",
+      "title": "下载相关问题",
+      "hasSub": true,
+      "subs": [
+        { "id": "dl-install", "label": "安装下载器" },
+        { "id": "dl-config", "label": "配置加速" },
+        { "id": "dl-run", "label": "开始下载" }
+      ],
+      "authors": ["合月亭", "Akari"],
+      "updated": "2024-01-01T00:00:00.000Z",
+      "content": "<section id=\"dl-install\"><h2>安装下载器</h2><p>推荐使用 IDM / Motrix / aria2...</p></section><section id=\"dl-config\"><h2>配置加速</h2><p>针对不同平台的加速方案...</p></section><section id=\"dl-run\"><h2>开始下载</h2><p>如何正确获取下载链接...</p></section>"
+    },
+    {
+      "id": "page-decrypt",
+      "title": "解密相关问题",
+      "hasSub": true,
+      "subs": [
+        { "id": "dec-tool", "label": "解密工具" },
+        { "id": "dec-guide", "label": "操作步骤" },
+        { "id": "dec-faq", "label": "常见报错" }
+      ],
+      "authors": ["Yuki", "Mikan"],
+      "updated": "2024-01-01T00:00:00.000Z",
+      "content": "<section id=\"dec-tool\"><h2>解密工具</h2><p>常用解密工具推荐...</p></section><section id=\"dec-guide\"><h2>操作步骤</h2><p>完整解密流程...</p></section><section id=\"dec-faq\"><h2>常见报错</h2><p>CRC校验失败等问题排查...</p></section>"
+    },
+    {
+      "id": "page-unzip",
+      "title": "解压相关问题",
+      "hasSub": true,
+      "subs": [
+        { "id": "unzip-tool", "label": "推荐软件" },
+        { "id": "unzip-encoding", "label": "乱码处理" },
+        { "id": "unzip-split", "label": "分卷解压" }
+      ],
+      "authors": ["Mikan"],
+      "updated": "2024-01-01T00:00:00.000Z",
+      "content": "<section id=\"unzip-tool\"><h2>推荐软件</h2><p>7-Zip / Bandizip...</p></section><section id=\"unzip-encoding\"><h2>乱码处理</h2><p>日文文件名编码转换...</p></section><section id=\"unzip-split\"><h2>分卷解压</h2><p>.part1.rar 处理...</p></section>"
+    },
+    {
+      "id": "page-run",
+      "title": "运行相关问题",
+      "hasSub": true,
+      "subs": [
+        { "id": "run-locale", "label": "区域模拟" },
+        { "id": "run-patch", "label": "汉化补丁" },
+        { "id": "run-error", "label": "启动报错" }
+      ],
+      "authors": ["合月亭", "Akari"],
+      "updated": "2024-01-01T00:00:00.000Z",
+      "content": "<section id=\"run-locale\"><h2>区域模拟</h2><p>Locale Emulator...</p></section><section id=\"run-patch\"><h2>汉化补丁</h2><p>挂载或替换汉化文件...</p></section><section id=\"run-error\"><h2>启动报错</h2><p>DLL缺失、DirectX错误...</p></section>"
+    },
+    {
+      "id": "page-tools",
+      "title": "GAL常用工具合集",
+      "hasSub": true,
+      "subs": [
+        { "id": "tools-trans", "label": "翻译工具" },
+        { "id": "tools-extract", "label": "资源提取" },
+        { "id": "tools-misc", "label": "其他辅助" }
+      ],
+      "authors": ["Akari", "Yuki"],
+      "updated": "2024-01-01T00:00:00.000Z",
+      "content": "<section id=\"tools-trans\"><h2>翻译工具</h2><p>屏幕翻译、OCR...</p></section><section id=\"tools-extract\"><h2>资源提取</h2><p>CG/音乐提取...</p></section><section id=\"tools-misc\"><h2>其他辅助</h2><p>存档管理...</p></section>"
+    },
+    {
+      "id": "page-search",
+      "title": "寻找资源的逻辑",
+      "hasSub": true,
+      "subs": [
+        { "id": "search-engine", "label": "搜索技巧" },
+        { "id": "search-site", "label": "常用站点" },
+        { "id": "search-torrent", "label": "种子追踪" }
+      ],
+      "authors": ["Yuki"],
+      "updated": "2024-01-01T00:00:00.000Z",
+      "content": "<section id=\"search-engine\"><h2>搜索引擎技巧</h2><p>高级搜索语法...</p></section><section id=\"search-site\"><h2>常用站点</h2><p>资源站索引...</p></section><section id=\"search-torrent\"><h2>种子追踪</h2><p>BT/磁力链接...</p></section>"
+    },
+    {
+      "id": "page-glossary",
+      "title": "专业术语参考",
+      "hasSub": true,
+      "subs": [
+        { "id": "glossary-basic", "label": "基础术语" },
+        { "id": "glossary-tech", "label": "技术术语" },
+        { "id": "glossary-slang", "label": "社区黑话" }
+      ],
+      "authors": ["Mikan", "合月亭"],
+      "updated": "2024-01-01T00:00:00.000Z",
+      "content": "<section id=\"glossary-basic\"><h2>基础术语</h2><p>GAL、VN、ADV...</p></section><section id=\"glossary-tech\"><h2>技术术语</h2><p>引擎、文件格式...</p></section><section id=\"glossary-slang\"><h2>社区黑话</h2><p>拔作、废萌...</p></section>"
+    },
+    {
+      "id": "page-faq",
+      "title": "常见问题 (FAQ)",
+      "hasSub": false,
+      "subs": [],
+      "authors": ["合月亭"],
+      "updated": "2024-01-01T00:00:00.000Z",
+      "content": "<section id=\"faq\"><h3>Q: 游戏打不开？</h3><p>A: 检查转区和运行库。</p><h3>Q: CRC错误？</h3><p>A: 重新下载该分卷。</p></section>"
+    }
+  ]
+}
