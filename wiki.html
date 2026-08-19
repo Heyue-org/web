@@ -13,12 +13,11 @@
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family:'Microsoft YaHei','PingFang SC',sans-serif; font-size:18px; background:var(--bg-color); color:var(--text-main); line-height:1.7; height:100vh; overflow:hidden; display:flex; }
 
-        /* ===== Sidebar ===== */
         .sidebar { width:280px; background:var(--sidebar-bg); border-right:1px solid var(--border-color); display:flex; flex-direction:column; height:100%; transition:transform .3s; z-index:100; flex-shrink:0; }
         .sidebar-header { padding:1.2rem 1.5rem; border-bottom:1px solid var(--border-color); font-weight:700; font-size:1.2rem; color:var(--accent-color); display:flex; align-items:center; gap:10px; }
         .sidebar-content { flex:1; overflow-y:auto; padding:.5rem 0; }
         .toc-list { list-style:none; }
-        .toc-page-link { display:flex; justify-content:space-between; align-items:center; cursor:pointer; color:var(--text-main); font-weight:600; transition:all .2s; border-left:4px solid transparent; user-select:none; }
+        .toc-page-link { display:flex; justify-content:space-between; align-items:center; cursor:pointer; color:var(--text-main); font-weight:600; transition:background-color .15s,color .15s,border-color .15s; border-left:4px solid transparent; user-select:none; }
         .toc-page-link:hover { background:var(--hover-bg); color:var(--accent-color); }
         .toc-page-link.active { background:rgba(217,119,6,.08); color:var(--accent-color); border-left-color:var(--accent-color); }
         .link-text { flex:1; padding:.7rem 1.5rem; }
@@ -27,22 +26,20 @@
         .expand-arrow.open { transform:rotate(90deg); opacity:1; }
         .sub-menu { display:none; background:rgba(0,0,0,.02); padding-bottom:.5rem; }
         .sub-menu.visible { display:block; }
-        .toc-link { display:block; padding:.4rem 1.5rem .4rem 2.5rem; text-decoration:none; color:var(--text-sub); font-size:.9rem; transition:all .2s; }
+        .toc-link { display:block; padding:.4rem 1.5rem .4rem 2.5rem; text-decoration:none; color:var(--text-sub); font-size:.9rem; transition:background-color .15s,color .15s; }
         .toc-link:hover { color:var(--accent-color); background:var(--hover-bg); }
         .sidebar-edit-actions { padding:.8rem 1rem; border-top:1px solid var(--border-color); }
         .btn-add-page { width:100%; padding:.5rem; border:1px dashed var(--accent-color); background:none; color:var(--accent-color); border-radius:6px; cursor:pointer; font-size:.85rem; font-weight:600; transition:all .2s; }
         .btn-add-page:hover { background:rgba(217,119,6,.08); }
         .edit-mode .toc-page-link { padding-right:.5rem; }
-        /* ★ FIX: 删除按钮默认完全不可交互，仅编辑模式下可见可点 */
         .btn-delete-page { background:none; border:none; color:var(--danger); cursor:pointer; font-size:.8rem; padding:.3rem .5rem; border-radius:4px; flex-shrink:0; display:none; pointer-events:none; }
         .edit-mode .btn-delete-page { display:inline-block; pointer-events:auto; opacity:.6; }
         .btn-delete-page:hover { opacity:1; background:rgba(239,68,68,.1); }
 
-        /* ===== Main ===== */
         .main-content { flex:1; overflow-y:auto; padding:3rem 4rem; scroll-behavior:smooth; background:var(--bg-color); min-width:0; }
-        .content-wrapper { max-width:1400px; margin:0 auto; background:#fff; padding:3rem; border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,.05); min-height:80vh; }
+        .content-wrapper { max-width:1400px; margin:0 auto; background:#fff; padding:3rem; border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,.05); min-height:80vh; contain:layout paint; }
         .content-wrapper.code-open { max-width:none; }
-        .wiki-page { display:none; animation:fadeIn .4s ease; }
+        .wiki-page { display:none; animation:fadeIn .25s ease; contain:content; }
         .wiki-page.active { display:block; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
         h1 { font-size:2.2rem; margin-bottom:.5rem; border-bottom:2px solid var(--border-color); padding-bottom:1rem; }
@@ -53,11 +50,9 @@
         pre { background:#1e293b; color:#e2e8f0; padding:1.2rem; border-radius:8px; overflow-x:auto; margin-bottom:1.2rem; }
         img { max-width:100%; border-radius:8px; margin:1rem 0; }
 
-        /* Meta Bar */
         .meta-bar { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; font-size:.82rem; color:var(--text-sub); margin-bottom:2rem; padding-top:.5rem; }
         .meta-author-tag { display:inline-flex; align-items:center; gap:.3rem; background:rgba(217,119,6,.1); color:var(--accent-color); padding:.15rem .7rem; border-radius:20px; font-weight:600; font-size:.78rem; }
 
-        /* Author Tags Editor */
         .author-tags-editor { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; }
         .author-tag { display:inline-flex; align-items:center; gap:.3rem; background:rgba(217,119,6,.12); color:var(--accent-color); padding:.15rem .5rem .15rem .7rem; border-radius:20px; font-size:.78rem; font-weight:600; white-space:nowrap; animation:tagIn .2s ease; }
         @keyframes tagIn { from{opacity:0;transform:scale(.8)} to{opacity:1;transform:scale(1)} }
@@ -72,7 +67,6 @@
         .member-suggestion-item:hover,.member-suggestion-item.highlighted { background:var(--hover-bg); color:var(--accent-color); }
         .member-suggestion-item.used { opacity:.4; pointer-events:none; }
 
-        /* ===== Editor Toolbar ===== */
         .editor-toolbar { display:none; position:sticky; top:0; z-index:50; background:#fff; border:1px solid var(--border-color); border-radius:10px; padding:.4rem .6rem; margin-bottom:1.5rem; gap:.2rem; flex-wrap:wrap; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,.06); }
         .editor-toolbar.show { display:flex; }
         .toolbar-btn { background:none; border:1px solid transparent; border-radius:4px; padding:.3rem .6rem; cursor:pointer; font-size:.85rem; color:var(--text-main); transition:all .15s; font-weight:600; line-height:1; }
@@ -91,7 +85,6 @@
         .editable-body:focus { border-color:var(--accent-color); }
         .editable-body img { display:block; max-width:100%; }
 
-        /* ===== 源码分栏 ===== */
         .editor-split { display:grid; grid-template-columns:1fr; gap:.8rem; align-items:stretch; margin-top:.5rem; }
         .editor-split.code-open { grid-template-columns:1fr 1fr; }
         .editor-split .editable-body { min-width:0; margin-top:0; min-height:300px; }
@@ -101,7 +94,6 @@
         .code-pane textarea { flex:1; width:100%; min-width:0; border:none; outline:none; resize:none; background:#1e293b; color:#e2e8f0; font-family:'Consolas','Monaco',monospace; font-size:.78rem; line-height:1.5; padding:1rem; white-space:pre-wrap; overflow:auto; box-sizing:border-box; }
         @media(max-width:768px) { .editor-split.code-open { grid-template-columns:1fr; } .editor-split .editable-body,.editor-split .code-pane { min-height:220px; } }
 
-        /* ===== Top Controls ===== */
         .top-controls { display:flex; align-items:center; gap:.8rem; margin-bottom:1.5rem; flex-wrap:wrap; }
         .mode-toggle { padding:.5rem 1.2rem; border-radius:6px; font-size:.85rem; font-weight:700; cursor:pointer; border:1px solid var(--border-color); background:#fff; color:var(--text-main); transition:all .2s; }
         .mode-toggle.editing { background:var(--accent-color); color:#fff; border-color:var(--accent-color); }
@@ -116,7 +108,6 @@
         .save-toast { position:fixed; bottom:2rem; right:2rem; background:var(--success); color:#fff; padding:.8rem 1.5rem; border-radius:8px; font-weight:600; font-size:.9rem; transform:translateY(100px); opacity:0; transition:all .3s; z-index:999; }
         .save-toast.show { transform:translateY(0); opacity:1; }
 
-        /* ===== Modals ===== */
         .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:500; justify-content:center; align-items:center; }
         .modal-overlay.show { display:flex; }
         .modal-box { background:#fff; border-radius:12px; padding:2rem; max-width:480px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,.15); animation:modalIn .25s ease; }
@@ -147,11 +138,9 @@
         .add-member-row button { padding:.4rem 1rem; border-radius:6px; border:none; background:var(--accent-color); color:#fff; font-size:.85rem; font-weight:600; cursor:pointer; }
         .add-member-row button:hover { opacity:.9; }
 
-        /* Konami Hint */
         .konami-hint { position:fixed; bottom:1rem; left:50%; transform:translateX(-50%); font-size:.7rem; color:var(--border-color); pointer-events:none; user-select:none; opacity:0; transition:opacity 1s; z-index:1; }
         .konami-hint.flash { opacity:1; }
 
-        /* Mobile */
         .mobile-menu-btn { display:none; position:fixed; top:1rem; left:1rem; z-index:200; background:var(--accent-color); color:white; border:none; padding:.5rem .8rem; border-radius:4px; cursor:pointer; font-size:1rem; }
         .sidebar-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.3); z-index:99; }
         .sidebar-overlay.active { display:block; }
@@ -171,8 +160,6 @@
 
 <button class="mobile-menu-btn" id="mobileMenuBtn">☰ 目录</button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
-<div class="konami-hint" id="konamiHint">🎮 ↑↑↓↓←→←→BA</div>
-
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header"><span>📚 合月亭 Wiki</span></div>
     <div class="sidebar-content"><ul class="toc-list" id="tocList"></ul></div>
@@ -181,13 +168,16 @@
     </div>
 </aside>
 
-<main class="main-content" id="mainContent">
+<main class="main-content" id="mainContent" aria-live="polite">
     <div class="content-wrapper">
         <div class="top-controls" id="topControls" style="display:none;">
             <button class="mode-toggle" id="modeToggle" title="切换编辑/预览模式">✏️ 编辑模式</button>
             <button class="btn-save" id="btnSave" title="保存当前页面 (Ctrl+S)">💾 保存</button>
             <button class="btn-manage-members" id="btnManageMembers" title="管理团队成员列表">👥 成员管理</button>
-            <button class="btn-export" id="btnExport" title="导出为静态HTML文件">📤 导出HTML</button>
+            <button class="btn-export" id="btnExportJson" title="导出数据为 JSON 文件">📤 导出JSON</button>
+            <button class="btn-export" id="btnImportJson" title="从 JSON 文件导入数据">📥 导入JSON</button>
+            <button class="btn-export" id="btnExport" title="导出为静态HTML文件">📄 导出HTML</button>
+            <input type="file" id="importJsonInput" accept=".json,application/json" style="display:none;">
         </div>
         <div class="editor-toolbar" id="editorToolbar">
             <button class="toolbar-btn" data-cmd="bold" title="加粗 (Ctrl+B)"><b>B</b></button>
@@ -237,7 +227,7 @@
             <button class="toolbar-btn" data-cmd="blockquote" title="引用块">❝ 引用</button>
             <button class="toolbar-btn" data-cmd="hr" title="插入水平分隔线">— 分隔线</button>
             <div class="toolbar-sep"></div>
-            <button class="toolbar-btn" data-cmd="insertImage" title="插入图片 (输入URL)">🖼 图片</button>
+            <button class="toolbar-btn" data-cmd="insertImage" title="插入图片 (输入URL)">图片</button>
             <button class="toolbar-btn" data-cmd="createLink" title="插入超链接">🔗 链接</button>
             <button class="toolbar-btn" data-cmd="code" title="行内代码">&lt;/&gt;</button>
             <button class="toolbar-btn" data-cmd="pre" title="代码块">Pre</button>
@@ -252,9 +242,8 @@
     </div>
 </main>
 
-<div class="save-toast" id="saveToast">✅ 已保存</div>
+<div class="save-toast" id="saveToast">已保存</div>
 
-<!-- Save Confirm Modal -->
 <div class="modal-overlay" id="saveConfirmModal">
     <div class="modal-box">
         <h3>⚠️ 未保存的修改</h3>
@@ -267,7 +256,6 @@
     </div>
 </div>
 
-<!-- Member Manager Modal -->
 <div class="modal-overlay member-manager" id="memberModal">
     <div class="modal-box">
         <h3>👥 团队成员管理</h3>
@@ -290,35 +278,28 @@
 
     const PAGES_KEY = 'heyue_wiki_pages_v6';
     const MEMBERS_KEY = 'heyue_wiki_members_v6';
-
-    const DEFAULT_MEMBERS = [
-        { id:'m1', name:'合月亭' }, { id:'m2', name:'Akari' },
-        { id:'m3', name:'Yuki' }, { id:'m4', name:'Mikan' },
-    ];
-
-    const DEFAULT_PAGES = [
-        { id:'page-intro', title:'项目简介', hasSub:false, subs:[], authors:['合月亭'], updated:new Date().toISOString(), content:'<p>欢迎来到合月亭 Wiki！</p>' },
-        { id:'page-download', title:'下载相关问题', hasSub:true, subs:[{id:'dl-install',label:'安装下载器'},{id:'dl-config',label:'配置加速'},{id:'dl-run',label:'开始下载'}], authors:['合月亭','Akari'], updated:new Date().toISOString(), content:'<section id="dl-install"><h2>安装下载器</h2><p>推荐使用 IDM / Motrix / aria2...</p></section><section id="dl-config"><h2>配置加速</h2><p>针对不同平台的加速方案...</p></section><section id="dl-run"><h2>开始下载</h2><p>如何正确获取下载链接...</p></section>' },
-        { id:'page-decrypt', title:'解密相关问题', hasSub:true, subs:[{id:'dec-tool',label:'解密工具'},{id:'dec-guide',label:'操作步骤'},{id:'dec-faq',label:'常见报错'}], authors:['Yuki','Mikan'], updated:new Date().toISOString(), content:'<section id="dec-tool"><h2>解密工具</h2><p>常用解密工具推荐...</p></section><section id="dec-guide"><h2>操作步骤</h2><p>完整解密流程...</p></section><section id="dec-faq"><h2>常见报错</h2><p>CRC校验失败等问题排查...</p></section>' },
-        { id:'page-unzip', title:'解压相关问题', hasSub:true, subs:[{id:'unzip-tool',label:'推荐软件'},{id:'unzip-encoding',label:'乱码处理'},{id:'unzip-split',label:'分卷解压'}], authors:['Mikan'], updated:new Date().toISOString(), content:'<section id="unzip-tool"><h2>推荐软件</h2><p>7-Zip / Bandizip...</p></section><section id="unzip-encoding"><h2>乱码处理</h2><p>日文文件名编码转换...</p></section><section id="unzip-split"><h2>分卷解压</h2><p>.part1.rar 处理...</p></section>' },
-        { id:'page-run', title:'运行相关问题', hasSub:true, subs:[{id:'run-locale',label:'区域模拟'},{id:'run-patch',label:'汉化补丁'},{id:'run-error',label:'启动报错'}], authors:['合月亭','Akari'], updated:new Date().toISOString(), content:'<section id="run-locale"><h2>区域模拟</h2><p>Locale Emulator...</p></section><section id="run-patch"><h2>汉化补丁</h2><p>挂载或替换汉化文件...</p></section><section id="run-error"><h2>启动报错</h2><p>DLL缺失、DirectX错误...</p></section>' },
-        { id:'page-tools', title:'GAL常用工具合集', hasSub:true, subs:[{id:'tools-trans',label:'翻译工具'},{id:'tools-extract',label:'资源提取'},{id:'tools-misc',label:'其他辅助'}], authors:['Akari','Yuki'], updated:new Date().toISOString(), content:'<section id="tools-trans"><h2>翻译工具</h2><p>屏幕翻译、OCR...</p></section><section id="tools-extract"><h2>资源提取</h2><p>CG/音乐提取...</p></section><section id="tools-misc"><h2>其他辅助</h2><p>存档管理...</p></section>' },
-        { id:'page-search', title:'寻找资源的逻辑', hasSub:true, subs:[{id:'search-engine',label:'搜索技巧'},{id:'search-site',label:'常用站点'},{id:'search-torrent',label:'种子追踪'}], authors:['Yuki'], updated:new Date().toISOString(), content:'<section id="search-engine"><h2>搜索引擎技巧</h2><p>高级搜索语法...</p></section><section id="search-site"><h2>常用站点</h2><p>资源站索引...</p></section><section id="search-torrent"><h2>种子追踪</h2><p>BT/磁力链接...</p></section>' },
-        { id:'page-glossary', title:'专业术语参考', hasSub:true, subs:[{id:'glossary-basic',label:'基础术语'},{id:'glossary-tech',label:'技术术语'},{id:'glossary-slang',label:'社区黑话'}], authors:['Mikan','合月亭'], updated:new Date().toISOString(), content:'<section id="glossary-basic"><h2>基础术语</h2><p>GAL、VN、ADV...</p></section><section id="glossary-tech"><h2>技术术语</h2><p>引擎、文件格式...</p></section><section id="glossary-slang"><h2>社区黑话</h2><p>拔作、废萌...</p></section>' },
-        { id:'page-faq', title:'常见问题 (FAQ)', hasSub:false, subs:[], authors:['合月亭'], updated:new Date().toISOString(), content:'<section id="faq"><h3>Q: 游戏打不开？</h3><p>A: 检查转区和运行库。</p><h3>Q: CRC错误？</h3><p>A: 重新下载该分卷。</p></section>' },
-    ];
+    const DATA_URL = 'WIKI-data.json';
 
     let pages=[], members=[];
     let isEditMode=false, currentPageId=null, hasUnsavedChanges=false;
     let editorUnlocked=false;
     let codeViewOpen=false;
+    let syncTimer=0;
+    let toastTimer=0;
 
-    // ===== Helpers =====
-    function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+    const $ = id => document.getElementById(id);
+    const dom = {
+        tocList: $('tocList'), pagesContainer: $('pagesContainer'), mainContent: $('mainContent'),
+        topControls: $('topControls'), modeToggle: $('modeToggle'), btnSave: $('btnSave'),
+        btnManageMembers: $('btnManageMembers'), editorToolbar: $('editorToolbar'),
+        sidebarEditActions: $('sidebarEditActions'), contentWrapper: document.querySelector('.content-wrapper'),
+        saveToast: $('saveToast'), saveConfirmModal: $('saveConfirmModal'), memberModal: $('memberModal')
+    };
+
+    function esc(s){const d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
     function formatTime(iso){if(!iso)return'—';const d=new Date(iso),p=n=>String(n).padStart(2,'0');return`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;}
     function getAuthors(pg){if(Array.isArray(pg.authors))return pg.authors;if(pg.author)return[pg.author];return[];}
 
-    // ===== 格式白名单（只允许工具栏提供的格式，粘贴/编辑时清洗外部脏格式） =====
     const ALLOWED_TAGS = new Set([
         'P','DIV','BR','B','STRONG','I','EM','U','S','STRIKE','DEL',
         'H1','H2','H3','H4','H5','H6','BLOCKQUOTE','UL','OL','LI','HR',
@@ -326,7 +307,6 @@
     ]);
     const ALLOWED_STYLES = new Set(['color','background-color','text-align','font-size','font-family']);
     function sanitizeNode(root){
-        // 遍历所有元素，删除白名单外的标签（保留文字内容）与非法属性/样式
         const els=[...root.querySelectorAll('*')];
         for(const el of els){
             if(!ALLOWED_TAGS.has(el.tagName)){
@@ -335,7 +315,6 @@
                 parent.removeChild(el);
                 continue;
             }
-            // 清理属性：只保留 a[href]/img[src,alt]/section[id]/font[size,face,color]
             for(const attr of[...el.attributes]){
                 const name=attr.name.toLowerCase();
                 const keepAttr=(el.tagName==='A'&&name==='href')
@@ -344,7 +323,6 @@
                     ||(el.tagName==='FONT'&&(name==='size'||name==='face'||name==='color'));
                 if(!keepAttr)el.removeAttribute(attr.name);
             }
-            // 清理 style：只保留白名单内的 CSS 属性
             if(el.getAttribute('style')){
                 const kept=[];
                 for(const part of el.getAttribute('style').split(';')){
@@ -394,21 +372,38 @@
         return subs;
     }
 
-    // ===== Persistence =====
-    function loadData(){
-        try{const r=localStorage.getItem(PAGES_KEY);pages=r?JSON.parse(r):JSON.parse(JSON.stringify(DEFAULT_PAGES));}catch(e){pages=JSON.parse(JSON.stringify(DEFAULT_PAGES));}
-        try{const r=localStorage.getItem(MEMBERS_KEY);members=r?JSON.parse(r):JSON.parse(JSON.stringify(DEFAULT_MEMBERS));}catch(e){members=JSON.parse(JSON.stringify(DEFAULT_MEMBERS));}
+    async function loadData(){
+        let loadedPages=null, loadedMembers=null;
+        try{const r=localStorage.getItem(PAGES_KEY);if(r)loadedPages=JSON.parse(r);}catch(e){}
+        try{const r=localStorage.getItem(MEMBERS_KEY);if(r)loadedMembers=JSON.parse(r);}catch(e){}
+
+        if(loadedPages&&loadedMembers){
+            pages=loadedPages;members=loadedMembers;
+            return;
+        }
+
+        try{
+            const res=await fetch(DATA_URL,{cache:'no-store'});
+            if(res.ok){
+                const data=await res.json();
+                pages=Array.isArray(data.pages)?data.pages:[];
+                members=Array.isArray(data.members)?data.members:[];
+                if(pages.length)localStorage.setItem(PAGES_KEY,JSON.stringify(pages));
+                if(members.length)localStorage.setItem(MEMBERS_KEY,JSON.stringify(members));
+                return;
+            }
+        }catch(e){}
+        pages=loadedPages||[];members=loadedMembers||[];
     }
     function savePagesData(){localStorage.setItem(PAGES_KEY,JSON.stringify(pages));showToast();}
     function saveMembersData(){localStorage.setItem(MEMBERS_KEY,JSON.stringify(members));}
-    function showToast(msg){const t=document.getElementById('saveToast');t.textContent=msg||'✅ 已保存';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+    function showToast(msg){const t=dom.saveToast;t.textContent=msg||'✅ 已保存';t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2000);}
 
     function renderAuthorsDisplay(authors){
         if(!authors.length)return'<span class="meta-author-tag">✍️ 匿名</span>';
         return authors.map(a=>`<span class="meta-author-tag">✍️ ${esc(a)}</span>`).join(' ');
     }
 
-    // ===== Builders（页面渲染与导出共用） =====
     function buildPageHTML(pg,isActive=false){
         return`<div id="${pg.id}" class="wiki-page${isActive?' active':''}" data-page-id="${pg.id}">
             <h1 class="page-title-display">${esc(pg.title)}</h1>
@@ -423,36 +418,35 @@
         return`<li class="toc-item"><div class="toc-page-link${isActive?' active':''}"><span class="link-text" data-nav="${pg.id}">${esc(pg.title)}</span>${arrow}${del}</div>${subHtml}</li>`;
     }
 
-    // ===== Sidebar =====
     function renderSidebar(){
-        document.getElementById('tocList').innerHTML=pages.map((pg,idx)=>buildTocItemHTML(pg,{isActive:pg.id===currentPageId,idx})).join('');
+        dom.tocList.innerHTML=pages.map((pg,idx)=>buildTocItemHTML(pg,{isActive:pg.id===currentPageId,idx})).join('');
     }
 
-    // ===== Pages =====
     function renderPages(){
-        document.getElementById('pagesContainer').innerHTML=pages.map(pg=>buildPageHTML(pg,pg.id===currentPageId)).join('');
+        dom.pagesContainer.innerHTML=pages.map(pg=>buildPageHTML(pg,pg.id===currentPageId)).join('');
     }
 
     function switchPage(pageId){
+        if(!pageId)return;
         currentPageId=pageId;
-        document.querySelectorAll('.wiki-page').forEach(p=>p.classList.remove('active'));
-        document.getElementById(pageId)?.classList.add('active');
-        document.querySelectorAll('.toc-page-link').forEach(l=>l.classList.remove('active'));
-        document.querySelector(`[data-nav="${pageId}"]`)?.closest('.toc-page-link')?.classList.add('active');
-        document.getElementById('mainContent').scrollTop=0;
+        const activePage=dom.pagesContainer.querySelector('.wiki-page.active');
+        const nextPage=$(pageId);
+        if(activePage&&activePage!==nextPage)activePage.classList.remove('active');
+        if(nextPage)nextPage.classList.add('active');
+        const activeNav=dom.tocList.querySelector('.toc-page-link.active');
+        const nextNav=dom.tocList.querySelector(`[data-nav="${CSS.escape(pageId)}"]`)?.closest('.toc-page-link');
+        if(activeNav&&activeNav!==nextNav)activeNav.classList.remove('active');
+        if(nextNav)nextNav.classList.add('active');
+        dom.mainContent.scrollTop=0;
         if(window.innerWidth<=768)toggleSidebar(false);
-        if(isEditMode)enterEditModeForCurrentPage();
+        if(isEditMode)requestAnimationFrame(enterEditModeForCurrentPage);
     }
 
-    // ===== ★ Konami Code Gate (FIXED) =====
-    // 使用 e.code 作为主匹配（不受输入法影响），e.key 作为 fallback
-    // 序列: ↑↑↓↓←→←→BA
     const KONAMI_SEQ = [
         'ArrowUp','ArrowUp','ArrowDown','ArrowDown',
         'ArrowLeft','ArrowRight','ArrowLeft','ArrowRight',
         'KeyB','KeyA'
     ];
-    // e.key fallback map (覆盖中英文输入法下的各种返回值)
     const KEY_FALLBACK = {
         'ArrowUp':['ArrowUp','Up','↑'],
         'ArrowDown':['ArrowDown','Down','↓'],
@@ -464,9 +458,7 @@
     let konamiIdx = 0;
 
     function matchKey(expectedCode, e) {
-        // 优先匹配 e.code（物理键位，不受输入法影响）
         if (e.code === expectedCode) return true;
-        // fallback: 匹配 e.key 的所有可能值
         const fallbacks = KEY_FALLBACK[expectedCode];
         if (fallbacks && fallbacks.includes(e.key)) return true;
         return false;
@@ -475,7 +467,6 @@
     window.addEventListener('keydown', function konamiListener(e) {
         if (editorUnlocked) return;
 
-        // 忽略修饰键单独按下
         if (e.ctrlKey || e.altKey || e.metaKey) return;
 
         if (matchKey(KONAMI_SEQ[konamiIdx], e)) {
@@ -485,7 +476,6 @@
                 konamiIdx = 0;
             }
         } else {
-            // 按错：如果当前键是序列开头则从1开始，否则归零
             konamiIdx = matchKey(KONAMI_SEQ[0], e) ? 1 : 0;
         }
     });
@@ -500,7 +490,6 @@
         showToast('🎮 编辑器已解锁');
     }
 
-    // ===== Edit Mode =====
     function toggleEditMode(){
         if(!isEditMode){
             isEditMode=true;hasUnsavedChanges=false;
@@ -532,30 +521,30 @@
         if(currentPageId)document.getElementById(currentPageId)?.classList.add('active');
     }
 
-    // ===== 源码分栏同步 =====
     function getEditableBody(){return document.querySelector('.editable-body');}
-    // 把 HTML 按块级标签换行（行内标签保持紧凑，避免同步回正文时在字间塞空格）
     function formatHTMLForDisplay(html){
         const block=/<\s*(\/?(?:section|h[1-6]|p|div|blockquote|ul|ol|li|hr|pre|br)(?:\s|>))/gi;
         return html.replace(block,(m)=>'\n'+m);
     }
     function syncBodyToCode(){
-        const body=getEditableBody(),code=document.getElementById('codeBody');
-        if(body&&code)code.value=formatHTMLForDisplay(body.innerHTML).replace(/^\n/,'');
+        cancelAnimationFrame(syncTimer);
+        syncTimer=requestAnimationFrame(()=>{
+            const body=getEditableBody(),code=$('codeBody');
+            if(body&&code)code.value=formatHTMLForDisplay(body.innerHTML).replace(/^\n/,'');
+        });
     }
     function syncCodeToBody(){
-        const body=getEditableBody(),code=document.getElementById('codeBody');
+        const body=getEditableBody(),code=$('codeBody');
         if(!body||!code)return;
         const caret={start:code.selectionStart,end:code.selectionEnd};
         body.innerHTML=code.value;
-        // 保持 code 焦点与光标，避免左右跳
         code.focus();code.setSelectionRange(caret.start,caret.end);
         syncFormatState();
     }
     function toggleCodeView(){
         codeViewOpen=!codeViewOpen;
         const split=document.querySelector('.editor-split');
-        const wrapper=document.querySelector('.content-wrapper');
+        const wrapper=dom.contentWrapper;
         const btn=document.getElementById('btnToggleCode');
         if(!split)return;
         if(codeViewOpen){
@@ -569,7 +558,6 @@
         }
     }
 
-    // ===== Author Tags Editor =====
     function buildAuthorTagsEditor(currentAuthors){
         const tags=currentAuthors.map(a=>`<span class="author-tag" data-author="${esc(a)}">${esc(a)}<button class="tag-remove" data-remove="${esc(a)}" title="移除署名">✕</button></span>`).join('');
         return`<div class="author-tags-editor" id="authorTagsEditor">
@@ -605,7 +593,6 @@
         bodyEl.addEventListener('paste',e=>{pasteAsText(e);});
         codeEl.addEventListener('input',()=>{hasUnsavedChanges=true;syncCodeToBody();});
         codeEl.value=bodyEl.innerHTML;
-        // 进入编辑时同步 wrapper 铺满状态与源码按钮高亮
         const wrapper=document.querySelector('.content-wrapper');
         if(wrapper)wrapper.classList.toggle('code-open',codeViewOpen);
         document.getElementById('btnToggleCode')?.classList.toggle('active',codeViewOpen);
@@ -629,7 +616,6 @@
         function showSuggestions(q){
             const existing=getCurrentTags();
             const filtered=members.filter(m=>!q||m.name.toLowerCase().includes(q.toLowerCase()));
-            // 无匹配时直接隐藏下拉，避免出现空白弹层
             if(!filtered.length){suggestions.classList.remove('show');return;}
             suggestions.innerHTML=filtered.map((m,i)=>{
                 const used=existing.includes(m.name);
@@ -672,8 +658,6 @@
         return{title:titleEdit.textContent.trim(),content:bodyEdit.innerHTML,authors};
     }
 
-    // 把当前编辑内容写入数据模型（标题/正文/署名/子章节统一处理）。
-    // persist=true 时写 localStorage 并弹 toast；false 仅更新内存（导航/导出时用）。
     function commitCurrentEdits(persist=true){
         if(!currentPageId)return false;
         const edits=collectCurrentEdits();if(!edits)return false;
@@ -694,15 +678,13 @@
         if(!commitCurrentEdits(true))return;
         renderSidebar();
         const pg=pages.find(p=>p.id===currentPageId);
-        if(pg){const mt=document.querySelector(`#${pg.id} .meta-time`);if(mt)mt.textContent=`🕐 ${formatTime(pg.updated)}`;}
+        if(pg){const mt=$(pg.id)?.querySelector('.meta-time');if(mt)mt.textContent=`🕐 ${formatTime(pg.updated)}`;}
     }
 
-    // ===== Save Confirm Modal =====
     document.getElementById('btnSaveAndExit').addEventListener('click',()=>{saveCurrentPage();document.getElementById('saveConfirmModal').classList.remove('show');doExitEditMode();});
     document.getElementById('btnDiscard').addEventListener('click',()=>{document.getElementById('saveConfirmModal').classList.remove('show');hasUnsavedChanges=false;doExitEditMode();});
     document.getElementById('btnCancelExit').addEventListener('click',()=>{document.getElementById('saveConfirmModal').classList.remove('show');});
 
-    // ===== Member Manager =====
     function renderMemberList(){
         document.getElementById('memberList').innerHTML=members.map((m,i)=>
             `<li data-idx="${i}"><span class="member-name">${esc(m.name)}</span><button class="btn-rename" data-idx="${i}" title="重命名">✏️</button><button class="btn-del-member" data-idx="${i}" title="删除成员">🗑</button></li>`
@@ -725,10 +707,8 @@
     });
     document.getElementById('memberList').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList.contains('member-name-input')){document.querySelector(`.btn-confirm-rename[data-idx="${e.target.dataset.idx}"]`)?.click();}});
 
-    // ===== Add/Delete Pages =====
     document.getElementById('btnAddPage').addEventListener('click',()=>{
         const title=prompt('新分区名称：');if(!title?.trim())return;
-        // 先提交当前未保存内容，避免新增页面时丢失
         if(isEditMode&&hasUnsavedChanges)commitCurrentEdits(false);
         pages.push({id:'page-'+Date.now(),title:title.trim(),hasSub:false,subs:[],authors:[],updated:new Date().toISOString(),content:'<p>在此编写...</p>'});
         savePagesData();renderSidebar();renderPages();switchPage(pages[pages.length-1].id);
@@ -740,8 +720,6 @@
         if(currentPageId===rid)switchPage(pages[0].id);
     }
 
-    // ===== Toolbar Commands =====
-    // 选中文字设为/取消章节：选中文字成为章节标题，同步左侧目录锚点
     function toggleSectionOnSelection(){
         const body=document.querySelector('.editable-body');if(!body)return;
         const sel=window.getSelection();
@@ -751,7 +729,6 @@
         const node=container.nodeType===1?container:container.parentElement;
         const existing=node?.closest('section');
         if(existing){
-            // 取消章节：解包 section，内部标题降级为普通段落（锚点随之消失）
             const parent=existing.parentNode;
             existing.querySelectorAll('h2,h3').forEach(h=>{
                 const p=document.createElement('p');
@@ -761,7 +738,6 @@
             while(existing.firstChild)parent.insertBefore(existing.firstChild,existing);
             parent.removeChild(existing);
         }else{
-            // 设为章节：选中文字作为章节标题，包裹成带锚点 id 的 section
             const text=range.toString().trim();
             if(!text){alert('选中内容为空');return;}
             const section=document.createElement('section');
@@ -774,7 +750,6 @@
             sel.removeAllRanges();
             const r=document.createRange();r.selectNodeContents(section);sel.addRange(r);
         }
-        // 立即持久化并刷新左侧目录锚点（saveCurrentPage 内部会 commit + renderSidebar）
         saveCurrentPage();
     }
 
@@ -809,7 +784,6 @@
         syncBodyToCode();
     });
 
-    // Text Color Picker
     document.getElementById('textColorPicker').addEventListener('input', function(e){
         const body=document.querySelector('.editable-body');if(!body)return;
         body.focus();
@@ -818,7 +792,6 @@
         syncBodyToCode();
     });
 
-    // Highlight Color Picker（背景高亮）
     document.getElementById('hiliteColorPicker').addEventListener('input', function(e){
         const body=document.querySelector('.editable-body');if(!body)return;
         body.focus();
@@ -827,7 +800,6 @@
         syncBodyToCode();
     });
 
-    // Font Size Select（字号 1-7）
     document.getElementById('fontSizeSelect').addEventListener('change', function(e){
         const body=document.querySelector('.editable-body');if(!body)return;
         const v=e.target.value;
@@ -838,7 +810,6 @@
         syncBodyToCode();
     });
 
-    // Font Family Select（字体）
     document.getElementById('fontFamilySelect').addEventListener('change', function(e){
         const body=document.querySelector('.editable-body');if(!body)return;
         const v=e.target.value;
@@ -849,13 +820,11 @@
         syncBodyToCode();
     });
 
-    // ===== 选区变化时自动回显字号/字体 =====
     function syncFormatState(){
         if(!isEditMode)return;
         const body=document.querySelector('.editable-body');if(!body)return;
         const sel=window.getSelection();
         if(!sel.rangeCount||sel.isCollapsed)return;
-        // 选区必须落在可编辑正文内
         const anchor=sel.anchorNode;
         const anchorEl=anchor&&(anchor.nodeType===1?anchor:anchor.parentElement);
         if(!anchorEl||!body.contains(anchorEl))return;
@@ -866,9 +835,7 @@
 
         const fsSel=document.getElementById('fontSizeSelect');
         const ffSel=document.getElementById('fontFamilySelect');
-        // 字号：queryCommandValue 返回 "1"~"7"（或空）
         if(fsSel)fsSel.value=(/^[1-7]$/.test(fs))?fs:'';
-        // 字体：返回可能带引号，规范化后与选项匹配
         if(ffSel){
             const norm=String(ff).replace(/["']/g,'').trim().toLowerCase();
             let matched=false;
@@ -878,10 +845,13 @@
             if(!matched)ffSel.value='';
         }
     }
-    document.addEventListener('selectionchange',syncFormatState);
+    let selectionSyncQueued=false;
+    document.addEventListener('selectionchange',()=>{
+        if(selectionSyncQueued)return;
+        selectionSyncQueued=true;
+        requestAnimationFrame(()=>{selectionSyncQueued=false;syncFormatState();});
+    });
 
-    // ===== Export =====
-    // 导出的静态页运行脚本（不含编辑能力，仅保留目录切换/移动端抽屉）
     const EXPORT_RUNTIME_JS = `(()=>{
         const sb=document.getElementById('sidebar'),ov=document.getElementById('sidebarOverlay'),
               mb=document.getElementById('mobileMenuBtn'),mc=document.getElementById('mainContent');
@@ -932,7 +902,6 @@
     })();`;
 
     function buildExportHTML(){
-        // 编辑状态下先提交当前内容到内存模型（不写 localStorage）
         if(isEditMode)commitCurrentEdits(false);
         const ph=pages.map(pg=>buildPageHTML(pg,pg.id===currentPageId)).join('\n');
         const th=pages.map(pg=>buildTocItemHTML(pg,{isActive:pg.id===currentPageId,deletable:false})).join('\n');
@@ -952,7 +921,7 @@
     <div class="sidebar-header"><span>📚 合月亭 Wiki</span></div>
     <div class="sidebar-content"><ul class="toc-list" id="tocList">${th}</ul></div>
 </aside>
-<main class="main-content" id="mainContent">
+<main class="main-content" id="mainContent" aria-live="polite">
     <div class="content-wrapper"><div id="pagesContainer">${ph}</div></div>
 </main>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"5824bbe371ce4eefbe8027cb86c0d0a6"}'><\/script>
@@ -964,11 +933,43 @@
     document.getElementById('btnExport').addEventListener('click',()=>{
         const html=buildExportHTML();
         const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);
-        const a=document.createElement('a');a.href=url;a.download='heyue-wiki-export.html';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+        const a=document.createElement('a');a.href=url;a.download='heyue-wiki-export.html';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
     });
 
-    // ===== Sidebar Events =====
-    document.getElementById('tocList').addEventListener('click',function(e){
+    function buildDataJSON(){
+        if(isEditMode)commitCurrentEdits(false);
+        return JSON.stringify({members,pages},null,2);
+    }
+    document.getElementById('btnExportJson').addEventListener('click',()=>{
+        const json=buildDataJSON();
+        const blob=new Blob([json],{type:'application/json'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');a.href=url;a.download='WIKI-data.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+        showToast('📤 已导出 WIKI-data.json');
+    });
+    document.getElementById('btnImportJson').addEventListener('click',()=>{
+        document.getElementById('importJsonInput').click();
+    });
+    document.getElementById('importJsonInput').addEventListener('change',function(e){
+        const file=e.target.files&&e.target.files[0];
+        if(!file)return;
+        const reader=new FileReader();
+        reader.onload=()=>{
+            try{
+                const data=JSON.parse(reader.result);
+                if(!Array.isArray(data.pages)||!Array.isArray(data.members)){alert('JSON 格式不正确：需要包含 pages 和 members 数组');return;}
+                pages=data.pages.filter(p=>p&&p.id);members=data.members.filter(m=>m&&m.name);
+                localStorage.setItem(PAGES_KEY,JSON.stringify(pages));
+                localStorage.setItem(MEMBERS_KEY,JSON.stringify(members));
+                currentPageId=null;hasUnsavedChanges=false;renderSidebar();renderPages();switchPage(pages[0]?.id||'');
+                showToast('📥 已导入数据');
+            }catch(err){alert('JSON 解析失败：'+err.message);}
+        };
+        reader.readAsText(file,'utf-8');
+        e.target.value='';
+    });
+
+    dom.tocList.addEventListener('click',function(e){
         const del=e.target.closest('.btn-delete-page');
         if(del){e.stopPropagation();deletePage(parseInt(del.dataset.delIdx));return;}
         const ar=e.target.closest('.expand-arrow');
@@ -977,7 +978,6 @@
         if(nt){
             const pid=nt.dataset.nav;
             if(pid){
-                // 切换前先提交未保存内容，防止丢失
                 if(isEditMode&&hasUnsavedChanges)commitCurrentEdits(false);
                 switchPage(pid);
                 const pl=nt.closest('.toc-page-link'),sm=pl?.nextElementSibling,ae=pl?.querySelector('.expand-arrow');
@@ -997,18 +997,29 @@
         }
     });
 
-    // ===== Mobile =====
-    function toggleSidebar(open){const sb=document.getElementById('sidebar'),ov=document.getElementById('sidebarOverlay');const a=open!==undefined?open:!sb.classList.contains('active');sb.classList.toggle('active',a);ov.classList.toggle('active',a);}
+    function toggleSidebar(open){const sb=$('sidebar'),ov=$('sidebarOverlay');const a=open!==undefined?open:!sb.classList.contains('active');sb.classList.toggle('active',a);ov.classList.toggle('active',a);}
     document.getElementById('mobileMenuBtn').addEventListener('click',()=>toggleSidebar());
     document.getElementById('sidebarOverlay').addEventListener('click',()=>toggleSidebar(false));
 
-    // ===== Top Buttons =====
-    document.getElementById('modeToggle').addEventListener('click',toggleEditMode);
-    document.getElementById('btnSave').addEventListener('click',saveCurrentPage);
-    document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='s'&&isEditMode){e.preventDefault();saveCurrentPage();}});
+    $('modeToggle').addEventListener('click',toggleEditMode);
+    dom.btnSave.addEventListener('click',saveCurrentPage);
+    document.addEventListener('keydown',e=>{
+        if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'&&isEditMode){e.preventDefault();saveCurrentPage();return;}
+        if(e.key==='Escape'){
+            if($('memberModal').classList.contains('show'))$('memberModal').classList.remove('show');
+            else if($('saveConfirmModal').classList.contains('show'))$('saveConfirmModal').classList.remove('show');
+            else if(window.innerWidth<=768)toggleSidebar(false);
+        }
+    });
+    window.addEventListener('beforeunload',e=>{
+        if(hasUnsavedChanges){e.preventDefault();e.returnValue='';}
+    });
 
-    // ===== Init =====
-    loadData();renderSidebar();renderPages();switchPage(pages[0]?.id||'page-intro');
+    (async()=>{
+        await loadData();
+        renderSidebar();renderPages();switchPage(pages[0]?.id||'page-intro');
+        if(!pages.length){dom.pagesContainer.innerHTML='<div class="wiki-page active"><h1>暂无内容</h1><p>请导入 WIKI-data.json 或在编辑模式中新增页面。</p></div>';}
+    })();
 })();
 </script>
 </body>
