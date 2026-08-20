@@ -15,7 +15,7 @@
         "合月亭"
       ],
       "updated": "2026-08-20T11:49:08.041Z",
-      "content": "<p>本教程专注galgame的下载/解密/解压/运行等疑难杂症</p>"
+      "content": "<p>本教程专注galgame的下载/解密/解压/运行等疑难杂症 测试</p>"
     },
     {
       "id": "page-download",
@@ -86,15 +86,23 @@
           "label": "区域模拟"
         },
         {
-          "id": "run-error",
-          "label": "启动报错"
+          "id": "sec-1787248653078",
+          "label": "游戏打不开"
+        },
+        {
+          "id": "sec-1787248665090",
+          "label": "闪退或存在“Unicode”关键字等"
+        },
+        {
+          "id": "sec-1787248669346",
+          "label": "找不到可执行文件"
         }
       ],
       "authors": [
         "Cintser"
       ],
-      "updated": "2026-08-20T11:46:28.725Z",
-      "content": "<section id=\"run-locale\"><h2>区域模拟</h2><p><i><font size=\"3\" color=\"#000000\">为什么有些游戏打开会乱码呢？通俗的讲就类似【驴唇不对马嘴】，当我给游戏引擎一个只\n能说中文的嘴，却让它去读一篇日语演讲稿一样，就像“大丈夫”在中文读\n作“da’zhang’fu”，在日文读作“da i jyou bu”。游戏引擎自然就读错了，体现出来\n的就是乱码。</font></i></p><p><i><font size=\"3\" color=\"#000000\">对于非简中区的朋友，如果想在自己的电脑上使用简体中文的汉化补丁，或是非日区的玩日\n区的游戏，想要不乱码，就要使用转区软件，这里推荐使用“Locale Emulator”</font></i></p><p><i><font size=\"3\" color=\"#000000\">Locale Emulator作者于2022.4.16对github项目仓库进行归档，不再更新了。</font></i></p><p><i><font size=\"3\" color=\"#000000\"><span>现有替代品是</span><a href=\"https://github.com/InWILL/Locale_Remulator\">Locale Remulator</a><span>，相比LE，LR增加了对64位程序的支持。</span></font></i></p><p><!--StartFragment--><!--EndFragment--></p><p><a href=\"https://www.bilibili.com/read/cv17071516\"><i><font size=\"3\" color=\"#000000\">[转区工具]Locale Emulator的使用(2023 Ver1.0)</font></i></a></p><p><span><b>下面开始教程</b></span></p><p><font size=\"4\"><span>第一步，在</span><a href=\"https://github.com/xupefei/Locale-Emulator\">https://github.com/xupefei/Locale-Emulator</a><span>找到我们\n要下载的文件</span></font></p><p><span><font size=\"3\">据说有些兼容问题</font></span></p><p><font size=\"3\"><span>win10或win10以下的操作系统建议选择</span><span>2.4.1.0以下</span><span>版本</span></font></p><p><!--StartFragment--><!--EndFragment--></p><p><font size=\"3\">win11版建议选择2.5.0.1以上版本。</font></p><p><img src=\"https://sway.cloud.microsoft/s/RcqolL0J7p9iPZQG/images/FgyP_5THf4K7vu?quality=1256&amp;allowAnimation=true\" alt=\"\"></p><p><!--StartFragment-->第二步，解压，可以看到如下图的文件结构。</p><p>我们双击“installer”，进行软件安装，我推荐是“为所有用户安装”。<!--EndFragment--></p><p><span>第三步，我们安装后，右键想要转区运行的软件，就可以在右键菜单中，找到新增的“</span><span><b>Locale Emulator</b></span><span>”，</span></p><p><span>对于<b>非日区用户运行日区</b>游戏，选择“</span><span><b><font color=\"#ff0000\">run in jp</font></b></span><span>”就可以了。</span></p><p><span><i><font color=\"#747676\">对于想运行其他语言游戏的朋友，就要选择“</font><font color=\"#96d65c\">修改此程序的配置</font><font color=\"#747676\">”，</font></i></span></p><p><span><font color=\"#747676\"><i>然后进入配置界面，在“预置配置”里，找到自己要转的语言，然后点击“保存”。</i></font></span></p><p><!--StartFragment--><!--EndFragment--></p><p><span><font color=\"#747676\"><i>点击保存运行后，在文件夹下会生成一个Game.exe.le.config的配置文件，之后再用LE启动该exe时无需再次进行配置，如果配置错了可以删除重新进行配置。</i></font></span></p><p><img src=\"https://sway.cloud.microsoft/s/RcqolL0J7p9iPZQG/images/qZuFrudkQN5W8M?quality=931&amp;allowAnimation=true\" alt=\"\"></p><p><!--StartFragment-->第四步，我们可以直接一步到位，把红框的选项全部选好，其他的可以不用管。</p><p><b>不要忘记保存</b><!--EndFragment--></p><p><img src=\"https://sway.cloud.microsoft/s/RcqolL0J7p9iPZQG/images/3ZwkmEax5P1Ghy?quality=517&amp;allowAnimation=true\" alt=\"\"></p><p><span>如果仍然有问题，可以去这里找找有没有你要的答案。</span></p><p><a href=\"https://www.bilibili.com/read/cv21785877\">[转区工具]Locale Emulator的使用(2023 Ver1.0)</a></p><p><!--StartFragment--><!--EndFragment--></p><p><a href=\"https://www.bilibili.com/read/cv21790436\">[转区工具]Locale Emulator的常见问题(2023 Ver1.0)</a></p><p></p><p></p><p></p></section><section id=\"run-error\"><h2>启动报错</h2><p><br></p></section>"
+      "updated": "2026-08-20T18:02:02.280Z",
+      "content": "<section id=\"run-locale\"><h2>区域模拟</h2><p><i><font size=\"3\" color=\"#919191\">为什么有些游戏打开会乱码呢？通俗的讲就类似【驴唇不对马嘴】，当我给游戏引擎一个只\n能说中文的嘴，却让它去读一篇日语演讲稿一样，就像“大丈夫”在中文读\n作“da’zhang’fu”，在日文读作“da i jyou bu”。游戏引擎自然就读错了，体现出来的就是乱码。</font></i></p><p><i><font size=\"3\" color=\"#919191\">对于非简中区的朋友，如果想在自己的电脑上使用简体中文的汉化补丁，或是非日区的玩日区的游戏，想要不乱码，就要使用转区软件，这里推荐使用“Locale Emulator”</font></i></p><p><i><font size=\"3\" color=\"#919191\">Locale Emulator作者于2022.4.16对github项目仓库进行归档，不再更新了。</font></i></p><p><i><font size=\"3\" color=\"#919191\"><span>现有替代品是</span><a href=\"https://github.com/InWILL/Locale_Remulator\">Locale Remulator</a><span>，相比LE，LR增加了对64位程序的支持。</span></font></i></p><p><!--StartFragment--><!--EndFragment--></p><p><a href=\"https://www.bilibili.com/read/cv17071516\"><i>[转区工具]Locale Emulator的使用(2023 Ver1.0)</i></a></p><p><span><b>下面开始教程</b></span></p><p><font size=\"4\"><span>第一步，在</span><a href=\"https://github.com/xupefei/Locale-Emulator\">https://github.com/xupefei/Locale-Emulator</a><span>找到我们\n要下载的文件</span></font></p><p><span><font size=\"3\">据说有些兼容问题</font></span></p><p><font size=\"3\"><span>win10或win10以下的操作系统建议选择</span><span>2.4.1.0以下</span><span>版本</span></font></p><p><!--StartFragment--><!--EndFragment--></p><p><font size=\"3\">win11版建议选择2.5.0.1以上版本。</font></p><p><img src=\"https://sway.cloud.microsoft/s/RcqolL0J7p9iPZQG/images/FgyP_5THf4K7vu?quality=1256&amp;allowAnimation=true\" alt=\"\"></p><p><!--StartFragment-->第二步，解压，可以看到如下图的文件结构。</p><p>我们双击“installer”，进行软件安装，我推荐是“为所有用户安装”。<!--EndFragment--></p><p><span>第三步，我们安装后，右键想要转区运行的软件，就可以在右键菜单中，找到新增的“</span><span><b>Locale Emulator</b></span><span>”，</span></p><p><span>对于<b>非日区用户运行日区</b>游戏，选择“</span><span><b><font color=\"#ff0000\">run in jp</font></b></span><span>”就可以了。</span></p><p><span><i><font color=\"#747676\">对于想运行其他语言游戏的朋友，就要选择“</font><font color=\"#96d65c\">修改此程序的配置</font><font color=\"#747676\">”，</font></i></span></p><p><span><font color=\"#747676\"><i>然后进入配置界面，在“预置配置”里，找到自己要转的语言，然后点击“保存”。</i></font></span></p><p><!--StartFragment--><!--EndFragment--></p><p><span><font color=\"#747676\"><i>点击保存运行后，在文件夹下会生成一个Game.exe.le.config的配置文件，之后再用LE启动该exe时无需再次进行配置，如果配置错了可以删除重新进行配置。</i></font></span></p><p><img src=\"https://sway.cloud.microsoft/s/RcqolL0J7p9iPZQG/images/qZuFrudkQN5W8M?quality=931&amp;allowAnimation=true\" alt=\"\"></p><p><!--StartFragment-->第四步，我们可以直接一步到位，把红框的选项全部选好，其他的可以不用管。</p><p><b>不要忘记保存</b><!--EndFragment--></p><p><img src=\"https://sway.cloud.microsoft/s/RcqolL0J7p9iPZQG/images/3ZwkmEax5P1Ghy?quality=517&amp;allowAnimation=true\" alt=\"\"></p><p><span>如果仍然有问题，可以去这里找找有没有你要的答案。</span></p><p><a href=\"https://www.bilibili.com/read/cv21785877\">[转区工具]Locale Emulator的使用(2023 Ver1.0)</a></p><p><!--StartFragment--><!--EndFragment--></p><p><a href=\"https://www.bilibili.com/read/cv21790436\">[转区工具]Locale Emulator的常见问题(2023 Ver1.0)</a></p></section><p></p><div><!--StartFragment--><p><b></b></p><section id=\"sec-1787248653078\"><h2><b>游戏打不开</b></h2></section><p></p><ul><li>可能是双击了错误的文件</li></ul><p>首先检查当前运行的游戏文件夹目录是否包含诸如“chs”、“cn”、“CN”、“CHS”等字眼，或是“中文名字”的可执行文件，因为大多数的汉化补丁会对原本的可执行文件进行一定的修改，使其可以在国内运行并进行破解操作</p><ul><li>可能解压不完全</li></ul><ul><li>可能是路径的问题</li></ul><p>有些游戏的运行路径不能出现中文，请将游戏文件名重命名为英文，Unity老版本有路径文件夹名太长会打不开游戏的bug。</p><ul><li>可能是系统的问题</li></ul><p>有些老游戏需要在老版本的操作系统上运行，例如WIN7,WINXP。此时请使用虚拟机安装旧\n版本的操作系统来运行。</p><p>游戏兼容什么系统可以通过游戏发行时的年份来大致判断，比如游戏发行于2011年那么应该\n是兼容WIN7的，发行于2005年应该是兼容WIN XP的。</p><p>尝试下载sxs.dll并解压到游戏目录 <a href=\"https://odd.lzacg.one/tool/%E4%BF%AE%E5%A4%8Dwin10%E6%B8%B8%E6%88%8F%E6%97%A0%E6%B3%95%E8%BF%90%E8%A1%8C%E7%9A%84sxs.dll.rar\">请到这里下载</a></p><ul><li>可能缺少了运行库(例如c++运行库)</li></ul><p>可能伴随报错“Syntax ERROR”</p><p>请使用DirectX_Repair修复工具进行修复 <a href=\"https://odd.lzacg.one/tool/DirectX_Repair\">请到这里下载</a></p><ul><li>手机运行游戏问题</li></ul><p>手机玩电脑游戏需要模拟器或者有人做移植，模拟器见工具篇</p><p>如果游戏文件没有错误但却使用模拟器运行不了或出错那么有可能是安卓系统版本过高导致\n的，对于安卓游戏同理。</p><p><b></b></p><section id=\"sec-1787248665090\"><h2><b>闪退或存在“Unicode”关键字等</b></h2></section><p></p><p>关闭 Windows 的“Beta版：打开控制面板 –&gt; 时钟和区域 –&gt; 区域 –&gt; 管理选项卡 –&gt; 更改\n系统区域设置 –&gt; 取消勾选 “Beta版: 使用 Unicode UTF-8…” –&gt; 重启电脑。</p><p><b></b></p><section id=\"sec-1787248669346\"><h2><b>找不到可执行文件</b></h2></section><p></p><p>解压错误，或者杀毒软件误杀。</p><!--EndFragment--></div><p><br></p>"
     },
     {
       "id": "page-tools",
@@ -102,13 +110,23 @@
       "hasSub": true,
       "subs": [
         {
-          "id": "sec-1787169949735",
-          "label": "1"
+          "id": "sec-1787248421081",
+          "label": "机翻工具"
+        },
+        {
+          "id": "sec-1787248425685",
+          "label": "手机模拟器"
+        },
+        {
+          "id": "sec-1787248428822",
+          "label": "其他"
         }
       ],
-      "authors": [],
-      "updated": "2026-08-19T20:17:48.712Z",
-      "content": "<p></p><section id=\"sec-1787169949735\"><h2>1</h2></section><p></p>"
+      "authors": [
+        "Alicxzore"
+      ],
+      "updated": "2026-08-20T23:42:33.890Z",
+      "content": "<p></p><p></p><section id=\"sec-1787248421081\"><h2>机翻工具</h2></section><p></p><!--StartFragment--><div>GAL有熟肉生肉之分，最新的GAL还没汉化组翻译怎么办？等待呗！但这是弱者的行为，尽管不能带来最好的推GAL体验，但若想第一时间美美吃上熟肉，机翻工具是不错的选择。</div><div>这里介绍两种常用的机翻工具</div><div>1.Visual Novel Reader（简称VNR）</div><div>Visual Novel Reader简称VNR，可以在电脑上实时显示galgame的中文翻译。</div><div>2.MTOOL</div><div>MTOOL是一个RPG机翻软件，适用于所有RPG Maker制作的游戏，以下是作者的爱发电主页和发布页</div><div><a href=\"https://afdian.com/a/AdventCirno?tab=home\">鬼才琪露诺正在创作MTool | 给玩家的实用工具 | 爱发电</a></div><div><a href=\"https://trs.mtool.app/release.php?lang=chs\">MTool 发布页</a></div><p></p><section id=\"sec-1787248425685\"><h2>手机模拟器</h2></section><p></p><div>手机模拟器最常用便是krkr和ONS了，正好有dalao做了ONS模拟器的改版，支持多平台，甚至可以在网页上运行，以下是作者的github页面：</div><div><a href=\"https://github.com/YuriSizuku/OnscripterYuri/releases\">发行作品 ·YuriSizuku/OnscripterYuri</a></div><div><br></div><div><p></p><section id=\"sec-1787248428822\"><h2>其他</h2></section><p></p><div>有些GAL是NS独占的（如重制版的月姬），如果有推NS平台的需求，这里推荐ryujinx（龙神）模拟器，下面是龙神模拟器官网：</div><div><a href=\"https://ryujinx.cn/\">Ryujinx - 高性能的Nintendo Switch模拟器</a></div><div>在官网下载完毕后前往根目录点击EXE文件会弹出软件窗口。</div><div>点击左上角【文件】&gt;【加载文件】就可以美美推NS平台上的GAL咯！</div><div><br></div><br><!--EndFragment--></div><p></p>"
     },
     {
       "id": "page-search",
