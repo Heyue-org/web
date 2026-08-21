@@ -318,6 +318,7 @@
             for(const attr of[...el.attributes]){
                 const name=attr.name.toLowerCase();
                 const keepAttr=(el.tagName==='A'&&name==='href')
+
                     ||(el.tagName==='IMG'&&(name==='src'||name==='alt'))
                     ||(el.tagName==='SECTION'&&name==='id')
                     ||(el.tagName==='FONT'&&(name==='size'||name==='face'||name==='color'));
@@ -373,28 +374,30 @@
     }
 
     async function loadData(){
-        let loadedPages=null, loadedMembers=null;
-        try{const r=localStorage.getItem(PAGES_KEY);if(r)loadedPages=JSON.parse(r);}catch(e){}
-        try{const r=localStorage.getItem(MEMBERS_KEY);if(r)loadedMembers=JSON.parse(r);}catch(e){}
-
-        if(loadedPages&&loadedMembers){
-            pages=loadedPages;members=loadedMembers;
-            return;
-        }
-
-        try{
-            const res=await fetch(DATA_URL,{cache:'no-store'});
-            if(res.ok){
-                const data=await res.json();
-                pages=Array.isArray(data.pages)?data.pages:[];
-                members=Array.isArray(data.members)?data.members:[];
-                if(pages.length)localStorage.setItem(PAGES_KEY,JSON.stringify(pages));
-                if(members.length)localStorage.setItem(MEMBERS_KEY,JSON.stringify(members));
+        try {
+            const res = await fetch(DATA_URL, { cache: 'no-store' });
+            if (res.ok) {
+                const data = await res.json();
+                if (Array.isArray(data.pages)) pages = data.pages;
+                if (Array.isArray(data.members)) members = data.members;
+                // 同步更新 localStorage 作为离线备份
+                if (pages.length) localStorage.setItem(PAGES_KEY, JSON.stringify(pages));
+                if (members.length) localStorage.setItem(MEMBERS_KEY, JSON.stringify(members));
                 return;
             }
-        }catch(e){}
-        pages=loadedPages||[];members=loadedMembers||[];
+        } catch (e) {
+            console.warn('无法从服务器加载最新数据，将尝试读取本地缓存', e);
+        }
+
+        // 仅在服务器请求失败时，才回退到 localStorage
+        try {
+            const lp = localStorage.getItem(PAGES_KEY);
+            const lm = localStorage.getItem(MEMBERS_KEY);
+            if (lp) pages = JSON.parse(lp);
+            if (lm) members = JSON.parse(lm);
+        } catch (e) {}
     }
+
     function savePagesData(){localStorage.setItem(PAGES_KEY,JSON.stringify(pages));showToast();}
     function saveMembersData(){localStorage.setItem(MEMBERS_KEY,JSON.stringify(members));}
     function showToast(msg){const t=dom.saveToast;t.textContent=msg||'✅ 已保存';t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2000);}
@@ -484,9 +487,11 @@
         editorUnlocked = true;
         document.getElementById('topControls').style.display = 'flex';
         const hint = document.getElementById('konamiHint');
-        hint.textContent = '🔓 编辑器已解锁';
-        hint.classList.add('flash');
-        setTimeout(() => hint.classList.remove('flash'), 2000);
+        if(hint){
+            hint.textContent = '🔓 编辑器已解锁';
+            hint.classList.add('flash');
+            setTimeout(() => hint.classList.remove('flash'), 2000);
+        }
         showToast('🎮 编辑器已解锁');
     }
 
@@ -1011,8 +1016,14 @@
             else if(window.innerWidth<=768)toggleSidebar(false);
         }
     });
-    window.addEventListener('beforeunload',e=>{
-        if(hasUnsavedChanges){e.preventDefault();e.returnValue='';}
+
+    window.addEventListener('beforeunload', e => {
+        if (isEditMode && hasUnsavedChanges) {
+            const warningMsg = '刷新会导致未保存的数据丢失，请编辑员确保数据成功导出';
+            e.preventDefault();
+            e.returnValue = warningMsg;
+            return warningMsg;
+        }
     });
 
     (async()=>{
