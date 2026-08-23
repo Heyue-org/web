@@ -2,7 +2,7 @@
 <html lang="zh-CN" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ACG资源站点导航 - 合月亭</title>
     <style>
         :root {
@@ -96,6 +96,56 @@
             justify-content: center; flex-shrink: 0;
         }
         .theme-toggle:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .mobile-sticky-tabs {
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 199;
+            background: var(--top-bar-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem 0;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .mobile-tabs-scroll {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 0 0.8rem;
+            gap: 0.5rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .mobile-tabs-scroll::-webkit-scrollbar { display: none; }
+        .mobile-tab-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.25s;
+            user-select: none;
+        }
+        .mobile-tab-item.active {
+            background: var(--accent-gold);
+            color: #0f172a;
+            border-color: var(--accent-gold);
+            font-weight: 700;
+        }
+        [data-theme="light"] .mobile-tab-item.active { color: #fff; }
+        .mobile-tab-item:not(.active):hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
         .layout {
             display: flex; flex: 1; max-width: 1400px;
             margin: 0 auto; width: 100%;
@@ -284,9 +334,7 @@
             margin-top: 0.3rem; padding-top: 0.4rem;
             border-top: 1px dashed var(--border-color);
         }
-        .rating-label {
-            color: var(--text-sub); font-size: 0.75rem; flex-shrink: 0;
-        }
+        .rating-label { color: var(--text-sub); font-size: 0.75rem; flex-shrink: 0; }
         .stars { display: inline-flex; gap: 2px; cursor: pointer; }
         .star {
             font-size: 1rem; color: var(--border-color);
@@ -298,15 +346,14 @@
             font-size: 0.75rem; color: var(--text-sub); margin-left: auto;
             white-space: nowrap;
         }
-        .rating-info .score-val {
-            color: var(--accent-gold); font-weight: 700;
-        }
+        .rating-info .score-val { color: var(--accent-gold); font-weight: 700; }
         .stars.disabled { cursor: default; opacity: 0.6; }
         .stars.disabled .star:hover { transform: none; }
         @media (max-width: 900px) {
             .grid { grid-template-columns: repeat(2, 1fr); }
         }
         @media (max-width: 768px) {
+            .mobile-sticky-tabs { display: block; }
             .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
             .sidebar {
                 position: fixed; left: -260px; top: 0; bottom: 0;
@@ -324,24 +371,48 @@
             .v-line { height: 22px; margin: 0 0.5rem; width: 2px; }
             .page-title { font-size: 1.1rem; letter-spacing: 1px; overflow: hidden; text-overflow: ellipsis; }
             .theme-toggle { padding: 0.3rem 0.5rem; font-size: 1rem; }
-            .main-content { padding: 1rem 0.6rem 3rem; }
-            .toolbar { gap: 0.6rem; }
+            .main-content { padding: 0.8rem 0 3rem; }
+            .toolbar { gap: 0.6rem; padding: 0 0.6rem; }
             .search-box { min-width: 0; padding: 0.5rem 0.8rem; font-size: 0.85rem; }
             .sort-select { padding: 0.5rem 0.6rem; font-size: 0.85rem; }
-            .grid-toggle-btn { display: flex; }
-            .grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
-            .grid.cols-3 { grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
-            .grid.cols-3 .site-card { padding: 0.8rem 0.7rem; }
-            .grid.cols-3 .site-name { font-size: 0.9rem; }
-            .grid.cols-3 .site-logo { width: 20px; height: 20px; }
-            .grid.cols-3 .links-toggle { font-size: 0.72rem; }
-            .grid.cols-3 .uid-inline { font-size: 0.62rem; }
-            .grid.cols-3 .meta-row { font-size: 0.72rem; gap: 0.4rem; }
-            .grid.cols-3 .meta-label { font-size: 0.65rem; }
-            .grid.cols-3 .rating-row { gap: 0.3rem; }
-            .grid.cols-3 .star { font-size: 0.8rem; }
-            .grid.cols-3 .rating-info { font-size: 0.65rem; }
-            .custom-links-row { padding-left: 0; }
+            .grid-toggle-btn { display: none !important; }
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0;
+                width: 100%;
+            }
+            .grid.cols-3 {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0;
+            }
+            .site-card {
+                padding: 0.8rem;
+                border-radius: 0;
+                gap: 0.3rem;
+                min-height: 0;
+            }
+            .site-card:hover { transform: none; box-shadow: none; }
+            .site-name-row { gap: 0.4rem; padding-right: 0; }
+            .site-logo { width: 20px; height: 20px; }
+            .site-name { font-size: 0.88rem; }
+            .links-toggle-row { padding: 0.1rem 0; gap: 0.3rem; }
+            .links-toggle { font-size: 0.72rem; gap: 0.2rem; }
+            .links-toggle .arrow { font-size: 0.6rem; }
+            .uid-inline { font-size: 0.62rem; }
+            .links-panel { gap: 0.2rem; padding: 0.3rem 0; margin-top: 0.1rem; }
+            .link-row { font-size: 0.72rem; gap: 0.3rem; }
+            .link-label { font-size: 0.65rem; }
+            .related-icons { gap: 4px; margin-left: 2px; }
+            .related-icon { width: 20px; height: 20px; font-size: 0.75rem; }
+            .related-icon.icon-gh svg { width: 12px; height: 12px; }
+            .custom-links-row { padding-left: 0; gap: 0.2rem 0.5rem; margin-top: 0; }
+            .custom-links-row a { font-size: 0.68rem; }
+            .meta-row { gap: 0.4rem; font-size: 0.72rem; }
+            .meta-label { font-size: 0.65rem; margin-bottom: 0; }
+            .rating-row { gap: 0.3rem; margin-top: 0.2rem; padding-top: 0.3rem; }
+            .rating-label { font-size: 0.65rem; }
+            .star { font-size: 0.85rem; }
+            .rating-info { font-size: 0.65rem; }
         }
     </style>
 </head>
@@ -358,6 +429,9 @@
             </div>
             <button class="theme-toggle" id="themeToggle" title="切换日/夜模式">🌙</button>
         </div>
+    </div>
+    <div class="mobile-sticky-tabs" id="mobileStickyTabs">
+        <div class="mobile-tabs-scroll" id="mobileTabsScroll"></div>
     </div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
     <div class="layout">
@@ -396,12 +470,9 @@
             </div>
         </main>
     </div>
-
     <script>
     (() => {
         var API_BASE = 'https://heyue-rating-worker.heyue-rating-api.workers.dev';
-
-        // ========== Theme ==========
         var THEME_KEY = 'heyue_nav_theme';
         var htmlEl = document.documentElement;
         var themeBtn = document.getElementById('themeToggle');
@@ -415,8 +486,6 @@
         themeBtn.addEventListener('click', function() {
             applyTheme(htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
         });
-
-        // ========== Mobile Sidebar ==========
         var sidebar = document.getElementById('sidebar');
         var overlay = document.getElementById('sidebarOverlay');
         var menuBtn = document.getElementById('mobileMenuBtn');
@@ -426,8 +495,39 @@
         }
         menuBtn.addEventListener('click', function() { toggleSidebar(true); });
         overlay.addEventListener('click', function() { toggleSidebar(false); });
-
-        // ========== Grid Toggle ==========
+        var mobileTabsScroll = document.getElementById('mobileTabsScroll');
+        var sidebarLinks = document.querySelectorAll('.sidebar-link[data-json]');
+        function buildMobileTabs() {
+            mobileTabsScroll.innerHTML = '';
+            sidebarLinks.forEach(function(link) {
+                var tab = document.createElement('a');
+                tab.className = 'mobile-tab-item';
+                tab.textContent = link.dataset.label;
+                tab.dataset.json = link.dataset.json;
+                tab.dataset.label = link.dataset.label;
+                if (link.classList.contains('active')) tab.classList.add('active');
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.mobile-tab-item').forEach(function(t) { t.classList.remove('active'); });
+                    tab.classList.add('active');
+                    sidebarLinks.forEach(function(l) { l.classList.remove('active'); });
+                    var matchedLink = document.querySelector('.sidebar-link[data-json="' + link.dataset.json + '"]');
+                    if (matchedLink) matchedLink.classList.add('active');
+                    currentJsonPath = link.dataset.json;
+                    loadCategory(currentJsonPath, link.dataset.label);
+                });
+                mobileTabsScroll.appendChild(tab);
+            });
+        }
+        buildMobileTabs();
+        function syncMobileTabsActive(jsonPath) {
+            document.querySelectorAll('.mobile-tab-item').forEach(function(t) {
+                t.classList.toggle('active', t.dataset.json === jsonPath);
+            });
+            var activeTab = mobileTabsScroll.querySelector('.mobile-tab-item.active');
+            if (activeTab) {
+                activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
         var GRID_COLS_KEY = 'heyue_nav_grid_cols';
         var gridToggleBtn = document.getElementById('gridToggleBtn');
         var cardContainer = document.getElementById('cardContainer');
@@ -449,10 +549,7 @@
         gridToggleBtn.addEventListener('click', function() {
             applyGridCols(currentCols === 2 ? 3 : 2);
         });
-
-        // ========== Data & Rendering ==========
         var GH_SVG = '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
-
         var globalCache = {};
         var allSites = [];
         var isGlobalSearch = false;
@@ -460,20 +557,38 @@
         var currentLabel = '';
         var ratingCache = {};
         var ratedKeys = new Set();
-
         function getRatingKey(site) {
             if (site.uid && site.uid.trim()) return 'uid:' + site.uid.trim();
             return 'site:' + (site.name || '') + '_' + (site.url || '').replace(/\s+/g, '_');
         }
-
-        function fetchRating(key) {
-            if (ratingCache[key]) return Promise.resolve(ratingCache[key]);
-            return fetch(API_BASE + '/rating?key=' + encodeURIComponent(key))
-                .then(function(res) { return res.ok ? res.json() : { score: 0, count: 0 }; })
-                .then(function(data) { ratingCache[key] = data; return data; })
-                .catch(function() { return { score: 0, count: 0 }; });
+        function getPinyin(str) {
+            if (!str) return '';
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
         }
-
+        function prepareSites(data) {
+            for (var i = 0; i < data.length; i++) {
+                if (!data[i]._sortName) {
+                    data[i]._sortName = getPinyin(data[i].name);
+                }
+            }
+            return data;
+        }
+        function fetchRatingsBatch(keys) {
+            var uncached = keys.filter(function(k) { return !ratingCache[k]; });
+            if (uncached.length === 0) return Promise.resolve();
+            return fetch(API_BASE + '/ratings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ keys: uncached })
+            })
+            .then(function(res) { return res.ok ? res.json() : {}; })
+            .then(function(data) {
+                for (var k in data) {
+                    if (data.hasOwnProperty(k)) ratingCache[k] = data[k];
+                }
+            })
+            .catch(function(e) { console.warn('batch rating fetch failed:', e); });
+        }
         function submitRating(key, score, starsEl, infoEl) {
             if (ratedKeys.has(key)) return;
             starsEl.classList.add('disabled');
@@ -490,7 +605,6 @@
             })
             .catch(function(e) { console.warn('rating submit failed:', e); starsEl.classList.remove('disabled'); });
         }
-
         function updateRatingDisplay(starsEl, infoEl, data) {
             var rounded = Math.round(data.score);
             var starSpans = starsEl.querySelectorAll('.star');
@@ -500,7 +614,6 @@
             }
             infoEl.innerHTML = '<span class="score-val">' + data.score + '</span> (' + data.count + ')';
         }
-
         function buildRatingHtml(site) {
             var key = getRatingKey(site);
             var stars = '';
@@ -510,16 +623,21 @@
                 + '<div class="stars" data-key="' + key + '">' + stars + '</div>'
                 + '<span class="rating-info">加载中...</span></div>';
         }
-
         function bindRatingEvents() {
             var allStars = document.querySelectorAll('.stars[data-key]');
+            var keysToFetch = [];
             for (var idx = 0; idx < allStars.length; idx++) {
+                var key = allStars[idx].getAttribute('data-key');
+                if (!ratingCache[key]) keysToFetch.push(key);
+            }
+            for (var idx2 = 0; idx2 < allStars.length; idx2++) {
                 (function(starsEl) {
                     var key = starsEl.getAttribute('data-key');
                     var infoEl = starsEl.nextElementSibling;
                     var starSpans = starsEl.querySelectorAll('.star');
-                    if (ratingCache[key]) updateRatingDisplay(starsEl, infoEl, ratingCache[key]);
-                    else fetchRating(key).then(function(data) { updateRatingDisplay(starsEl, infoEl, data); });
+                    if (ratingCache[key]) {
+                        updateRatingDisplay(starsEl, infoEl, ratingCache[key]);
+                    }
                     if (ratedKeys.has(key)) { starsEl.classList.add('disabled'); return; }
                     for (var j = 0; j < starSpans.length; j++) {
                         (function(star) {
@@ -547,89 +665,69 @@
                             else starSpans[k].classList.remove('active');
                         }
                     });
-                })(allStars[idx]);
+                })(allStars[idx2]);
+            }
+            if (keysToFetch.length > 0) {
+                fetchRatingsBatch(keysToFetch).then(function() {
+                    for (var i = 0; i < allStars.length; i++) {
+                        var k = allStars[i].getAttribute('data-key');
+                        if (ratingCache[k]) {
+                            updateRatingDisplay(allStars[i], allStars[i].nextElementSibling, ratingCache[k]);
+                        }
+                    }
+                });
             }
         }
-
-        /**
-         * 解析 related 字段（终极防御版）
-         * 兼容: "url1,url2" / "\"url1\",\"url2\"" / url1,url2 等
-         */
         function parseRelatedUrls(relatedField) {
             if (!relatedField || typeof relatedField !== 'string' || !relatedField.trim()) return [];
             var raw = relatedField.trim();
-            // 去掉首尾可能存在的引号
             if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
                 raw = raw.slice(1, -1);
             }
-            // 按逗号分割，清理每个URL
             var urls = [];
             var parts = raw.split(',');
             for (var i = 0; i < parts.length; i++) {
                 var u = parts[i].trim().replace(/^["']+|["']+$/g, '');
                 if (u && /^https?:\/\//i.test(u)) urls.push(u);
             }
-            // 去重
             var seen = {};
             return urls.filter(function(u) { if (seen[u]) return false; seen[u] = true; return true; });
         }
-
-        /**
-         * 三个图标全部从 related 数组中独立匹配
-         */
         function resolveIcons(relatedUrls) {
             var result = { nav: null, tg: null, github: null, custom: [] };
             var consumed = {};
-
             for (var i = 0; i < relatedUrls.length; i++) {
                 var lower = relatedUrls[i].toLowerCase();
                 if (!result.tg && (lower.includes('t.me') || lower.includes('discord') || lower.includes('tg'))) {
-                    result.tg = relatedUrls[i];
-                    consumed[i] = true;
+                    result.tg = relatedUrls[i]; consumed[i] = true;
                 } else if (!result.github && lower.includes('github.com')) {
-                    result.github = relatedUrls[i];
-                    consumed[i] = true;
+                    result.github = relatedUrls[i]; consumed[i] = true;
                 }
             }
-
             for (var j = 0; j < relatedUrls.length; j++) {
-                if (!consumed[j]) {
-                    result.nav = relatedUrls[j];
-                    consumed[j] = true;
-                    break;
-                }
+                if (!consumed[j]) { result.nav = relatedUrls[j]; consumed[j] = true; break; }
             }
-
             for (var k = 0; k < relatedUrls.length; k++) {
                 if (!consumed[k]) result.custom.push(relatedUrls[k]);
             }
-
             return result;
         }
-
         function renderCards(sites) {
             var container = document.getElementById('cardContainer');
             var countEl = document.getElementById('siteCount');
             countEl.textContent = '共 ' + sites.length + ' 个站点';
             if (sites.length === 0) { container.innerHTML = '<div class="loading">未找到匹配的站点</div>'; return; }
-
             container.innerHTML = sites.map(function(s) {
                 var siteName = s.name || '未命名站点';
                 var primaryUrl = s.url || '';
                 var relatedUrls = parseRelatedUrls(s.related);
                 var rel = resolveIcons(relatedUrls);
-
-                // DEBUG: 取消注释下面这行可在Console看到解析结果
-                // console.log('DEBUG related:', JSON.stringify(s.related), '→ parsed:', relatedUrls, '→ icons:', rel);
-
                 var logoHtml = '';
                 if (s.logo && s.logo.trim()) {
                     logoHtml = '<img class="site-logo" src="' + s.logo.trim() + '" alt="" onerror="this.style.display=\'none\'">';
                 }
-
                 var urlLink = primaryUrl
                     ? '<a href="' + primaryUrl + '" target="_blank" rel="noopener">' + primaryUrl + '</a>' : '—';
-
                 var navIcon = rel.nav
                     ? '<a class="related-icon icon-nav active" href="' + rel.nav + '" target="_blank" rel="noopener" title="导航/主页">📑</a>'
                     : '<span class="related-icon icon-nav" title="无导航链接">📑</span>';
@@ -639,24 +737,19 @@
                 var ghIcon = rel.github
                     ? '<a class="related-icon icon-gh active" href="' + rel.github + '" target="_blank" rel="noopener" title="GitHub">' + GH_SVG + '</a>'
                     : '<span class="related-icon icon-gh" title="无GitHub链接">' + GH_SVG + '</span>';
-
                 var iconsHtml = '<span class="related-icons">' + navIcon + tgIcon + ghIcon + '</span>';
                 var customLinksHtml = rel.custom.length > 0
                     ? '<div class="custom-links-row">' + rel.custom.map(function(u) { return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>'; }).join('') + '</div>' : '';
-
                 var problemHtml = s.issue
                     ? '<span class="meta-value problem">' + s.issue + '</span>'
                     : '<span style="color:var(--text-sub)">暂无</span>';
-
                 var uidInlineHtml = '';
                 if (s.uid && s.uid.trim()) {
                     uidInlineHtml = '<span class="uid-inline">UID: <span class="uid-val">' + s.uid.trim() + '</span></span>';
                 }
-
                 var categoryTag = isGlobalSearch && s._category
                     ? '<span style="position:absolute;top:0;left:0;background:rgba(251,191,36,0.15);color:var(--accent-gold);font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:10px 0 8px 0;letter-spacing:0.5px;">' + s._category + '</span>'
                     : '';
-
                 return '<div class="site-card">'
                     + categoryTag
                     + '<div class="site-name-row">' + logoHtml
@@ -675,15 +768,8 @@
                     + '</div>'
                     + buildRatingHtml(s) + '</div>';
             }).join('');
-
             bindRatingEvents();
         }
-
-        function getPinyin(str) {
-            if (!str) return '';
-            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-        }
-
         function filterAndSort() {
             var keyword = document.getElementById('searchInput').value.trim().toLowerCase();
             var sortMode = document.getElementById('sortSelect').value;
@@ -696,20 +782,18 @@
                     return [s.name, s.remark, s.url, s.related, s.issue, s.uid, s._category]
                         .join(' ').toLowerCase().includes(keyword);
                 });
-                if (sortMode === 'name') filtered.sort(function(a, b) { return getPinyin(a.name).localeCompare(getPinyin(b.name)); });
+                if (sortMode === 'name') filtered.sort(function(a, b) { return a._sortName.localeCompare(b._sortName); });
                 renderCards(filtered);
             } else {
                 isGlobalSearch = false;
                 titleEl.textContent = currentLabel;
                 var filtered = allSites.slice();
-                if (sortMode === 'name') filtered.sort(function(a, b) { return getPinyin(a.name).localeCompare(getPinyin(b.name)); });
+                if (sortMode === 'name') filtered.sort(function(a, b) { return a._sortName.localeCompare(b._sortName); });
                 renderCards(filtered);
             }
         }
-
         document.getElementById('searchInput').addEventListener('input', filterAndSort);
         document.getElementById('sortSelect').addEventListener('change', filterAndSort);
-
         function preloadAllCategories() {
             var links = document.querySelectorAll('.sidebar-link[data-json]');
             var fetchPromises = Array.from(links).map(function(link) {
@@ -719,7 +803,10 @@
                 return fetch(jsonPath)
                     .then(function(res) { return res.ok ? res.json() : null; })
                     .then(function(data) {
-                        if (data) globalCache[jsonPath] = data.map(function(item) { return Object.assign({}, item, { _category: label }); });
+                        if (data) {
+                            var sites = data.map(function(item) { return Object.assign({}, item, { _category: label }); });
+                            globalCache[jsonPath] = prepareSites(sites);
+                        }
                     })
                     .catch(function(e) { console.warn('preload failed: ' + jsonPath, e); });
             });
@@ -727,7 +814,6 @@
                 console.log('Global index ready, cached ' + Object.keys(globalCache).length + ' categories');
             });
         }
-
         function loadCategory(jsonPath, label) {
             var container = document.getElementById('cardContainer');
             var titleEl = document.getElementById('categoryTitle');
@@ -737,6 +823,7 @@
             searchInput.value = '';
             isGlobalSearch = false;
             allSites = [];
+            syncMobileTabsActive(jsonPath);
             if (!jsonPath) {
                 container.innerHTML = '<div class="loading">「' + label + '」的 JSON 数据路径尚未配置<br>请在 sidebar-link 的 data-json 属性中填写对应 .json 文件路径</div>';
                 document.getElementById('siteCount').textContent = '';
@@ -745,29 +832,30 @@
             container.innerHTML = '<div class="loading">加载中...</div>';
             if (globalCache[jsonPath]) {
                 allSites = globalCache[jsonPath].map(function(item) { var copy = Object.assign({}, item); delete copy._category; return copy; });
+                prepareSites(allSites);
                 renderCards(allSites);
             } else {
                 fetch(jsonPath)
                     .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
-                    .then(function(data) { allSites = data; renderCards(allSites); })
+                    .then(function(data) {
+                        allSites = prepareSites(data);
+                        renderCards(allSites);
+                    })
                     .catch(function(e) {
                         container.innerHTML = '<div class="loading" style="color:var(--danger)">数据加载失败: ' + e.message + '<br>请检查 ' + jsonPath + ' 是否存在且格式正确</div>';
                         document.getElementById('siteCount').textContent = '';
                     });
             }
         }
-
-        var links = document.querySelectorAll('.sidebar-link');
-        links.forEach(function(link) {
+        sidebarLinks.forEach(function(link) {
             link.addEventListener('click', function() {
-                links.forEach(function(l) { l.classList.remove('active'); });
+                sidebarLinks.forEach(function(l) { l.classList.remove('active'); });
                 link.classList.add('active');
                 currentJsonPath = link.dataset.json;
                 loadCategory(currentJsonPath, link.dataset.label);
                 if (window.innerWidth <= 768) toggleSidebar(false);
             });
         });
-
         preloadAllCategories();
         var firstLink = document.querySelector('.sidebar-link.active');
         if (firstLink) {
