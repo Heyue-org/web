@@ -3,52 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>合月亭 Wiki</title>
+    <title>合月亭 Wiki · HWF V1.1</title>
     <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:'Microsoft YaHei','PingFang SC',sans-serif; font-size:18px; background:#f8fafc; color:#334155; line-height:1.7; height:100vh; overflow:hidden; display:flex; }
+
         :root {
             --bg-color: #f8fafc; --sidebar-bg: #fff; --text-main: #334155;
             --text-sub: #64748b; --accent-color: #d97706; --border-color: #e2e8f0;
             --hover-bg: #f1f5f9; --code-bg: #f1f5f9; --danger: #ef4444; --success: #22c55e;
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family:'Microsoft YaHei','PingFang SC',sans-serif; font-size:18px; background:var(--bg-color); color:var(--text-main); line-height:1.7; height:100vh; overflow:hidden; display:flex; }
 
         .sidebar { width:280px; background:var(--sidebar-bg); border-right:1px solid var(--border-color); display:flex; flex-direction:column; height:100%; transition:transform .3s; z-index:100; flex-shrink:0; }
-        .sidebar-header { padding:1.2rem 1.5rem; border-bottom:1px solid var(--border-color); font-weight:700; font-size:1.2rem; color:var(--accent-color); display:flex; align-items:center; gap:10px; }
+        .sidebar-header { padding:1.2rem 1.5rem; border-bottom:1px solid var(--border-color); font-weight:700; font-size:1.2rem; color:var(--accent-color); display:flex; align-items:baseline; gap:0.15rem; }
+        .sidebar-header .brand { flex:0 0 auto; line-height:1.4; }
+        .sidebar-header .version-tag { display:none; font-size:50%; color:var(--text-sub); font-weight:normal; opacity:0.7; white-space:nowrap; flex-shrink:0; line-height:1.4; }
         .sidebar-content { flex:1; overflow-y:auto; padding:.5rem 0; }
         .toc-list { list-style:none; }
-        .toc-page-link { display:flex; justify-content:space-between; align-items:center; cursor:pointer; color:var(--text-main); font-weight:600; transition:background-color .15s,color .15s,border-color .15s; border-left:4px solid transparent; user-select:none; }
+        .toc-page-link { padding-left:0; display:flex; justify-content:space-between; align-items:center; cursor:pointer; color:var(--text-main); font-weight:600; transition:background-color .15s,color .15s,border-color .15s; border-left:4px solid transparent; user-select:none; white-space:nowrap; min-width:0; }
         .toc-page-link:hover { background:var(--hover-bg); color:var(--accent-color); }
         .toc-page-link.active { background:rgba(217,119,6,.08); color:var(--accent-color); border-left-color:var(--accent-color); }
-        .link-text { flex:1; padding:.7rem 1.5rem; }
-        .expand-arrow { font-size:.6rem; margin-right:1.5rem; padding:12px 8px 12px 20px; cursor:pointer; opacity:.6; transition:all .3s; display:inline-block; line-height:1; }
+        .link-text { flex:1; min-width:0; white-space:nowrap; overflow:visible; text-overflow:clip; padding:.7rem .8rem .7rem .4rem; }
+        .edit-mode .link-text { overflow:visible; max-width:none; }
+        .expand-arrow { font-size:.6rem; margin-right:1.5rem; padding:12px 8px 12px 20px; cursor:pointer; opacity:.6; transition:all .3s; display:inline-block; line-height:1; flex-shrink:0; }
         .expand-arrow:hover { opacity:1; }
         .expand-arrow.open { transform:rotate(90deg); opacity:1; }
         .sub-menu { display:none; background:rgba(0,0,0,.02); padding-bottom:.5rem; }
         .sub-menu.visible { display:block; }
-        .toc-link { display:block; padding:.4rem 1.5rem .4rem 2.5rem; text-decoration:none; color:var(--text-sub); font-size:.9rem; transition:background-color .15s,color .15s; }
+        .toc-link { display:block; padding:.4rem 1.5rem .4rem 2.5rem; text-decoration:none; color:var(--text-sub); font-size:.9rem; transition:background-color .15s,color .15s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
         .toc-link:hover { color:var(--accent-color); background:var(--hover-bg); }
         .sidebar-edit-actions { padding:.8rem 1rem; border-top:1px solid var(--border-color); }
         .btn-add-page { width:100%; padding:.5rem; border:1px dashed var(--accent-color); background:none; color:var(--accent-color); border-radius:6px; cursor:pointer; font-size:.85rem; font-weight:600; transition:all .2s; }
         .btn-add-page:hover { background:rgba(217,119,6,.08); }
-        .edit-mode .toc-page-link { padding-right:.5rem; }
-        .btn-delete-page { background:none; border:none; color:var(--danger); cursor:pointer; font-size:.8rem; padding:.3rem .5rem; border-radius:4px; flex-shrink:0; display:none; pointer-events:none; }
+        .edit-mode .toc-page-link { padding-right:.2rem; }
+        .btn-delete-page { background:none; border:none; color:var(--danger); cursor:pointer; font-size:.8rem; padding:.3rem .5rem; border-radius:4px; flex-shrink:0; display:none; pointer-events:none; flex:0 0 auto; }
         .edit-mode .btn-delete-page { display:inline-block; pointer-events:auto; opacity:.6; }
         .btn-delete-page:hover { opacity:1; background:rgba(239,68,68,.1); }
 
         .main-content { flex:1; overflow-y:auto; padding:3rem 4rem; scroll-behavior:smooth; background:var(--bg-color); min-width:0; }
         .content-wrapper { max-width:1400px; margin:0 auto; background:#fff; padding:3rem; border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,.05); min-height:80vh; contain:layout paint; }
-        .content-wrapper.code-open { max-width:none; }
         .wiki-page { display:none; animation:fadeIn .25s ease; contain:content; }
         .wiki-page.active { display:block; }
         @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-        h1 { font-size:2.2rem; margin-bottom:.5rem; border-bottom:2px solid var(--border-color); padding-bottom:1rem; }
-        h2 { font-size:1.6rem; margin-top:2.5rem; margin-bottom:.8rem; }
-        h3 { font-size:1.3rem; margin-top:1.8rem; margin-bottom:.6rem; }
-        p { margin-bottom:1rem; text-align:justify; }
+
+        h1, h2, h3, h4, h5, h6, p, div, section, blockquote, ul, ol, li { margin:0; padding:0; }
+        ul, ol { padding-left:1.5em; }
+        h1 { font-size:2.2rem; border-bottom:2px solid var(--border-color); padding-bottom:1rem; }
+        h2 { font-size:1.6rem; }
+        h3 { font-size:1.3rem; }
+        p { text-align:justify; }
         code { background:var(--code-bg); padding:.15rem .4rem; border-radius:4px; font-family:monospace; color:#d97706; font-size:.9em; }
-        pre { background:#1e293b; color:#e2e8f0; padding:1.2rem; border-radius:8px; overflow-x:auto; margin-bottom:1.2rem; }
-        img { max-width:100%; border-radius:8px; margin:1rem 0; }
+        pre { background:#1e293b; color:#e2e8f0; padding:1.2rem; border-radius:8px; overflow-x:auto; margin-bottom:1.2rem; position:relative; }
+        .copy-btn {
+            position:absolute; top:8px; right:8px; background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.2); border-radius:4px; padding:4px 8px; font-size:.7rem; cursor:pointer; transition:all .2s; z-index:10;
+        }
+        .copy-btn:hover { background:rgba(255,255,255,.3); }
+        .copy-btn.copied { background:var(--success); border-color:var(--success); }
+        img { max-width:100%; border-radius:8px; margin:0; display:block; }
+        .page-body-display img { cursor:zoom-in; }
+        .editable-body img { cursor:pointer; }
+        .img-selected { outline:2px solid var(--accent-color); outline-offset:2px; }
+
+        table {
+            width:100%;
+            border-collapse:collapse;
+            margin:1.5rem 0;
+            font-size:.95em;
+            background:#fff;
+        }
+        th, td {
+            border:1px solid var(--border-color);
+            padding:.65rem .8rem;
+            text-align:left;
+            vertical-align:top;
+        }
+        th {
+            background:#f8fafc;
+            font-weight:700;
+        }
+        tr:hover td {
+            background:var(--hover-bg);
+        }
 
         .meta-bar { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; font-size:.82rem; color:var(--text-sub); margin-bottom:2rem; padding-top:.5rem; }
         .meta-author-tag { display:inline-flex; align-items:center; gap:.3rem; background:rgba(217,119,6,.1); color:var(--accent-color); padding:.15rem .7rem; border-radius:20px; font-weight:600; font-size:.78rem; }
@@ -84,15 +119,7 @@
         .editable-body { outline:none; min-height:200px; border:1px dashed var(--border-color); border-radius:8px; padding:1rem; margin-top:.5rem; cursor:text; }
         .editable-body:focus { border-color:var(--accent-color); }
         .editable-body img { display:block; max-width:100%; }
-
-        .editor-split { display:grid; grid-template-columns:1fr; gap:.8rem; align-items:stretch; margin-top:.5rem; }
-        .editor-split.code-open { grid-template-columns:1fr 1fr; }
-        .editor-split .editable-body { min-width:0; margin-top:0; min-height:300px; }
-        .code-pane { display:none; min-width:0; flex-direction:column; border:1px dashed var(--border-color); border-radius:8px; overflow:hidden; background:#1e293b; }
-        .editor-split.code-open .code-pane { display:flex; }
-        .code-pane-header { display:flex; align-items:center; justify-content:space-between; padding:.4rem .7rem; background:#0f172a; color:#94a3b8; font-size:.72rem; font-weight:600; }
-        .code-pane textarea { flex:1; width:100%; min-width:0; border:none; outline:none; resize:none; background:#1e293b; color:#e2e8f0; font-family:'Consolas','Monaco',monospace; font-size:.78rem; line-height:1.5; padding:1rem; white-space:pre-wrap; overflow:auto; box-sizing:border-box; }
-        @media(max-width:768px) { .editor-split.code-open { grid-template-columns:1fr; } .editor-split .editable-body,.editor-split .code-pane { min-height:220px; } }
+        .editable-body a { color:var(--accent-color); text-decoration:underline; cursor:pointer; }
 
         .top-controls { display:flex; align-items:center; gap:.8rem; margin-bottom:1.5rem; flex-wrap:wrap; }
         .mode-toggle { padding:.5rem 1.2rem; border-radius:6px; font-size:.85rem; font-weight:700; cursor:pointer; border:1px solid var(--border-color); background:#fff; color:var(--text-main); transition:all .2s; }
@@ -138,6 +165,22 @@
         .add-member-row button { padding:.4rem 1rem; border-radius:6px; border:none; background:var(--accent-color); color:#fff; font-size:.85rem; font-weight:600; cursor:pointer; }
         .add-member-row button:hover { opacity:.9; }
 
+        #linkModal .modal-box input[type="text"] {
+            width:100%; padding:.4rem .6rem; border:1px solid var(--border-color); border-radius:4px; font-size:.9rem; font-family:inherit; box-sizing:border-box;
+        }
+        #linkModal .modal-box input:focus { border-color:var(--accent-color); outline:none; }
+        #linkModal .modal-box label { display:block; font-weight:600; margin-bottom:.2rem; font-size:.85rem; color:var(--text-sub); }
+
+        .img-toolbar { position:fixed; display:none; z-index:300; background:#fff; border:1px solid var(--border-color); border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,.15); padding:.35rem .5rem; gap:.15rem; flex-wrap:wrap; align-items:center; max-width:90vw; }
+        .img-toolbar .toolbar-btn { font-size:.75rem; padding:.25rem .5rem; }
+
+        .img-lightbox { display:none; position:fixed; inset:0; background:rgba(15,23,42,.85); z-index:1000; justify-content:center; align-items:center; cursor:zoom-out; }
+        .img-lightbox.show { display:flex; }
+        .img-lightbox img { max-width:90vw; max-height:88vh; border-radius:8px; box-shadow:0 10px 40px rgba(0,0,0,.5); animation:lbZoom .28s cubic-bezier(.2,.8,.3,1); cursor:default; }
+        @keyframes lbZoom { from{opacity:0;transform:scale(.55)} to{opacity:1;transform:scale(1)} }
+        .lightbox-close { position:absolute; top:1.2rem; right:1.5rem; background:rgba(255,255,255,.12); color:#fff; border:1px solid rgba(255,255,255,.35); width:40px; height:40px; border-radius:50%; font-size:1.1rem; cursor:pointer; transition:all .2s; z-index:1001; }
+        .lightbox-close:hover { background:rgba(255,255,255,.28); transform:rotate(90deg); }
+
         .konami-hint { position:fixed; bottom:1rem; left:50%; transform:translateX(-50%); font-size:.7rem; color:var(--border-color); pointer-events:none; user-select:none; opacity:0; transition:opacity 1s; z-index:1; }
         .konami-hint.flash { opacity:1; }
 
@@ -161,7 +204,10 @@
 <button class="mobile-menu-btn" id="mobileMenuBtn">☰ 目录</button>
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header"><span>📚 合月亭 Wiki</span></div>
+    <div class="sidebar-header">
+        <span class="brand">📚 合月亭 Wiki</span>
+        <span class="version-tag" id="versionTag">HWF V1.1</span>
+    </div>
     <div class="sidebar-content"><ul class="toc-list" id="tocList"></ul></div>
     <div class="sidebar-edit-actions" id="sidebarEditActions" style="display:none;">
         <button class="btn-add-page" id="btnAddPage">＋ 新增分区页面</button>
@@ -173,10 +219,9 @@
         <div class="top-controls" id="topControls" style="display:none;">
             <button class="mode-toggle" id="modeToggle" title="切换编辑/预览模式">✏️ 编辑模式</button>
             <button class="btn-save" id="btnSave" title="保存当前页面 (Ctrl+S)">💾 保存</button>
-            <button class="btn-manage-members" id="btnManageMembers" title="管理团队成员列表">👥 成员管理</button>
+            <button class="btn-manage-members" id="btnManageMembers" title="编辑部成员管理">👥 编辑部成员列表</button>
             <button class="btn-export" id="btnExportJson" title="导出数据为 JSON 文件">📤 导出JSON</button>
             <button class="btn-export" id="btnImportJson" title="从 JSON 文件导入数据">📥 导入JSON</button>
-            <button class="btn-export" id="btnExport" title="导出为静态HTML文件">📄 导出HTML</button>
             <input type="file" id="importJsonInput" accept=".json,application/json" style="display:none;">
         </div>
         <div class="editor-toolbar" id="editorToolbar">
@@ -225,17 +270,16 @@
             <button class="toolbar-btn" data-cmd="justifyRight" title="右对齐">⇥ 右</button>
             <div class="toolbar-sep"></div>
             <button class="toolbar-btn" data-cmd="blockquote" title="引用块">❝ 引用</button>
-            <button class="toolbar-btn" data-cmd="hr" title="插入水平分隔线">— 分隔线</button>
             <div class="toolbar-sep"></div>
-            <button class="toolbar-btn" data-cmd="insertImage" title="插入图片 (输入URL)">图片</button>
-            <button class="toolbar-btn" data-cmd="createLink" title="插入超链接">🔗 链接</button>
+            <button class="toolbar-btn" data-cmd="insertImage" title="插入图片 (输入URL)，插入后点击图片可调尺寸">图片</button>
+            <button class="toolbar-btn" data-cmd="table" title="插入表格">⊞ 表格</button>
+            <button class="toolbar-btn" data-cmd="createLink" title="插入或编辑链接">🔗 链接</button>
             <button class="toolbar-btn" data-cmd="code" title="行内代码">&lt;/&gt;</button>
             <button class="toolbar-btn" data-cmd="pre" title="代码块">Pre</button>
             <div class="toolbar-sep"></div>
             <button class="toolbar-btn" data-cmd="insertUnorderedList" title="无序列表">• List</button>
             <button class="toolbar-btn" data-cmd="removeFormat" title="清除选中文字的格式">✕ 清除</button>
-            <div class="toolbar-sep"></div>
-            <button class="toolbar-btn" id="btnToggleCode" title="显示/隐藏 HTML 源码分栏（可查看并编辑源码）">🖥 源码</button>
+            <button class="toolbar-btn" data-cmd="clean" title="清理空行、空段落、粘贴残留注释，统一结构">🧹 清理</button>
             <span class="toolbar-label">编辑中...</span>
         </div>
         <div id="pagesContainer"></div>
@@ -243,6 +287,43 @@
 </main>
 
 <div class="save-toast" id="saveToast">已保存</div>
+
+<div class="modal-overlay" id="linkModal">
+    <div class="modal-box">
+        <h3>🔗 插入/编辑链接</h3>
+        <div style="margin-bottom:1rem;">
+            <label for="linkTitleInput">标题</label>
+            <input type="text" id="linkTitleInput" placeholder="显示的文字">
+        </div>
+        <div style="margin-bottom:1.5rem;">
+            <label for="linkHrefInput">链接</label>
+            <input type="text" id="linkHrefInput" placeholder="输入 URL 或内部页面 ID（如 #page-123）">
+        </div>
+        <div class="modal-actions">
+            <button class="modal-btn" id="linkCancelBtn">取消</button>
+            <button class="modal-btn primary" id="linkConfirmBtn">确定</button>
+        </div>
+    </div>
+</div>
+
+<div class="img-toolbar" id="imgToolbar">
+    <span style="font-size:.72rem;color:var(--text-sub);font-weight:600;">图片尺寸</span>
+    <button class="toolbar-btn" data-imgw="25%">25%</button>
+    <button class="toolbar-btn" data-imgw="50%">50%</button>
+    <button class="toolbar-btn" data-imgw="75%">75%</button>
+    <button class="toolbar-btn" data-imgw="100%">100%</button>
+    <button class="toolbar-btn" data-imgw="" title="恢复原始大小">原始</button>
+    <input type="text" class="author-text-input" id="imgWidthInput" placeholder="如 300px 或 60%" style="width:110px;">
+    <button class="toolbar-btn" id="btnImgWidthApply">应用</button>
+    <div class="toolbar-sep"></div>
+    <button class="toolbar-btn" id="btnImgDelete" title="删除图片" style="color:var(--danger);">🗑</button>
+    <button class="toolbar-btn" id="btnImgToolbarClose" title="关闭">✕</button>
+</div>
+
+<div class="img-lightbox" id="imgLightbox">
+    <button class="lightbox-close" id="lightboxClose" title="关闭 (Esc)">✕</button>
+    <img id="lightboxImg" alt="">
+</div>
 
 <div class="modal-overlay" id="saveConfirmModal">
     <div class="modal-box">
@@ -258,7 +339,7 @@
 
 <div class="modal-overlay member-manager" id="memberModal">
     <div class="modal-box">
-        <h3>👥 团队成员管理</h3>
+        <h3>👥 编辑部成员管理</h3>
         <p style="margin-bottom:.8rem;font-size:.8rem;color:var(--text-sub);">此列表仅用于署名时快捷填充，不影响已有页面署名。</p>
         <ul class="member-list" id="memberList"></ul>
         <div class="add-member-row">
@@ -271,21 +352,25 @@
     </div>
 </div>
 
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
 <script>
 (() => {
     'use strict';
 
-    const PAGES_KEY = 'heyue_wiki_pages_v6';
-    const MEMBERS_KEY = 'heyue_wiki_members_v6';
+    const FRAMEWORK = {
+        name: 'Heyue Wiki Framework',
+        version: 'V1.1',
+        short: 'HWF'
+    };
+
+    const PAGES_KEY = 'heyue_wiki_pages_v10';
+    const MEMBERS_KEY = 'heyue_wiki_members_v10';
     const DATA_URL = 'WIKI-data.json';
 
     let pages=[], members=[];
     let isEditMode=false, currentPageId=null, hasUnsavedChanges=false;
     let editorUnlocked=false;
-    let codeViewOpen=false;
-    let syncTimer=0;
     let toastTimer=0;
+    let activeImg=null;
 
     const $ = id => document.getElementById(id);
     const dom = {
@@ -296,6 +381,20 @@
         saveToast: $('saveToast'), saveConfirmModal: $('saveConfirmModal'), memberModal: $('memberModal')
     };
 
+    function setVersionTag() {
+        const tag = document.getElementById('versionTag');
+        if (tag) {
+            tag.textContent = `${FRAMEWORK.short} ${FRAMEWORK.version}`;
+        }
+    }
+
+    function toggleVersionTag(show) {
+        const tag = document.getElementById('versionTag');
+        if (tag) {
+            tag.style.display = show ? 'inline-block' : 'none';
+        }
+    }
+
     function esc(s){const d=document.createElement('div');d.textContent=s==null?'':String(s);return d.innerHTML;}
     function formatTime(iso){if(!iso)return'—';const d=new Date(iso),p=n=>String(n).padStart(2,'0');return`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;}
     function getAuthors(pg){if(Array.isArray(pg.authors))return pg.authors;if(pg.author)return[pg.author];return[];}
@@ -303,10 +402,52 @@
     const ALLOWED_TAGS = new Set([
         'P','DIV','BR','B','STRONG','I','EM','U','S','STRIKE','DEL',
         'H1','H2','H3','H4','H5','H6','BLOCKQUOTE','UL','OL','LI','HR',
-        'CODE','PRE','A','IMG','FONT','SPAN','SECTION'
+        'CODE','PRE','A','IMG','FONT','SPAN','SECTION',
+        'TABLE','THEAD','TBODY','TFOOT','TR','TH','TD'
     ]);
-    const ALLOWED_STYLES = new Set(['color','background-color','text-align','font-size','font-family']);
+    const ALLOWED_STYLES = new Set(['color','background-color','text-align','font-size','font-family','width','height','max-width']);
+
+    function stripComments(root){
+        const w=document.createTreeWalker(root,NodeFilter.SHOW_COMMENT);
+        const list=[];while(w.nextNode())list.push(w.currentNode);
+        list.forEach(c=>{if(c.parentNode)c.parentNode.removeChild(c);});
+    }
+
+    function normalizeDivs(root){
+        const BLOCK_RE=/^(DIV|P|SECTION|UL|OL|TABLE|BLOCKQUOTE|PRE|HR|H[1-6])$/;
+        let divs=[...root.querySelectorAll('div')];
+        for(const d of divs){
+            if(!d.isConnected)continue;
+            const hasBlock=[...d.children].some(c=>BLOCK_RE.test(c.tagName));
+            if(hasBlock){
+                const parent=d.parentNode;
+                while(d.firstChild)parent.insertBefore(d.firstChild,d);
+                parent.removeChild(d);
+            }
+        }
+        root.querySelectorAll('div').forEach(d=>{
+            if(!d.isConnected)return;
+            const p=document.createElement('p');
+            const st=d.getAttribute('style');
+            if(st)p.setAttribute('style',st);
+            while(d.firstChild)p.appendChild(d.firstChild);
+            d.replaceWith(p);
+        });
+    }
+
+    function cleanEmptyBlocks(root){
+        for(let pass=0;pass<2;pass++){
+            const els=[...root.querySelectorAll('p,div')];
+            for(const el of els){
+                if(!el.isConnected)continue;
+                if(el.querySelector('img,table,section,ul,ol,pre,blockquote,hr,iframe'))continue;
+                if(!el.textContent.replace(/[\u00a0\s]/g,'').length)el.remove();
+            }
+        }
+    }
+
     function sanitizeNode(root){
+        stripComments(root);
         const els=[...root.querySelectorAll('*')];
         for(const el of els){
             if(!ALLOWED_TAGS.has(el.tagName)){
@@ -317,13 +458,17 @@
             }
             for(const attr of[...el.attributes]){
                 const name=attr.name.toLowerCase();
-                const keepAttr=(el.tagName==='A'&&name==='href')
+                const keepAttr = name==='style'
 
-                    ||(el.tagName==='IMG'&&(name==='src'||name==='alt'))
+                    ||(el.tagName==='A'&&(name==='href'||name==='title'))
+                    ||(el.tagName==='IMG'&&(name==='src'||name==='alt'||name==='width'||name==='height'))
                     ||(el.tagName==='SECTION'&&name==='id')
-                    ||(el.tagName==='FONT'&&(name==='size'||name==='face'||name==='color'));
+                    ||(el.tagName==='FONT'&&(name==='size'||name==='face'||name==='color'))
+                    ||((el.tagName==='TD'||el.tagName==='TH')&&(name==='colspan'||name==='rowspan'));
                 if(!keepAttr)el.removeAttribute(attr.name);
             }
+            if(el.tagName==='A'&&/^\s*javascript:/i.test(el.getAttribute('href')||''))el.removeAttribute('href');
+            if(el.tagName==='IMG'&&/^\s*javascript:/i.test(el.getAttribute('src')||''))el.removeAttribute('src');
             if(el.getAttribute('style')){
                 const kept=[];
                 for(const part of el.getAttribute('style').split(';')){
@@ -339,6 +484,16 @@
         }
         return root.innerHTML;
     }
+
+    function normalizeContent(html){
+        const tmp=document.createElement('div');
+        tmp.innerHTML=html;
+        stripComments(tmp);
+        normalizeDivs(tmp);
+        cleanEmptyBlocks(tmp);
+        return sanitizeNode(tmp);
+    }
+
     function pasteAsText(e){
         e.preventDefault();
         const body=document.querySelector('.editable-body');if(!body)return;
@@ -347,14 +502,12 @@
         const html=cd.getData('text/html');
         let insert;
         if(html){
-            const tmp=document.createElement('div');tmp.innerHTML=html;
-            insert=sanitizeNode(tmp);
+            insert=normalizeContent(html);
         }else{
-            insert=text.split(/\r?\n/).map(l=>esc(l)||'<br>').join('<br>');
+            insert=text.split(/\r?\n/).map(l=>'<p>'+(esc(l)||'<br>')+'</p>').join('');
         }
         document.execCommand('insertHTML',false,insert);
         hasUnsavedChanges=true;
-        syncBodyToCode();
     }
 
     function extractSubs(html) {
@@ -373,6 +526,12 @@
         return subs;
     }
 
+    function stripContentComments(pgList){
+        pgList.forEach(pg=>{
+            if(typeof pg.content==='string')pg.content=pg.content.replace(/<!--([\s\S]*?)-->/g,'');
+        });
+    }
+
     async function loadData(){
         try {
             const res = await fetch(DATA_URL, { cache: 'no-store' });
@@ -380,7 +539,7 @@
                 const data = await res.json();
                 if (Array.isArray(data.pages)) pages = data.pages;
                 if (Array.isArray(data.members)) members = data.members;
-                // 同步更新 localStorage 作为离线备份
+                stripContentComments(pages);
                 if (pages.length) localStorage.setItem(PAGES_KEY, JSON.stringify(pages));
                 if (members.length) localStorage.setItem(MEMBERS_KEY, JSON.stringify(members));
                 return;
@@ -388,8 +547,6 @@
         } catch (e) {
             console.warn('无法从服务器加载最新数据，将尝试读取本地缓存', e);
         }
-
-        // 仅在服务器请求失败时，才回退到 localStorage
         try {
             const lp = localStorage.getItem(PAGES_KEY);
             const lm = localStorage.getItem(MEMBERS_KEY);
@@ -427,6 +584,44 @@
 
     function renderPages(){
         dom.pagesContainer.innerHTML=pages.map(pg=>buildPageHTML(pg,pg.id===currentPageId)).join('');
+        if (!isEditMode) {
+            document.querySelectorAll('.wiki-page.active .page-body-display img').forEach(img => {
+                img.style.cursor = 'pointer';
+                img.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openLightbox(this);
+                });
+            });
+        }
+        document.querySelectorAll('pre code').forEach(block => {
+            const pre = block.parentElement;
+            if (pre && !pre.querySelector('.copy-btn')) {
+                const btn = document.createElement('button');
+                btn.className = 'copy-btn';
+                btn.textContent = '复制';
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const code = block.textContent;
+                    navigator.clipboard.writeText(code).then(() => {
+                        this.textContent = '已复制';
+                        this.classList.add('copied');
+                        setTimeout(() => { this.textContent = '复制'; this.classList.remove('copied'); }, 2000);
+                    }).catch(() => {
+                        const area = document.createElement('textarea');
+                        area.value = code;
+                        document.body.appendChild(area);
+                        area.select();
+                        document.execCommand('copy');
+                        area.remove();
+                        this.textContent = '已复制';
+                        this.classList.add('copied');
+                        setTimeout(() => { this.textContent = '复制'; this.classList.remove('copied'); }, 2000);
+                    });
+                });
+                pre.style.position = 'relative';
+                pre.appendChild(btn);
+            }
+        });
     }
 
     function switchPage(pageId){
@@ -437,12 +632,23 @@
         if(activePage&&activePage!==nextPage)activePage.classList.remove('active');
         if(nextPage)nextPage.classList.add('active');
         const activeNav=dom.tocList.querySelector('.toc-page-link.active');
-        const nextNav=dom.tocList.querySelector(`[data-nav="${CSS.escape(pageId)}"]`)?.closest('.toc-page-link');
+        const safeId = window.CSS?.escape ? CSS.escape(pageId) : pageId.replace(/[^\w-]/g,'');
+        const nextNav=dom.tocList.querySelector(`[data-nav="${safeId}"]`)?.closest('.toc-page-link');
         if(activeNav&&activeNav!==nextNav)activeNav.classList.remove('active');
         if(nextNav)nextNav.classList.add('active');
         dom.mainContent.scrollTop=0;
         if(window.innerWidth<=768)toggleSidebar(false);
         if(isEditMode)requestAnimationFrame(enterEditModeForCurrentPage);
+        if (!isEditMode) {
+            document.querySelectorAll('.wiki-page.active .page-body-display img').forEach(img => {
+                img.style.cursor = 'pointer';
+                img.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openLightbox(this);
+                });
+            });
+            renderPages();
+        }
     }
 
     const KONAMI_SEQ = [
@@ -469,9 +675,7 @@
 
     window.addEventListener('keydown', function konamiListener(e) {
         if (editorUnlocked) return;
-
         if (e.ctrlKey || e.altKey || e.metaKey) return;
-
         if (matchKey(KONAMI_SEQ[konamiIdx], e)) {
             konamiIdx++;
             if (konamiIdx === KONAMI_SEQ.length) {
@@ -493,6 +697,7 @@
             setTimeout(() => hint.classList.remove('flash'), 2000);
         }
         showToast('🎮 编辑器已解锁');
+        toggleVersionTag(true);
     }
 
     function toggleEditMode(){
@@ -514,6 +719,7 @@
 
     function doExitEditMode(){
         isEditMode=false;hasUnsavedChanges=false;
+        hideImgToolbar();
         document.getElementById('modeToggle').textContent='✏️ 编辑模式';
         document.getElementById('modeToggle').classList.remove('editing');
         document.getElementById('btnSave').classList.remove('show');
@@ -521,47 +727,18 @@
         document.getElementById('editorToolbar').classList.remove('show');
         document.getElementById('sidebarEditActions').style.display='none';
         document.body.classList.remove('edit-mode');
-        document.querySelector('.content-wrapper')?.classList.remove('code-open');
         renderPages();
         if(currentPageId)document.getElementById(currentPageId)?.classList.add('active');
+        document.querySelectorAll('.wiki-page.active .page-body-display img').forEach(img => {
+            img.style.cursor = 'pointer';
+            img.addEventListener('click', function(e) {
+                e.stopPropagation();
+                openLightbox(this);
+            });
+        });
     }
 
     function getEditableBody(){return document.querySelector('.editable-body');}
-    function formatHTMLForDisplay(html){
-        const block=/<\s*(\/?(?:section|h[1-6]|p|div|blockquote|ul|ol|li|hr|pre|br)(?:\s|>))/gi;
-        return html.replace(block,(m)=>'\n'+m);
-    }
-    function syncBodyToCode(){
-        cancelAnimationFrame(syncTimer);
-        syncTimer=requestAnimationFrame(()=>{
-            const body=getEditableBody(),code=$('codeBody');
-            if(body&&code)code.value=formatHTMLForDisplay(body.innerHTML).replace(/^\n/,'');
-        });
-    }
-    function syncCodeToBody(){
-        const body=getEditableBody(),code=$('codeBody');
-        if(!body||!code)return;
-        const caret={start:code.selectionStart,end:code.selectionEnd};
-        body.innerHTML=code.value;
-        code.focus();code.setSelectionRange(caret.start,caret.end);
-        syncFormatState();
-    }
-    function toggleCodeView(){
-        codeViewOpen=!codeViewOpen;
-        const split=document.querySelector('.editor-split');
-        const wrapper=dom.contentWrapper;
-        const btn=document.getElementById('btnToggleCode');
-        if(!split)return;
-        if(codeViewOpen){
-            split.classList.add('code-open');
-            if(wrapper)wrapper.classList.add('code-open');
-            syncBodyToCode();btn.classList.add('active');
-        }else{
-            split.classList.remove('code-open');
-            if(wrapper)wrapper.classList.remove('code-open');
-            btn.classList.remove('active');
-        }
-    }
 
     function buildAuthorTagsEditor(currentAuthors){
         const tags=currentAuthors.map(a=>`<span class="author-tag" data-author="${esc(a)}">${esc(a)}<button class="tag-remove" data-remove="${esc(a)}" title="移除署名">✕</button></span>`).join('');
@@ -583,24 +760,34 @@
         const currentAuthors=getAuthors(pg);
         pageEl.querySelector('.page-title-display').innerHTML=`<div class="editable-title" contenteditable="true" spellcheck="false">${esc(pg.title)}</div>`;
         pageEl.querySelector('.meta-bar').innerHTML=`<span class="meta-time">🕐 ${formatTime(pg.updated)}</span>${buildAuthorTagsEditor(currentAuthors)}`;
-        pageEl.querySelector('.page-body-display').innerHTML=`
-            <div class="editor-split${codeViewOpen?' code-open':''}">
-                <div class="editable-body" contenteditable="true" spellcheck="false">${pg.content}</div>
-                <div class="code-pane">
-                    <div class="code-pane-header"><span>HTML 源码</span><span class="code-hint">两边同步编辑</span></div>
-                    <textarea id="codeBody" spellcheck="false" wrap="soft"></textarea>
-                </div>
-            </div>`;
+        pageEl.querySelector('.page-body-display').innerHTML=`<div class="editable-body" contenteditable="true" spellcheck="false">${pg.content}</div>`;
         pageEl.querySelector('.editable-title').addEventListener('input',()=>{hasUnsavedChanges=true;});
         const bodyEl=pageEl.querySelector('.editable-body');
-        const codeEl=pageEl.querySelector('#codeBody');
-        bodyEl.addEventListener('input',()=>{hasUnsavedChanges=true;syncBodyToCode();});
+        bodyEl.addEventListener('input',()=>{hasUnsavedChanges=true;});
         bodyEl.addEventListener('paste',e=>{pasteAsText(e);});
-        codeEl.addEventListener('input',()=>{hasUnsavedChanges=true;syncCodeToBody();});
-        codeEl.value=bodyEl.innerHTML;
-        const wrapper=document.querySelector('.content-wrapper');
-        if(wrapper)wrapper.classList.toggle('code-open',codeViewOpen);
-        document.getElementById('btnToggleCode')?.classList.toggle('active',codeViewOpen);
+        bodyEl.addEventListener('dblclick', function(e) {
+            const img = e.target.closest('img');
+            if (img) {
+                e.preventDefault();
+                const currentW = img.width || img.naturalWidth || 300;
+                const currentH = img.height || img.naturalHeight || 200;
+                const w = prompt('输入图片宽度（像素或百分比，如 300 或 50%）', currentW);
+                if (w !== null && w.trim() !== '') {
+                    const h = prompt('输入图片高度（像素或百分比，留空自动）', currentH);
+                    img.style.width = w.trim();
+                    if (h !== null && h.trim() !== '') {
+                        img.style.height = h.trim();
+                    } else {
+                        img.style.height = 'auto';
+                    }
+                    hasUnsavedChanges = true;
+                }
+            }
+        });
+        bodyEl.addEventListener('click', function(e) {
+            const img = e.target.closest('img');
+            if (img) { e.preventDefault(); e.stopPropagation(); showImgToolbar(img); return; }
+        });
         bindAuthorTagsEvents();
     }
 
@@ -668,8 +855,7 @@
         const edits=collectCurrentEdits();if(!edits)return false;
         const pg=pages.find(p=>p.id===currentPageId);if(!pg)return false;
         pg.title=edits.title;
-        const tmp=document.createElement('div');tmp.innerHTML=edits.content;
-        pg.content=sanitizeNode(tmp);
+        pg.content=normalizeContent(edits.content);
         pg.authors=edits.authors;delete pg.author;
         pg.updated=new Date().toISOString();
         const newSubs=extractSubs(pg.content);
@@ -735,94 +921,256 @@
         const existing=node?.closest('section');
         if(existing){
             const parent=existing.parentNode;
-            existing.querySelectorAll('h2,h3').forEach(h=>{
-                const p=document.createElement('p');
-                p.textContent=h.textContent;
-                h.replaceWith(p);
-            });
+            existing.querySelectorAll('h2,h3').forEach(h=>{const p=document.createElement('p');p.textContent=h.textContent;h.replaceWith(p);});
             while(existing.firstChild)parent.insertBefore(existing.firstChild,existing);
             parent.removeChild(existing);
         }else{
             const text=range.toString().trim();
             if(!text){alert('选中内容为空');return;}
-            const section=document.createElement('section');
-            section.id='sec-'+Date.now();
-            const h2=document.createElement('h2');
-            h2.textContent=text;
-            section.appendChild(h2);
-            range.deleteContents();
-            range.insertNode(section);
-            sel.removeAllRanges();
-            const r=document.createRange();r.selectNodeContents(section);sel.addRange(r);
+            const section=document.createElement('section');section.id='sec-'+Date.now();
+            const h2=document.createElement('h2');h2.textContent=text;section.appendChild(h2);
+            range.deleteContents();range.insertNode(section);
+            sel.removeAllRanges();const r=document.createRange();r.selectNodeContents(section);sel.addRange(r);
         }
         saveCurrentPage();
     }
 
-    document.getElementById('editorToolbar').addEventListener('click',function(e){
-        const btn=e.target.closest('.toolbar-btn');if(!btn)return;
-        if(btn.id==='btnToggleCode'){toggleCodeView();return;}
-        if(!btn.dataset.cmd)return;
-        const body=document.querySelector('.editable-body');if(!body)return;
-        body.focus();
-        const cmd=btn.dataset.cmd;
-        switch(cmd){
-            case'bold':document.execCommand('bold');break;
-            case'italic':document.execCommand('italic');break;
-            case'underline':document.execCommand('underline');break;
-            case'strikeThrough':document.execCommand('strikeThrough');break;
-            case'h2':document.execCommand('formatBlock',false,'<h2>');break;
-            case'h3':document.execCommand('formatBlock',false,'<h3>');break;
-            case'blockquote':document.execCommand('formatBlock',false,'<blockquote>');break;
-            case'justifyLeft':document.execCommand('justifyLeft');break;
-            case'justifyCenter':document.execCommand('justifyCenter');break;
-            case'justifyRight':document.execCommand('justifyRight');break;
-            case'hr':document.execCommand('insertHorizontalRule');break;
-            case'insertUnorderedList':document.execCommand('insertUnorderedList');break;
-            case'removeFormat':document.execCommand('removeFormat');break;
-            case'code':{const s=window.getSelection();document.execCommand('insertHTML',false,'<code>'+esc(s.toString()||'代码')+'</code>');break;}
-            case'pre':document.execCommand('insertHTML',false,'<pre>// code\n</pre><p></p>');break;
-            case'insertImage':{const u=prompt('图片URL：','https://');if(u&&u!=='https://')document.execCommand('insertHTML',false,`<img src="${esc(u)}" alt=""><p></p>`);break;}
-            case'createLink':{const h=prompt('链接URL：','https://');if(h&&h!=='https://')document.execCommand('createLink',false,h);break;}
-            case'insertSection':toggleSectionOnSelection();break;
-        }
+    function cleanCurrentBody(){
+        const body=getEditableBody();if(!body)return;
+        stripComments(body);normalizeDivs(body);cleanEmptyBlocks(body);
+        if(!body.textContent.trim()&&!body.querySelector('img,table,section'))body.innerHTML='<p><br></p>';
         hasUnsavedChanges=true;
-        syncBodyToCode();
+        showToast('🧹 已清理空行与冗余标签');
+    }
+
+    // --- 链接工具核心逻辑修复 START ---
+    function openLinkModal(initialTitle, initialHref) {
+        const modal = document.getElementById('linkModal');
+        if (!modal) {
+            console.error('链接模态框未找到');
+            return;
+        }
+        const titleInput = document.getElementById('linkTitleInput');
+        const hrefInput = document.getElementById('linkHrefInput');
+        if (!titleInput || !hrefInput) {
+            console.error('模态框输入框未找到');
+            return;
+        }
+        titleInput.value = initialTitle || '';
+        hrefInput.value = initialHref || '';
+        modal.classList.add('show');
+        setTimeout(() => titleInput.focus(), 100);
+    }
+
+    function closeLinkModal() {
+        const modal = document.getElementById('linkModal');
+        if (modal) modal.classList.remove('show');
+    }
+
+    function getLinkInfoFromSelection() {
+        const sel = window.getSelection();
+        if (!sel.rangeCount) return null;
+        
+        const range = sel.getRangeAt(0);
+        let a = range.startContainer.nodeType === Node.ELEMENT_NODE ? range.startContainer : range.startContainer.parentElement;
+        a = a?.closest?.('a');
+        
+        if (!a) {
+            const common = range.commonAncestorContainer;
+            const el = common.nodeType === Node.ELEMENT_NODE ? common : common.parentElement;
+            a = el?.closest?.('a');
+        }
+        
+        if (a) {
+            return { title: a.textContent, href: a.getAttribute('href') || '', element: a };
+        } else {
+            const text = sel.toString().trim();
+            return { title: text, href: '', element: null };
+        }
+    }
+
+    function insertOrEditLink(title, href) {
+        if (!title.trim()) { alert('标题不能为空'); return; }
+        
+        // 恢复之前保存的光标位置
+        const body = document.querySelector('.editable-body');
+        if (body && savedEditorRange) {
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(savedEditorRange);
+        }
+
+        const sel = window.getSelection();
+        if (!sel.rangeCount) {
+            alert('请先点击编辑区域或选中一些文字');
+            return;
+        }
+        
+        const range = sel.getRangeAt(0);
+        let a = null;
+        let node = range.startContainer;
+        if (node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+        a = node?.closest?.('a');
+        
+        if (!a) {
+            const common = range.commonAncestorContainer;
+            const el = common.nodeType === Node.ELEMENT_NODE ? common : common.parentElement;
+            a = el?.closest?.('a');
+        }
+        
+        if (a) {
+            // 编辑现有链接
+            const newA = document.createElement('a');
+            newA.href = href || '#';
+            newA.textContent = title;
+            a.replaceWith(newA);
+            
+            const newRange = document.createRange();
+            newRange.selectNodeContents(newA);
+            sel.removeAllRanges();
+            sel.addRange(newRange);
+        } else {
+            // 插入新链接
+            let selectedText = sel.toString().trim();
+            if (!selectedText) {
+                selectedText = title;
+            }
+            const linkHtml = `<a href="${esc(href || '#')}">${esc(selectedText)}</a>`;
+            document.execCommand('insertHTML', false, linkHtml);
+        }
+        hasUnsavedChanges = true;
+    }
+
+    // 全局变量用于保存编辑器失去焦点前的 Range
+    let savedEditorRange = null;
+    document.addEventListener('selectionchange', function(){
+        const body = document.querySelector('.editable-body');
+        const sel = window.getSelection();
+        if(body && sel && sel.rangeCount && body.contains(sel.anchorNode)){
+            savedEditorRange = sel.getRangeAt(0).cloneRange();
+        }
+    });
+    // --- 链接工具核心逻辑修复 END ---
+
+    document.getElementById('editorToolbar').addEventListener('click', function(e) {
+        const btn = e.target.closest('.toolbar-btn');
+        if (!btn) return;
+        if (!btn.dataset.cmd) return;
+        
+        const body = document.querySelector('.editable-body');
+        if (!body) { alert('未找到可编辑区域'); return; }
+        
+        // 对于不需要弹窗的命令，先聚焦以确保 execCommand 生效
+        if (btn.dataset.cmd !== 'createLink') {
+            body.focus();
+            // 如果有保存的Range且当前没有有效选区，尝试恢复
+            const sel = window.getSelection();
+            if (savedEditorRange && (!sel.rangeCount || sel.isCollapsed)) {
+                 sel.removeAllRanges();
+                 sel.addRange(savedEditorRange);
+            }
+        }
+
+        const cmd = btn.dataset.cmd;
+        switch(cmd) {
+            case 'bold': document.execCommand('bold'); break;
+            case 'italic': document.execCommand('italic'); break;
+            case 'underline': document.execCommand('underline'); break;
+            case 'strikeThrough': document.execCommand('strikeThrough'); break;
+            case 'h2': document.execCommand('formatBlock', false, 'h2'); break;
+            case 'h3': document.execCommand('formatBlock', false, 'h3'); break;
+            case 'blockquote': {
+                if (!window.getSelection().isCollapsed) {
+                    document.execCommand('formatBlock', false, 'blockquote');
+                } else {
+                    document.execCommand('insertHTML', false, '<blockquote><br></blockquote>');
+                }
+                break;
+            }
+            case 'justifyLeft': document.execCommand('justifyLeft'); break;
+            case 'justifyCenter': document.execCommand('justifyCenter'); break;
+            case 'justifyRight': document.execCommand('justifyRight'); break;
+            case 'insertUnorderedList': document.execCommand('insertUnorderedList'); break;
+            case 'removeFormat': document.execCommand('removeFormat'); break;
+            case 'code': {
+                const s = window.getSelection();
+                document.execCommand('insertHTML', false, '<code>' + esc(s.toString() || '代码') + '</code>');
+                break;
+            }
+            case 'pre': document.execCommand('insertHTML', false, '<pre>// code\n</pre><p></p>'); break;
+            case 'insertImage': {
+                const u = prompt('图片URL：', 'https://');
+                if (u && u !== 'https://') document.execCommand('insertHTML', false, `<img src="${esc(u)}" alt=""><p></p>`);
+                break;
+            }
+            case 'table': {
+                const r = parseInt(prompt('表格行数（第一行为表头）：','3'),10);
+                const c = parseInt(prompt('表格列数：','3'),10);
+                if (!r || !c || r < 1 || c < 1 || r > 50 || c > 20) { alert('请输入有效的行列数（行≤50，列≤20）'); break; }
+                let html = '<table>';
+                for (let i = 0; i < r; i++) {
+                    html += '<tr>';
+                    for (let j = 0; j < c; j++) {
+                        html += i === 0 ? '<th>表头</th>' : '<td><br></td>';
+                    }
+                    html += '</tr>';
+                }
+                html += '</table><p></p>';
+                document.execCommand('insertHTML', false, html);
+                break;
+            }
+            case 'createLink': {
+                // 链接命令不立即 focus body，以免 selection 丢失
+                // 而是直接从 savedEditorRange 或当前 selection 获取信息
+                const info = getLinkInfoFromSelection();
+                openLinkModal(info?.title || '', info?.href || '');
+                break;
+            }
+            case 'insertSection': toggleSectionOnSelection(); break;
+            case 'clean': cleanCurrentBody(); break;
+        }
+        if (cmd !== 'clean' && cmd !== 'createLink') {
+            hasUnsavedChanges = true;
+        }
+    });
+
+    document.getElementById('linkConfirmBtn').addEventListener('click', function() {
+        const title = document.getElementById('linkTitleInput').value;
+        const href = document.getElementById('linkHrefInput').value;
+        insertOrEditLink(title, href);
+        closeLinkModal();
+    });
+
+    document.getElementById('linkCancelBtn').addEventListener('click', closeLinkModal);
+    document.getElementById('linkModal').addEventListener('click', function(e) {
+        if (e.target === this) closeLinkModal();
     });
 
     document.getElementById('textColorPicker').addEventListener('input', function(e){
-        const body=document.querySelector('.editable-body');if(!body)return;
-        body.focus();
+        const body=document.querySelector('.editable-body');if(!body)return;body.focus();
+        document.execCommand('styleWithCSS',false,true);
         document.execCommand('foreColor',false,e.target.value);
+        document.execCommand('styleWithCSS',false,false);
         hasUnsavedChanges=true;
-        syncBodyToCode();
     });
 
     document.getElementById('hiliteColorPicker').addEventListener('input', function(e){
-        const body=document.querySelector('.editable-body');if(!body)return;
-        body.focus();
-        document.execCommand('hiliteColor',false,e.target.value);
+        const body=document.querySelector('.editable-body');if(!body)return;body.focus();
+        document.execCommand('styleWithCSS',false,true);
+        let ok=false;try{ok=document.execCommand('hiliteColor',false,e.target.value);}catch(err){}
+        if(!ok){try{document.execCommand('backColor',false,e.target.value);}catch(err){}}
+        document.execCommand('styleWithCSS',false,false);
         hasUnsavedChanges=true;
-        syncBodyToCode();
     });
 
     document.getElementById('fontSizeSelect').addEventListener('change', function(e){
-        const body=document.querySelector('.editable-body');if(!body)return;
-        const v=e.target.value;
-        if(!v)return;
-        body.focus();
-        document.execCommand('fontSize',false,v);
-        hasUnsavedChanges=true;
-        syncBodyToCode();
+        const body=document.querySelector('.editable-body');if(!body)return;const v=e.target.value;if(!v)return;body.focus();
+        document.execCommand('fontSize',false,v);hasUnsavedChanges=true;
     });
 
     document.getElementById('fontFamilySelect').addEventListener('change', function(e){
-        const body=document.querySelector('.editable-body');if(!body)return;
-        const v=e.target.value;
-        if(!v)return;
-        body.focus();
-        document.execCommand('fontName',false,v);
-        hasUnsavedChanges=true;
-        syncBodyToCode();
+        const body=document.querySelector('.editable-body');if(!body)return;const v=e.target.value;if(!v)return;body.focus();
+        document.execCommand('fontName',false,v);hasUnsavedChanges=true;
     });
 
     function syncFormatState(){
@@ -833,173 +1181,109 @@
         const anchor=sel.anchorNode;
         const anchorEl=anchor&&(anchor.nodeType===1?anchor:anchor.parentElement);
         if(!anchorEl||!body.contains(anchorEl))return;
-
         let fs='',ff='';
         try{fs=document.queryCommandValue('fontSize')||'';}catch(e){}
         try{ff=document.queryCommandValue('fontName')||'';}catch(e){}
-
         const fsSel=document.getElementById('fontSizeSelect');
         const ffSel=document.getElementById('fontFamilySelect');
         if(fsSel)fsSel.value=(/^[1-7]$/.test(fs))?fs:'';
         if(ffSel){
             const norm=String(ff).replace(/["']/g,'').trim().toLowerCase();
             let matched=false;
-            for(const o of ffSel.options){
-                if(o.value&&o.value.toLowerCase()===norm){ffSel.value=o.value;matched=true;break;}
-            }
+            for(const o of ffSel.options){if(o.value&&o.value.toLowerCase()===norm){ffSel.value=o.value;matched=true;break;}}
             if(!matched)ffSel.value='';
         }
     }
     let selectionSyncQueued=false;
     document.addEventListener('selectionchange',()=>{
-        if(selectionSyncQueued)return;
-        selectionSyncQueued=true;
+        if(selectionSyncQueued)return;selectionSyncQueued=true;
         requestAnimationFrame(()=>{selectionSyncQueued=false;syncFormatState();});
     });
 
-    const EXPORT_RUNTIME_JS = `(()=>{
-        const sb=document.getElementById('sidebar'),ov=document.getElementById('sidebarOverlay'),
-              mb=document.getElementById('mobileMenuBtn'),mc=document.getElementById('mainContent');
-        function toggleSidebar(open){
-            const show=open!==undefined?open:!sb.classList.contains('active');
-            sb.classList.toggle('active',show);
-            ov.classList.toggle('active',show);
-        }
-        mb.onclick=()=>toggleSidebar();
-        ov.onclick=()=>toggleSidebar(false);
-        document.getElementById('tocList').onclick=function(e){
-            const ar=e.target.closest('.expand-arrow'),
-                  nt=e.target.closest('.link-text'),
-                  tl=e.target.closest('.toc-link');
-            if(ar){
-                e.stopPropagation();
-                const sm=ar.closest('.toc-page-link').nextElementSibling;
-                if(sm?.classList.contains('sub-menu')){sm.classList.toggle('visible');ar.classList.toggle('open');}
-                return;
-            }
-            if(nt){
-                const tid=nt.dataset.nav;
-                if(tid){
-                    document.querySelectorAll('.wiki-page').forEach(p=>p.classList.remove('active'));
-                    document.getElementById(tid)?.classList.add('active');
-                    document.querySelectorAll('.toc-page-link').forEach(l=>l.classList.remove('active'));
-                    nt.closest('.toc-page-link')?.classList.add('active');
-                    mc.scrollTop=0;
-                    if(innerWidth<=768)toggleSidebar(false);
-                }
-                return;
-            }
-            if(tl){
-                const pid=tl.dataset.parent;
-                if(pid){
-                    document.querySelectorAll('.wiki-page').forEach(p=>p.classList.remove('active'));
-                    document.getElementById(pid)?.classList.add('active');
-                    document.querySelectorAll('.toc-page-link').forEach(l=>l.classList.remove('active'));
-                    document.querySelector('[data-nav="'+pid+'"]')?.closest('.toc-page-link')?.classList.add('active');
-                }
-                requestAnimationFrame(()=>{
-                    const a=document.getElementById(tl.getAttribute('href')?.slice(1));
-                    if(a)a.scrollIntoView({behavior:'smooth',block:'start'});
-                });
-                if(innerWidth<=768)toggleSidebar(false);
-            }
-        };
-    })();`;
-
-    function buildExportHTML(){
-        if(isEditMode)commitCurrentEdits(false);
-        const ph=pages.map(pg=>buildPageHTML(pg,pg.id===currentPageId)).join('\n');
-        const th=pages.map(pg=>buildTocItemHTML(pg,{isActive:pg.id===currentPageId,deletable:false})).join('\n');
-        const css=document.querySelector('style').textContent;
-        return`<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>合月亭 Wiki</title>
-<style>${css}</style>
-</head>
-<body>
-<button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
-<div class="sidebar-overlay" id="sidebarOverlay"></div>
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-header"><span>📚 合月亭 Wiki</span></div>
-    <div class="sidebar-content"><ul class="toc-list" id="tocList">${th}</ul></div>
-</aside>
-<main class="main-content" id="mainContent" aria-live="polite">
-    <div class="content-wrapper"><div id="pagesContainer">${ph}</div></div>
-</main>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"5824bbe371ce4eefbe8027cb86c0d0a6"}'><\/script>
-<script>${EXPORT_RUNTIME_JS}<\/script>
-</body>
-</html>`;
+    function showImgToolbar(img){
+        activeImg=img;
+        const tb=$('imgToolbar');
+        document.querySelectorAll('.img-selected').forEach(i=>i.classList.remove('img-selected'));
+        img.classList.add('img-selected');
+        tb.style.display='flex';
+        const ir=img.getBoundingClientRect();
+        tb.style.left=Math.max(8,Math.min(ir.left,innerWidth-tb.offsetWidth-8))+'px';
+        let top=ir.bottom+8;
+        if(top+tb.offsetHeight>innerHeight-8)top=Math.max(8,ir.top-tb.offsetHeight-8);
+        tb.style.top=top+'px';
+    }
+    function hideImgToolbar(){
+        const tb=$('imgToolbar');
+        if(tb)tb.style.display='none';
+        document.querySelectorAll('.img-selected').forEach(i=>i.classList.remove('img-selected'));
+        activeImg=null;
+    }
+    function applyImgWidth(v){
+        if(!activeImg)return;
+        if(!v){activeImg.style.width='';activeImg.style.height='';}
+        else{activeImg.style.width=v;activeImg.style.height='auto';}
+        hasUnsavedChanges=true;
     }
 
-    document.getElementById('btnExport').addEventListener('click',()=>{
-        const html=buildExportHTML();
-        const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);
-        const a=document.createElement('a');a.href=url;a.download='heyue-wiki-export.html';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    function openLightbox(img){
+        const lb=$('imgLightbox'),lbImg=$('lightboxImg');
+        lbImg.src=img.currentSrc||img.src;
+        lb.classList.add('show');
+    }
+    function closeLightbox(){$('imgLightbox').classList.remove('show');}
+
+    $('imgToolbar').addEventListener('click',function(e){
+        const wb=e.target.closest('[data-imgw]');
+        if(wb){applyImgWidth(wb.dataset.imgw);return;}
+        if(e.target.id==='btnImgWidthApply')return;
+        if(e.target.id==='btnImgDelete'){if(activeImg){activeImg.remove();hasUnsavedChanges=true;}hideImgToolbar();return;}
+        if(e.target.id==='btnImgToolbarClose'){hideImgToolbar();return;}
     });
+    $('btnImgWidthApply').addEventListener('click',()=>{
+        const v=$('imgWidthInput').value.trim();
+        if(v&&!/^(\d+(\.\d+)?)(px|%)$/.test(v)){alert('格式示例：300px 或 60%');return;}
+        applyImgWidth(v);
+    });
+    $('imgWidthInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('btnImgWidthApply').click();}});
+    document.addEventListener('mousedown',e=>{
+        const tb=$('imgToolbar');
+        if(tb.style.display!=='none'&&!tb.contains(e.target)&&e.target.tagName!=='IMG')hideImgToolbar();
+    });
+    dom.mainContent.addEventListener('scroll',()=>{if($('imgToolbar').style.display!=='none')hideImgToolbar();});
 
-    function buildDataJSON(){
-        if(isEditMode)commitCurrentEdits(false);
-        return JSON.stringify({members,pages},null,2);
-    }
+    $('imgLightbox').addEventListener('click',e=>{if(e.target.id!=='lightboxImg')closeLightbox();});
+    $('lightboxClose').addEventListener('click',closeLightbox);
+    dom.pagesContainer.addEventListener('click',e=>{if(isEditMode)return;const img=e.target.closest('img');if(img)openLightbox(img);});
+
     document.getElementById('btnExportJson').addEventListener('click',()=>{
-        const json=buildDataJSON();
-        const blob=new Blob([json],{type:'application/json'});
-        const url=URL.createObjectURL(blob);
+        const json=buildDataJSON();const blob=new Blob([json],{type:'application/json'});const url=URL.createObjectURL(blob);
         const a=document.createElement('a');a.href=url;a.download='WIKI-data.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
         showToast('📤 已导出 WIKI-data.json');
     });
-    document.getElementById('btnImportJson').addEventListener('click',()=>{
-        document.getElementById('importJsonInput').click();
-    });
+    document.getElementById('btnImportJson').addEventListener('click',()=>{document.getElementById('importJsonInput').click();});
     document.getElementById('importJsonInput').addEventListener('change',function(e){
-        const file=e.target.files&&e.target.files[0];
-        if(!file)return;
+        const file=e.target.files&&e.target.files[0];if(!file)return;
         const reader=new FileReader();
         reader.onload=()=>{
             try{
                 const data=JSON.parse(reader.result);
-                if(!Array.isArray(data.pages)||!Array.isArray(data.members)){alert('JSON 格式不正确：需要包含 pages 和 members 数组');return;}
-                pages=data.pages.filter(p=>p&&p.id);members=data.members.filter(m=>m&&m.name);
-                localStorage.setItem(PAGES_KEY,JSON.stringify(pages));
-                localStorage.setItem(MEMBERS_KEY,JSON.stringify(members));
+                const importedPages=Array.isArray(data.pages)?data.pages:(Array.isArray(data)?data:[]);
+                const importedMembers=Array.isArray(data.members)?data.members:[];
+                if(!importedPages.length&&!importedMembers.length&&!Array.isArray(data)){alert('JSON 格式不正确');return;}
+                pages=importedPages.filter(p=>p&&p.id);members=importedMembers.filter(m=>m&&m.name);
+                stripContentComments(pages);
+                localStorage.setItem(PAGES_KEY,JSON.stringify(pages));localStorage.setItem(MEMBERS_KEY,JSON.stringify(members));
                 currentPageId=null;hasUnsavedChanges=false;renderSidebar();renderPages();switchPage(pages[0]?.id||'');
                 showToast('📥 已导入数据');
             }catch(err){alert('JSON 解析失败：'+err.message);}
-        };
-        reader.readAsText(file,'utf-8');
-        e.target.value='';
+        };reader.readAsText(file,'utf-8');e.target.value='';
     });
 
     dom.tocList.addEventListener('click',function(e){
-        const del=e.target.closest('.btn-delete-page');
-        if(del){e.stopPropagation();deletePage(parseInt(del.dataset.delIdx));return;}
-        const ar=e.target.closest('.expand-arrow');
-        if(ar){e.stopPropagation();const sm=ar.closest('.toc-page-link').nextElementSibling;if(sm?.classList.contains('sub-menu')){sm.classList.toggle('visible');ar.classList.toggle('open');}return;}
-        const nt=e.target.closest('.link-text');
-        if(nt){
-            const pid=nt.dataset.nav;
-            if(pid){
-                if(isEditMode&&hasUnsavedChanges)commitCurrentEdits(false);
-                switchPage(pid);
-                const pl=nt.closest('.toc-page-link'),sm=pl?.nextElementSibling,ae=pl?.querySelector('.expand-arrow');
-                if(sm?.classList.contains('sub-menu')&&!sm.classList.contains('visible')){sm.classList.add('visible');if(ae)ae.classList.add('open');}
-            }
-            return;
-        }
-        const tl=e.target.closest('.toc-link');
-        if(tl){
-            const pid=tl.dataset.parent;
-            if(pid&&currentPageId!==pid){
-                if(isEditMode&&hasUnsavedChanges)commitCurrentEdits(false);
-                switchPage(pid);
-            }
-            requestAnimationFrame(()=>{const a=document.getElementById(tl.getAttribute('href')?.slice(1));if(a)a.scrollIntoView({behavior:'smooth',block:'start'});});
-            if(innerWidth<=768)toggleSidebar(false);
-        }
+        const del=e.target.closest('.btn-delete-page');if(del){e.stopPropagation();deletePage(parseInt(del.dataset.delIdx));return;}
+        const ar=e.target.closest('.expand-arrow');if(ar){e.stopPropagation();const sm=ar.closest('.toc-page-link').nextElementSibling;if(sm?.classList.contains('sub-menu')){sm.classList.toggle('visible');ar.classList.toggle('open');}return;}
+        const nt=e.target.closest('.link-text');if(nt){const pid=nt.dataset.nav;if(pid){if(isEditMode&&hasUnsavedChanges)commitCurrentEdits(false);switchPage(pid);const pl=nt.closest('.toc-page-link'),sm=pl?.nextElementSibling,ae=pl?.querySelector('.expand-arrow');if(sm?.classList.contains('sub-menu')&&!sm.classList.contains('visible')){sm.classList.add('visible');if(ae)ae.classList.add('open');}}return;}
+        const tl=e.target.closest('.toc-link');if(tl){const pid=tl.dataset.parent;if(pid&&currentPageId!==pid){if(isEditMode&&hasUnsavedChanges)commitCurrentEdits(false);switchPage(pid);}requestAnimationFrame(()=>{const a=document.getElementById(tl.getAttribute('href')?.slice(1));if(a)a.scrollIntoView({behavior:'smooth',block:'start'});});if(innerWidth<=768)toggleSidebar(false);}
     });
 
     function toggleSidebar(open){const sb=$('sidebar'),ov=$('sidebarOverlay');const a=open!==undefined?open:!sb.classList.contains('active');sb.classList.toggle('active',a);ov.classList.toggle('active',a);}
@@ -1011,26 +1295,35 @@
     document.addEventListener('keydown',e=>{
         if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='s'&&isEditMode){e.preventDefault();saveCurrentPage();return;}
         if(e.key==='Escape'){
-            if($('memberModal').classList.contains('show'))$('memberModal').classList.remove('show');
+            if($('imgLightbox').classList.contains('show'))closeLightbox();
+            else if($('imgToolbar').style.display!=='none')hideImgToolbar();
+            else if($('memberModal').classList.contains('show'))$('memberModal').classList.remove('show');
             else if($('saveConfirmModal').classList.contains('show'))$('saveConfirmModal').classList.remove('show');
+            else if(document.getElementById('linkModal')?.classList.contains('show'))closeLinkModal();
             else if(window.innerWidth<=768)toggleSidebar(false);
         }
     });
 
-    window.addEventListener('beforeunload', e => {
-        if (isEditMode && hasUnsavedChanges) {
-            const warningMsg = '刷新会导致未保存的数据丢失，请编辑员确保数据成功导出';
+    window.addEventListener('beforeunload', (e) => {
+        if (isEditMode) {
             e.preventDefault();
-            e.returnValue = warningMsg;
-            return warningMsg;
+            e.returnValue = '当前处于编辑模式，刷新可能导致数据丢失，请编辑员确保数据已成功保存或导出';
+            return e.returnValue;
         }
     });
 
     (async()=>{
-        await loadData();
-        renderSidebar();renderPages();switchPage(pages[0]?.id||'page-intro');
+        await loadData();renderSidebar();renderPages();switchPage(pages[0]?.id||'page-intro');
         if(!pages.length){dom.pagesContainer.innerHTML='<div class="wiki-page active"><h1>暂无内容</h1><p>请导入 WIKI-data.json 或在编辑模式中新增页面。</p></div>';}
+        toggleVersionTag(false);
     })();
+
+    setVersionTag();
+
+    function buildDataJSON(){
+        if(isEditMode)commitCurrentEdits(false);
+        return JSON.stringify({_exportedAt:new Date().toISOString(),members,pages},null,2);
+    }
 })();
 </script>
 </body>
