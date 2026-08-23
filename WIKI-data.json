@@ -1,169 +1,870 @@
-{
-  "_exportedAt": "2026-08-23T00:31:17.505Z",
-  "members": [
-    {
-      "id": "m1787157249624",
-      "name": "Cintser"
-    }
-  ],
-  "pages": [
-    {
-      "id": "page-intro",
-      "title": "wiki说明",
-      "hasSub": false,
-      "subs": [],
-      "authors": [
-        "合月亭编辑部"
-      ],
-      "updated": "2026-08-23T00:28:45.759Z",
-      "content": "<h2><span style=\"color:rgb(0, 0, 0)\"><span>本教程专注&nbsp;</span>买断制二次元游戏&nbsp;<span>的下载/解密/解压/运行等疑难杂症</span></span></h2><h2><span style=\"color:rgb(0, 0, 0)\">欢迎各位有志之士参与投稿喵~</span></h2><div><span style=\"color:rgb(0, 0, 0)\"><br></span></div><p><span style=\"color:rgb(0, 0, 0)\">“↑↑↓↓←→←→BA”即可开启编辑模式，<b>编辑完成后请第一时间导出json，网页一旦刷新将清除缓存。</b></span></p><p><span style=\"color:rgb(0, 0, 0)\">您可以通过以下方式递交稿件，并请留意以下事项：</span></p><p></p><ul><li><span style=\"color:rgb(0, 0, 0)\">备注你参与编辑的页面名称（如专业术语参考）。</span></li><li><span style=\"color:rgb(0, 0, 0)\">如需插入本地路径的图片请在正文中预留图片位置，并将图片作为附件一同发送。</span></li><li><span style=\"color:rgb(0, 0, 0)\">请留下署名，如未收到署名将视为匿名发表，且只接受原信源的署名补充。</span></li></ul><p></p><p><span style=\"color:rgb(0, 0, 0)\">1.QQ群：<a href=\"http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&amp;k=wWZqzX8EPYK_BG1KVvuLzzrG9SvFhwz5&amp;authKey=JroR1GKyTQL79NyndpCaO3Hb%2BUxRf9Q6ZSK9vM6vgRcH%2FiVGG0%2FudkPwx8MU1we0&amp;noverify=0&amp;group_code=853996356\">853996356</a></span></p><p><span style=\"color:rgb(0, 0, 0)\">2.邮箱：<a href=\"Cintser_@outlook.com\" style=\"\">Cintser_@outlook.com</a></span></p><p><br></p>"
-    },
-    {
-      "id": "page-download",
-      "title": "下载相关问题",
-      "hasSub": true,
-      "subs": [
-        {
-          "id": "sec-1787160227107",
-          "label": "常见问题"
-        },
-        {
-          "id": "sec-1787160286153",
-          "label": "BT下载"
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ACG资源站点导航 - 合月亭</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent-gold: #fbbf24;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --danger: #f87171;
+            --excellent: #34d399;
+            --top-bar-bg: rgba(15, 23, 42, 0.6);
+            --input-bg: rgba(30, 41, 59, 0.8);
+            --sidebar-w: 220px;
         }
-      ],
-      "authors": [
-        "Cintser",
-        "梦境无恒"
-      ],
-      "updated": "2026-08-22T23:36:31.321Z",
-      "content": "<h2><span>\n\n<p>\n\n</p>\n\n<section id=\"sec-1787160227107\">\n\n<h2>常见问题\n\n</h2>\n\n</section>\n\n<p>\n\n</p></span>\n\n</h2>\n\n<h2><span><font size=\"4\" color=\"#000000\">1.下载慢/下载到一半突然变慢或者不动了</font></span>\n\n</h2>\n\n\n<div><font color=\"#000000\"><span><font face=\"Microsoft YaHei, sans-serif\" size=\"4\">网络问题，请自行解决，建议试试梯子（节点不对或者人家本来就在境内挂了可能更慢）。</font></span>\n\n</font></div>\n\n<div><font color=\"#000000\"><span><font face=\"Microsoft YaHei, sans-serif\" size=\"4\">也可以用多线程下载器试试看</font></span>\n</font></div><div><span><font face=\"Microsoft YaHei, sans-serif\" size=\"4\" color=\"#000000\"><br></font></span></div>\n<div>\n\n</div>\n\n<div><font color=\"#000000\"><font size=\"4\"><b>2.网聚盘下过来是几KB的压缩包</b></font>\n\n</font></div>\n\n<div><span style=\"color:rgb(0, 0, 0)\"><span style=\"font-family:&quot;Mona Sans VF&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, &quot;Noto Sans Backtick Fix&quot;, &quot;Noto Sans&quot;, Helvetica, Arial, sans-serif, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;\"><font size=\"4\">AList常见系统问题</font></span><span style=\"text-align:justify\">，其分支</span></span><span style=\"text-align:justify\">OpenList</span><span style=\"color:rgb(0, 0, 0);text-align:justify\">大概不会问题</span><span style=\"color:rgb(0, 0, 0);font-size:large;font-family:&quot;Microsoft YaHei&quot;, sans-serif\">。</span></div>\n\n<div><font color=\"#000000\"><span><font face=\"Microsoft YaHei, sans-serif\" size=\"4\">解决方法：不要打包或者多选下载，一个一个下，或者用爬</font></span></font><span style=\"color:rgb(0, 0, 0)\">虫。</span></div>\n\n<div><font color=\"#000000\"><font face=\"Microsoft YaHei, sans-serif\" size=\"4\">\n\n<br></font>\n\n</font></div>\n\n<div><font color=\"#000000\"><font size=\"4\"><b>3.浏览器提示阻止不安全下载？</b></font>\n\n</font></div>\n\n<div><font color=\"#000000\"><span><font face=\"Microsoft YaHei, sans-serif\" size=\"4\">提示栏会有“更多”按钮，点一下 --&gt; 点击保留</font></span>\n\n</font></div>\n\n<div><font color=\"#000000\"><span><font face=\"Microsoft YaHei, sans-serif\" size=\"4\">要么你自己去装一个多线程下载器</font></span>\n\n</font></div>\n\n<div><font color=\"#000000\"><b><font face=\"Microsoft YaHei, sans-serif\" size=\"4\">\n\n<br></font>\n\n</b></font></div>\n\n<div><font color=\"#000000\"><font size=\"4\"><b>4.网站打不开</b></font>\n\n</font></div>\n\n<div><font color=\"#000000\"><span><font face=\"Microsoft YaHei, sans-serif\" size=\"4\">挂梯子试试（有时候节点可能有问题/不合适，请自行观察）如果你把你的节点都试过了还打</font></span>\n\n</font></div>\n\n<div><font color=\"#000000\"><span><font face=\"Microsoft YaHei, sans-serif\" size=\"4\">不开那大概是这网站出了什么问题，不放心的话也可以让群友试试。</font></span>\n\n</font></div>\n\n<div><span><font face=\"Microsoft YaHei, sans-serif\" size=\"4\" color=\"#000000\">也可能是你运营商的问题</font></span>\n\n</div>\n\n<div><span><font face=\"Microsoft YaHei, sans-serif\">\n\n<br></font></span>\n\n</div>\n\n<div><span><font face=\"Microsoft YaHei, sans-serif\">\n\n<section id=\"sec-1787160286153\">\n\n<h2>BT下载\n\n</h2>\n\n</section></font></span>\n\n</div>\n\n\n\n<h2>\n\n<p>\n\n</p>\n\n</h2>\n\n<h2>\n\n<p>\n\n</p>\n\n</h2>\n\n<div>\n\n<div><font size=\"4\" color=\"#000000\"><b>1.1&nbsp; BT协议&amp;amp;磁力链接</b></font></div><div><font size=\"4\" color=\"#000000\"><b><br></b></font></div><div>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">&nbsp; &nbsp; BitTorrent协议简称<b>BT</b>或<b>bt</b>，俗称比特洪流、BT下载，</font><span>基于P2P(Peer-to-Peer、用户对用户)构建，</span><span>是一个在电脑文件分享领域中，当下流行的一种网络协议程序。</span>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">\n\n<br></font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\"><b>1.2&nbsp; BT工作原理</b></font>\n\n</div><div><font size=\"4\" color=\"#000000\"><b><br></b></font></div>\n\n<div><font size=\"4\" color=\"#000000\">&nbsp; &nbsp;简单来说，可以把BT文件当作业来看，一本作业分为3页，答案可以在讲台上，也可以在某些同学的作业本里，在哪抄的不重要，总之你和两位好鸽们开始抄答案，你在讲台抄第1页；同学B抄第2页；同学C抄第3页的同时，你<strike>跟二郎神似得一</strike>边抄讲台一边抄另外两位好鸽们的，当然他们也一样，</font><font color=\"#000000\" size=\"4\">使得效率大大提高……</font>\n\n</div><div><img src=\"assets/css/images/wiki/bt1.webp\" alt=\"\"><p></p></div>\n\n<div><img src=\"https://i0.hdslb.com/bfs/article/d7fc9737e7204cec55ab3b398142354aa60acdf3.png@1152w_750h.avif\" alt=\"\">\n\n<p>\n\n</p>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">当然效率提高只是对提供下载服务方来说的，对于普通下载文件的用户体感来说应该区别不大。</font>\n\n</div>\n\n<div><br></div><div>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\"><b>1.4&nbsp; bt任务的健康度(可用性)；死种的情况</b></font></div><div>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">&nbsp; &nbsp; 根据1.2中所描述的情况：由于bt的下载是用户之间自动进行的，因此一个torrent或磁链是否能被完整下载完取决于当前所有加入了这个bt传输中用户(包括上传来源)的总持有比例，也就是所谓的健康度/可用性。</font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">\n\n<br></font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">&nbsp; &nbsp; 假设当前有3个用户，A、B、C正在进行这个任务，其中A持有30%，B持有20%，C持有50%，ABC持有的部分互相没有重合，那么总可用就是0.3 + 0.2 + 0.5 = 100%。此时，A会从BC那里拿到剩下的70%，B从AC拿到剩下的80%，C从AB拿到剩下的50%，所有用户都能100%完成完整下载。</font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">\n\n<br></font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">&nbsp; &nbsp; 而如果上述例子中B所持有的20%的内容被C所包含，那么所有用户无论如何只能完成0.3 + 0.5 = 80%的进度，这种总持有比例小于1的情况称之为死种，ABC无论如何操作也不能拿到剩下的20%，因为即使是最理想的情况，所有人的进度都会卡在80%，无法到达100%。但此时如果突然原始上传者重新放源，或天降了一个持有剩下20%的用户D加入了BT任务，那么死种可能会被盘活，所有人都能完成下载。</font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">\n\n<br></font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\"><b>1.5&nbsp; 一些可以执行BT任务下载的软件的争议与限制</b></font></div><div>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">&nbsp; &nbsp; 当然不用说此条目主要指的是迅雷，当然别的下载器也有一些问题：</font></div><div><font size=\"4\" color=\"#000000\"><br></font></div>\n\n<div><span>(1)、几乎只下载不上传，有违P2P的共享原则。</span>\n\n</div>\n\n<div><span>(2)、提供有偿服务，有偿服务是建立在抢占其它免费用户(包括迅雷客户端本身和其它客户端)的资源基础上，有违P2P的公平原则。</span>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">\n\n<br></font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">&nbsp; &nbsp; 当然这些举动也被其它客户端的用户采取了对等的反制措施：禁止迅雷客户端与其它客户端进行通信传输，或必须达到一定上传量才可以继续下载任务。</font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">\n\n<br></font>\n\n</div>\n\n<div><font size=\"4\" color=\"#000000\">&nbsp; &nbsp; 再引申一下，事实上一些在线网盘服务提供的磁链/torrent的“离线下载”也是吸血的(如百度网盘、pikpak等)。但由于这些网盘自身有一个磁链和种子的检索库，同一个磁链/torrent至多只会被吸一次血，之后它的内容就永久存在了网盘上，如果是先上传磁力中的文件，再使用磁链的话甚至不会被吸血。因此使用bt的P2P众对它的意见似乎并不大。但百度网盘也因为一些非吸血的其它问题被用户诟病，懂得都懂。</font>\n\n</div>\n\n</div>\n\n<h2><font face=\"msyhbd, sans-serif\">\n\n<div>\n\n<section id=\"sec-1787157532827\">\n\n<p>\n\n<br>\n\n</p>\n\n</section>\n\n<p>\n\n</p>\n\n</div></font>\n\n</h2>"
-    },
-    {
-      "id": "page-decrypt",
-      "title": "解密相关问题",
-      "hasSub": true,
-      "subs": [
-        {
-          "id": "dec-tool",
-          "label": "常用解密工具"
-        },
-        {
-          "id": "dec-guide",
-          "label": "操作步骤"
+        [data-theme="light"] {
+            --bg-dark: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --accent-gold: #d97706;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --danger: #dc2626;
+            --excellent: #059669;
+            --top-bar-bg: rgba(255, 255, 255, 0.7);
+            --input-bg: rgba(255, 255, 255, 0.9);
         }
-      ],
-      "authors": [],
-      "updated": "2026-08-22T23:36:27.088Z",
-      "content": "<section id=\"dec-tool\"><h2>常用解密工具</h2><p><br></p></section><section id=\"dec-guide\"><h2>操作步骤</h2><p><br></p></section>"
-    },
-    {
-      "id": "page-unzip",
-      "title": "解压相关问题",
-      "hasSub": true,
-      "subs": [
-        {
-          "id": "sec-1787170183950",
-          "label": "打开文件后缀显示"
-        },
-        {
-          "id": "sec-1787170186882",
-          "label": "常规流程"
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
         }
-      ],
-      "authors": [
-        "Cintser"
-      ],
-      "updated": "2026-08-22T23:04:22.297Z",
-      "content": "<p></p><section id=\"sec-1787170183950\"><h2>打开文件后缀显示</h2></section><p></p><div><img src=\"https://sway.cloud.microsoft/s/cB5ROPjMXBzYtCtO/images/jWGW_nDaBJqFPU?quality=1408&amp;allowAnimation=true\" alt=\"\" style=\"width:50%;height:auto\"></div><div><br></div><div><section id=\"sec-1787170186882\"><h2><b>常规流程</b></h2></section><p></p><p><b style=\"color:rgb(0, 0, 0)\">1.电脑PC端</b></p><p><span style=\"color:rgb(0, 0, 0)\">电脑推荐使用<a href=\"https://www.7-zip.org/\">7-zip</a>和<a href=\"https://www.rarlab.com/download.htm\">WINRAR</a>和<a href=\"https://www.bandisoft.com/bandizip/\">Bandzip</a>（放官网而不是下载链接的原因是让你下载最新版本）。</span></p><p><span style=\"color:rgb(0, 0, 0)\">如果软件在你的使用习惯下解压时<i>不<u>会自动创建文件夹</u></i>（不清楚就去试），你需要提前创建一个文件夹，把压缩包放进去再解压，不然会导致文件<i><u>散的到处都是</u></i>，清理十分麻烦（可按创建文件时间排序来清理）。</span></p><p><span style=\"color:rgb(0, 0, 0)\">右击压缩包选择 ——&gt; 解压到当前文件夹</span></p><p><span style=\"color:rgb(0, 0, 0)\"><br></span></p><p><b style=\"color:rgb(0, 0, 0)\">2.手机（安卓）端</b></p><p><span style=\"color:rgb(0, 0, 0)\">安卓端推荐使用 <a href=\"https://odd.lzacg.one/tool/public/ZArchiver_Pro_v1.0.10.APK\">ZArchiver</a> 和 <a href=\"https://mt2.cn/\">MT管理器</a>进行解压（一些手机系统的\n自带解压已经完全够自用）</span></p><p><span style=\"color:rgb(0, 0, 0)\"><br></span></p><p><b style=\"color:rgb(0, 0, 0)\">3.手机iOS端</b></p><p><span style=\"color:rgb(0, 0, 0)\">iOS端在 AppStore 下载解压专家即可</span></p><p><span style=\"color:rgb(0, 0, 0)\"><br></span></p><p><b style=\"color:rgb(0, 0, 0)\">4.注意事项</b></p><p><span style=\"color:rgb(0, 0, 0)\">如果是分卷压缩（001/part1/Z01等</span><span style=\"color:rgb(0, 0, 0)\"><b>含有</b></span><span style=\"color:rgb(0, 0, 0)\"><b>序号的后缀</b>），</span><span style=\"color:rgb(255, 0, 0)\"><b>请全部下载</b></span><span style=\"color:rgb(0, 0, 0)\"><b>！</b></span><b style=\"color:rgb(0, 0, 0)\">保证下载的压缩包名称、大小和下载页面的一致</b><span style=\"color:rgb(0, 0, 0)\">，然后解压排首位的压缩包。</span></p><p><span style=\"color:rgb(0, 0, 0)\">压缩包如果后缀是exe，可能是自解压程序，双击即可解压，但相对中毒风险更高。</span></p><p><span style=\"color:rgb(0, 0, 0)\"><br></span></p><p><b style=\"color:rgb(0, 0, 0)\">5.解压遇到问题</b></p><p><span style=\"color:rgb(0, 0, 0)\">1.解压失败：有可能是网络环境不佳导致下载不全或出错，需要重新下载，但建议先换解压软件试试（成功率30%）。</span></p><p><span style=\"color:rgb(0, 0, 0)\">2.密码错误：是否和其他码搞混了（比如提取码），是否多复制了空格。</span></p><p><span style=\"color:rgb(0, 0, 0)\">3.密码忘了：试试压缩包破解软件，推荐ARCHPR，希望不大。</span></p></div>"
-    },
-    {
-      "id": "page-run",
-      "title": "运行相关问题",
-      "hasSub": true,
-      "subs": [
-        {
-          "id": "run-locale",
-          "label": "区域模拟（乱码）"
-        },
-        {
-          "id": "sec-1787248653078",
-          "label": "游戏打不开"
-        },
-        {
-          "id": "sec-1787248665090",
-          "label": "闪退或存在“Unicode”关键字等"
-        },
-        {
-          "id": "sec-1787248669346",
-          "label": "找不到可执行文件"
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%; left: 50%;
+            transform: translateX(-50%);
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
+            z-index: -1; pointer-events: none;
+            transition: background 0.3s;
         }
-      ],
-      "authors": [
-        "Cintser"
-      ],
-      "updated": "2026-08-22T23:14:09.798Z",
-      "content": "<section id=\"run-locale\"><h2>区域模拟（乱码）</h2><p><i><font size=\"3\" color=\"#919191\">为什么有些游戏打开会乱码呢？通俗的讲就类似【驴唇不对马嘴】，当我给游戏引擎一个只能说中文的嘴，却让它去读一篇日语演讲稿一样，就像“大丈夫”在中文读作“da’zhang’fu”，在日文读作“da i jyou bu”。游戏引擎自然就读错了，体现出来的就是乱码。</font></i></p><p><i><font size=\"3\" color=\"#919191\">对于非简中区的朋友想使用简中汉化补丁，或是非日区的玩日区的游戏，需要使用转区软件。</font></i></p><p><br></p><p><span style=\"color:rgb(0, 0, 0)\"><font size=\"4\">这里使用“<b>Locale Emulator</b>”作为示范。</font></span></p><p><font size=\"4\" style=\"color:rgb(0, 0, 0)\"><b>第一步</b>，在<a href=\"https://github.com/xupefei/Locale-Emulator\" style=\"\">https://github.com/xupefei/Locale-Emulator</a>找到我们\n要下载的文件</font></p><p><font size=\"3\" style=\"\">需要注意的是，Locale <span style=\"color:rgb(255, 0, 0)\">E</span>mulator作者于2022.4.16对github项目仓库进行归档，不再更新了。</font></p><p><font size=\"3\" style=\"\">现有替代品是<a href=\"https://github.com/InWILL/Locale_Remulator\" style=\"\">Locale Remulator</a>，相比LE，LR增加了对64位程序的支持。</font></p><p><span><font size=\"3\">且</font></span><font size=\"3\"><span style=\"color:rgb(0, 0, 0)\">Locale </span><span style=\"color:rgb(255, 0, 0)\">E</span><span style=\"color:rgb(0, 0, 0)\">mulator</span>&nbsp;</font><span><font size=\"3\">有些兼容问题</font></span></p><p><font size=\"3\"><span>win10或win10以下的操作系统建议选择</span><span>2.4.1.0以下</span><span>版本</span></font></p><p></p><p><font size=\"3\">win11版建议选择2.5.0.1以上版本。</font></p><p><img src=\"https://sway.cloud.microsoft/s/RcqolL0J7p9iPZQG/images/FgyP_5THf4K7vu?quality=1256&amp;allowAnimation=true\" alt=\"\" style=\"width:75%;height:auto\"></p><p><b>第二步</b>，解压，可以看到如下图的文件结构。</p><p>我们双击“installer”，进行软件安装，我推荐是“为所有用户安装”。</p><p><br></p><p><span><b>第三步</b>，我们安装后，右键想要转区运行的软件，就可以在右键菜单中，找到新增的“</span><span><b>Locale Emulator</b></span><span>”，</span></p><p><span>对于<b>非日区用户运行日区</b>游戏，选择“</span><span><b><font color=\"#ff0000\">run in jp</font></b></span><span>”就可以了。</span></p><p><span><br></span></p><p><span><i><font color=\"#747676\">对于想运行其他语言游戏的朋友，就要选择“</font><font color=\"#96d65c\">修改此程序的配置</font><font color=\"#747676\">”，</font></i></span></p><p><span><font color=\"#747676\"><i>然后进入配置界面，在“预置配置”里，找到自己要转的语言，然后点击“保存”。</i></font></span></p><p></p><p><span><font color=\"#747676\"><i>点击保存运行后，在文件夹下会生成一个Game.exe.le.config的配置文件，之后再用LE启动该exe时无需再次进行配置，如果配置错了可以删除重新进行配置。</i></font></span></p><p><img src=\"https://sway.cloud.microsoft/s/RcqolL0J7p9iPZQG/images/qZuFrudkQN5W8M?quality=931&amp;allowAnimation=true\" alt=\"\" style=\"width:50%;height:auto\"></p><p><b><br></b></p><p><b>第四步</b>，我们可以直接一步到位，把红框的选项全部选好，其他的可以不用管。</p><p>不要忘记保存</p><p><b><br></b></p><p><img src=\"https://sway.cloud.microsoft/s/RcqolL0J7p9iPZQG/images/3ZwkmEax5P1Ghy?quality=517&amp;allowAnimation=true\" alt=\"\"></p><p><span>如果仍然有问题，可以去这里找找有没有你要的答案。</span></p><p><a href=\"https://www.bilibili.com/read/cv21785877\">[转区工具]Locale Emulator的使用(2023 Ver1.0)</a></p><p></p><p><a href=\"https://www.bilibili.com/read/cv21790436\">[转区工具]Locale Emulator的常见问题(2023 Ver1.0)</a></p><p><br></p></section><p></p><div><p><b></b></p><section id=\"sec-1787248653078\"><h2><b>游戏打不开</b></h2></section><p></p><ul><li><b>可能是双击了错误的文件</b></li></ul><p>首先检查当前运行的游戏文件夹目录是否包含诸如“chs”、“cn”、“CN”、“CHS”等字眼，或是“中文名字”的可执行文件，因为大多数的汉化补丁会对原本的可执行文件进行一定的修改，使其可以在国内运行并进行破解操作</p><ul><li><b>可能解压不完全</b></li></ul><ul><li><b>可能是路径的问题</b></li></ul><p>有些游戏的运行路径不能出现中文，请将游戏文件名重命名为英文，Unity老版本有路径文件夹名太长会打不开游戏的bug。</p><ul><li><b>可能是系统的问题</b></li></ul><p>有些老游戏需要在老版本的操作系统上运行，例如WIN7,WINXP。此时请使用虚拟机安装旧\n版本的操作系统来运行。</p><p>游戏兼容什么系统可以通过游戏发行时的年份来大致判断，比如游戏发行于2011年那么应该\n是兼容WIN7的，发行于2005年应该是兼容WIN XP的。</p><p>尝试下载sxs.dll并解压到游戏目录 <a href=\"https://odd.lzacg.one/tool/%E4%BF%AE%E5%A4%8Dwin10%E6%B8%B8%E6%88%8F%E6%97%A0%E6%B3%95%E8%BF%90%E8%A1%8C%E7%9A%84sxs.dll.rar\">请到这里下载</a></p><ul><li><b>可能缺少了运行库</b>(例如c++运行库)</li></ul><p>可能伴随报错“Syntax ERROR”</p><p>请使用DirectX_Repair修复工具进行修复 <a href=\"https://odd.lzacg.one/tool/DirectX_Repair\">请到这里下载</a></p><ul><li><b>手机运行游戏问题</b></li></ul><p>手机玩电脑游戏需要模拟器或者有人做移植，模拟器见工具篇</p><p>如果游戏文件没有错误但却使用模拟器运行不了或出错那么有可能是安卓系统版本过高导致\n的，对于安卓游戏同理。</p><p><br></p><p><b></b></p><section id=\"sec-1787248665090\"><h2><b>闪退或存在“Unicode”关键字等</b></h2></section><p></p><p>关闭 Windows 的“Beta版：打开控制面板 –&gt; 时钟和区域 –&gt; 区域 –&gt; 管理选项卡 –&gt; 更改\n系统区域设置 –&gt; 取消勾选 “Beta版: 使用 Unicode UTF-8…” –&gt; 重启电脑。</p><p><br></p><p><b></b></p><section id=\"sec-1787248669346\"><h2><b>找不到可执行文件</b></h2></section><p></p><p>解压错误，或者杀毒软件误杀。</p></div><p><br></p>"
-    },
-    {
-      "id": "page-tools",
-      "title": "GAL常用工具",
-      "hasSub": true,
-      "subs": [
-        {
-          "id": "sec-1787305468900",
-          "label": "解压缩"
-        },
-        {
-          "id": "sec-1787305477093",
-          "label": "翻译工具"
-        },
-        {
-          "id": "sec-1787248425685",
-          "label": "模拟器"
-        },
-        {
-          "id": "sec-1787305572715",
-          "label": "区域模拟器"
-        },
-        {
-          "id": "sec-1787305586788",
-          "label": "环境修复工具"
+        [data-theme="light"] body::before {
+            background: radial-gradient(circle, rgba(217,119,6,0.08) 0%, transparent 70%);
         }
-      ],
-      "authors": [
-        "Alicxzore",
-        "Cintser"
-      ],
-      "updated": "2026-08-23T00:31:17.505Z",
-      "content": "<p>\n\n\n</p>\n\n\n<p>\n\n\n</p>\n\n\n<p><i style=\"color:rgb(107, 107, 107)\">本页面部分下载源引用自友站</i><a href=\"https://www.lycorisgal.com/\"><i>LyCorisGal</i></a></p>\n\n\n<div>\n\n\n<section id=\"sec-1787305468900\">\n\n\n<h2>解压缩\n\n</h2>\n\n\n<h2><span><font size=\"4\">电脑PC端：</font></span>\n</h2>\n<p>7-zip：<a href=\"https://7-zip.org/download.html\">官网发布页</a>\n\n\n</p>\n\n\n<p>WinRAR：<a href=\"https://www.rarlab.com/download.htm\">官网发布页</a>\n\n\n</p>\n\n\n<p>Bandzip：<a href=\"https://cn.bandisoft.com/bandizip/\">官网发布页</a>\n\n\n</p>\n\n\n<p>（一般情况下任选两种即可）\n\n\n</p><p><br></p>\n\n\n<p><b>手机安卓端：</b>\n\n\n</p>\n\n\n<p>ZArchiver：<a href=\"https://www.zdevs.ru/en/za/apk.html\">下载</a>\n\n\n</p><p>MT管理器：<a href=\"https://mt2.cn/\">下载</a></p>\n\n\n<p><b>手机iOS端：</b>\n\n\n</p>\n\n\n<p>解压专家AppStore：<a href=\"https://apps.apple.com/cn/app/%E8%A7%A3%E5%8E%8B%E4%B8%93%E5%AE%B6-dzip-zip-rar-7z-%E5%BF%AB%E9%80%9F%E8%A7%A3%E5%8E%8B%E5%92%8C%E5%8E%8B%E7%BC%A9/id1400133654\">下载</a>\n\n\n</p><p><br></p>\n\n\n</section></div>\n\n\n\n\n\n\n\n\n<p>\n\n\n</p>\n\n\n<section id=\"sec-1787305477093\">\n\n\n<h2>翻译工具\n\n\n</h2>\n\n\n</section>\n\n\n<p>\n\n\n</p>\n\n\n<p>\n\n\n</p>\n\n\n<div>GAL有熟肉生肉之分，最新的GAL还没汉化组翻译怎么办？等待呗！但这是弱者的行为，尽管不能带来最好的推GAL体验，但若想第一时间美美吃上熟肉，机翻工具是不错的选择。\n\n\n</div>\n\n\n<div><br></div>\n\n\n<div><ul><li><b>Visual Novel Reader</b>（简称VNR）\n\n\n</li></ul></div><div><strike><span style=\"color:rgb(0, 0, 0)\">官网：</span>\n\n<a href=\"https://vnr-file.ys168.com/\">https://vnr-file.ys168.com/</a>&nbsp; &nbsp;</strike><span style=\"text-align:justify\"><span style=\"color:rgb(0, 0, 0)\">已失效</span></span></div><div style=\"text-align:justify\"><font color=\"#000000\">官方群号：</font><a href=\"https://tieba.baidu.com/p/4316380270\">跳转到百度贴吧</a></div><div style=\"text-align:justify\"><br></div>\n\n\n<div><ul><li><b>MTOOL\n\n\n</b></li></ul></div>\n\n\n<div>适用于所有RPG Maker制作的游戏</div>\n\n\n<div>官网：<a href=\"https://trs.mtool.app/release.php?lang=chs\">MTool 发布页</a></div><div>爱发电：<a href=\"https://afdian.com/a/AdventCirno?tab=home\">鬼才琪露诺正在创作MTool</a></div><div><br></div><div><ul><li><span style=\"font-family:&quot;Microsoft YaHei&quot;;font-size:large\"><b>LunaTranslator</b></span></li></ul><font face=\"Microsoft YaHei\" size=\"4\">官网：</font><a href=\"https://docs.lunatranslator.org/\">https://docs.lunatranslator.org/</a></div><div><span style=\"text-align:justify\">Github：</span><a href=\"https://github.com/HIllya51/LunaTranslator\">下载</a></div><div><br></div>\n\n\n<p>\n\n\n</p>\n\n\n<section id=\"sec-1787248425685\">\n\n\n<h2>模拟器\n\n\n</h2>\n\n\n<div>\n\n\n<blockquote><i>使用模拟器出现故障不要找游戏官方反馈问题！<br></i><blockquote><i>使用模拟器出现故障不要找游戏官方反馈问题！<br></i><i>使用模拟器出现故障不要找游戏官方反馈问题！</i></blockquote><blockquote><i><br></i></blockquote></blockquote><p></p><ul><li><span style=\"text-align:start\"><b>龙神模拟器</b></span></li></ul><span style=\"text-align:start\">官网：</span><a href=\"https://ryujinx.cn/\">https://ryujinx.cn/</a><p></p></div></section>\n\n\n<div>\n\n\n<p>\n\n\n</p>\n\n\n<div>有些GAL是NS独占的（如重制版的月姬），如果有推NS平台的需求可使用这款模拟器。</div>\n\n\n<div>\n\n\n<p>\n\n\n<br>\n\n\n</p>\n\n\n<div>\n\n\n<ul>\n\n\n<li><b>Tyranor模拟器</b>\n\n\n</li>\n\n\n</ul>官网：<a href=\"https://www.tyranoremu.com/\">https://www.tyranoremu.com/</a>\n\n\n<br>\n\n\n<p>“专为安卓移动端设计的免费 Galgame 模拟器，支持 20+ 游戏引擎，覆盖 90% 日式 AVG/RPG 游戏格式，独家渲染技术，加载速度提升 50%，智能温控算法”——引用自官网描述。\n\n\n</p><p><br></p>\n\n\n<ul>\n\n\n<li><b>ARKRPG</b>：<a href=\"https://arkrpg.tech/\">https://arkrpg.tech/</a>\n\n\n</li>\n\n\n</ul>\n\n\n<p>在 iPhone / iPad 上体验 RPG Maker 游戏，基于优化的 WebGL 渲染与兼容层，同时兼容 MV 与 MZ 引擎，并通过大量游戏测试持续提升兼容性与体验。导入本地游戏文件并使用触 控、手柄或键盘进行操作。\n\n\n</p><p><br></p>\n\n\n<p>\n\n\n</p>\n\n\n<ul>\n\n\n<li><b>ONScripter模拟器</b>\n\n\n</li>\n\n\n</ul>Github：&nbsp;<a href=\"https://github.com/YuriSizuku/OnscripterYuri/releases\">发布页</a><br>\n\n\n<p>LCG网盘：<a href=\"https://cloud.arisumika.top/s/0Zhp\">下载</a>\n\n\n</p>\n\n\n<p>AppStore：<a href=\"https://apps.apple.com/cn/app/onsplayer/id1388250129\">下载</a>\n\n\n</p><p><br></p>\n\n\n<p>\n\n\n</p>\n\n\n<ul>\n\n\n<li><b>Kirikiroid2模拟器\n\n\n</b></li>\n\n\n</ul>\n\n\n<p>LCG网盘：<a href=\"https://cloud.arisumika.top/s/OntK\">下载</a>\n\n\n</p>\n\n\n<p>AppStore：<a href=\"https://apps.apple.com/cn/app/xp3player/id1064060287\">下载</a>\n\n\n</p><p><br></p>\n\n\n<p>\n\n\n</p>\n\n\n<ul>\n\n\n<li><b>Winlator模拟器\n\n\n</b></li>\n\n\n</ul>\n\n\n<p>LCG网盘：<a href=\"https://cloud.arisumika.top/s/KpF7\">下载</a>\n\n\n</p>\n\n\n</div>\n\n\n<p>\n\n\n</p>\n\n\n<div>\n\n\nGithub：<a href=\"https://github.com/brunodev85/winlator\">下载</a></div><div><br></div>\n\n\n<p>\n\n\n</p>\n\n\n<section id=\"sec-1787305572715\">\n\n\n<h2>区域模拟器\n\n\n</h2>\n\n\n</section>\n\n\n<p>\n\n\n</p>\n\n\n<ul>\n\n\n<li><b>Locale.Emulator</b></li>\n\n\n</ul>\n\n\n<p>Github：<a href=\"https://github.com/xupefei/Locale-Emulator/releases\">下载</a>\n\n\n</p>\n\n\n<p>LCG网盘：<a href=\"https://cloud.arisumika.top/s/qKHn\">下载</a>\n\n\n</p><p><br></p>\n\n\n<p>\n\n\n</p>\n\n\n<ul>\n\n\n<li><b>AppLocale</b></li>\n\n\n</ul>\n\n\n<p>LCG网盘：<a href=\"https://cloud.arisumika.top/s/eYcO\">下载</a>\n\n\n</p><p><br></p>\n\n\n<p>\n\n\n</p>\n\n\n<ul>\n\n\n<li><b>NTLEA</b></li></ul><span style=\"text-align:justify\"><strike><span style=\"color:rgb(156, 156, 156)\">官网：http://ntlea.codeplex.com/</span> </strike>已失效</span><b><br></b><ul>\n\n\n</ul>\n\n\n<p>Github：<a href=\"https://github.com/IshYume/ntlea-archive\">下载</a>\n\n\n</p>\n\n\n<p>LCG网盘：<a href=\"https://cloud.arisumika.top/s/4DT1\">下载</a>\n\n\n</p>\n\n\n<p><br></p>\n\n\n<p>\n\n\n</p>\n\n\n<ul>\n\n\n<li><b>LocaleSwitch\n\n\n</b></li>\n\n\n</ul>\n\n\n<p>LCG网盘：<a href=\"https://cloud.arisumika.top/s/rJuy\">下载</a>\n\n\n</p><p><br></p>\n\n\n<p>\n\n\n</p>\n\n\n<section id=\"sec-1787305586788\">\n\n\n<h2>环境修复工具\n\n\n</h2>\n\n\n</section>\n\n\n<p>\n\n\n</p>\n\n\n<ul>\n\n\n<li>DirectX_Repair\n\n\n</li>\n\n\n</ul>\n\n\n<p>LCG网盘：<a href=\"https://cloud.arisumika.top/s/GzC5\">下载</a>\n\n\n</p><p>Gitcode：<a href=\"https://gitcode.com/Premium-Resources/fb832\">发布页</a></p>\n\n\n</div>\n\n\n<br>\n\n\n</div>\n\n\n<p>\n\n\n</p>"
-    },
-    {
-      "id": "page-search",
-      "title": "寻找资源的逻辑",
-      "hasSub": false,
-      "subs": [],
-      "authors": [],
-      "updated": "2026-08-22T23:39:19.147Z",
-      "content": "呃……写这个的初衷是教手头没有资源站点的人如何从0用浏览器找到资源站点，<div>但是你能看到这篇文章就能看到站点目录，那我写来干什么（</div><div>但是如果是找冷门资源之类的我也不是很擅长，只能寄希望于天降大师了</div>"
-    },
-    {
-      "id": "page-glossary",
-      "title": "专业术语参考",
-      "hasSub": true,
-      "subs": [
-        {
-          "id": "sec-1787417418520",
-          "label": "系统"
-        },
-        {
-          "id": "sec-1787417482297",
-          "label": "UI"
+        .top-bar {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--top-bar-bg);
+            backdrop-filter: blur(5px);
+            transition: background 0.3s, border-color 0.3s;
+            flex-shrink: 0;
+            z-index: 200;
         }
-      ],
-      "authors": [],
-      "updated": "2026-08-22T16:53:37.255Z",
-      "content": "<p></p><section id=\"sec-1787417418520\"><h2>系统</h2></section><p></p><p>PC=Windows端</p><p>KR=吉里吉里模拟器</p><p>TY=Tyranor模拟器</p><p>ONS=ONS模拟器=MINE模拟器</p><p>JOI=Joiplay模拟器</p><p>APK=安卓安装包</p><p>JP=日文原版（生肉）</p><p>CN=汉化版</p><p>EN=英文版</p><p>MDF,ISO,NRG=镜像文件</p><p><br></p><p></p><section id=\"sec-1787417482297\"><h2>UI</h2></section><p></p><p>ゲーム (Game) – 游戏</p><p>インストー儿 (Install) – 安装</p><p>セットアップ (Setup) – 安装 / 设定</p><p>起动（きどう） (Activate) – 启动/开始</p><p>スタト (Start) – 开始</p><p>终了（しゅうりょう） (Finish/End) – 完结</p><p>中止（ちゅうし） (Stop/Terminate) – 终止</p><p>キャンセ儿 (Cancel) – 取消</p><p>始め（はじめ）（ (Begin) – 开始</p><p>続け（つづけ） (Continue) – 继续</p><p>メニュー (Menu) – 菜单</p><p>ロード (Load) – 读取</p><p>セーブ (Save) – 储存</p><p>入力（にゅうりょく）(Key In) – 输入</p><p>データ (Data) – 资料/档案</p><p>上书き(うわがき)（ (Overwrite) – 盖过/取代</p><p>タイト儿 (Title/Title Page) – 标题/标题画面</p><p>次へ（つぎへ） (Next) – 下一页</p><p>戻る（もどる） (Back) – 回头/上一页</p><p>…ない (makes negative) – 不(反义词)</p>"
-    }
-  ]
-}
+        .top-bar-inner {
+            max-width: 1400px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: var(--text-main);
+            font-size: 1.8rem; font-weight: 700; letter-spacing: 2px;
+            white-space: nowrap; transition: color 0.3s;
+        }
+        .logo img {
+            width: 32px; height: 32px; border-radius: 50%;
+            object-fit: cover; border: 1px solid var(--accent-gold);
+        }
+        .v-line {
+            width: 3px; height: 32px; background: var(--text-main);
+            margin: 0 1.2rem; opacity: 0.9; flex-shrink: 0;
+            border-radius: 2px; transition: background 0.3s;
+        }
+        .page-title {
+            font-size: 1.8rem; font-weight: 600; color: var(--accent-gold);
+            letter-spacing: 2px; white-space: nowrap;
+            text-shadow: 0 0 10px rgba(251,191,36,0.3);
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        .theme-toggle {
+            background: none; border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 0.4rem 0.7rem; cursor: pointer;
+            font-size: 1.1rem; line-height: 1; color: var(--text-main);
+            transition: all 0.3s; display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0;
+        }
+        .theme-toggle:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .mobile-sticky-tabs {
+            display: none;
+            position: sticky;
+            top: 0;
+            z-index: 199;
+            background: var(--top-bar-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.5rem 0;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .mobile-tabs-scroll {
+            display: flex;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 0 0.8rem;
+            gap: 0.5rem;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .mobile-tabs-scroll::-webkit-scrollbar { display: none; }
+        .mobile-tab-item {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.9rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-sub);
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.25s;
+            user-select: none;
+        }
+        .mobile-tab-item.active {
+            background: var(--accent-gold);
+            color: #0f172a;
+            border-color: var(--accent-gold);
+            font-weight: 700;
+        }
+        [data-theme="light"] .mobile-tab-item.active { color: #fff; }
+        .mobile-tab-item:not(.active):hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+        .layout {
+            display: flex; flex: 1; max-width: 1400px;
+            margin: 0 auto; width: 100%;
+        }
+        .sidebar {
+            width: var(--sidebar-w); flex-shrink: 0;
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem 0; overflow-y: auto;
+            position: sticky; top: 0; height: calc(100vh - 60px);
+            transition: border-color 0.3s;
+        }
+        .sidebar-section-label {
+            padding: 0.6rem 1.5rem 0.4rem;
+            font-size: 0.75rem; font-weight: 600;
+            color: var(--text-sub); letter-spacing: 3px;
+            text-transform: uppercase; transition: color 0.3s;
+        }
+        .sidebar-link {
+            display: block; padding: 0.55rem 1.5rem;
+            font-size: 0.95rem; color: var(--text-main);
+            text-decoration: none; transition: all 0.2s;
+            border-left: 3px solid transparent; cursor: pointer;
+        }
+        .sidebar-link:hover {
+            background: rgba(251,191,36,0.08);
+            color: var(--accent-gold);
+        }
+        .sidebar-link.active {
+            border-left-color: var(--accent-gold);
+            background: rgba(251,191,36,0.12);
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+        .main-content {
+            flex: 1; min-width: 0; padding: 1.5rem 2rem 4rem;
+        }
+        .content-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.8rem;
+        }
+        .current-category {
+            font-size: 1.4rem; font-weight: 700;
+            color: var(--accent-gold); letter-spacing: 1px;
+        }
+        .site-count { color: var(--text-sub); font-size: 0.85rem; }
+        .toolbar {
+            display: flex; gap: 1rem; align-items: center;
+            flex-wrap: wrap; margin-bottom: 1.5rem;
+        }
+        .search-box {
+            flex: 1; min-width: 200px; padding: 0.6rem 1rem;
+            background: var(--input-bg); border: 1px solid var(--border-color);
+            border-radius: 8px; color: var(--text-main);
+            font-size: 0.9rem; outline: none; transition: all 0.3s;
+        }
+        .search-box:focus { border-color: var(--accent-gold); }
+        .sort-select {
+            padding: 0.6rem 1rem; background: var(--input-bg);
+            border: 1px solid var(--border-color); border-radius: 8px;
+            color: var(--text-main); font-size: 0.9rem;
+            outline: none; cursor: pointer; transition: all 0.3s;
+        }
+        .grid-toggle-btn {
+            display: none;
+            align-items: center; justify-content: center;
+            padding: 0.55rem 0.8rem;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 0.85rem; font-weight: 600;
+            cursor: pointer; white-space: nowrap;
+            transition: all 0.3s; user-select: none;
+            flex-shrink: 0;
+        }
+        .grid-toggle-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .grid-toggle-btn.active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(251,191,36,0.1); }
+        .grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+        }
+        .site-card {
+            position: relative; background: var(--bg-card);
+            border: 1px solid var(--border-color); border-radius: 10px;
+            padding: 1.2rem 1.4rem; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s, background 0.3s;
+            display: flex; flex-direction: column; gap: 0.5rem;
+        }
+        .site-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            border-color: rgba(251,191,36,0.4);
+        }
+        [data-theme="light"] .site-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .site-name-row {
+            display: flex; align-items: center; gap: 0.6rem;
+            padding-right: 3rem; overflow: hidden;
+        }
+        .site-logo {
+            width: 24px; height: 24px; border-radius: 4px;
+            object-fit: cover; flex-shrink: 0;
+            border: 1px solid var(--border-color);
+        }
+        .site-name {
+            font-size: 1.05rem; font-weight: 700; color: var(--text-main);
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .links-toggle-row {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 0.5rem; padding: 0.2rem 0;
+        }
+        .links-toggle {
+            display: flex; align-items: center; gap: 0.4rem;
+            font-size: 0.8rem; color: var(--accent-gold);
+            cursor: pointer; user-select: none; flex-shrink: 0;
+        }
+        .links-toggle:hover { opacity: 0.8; }
+        .links-toggle .arrow { transition: transform 0.3s; font-size: 0.7rem; }
+        .links-toggle.open .arrow { transform: rotate(90deg); }
+        .uid-inline {
+            font-size: 0.72rem; color: var(--text-sub);
+            font-family: 'Fira Code', 'Consolas', monospace;
+            letter-spacing: 0.5px; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+            min-width: 0;
+        }
+        .uid-inline .uid-val { color: var(--accent-gold); }
+        .links-panel {
+            display: none; flex-direction: column; gap: 0.3rem;
+            padding: 0.4rem 0; border-top: 1px dashed var(--border-color); margin-top: 0.2rem;
+        }
+        .links-panel.show { display: flex; }
+        .link-row {
+            font-size: 0.82rem; display: flex; gap: 0.5rem;
+            align-items: center; flex-wrap: wrap;
+        }
+        .link-label { color: var(--text-sub); flex-shrink: 0; font-size: 0.75rem; }
+        .link-row a {
+            color: var(--accent-gold); text-decoration: none;
+            border-bottom: 1px dashed rgba(251,191,36,0.4); word-break: break-all;
+        }
+        .link-row a:hover { border-bottom-style: solid; }
+        .related-icons { display: inline-flex; gap: 6px; margin-left: 4px; align-items: center; }
+        .related-icon {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 24px; height: 24px; border-radius: 4px;
+            font-size: 0.85rem; cursor: default; opacity: 0.25;
+            text-decoration: none !important; border-bottom: none !important; line-height: 1;
+        }
+        .related-icon.active { opacity: 1; cursor: pointer; }
+        .related-icon.active:hover { transform: scale(1.15); }
+        .related-icon.icon-nav.active { background: rgba(251,191,36,0.2); }
+        .related-icon.icon-tg.active { background: rgba(38,166,227,0.2); color: #26a6e3; }
+        .related-icon.icon-gh svg { width: 14px; height: 14px; fill: var(--text-sub); }
+        .related-icon.icon-gh.active svg { fill: var(--text-main); }
+        .related-icon.icon-gh.active { background: rgba(255,255,255,0.12); }
+        [data-theme="light"] .related-icon.icon-gh.active { background: rgba(0,0,0,0.08); }
+        [data-theme="light"] .related-icon.icon-gh.active svg { fill: #1e293b; }
+        .custom-links-row {
+            display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem;
+            padding-left: 3.2rem; margin-top: 0.1rem;
+        }
+        .meta-row { display: flex; gap: 0.8rem; font-size: 0.82rem; line-height: 1.5; }
+        .meta-item { flex: 1; min-width: 0; }
+        .meta-label { color: var(--text-sub); font-size: 0.75rem; margin-bottom: 0.1rem; }
+        .meta-value { word-break: break-all; }
+        .meta-value.problem {
+            color: #f87171 !important; font-weight: 700 !important;
+            text-shadow: 0 0 8px rgba(248,113,113,0.4);
+        }
+        [data-theme="light"] .meta-value.problem { color: #dc2626 !important; text-shadow: none; }
+        .loading {
+            text-align: center; padding: 4rem 0;
+            color: var(--text-sub); grid-column: 1 / -1;
+        }
+        .mobile-menu-btn {
+            display: none; background: none; border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 0.4rem 0.6rem; cursor: pointer;
+            font-size: 1.2rem; color: var(--text-main); margin-right: 0.8rem;
+            flex-shrink: 0;
+        }
+        .sidebar-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5); z-index: 299;
+        }
+        .rating-row {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-top: 0.3rem; padding-top: 0.4rem;
+            border-top: 1px dashed var(--border-color);
+        }
+        .rating-label { color: var(--text-sub); font-size: 0.75rem; flex-shrink: 0; }
+        .stars { display: inline-flex; gap: 2px; cursor: pointer; }
+        .star {
+            font-size: 1rem; color: var(--border-color);
+            transition: color 0.2s, transform 0.15s; user-select: none;
+        }
+        .star.active { color: var(--accent-gold); }
+        .star:hover { transform: scale(1.2); }
+        .rating-info {
+            font-size: 0.75rem; color: var(--text-sub); margin-left: auto;
+            white-space: nowrap;
+        }
+        .rating-info .score-val { color: var(--accent-gold); font-weight: 700; }
+        .stars.disabled { cursor: default; opacity: 0.6; }
+        .stars.disabled .star:hover { transform: none; }
+        @media (max-width: 900px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .mobile-sticky-tabs { display: block; }
+            .mobile-menu-btn { display: flex; align-items: center; justify-content: center; }
+            .sidebar {
+                position: fixed; left: -260px; top: 0; bottom: 0;
+                width: 260px; z-index: 300; background: var(--bg-dark);
+                border-right: 1px solid var(--border-color);
+                transition: left 0.3s ease; height: 100vh;
+            }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay.active { display: block; }
+            .top-bar { padding: 0.8rem 0.6rem; }
+            .top-bar-inner { gap: 0.5rem; }
+            .mobile-menu-btn { margin-right: 0.4rem; padding: 0.35rem 0.5rem; font-size: 1.1rem; }
+            .logo { font-size: 1.2rem; gap: 6px; }
+            .logo img { width: 26px; height: 26px; }
+            .v-line { height: 22px; margin: 0 0.5rem; width: 2px; }
+            .page-title { font-size: 1.1rem; letter-spacing: 1px; overflow: hidden; text-overflow: ellipsis; }
+            .theme-toggle { padding: 0.3rem 0.5rem; font-size: 1rem; }
+            .main-content { padding: 0.8rem 0 3rem; }
+            .toolbar { gap: 0.6rem; padding: 0 0.6rem; }
+            .search-box { min-width: 0; padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+            .sort-select { padding: 0.5rem 0.6rem; font-size: 0.85rem; }
+            .grid-toggle-btn { display: none !important; }
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0;
+                width: 100%;
+            }
+            .grid.cols-3 {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0;
+            }
+            .site-card {
+                padding: 0.8rem;
+                border-radius: 0;
+                gap: 0.3rem;
+                min-height: 0;
+            }
+            .site-card:hover { transform: none; box-shadow: none; }
+            .site-name-row { gap: 0.4rem; padding-right: 0; }
+            .site-logo { width: 20px; height: 20px; }
+            .site-name { font-size: 0.88rem; }
+            .links-toggle-row { padding: 0.1rem 0; gap: 0.3rem; }
+            .links-toggle { font-size: 0.72rem; gap: 0.2rem; }
+            .links-toggle .arrow { font-size: 0.6rem; }
+            .uid-inline { font-size: 0.62rem; }
+            .links-panel { gap: 0.2rem; padding: 0.3rem 0; margin-top: 0.1rem; }
+            .link-row { font-size: 0.72rem; gap: 0.3rem; }
+            .link-label { font-size: 0.65rem; }
+            .related-icons { gap: 4px; margin-left: 2px; }
+            .related-icon { width: 20px; height: 20px; font-size: 0.75rem; }
+            .related-icon.icon-gh svg { width: 12px; height: 12px; }
+            .custom-links-row { padding-left: 0; gap: 0.2rem 0.5rem; margin-top: 0; }
+            .custom-links-row a { font-size: 0.68rem; }
+            .meta-row { gap: 0.4rem; font-size: 0.72rem; }
+            .meta-label { font-size: 0.65rem; margin-bottom: 0; }
+            .rating-row { gap: 0.3rem; margin-top: 0.2rem; padding-top: 0.3rem; }
+            .rating-label { font-size: 0.65rem; }
+            .star { font-size: 0.85rem; }
+            .rating-info { font-size: 0.65rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div style="display:flex;align-items:center;min-width:0;flex:1;">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+                <a href="index.html" class="logo">
+                    <img src="assets/css/images/biglogo.png" alt="合月亭"><span class="logo-text">合月亭</span>
+                </a>
+                <div class="v-line"></div>
+                <div class="page-title">ACG资源站点导航</div>
+            </div>
+            <button class="theme-toggle" id="themeToggle" title="切换日/夜模式">🌙</button>
+        </div>
+    </div>
+    <div class="mobile-sticky-tabs" id="mobileStickyTabs">
+        <div class="mobile-tabs-scroll" id="mobileTabsScroll"></div>
+    </div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="layout">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-section-label">— 资源站 —</div>
+            <a class="sidebar-link active" data-json="assets/nav-pages/gal.json" data-label="GAL">GAL</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/voice_music.json" data-label="音声/音乐">音声/音乐</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/comic_illustration.json" data-label="漫画/插画/本子">漫画/插画/本子</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/hub.json" data-label="综合资源站">综合资源站</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/gal-info.json" data-label="GAL情报/入正">GAL情报/入正</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/ln.json" data-label="轻小说">轻小说</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/anime.json" data-label="动漫">动漫</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/mmd.json" data-label="MMD">MMD</a>
+            <div class="sidebar-section-label" style="margin-top:1rem;">— 工具 —</div>
+            <a class="sidebar-link" data-json="assets/nav-pages/wiki.json" data-label="WIKI">WIKI</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/acg-nav.json" data-label="二次元导航站">二次元导航站</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/tools.json" data-label="工具">工具</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/search.json" data-label="搜索引擎">搜索引擎</a>
+            <a class="sidebar-link" data-json="assets/nav-pages/valhalla.json" data-label="英灵殿">英灵殿</a>
+        </nav>
+        <main class="main-content">
+            <div class="content-header">
+                <div class="current-category" id="categoryTitle">GAL</div>
+                <span class="site-count" id="siteCount"></span>
+            </div>
+            <div class="toolbar">
+                <input type="text" class="search-box" id="searchInput" placeholder="搜索站点名称、备注或链接或UID...">
+                <select class="sort-select" id="sortSelect">
+                    <option value="default">默认排序</option>
+                    <option value="name">按名称排序 (A-Z)</option>
+                </select>
+                <button class="grid-toggle-btn" id="gridToggleBtn" title="切换每行卡片数">2列</button>
+            </div>
+            <div class="grid" id="cardContainer">
+                <div class="loading">请选择左侧分类加载数据</div>
+            </div>
+        </main>
+    </div>
+    <script>
+    (() => {
+        var API_BASE = 'https://heyue-rating-worker.heyue-rating-api.workers.dev';
+        var THEME_KEY = 'heyue_nav_theme';
+        var htmlEl = document.documentElement;
+        var themeBtn = document.getElementById('themeToggle');
+        function applyTheme(theme) {
+            htmlEl.setAttribute('data-theme', theme);
+            themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
+            localStorage.setItem(THEME_KEY, theme);
+        }
+        var saved = localStorage.getItem(THEME_KEY);
+        if (saved) applyTheme(saved);
+        themeBtn.addEventListener('click', function() {
+            applyTheme(htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        });
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        var menuBtn = document.getElementById('mobileMenuBtn');
+        function toggleSidebar(open) {
+            sidebar.classList.toggle('open', open);
+            overlay.classList.toggle('active', open);
+        }
+        menuBtn.addEventListener('click', function() { toggleSidebar(true); });
+        overlay.addEventListener('click', function() { toggleSidebar(false); });
+        var mobileTabsScroll = document.getElementById('mobileTabsScroll');
+        var sidebarLinks = document.querySelectorAll('.sidebar-link[data-json]');
+        function buildMobileTabs() {
+            mobileTabsScroll.innerHTML = '';
+            sidebarLinks.forEach(function(link) {
+                var tab = document.createElement('a');
+                tab.className = 'mobile-tab-item';
+                tab.textContent = link.dataset.label;
+                tab.dataset.json = link.dataset.json;
+                tab.dataset.label = link.dataset.label;
+                if (link.classList.contains('active')) tab.classList.add('active');
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.mobile-tab-item').forEach(function(t) { t.classList.remove('active'); });
+                    tab.classList.add('active');
+                    sidebarLinks.forEach(function(l) { l.classList.remove('active'); });
+                    var matchedLink = document.querySelector('.sidebar-link[data-json="' + link.dataset.json + '"]');
+                    if (matchedLink) matchedLink.classList.add('active');
+                    currentJsonPath = link.dataset.json;
+                    loadCategory(currentJsonPath, link.dataset.label);
+                });
+                mobileTabsScroll.appendChild(tab);
+            });
+        }
+        buildMobileTabs();
+        function syncMobileTabsActive(jsonPath) {
+            document.querySelectorAll('.mobile-tab-item').forEach(function(t) {
+                t.classList.toggle('active', t.dataset.json === jsonPath);
+            });
+            var activeTab = mobileTabsScroll.querySelector('.mobile-tab-item.active');
+            if (activeTab) {
+                activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+        }
+        var GRID_COLS_KEY = 'heyue_nav_grid_cols';
+        var gridToggleBtn = document.getElementById('gridToggleBtn');
+        var cardContainer = document.getElementById('cardContainer');
+        var currentCols = parseInt(localStorage.getItem(GRID_COLS_KEY)) || 2;
+        function applyGridCols(cols) {
+            currentCols = cols;
+            localStorage.setItem(GRID_COLS_KEY, cols);
+            if (cols === 3) {
+                cardContainer.classList.add('cols-3');
+                gridToggleBtn.textContent = '3列';
+                gridToggleBtn.classList.add('active');
+            } else {
+                cardContainer.classList.remove('cols-3');
+                gridToggleBtn.textContent = '2列';
+                gridToggleBtn.classList.remove('active');
+            }
+        }
+        applyGridCols(currentCols);
+        gridToggleBtn.addEventListener('click', function() {
+            applyGridCols(currentCols === 2 ? 3 : 2);
+        });
+        var GH_SVG = '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
+        var globalCache = {};
+        var allSites = [];
+        var isGlobalSearch = false;
+        var currentJsonPath = '';
+        var currentLabel = '';
+        var ratingCache = {};
+        var ratedKeys = new Set();
+        function getRatingKey(site) {
+            if (site.uid && site.uid.trim()) return 'uid:' + site.uid.trim();
+            return 'site:' + (site.name || '') + '_' + (site.url || '').replace(/\s+/g, '_');
+        }
+        function getPinyin(str) {
+            if (!str) return '';
+            return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        }
+        function prepareSites(data) {
+            for (var i = 0; i < data.length; i++) {
+                if (!data[i]._sortName) {
+                    data[i]._sortName = getPinyin(data[i].name);
+                }
+            }
+            return data;
+        }
+        function fetchRatingsBatch(keys) {
+            var uncached = keys.filter(function(k) { return !ratingCache[k]; });
+            if (uncached.length === 0) return Promise.resolve();
+            return fetch(API_BASE + '/ratings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ keys: uncached })
+            })
+            .then(function(res) { return res.ok ? res.json() : {}; })
+            .then(function(data) {
+                for (var k in data) {
+                    if (data.hasOwnProperty(k)) ratingCache[k] = data[k];
+                }
+            })
+            .catch(function(e) { console.warn('batch rating fetch failed:', e); });
+        }
+        function submitRating(key, score, starsEl, infoEl) {
+            if (ratedKeys.has(key)) return;
+            starsEl.classList.add('disabled');
+            fetch(API_BASE + '/rate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ key: key, score: score })
+            })
+            .then(function(res) { if (!res.ok) throw new Error('fail'); return res.json(); })
+            .then(function(data) {
+                ratingCache[key] = data;
+                ratedKeys.add(key);
+                updateRatingDisplay(starsEl, infoEl, data);
+            })
+            .catch(function(e) { console.warn('rating submit failed:', e); starsEl.classList.remove('disabled'); });
+        }
+        function updateRatingDisplay(starsEl, infoEl, data) {
+            var rounded = Math.round(data.score);
+            var starSpans = starsEl.querySelectorAll('.star');
+            for (var i = 0; i < starSpans.length; i++) {
+                if (i < rounded) starSpans[i].classList.add('active');
+                else starSpans[i].classList.remove('active');
+            }
+            infoEl.innerHTML = '<span class="score-val">' + data.score + '</span> (' + data.count + ')';
+        }
+        function buildRatingHtml(site) {
+            var key = getRatingKey(site);
+            var stars = '';
+            for (var i = 1; i <= 5; i++) stars += '<span class="star" data-val="' + i + '">\u2605</span>';
+            return '<div class="rating-row" data-rating-key="' + key + '">'
+                + '<span class="rating-label">评分</span>'
+                + '<div class="stars" data-key="' + key + '">' + stars + '</div>'
+                + '<span class="rating-info">加载中...</span></div>';
+        }
+        function bindRatingEvents() {
+            var allStars = document.querySelectorAll('.stars[data-key]');
+            var keysToFetch = [];
+            for (var idx = 0; idx < allStars.length; idx++) {
+                var key = allStars[idx].getAttribute('data-key');
+                if (!ratingCache[key]) keysToFetch.push(key);
+            }
+            for (var idx2 = 0; idx2 < allStars.length; idx2++) {
+                (function(starsEl) {
+                    var key = starsEl.getAttribute('data-key');
+                    var infoEl = starsEl.nextElementSibling;
+                    var starSpans = starsEl.querySelectorAll('.star');
+                    if (ratingCache[key]) {
+                        updateRatingDisplay(starsEl, infoEl, ratingCache[key]);
+                    }
+                    if (ratedKeys.has(key)) { starsEl.classList.add('disabled'); return; }
+                    for (var j = 0; j < starSpans.length; j++) {
+                        (function(star) {
+                            star.addEventListener('mouseenter', function() {
+                                if (starsEl.classList.contains('disabled')) return;
+                                var val = parseInt(star.getAttribute('data-val'));
+                                for (var k = 0; k < starSpans.length; k++) {
+                                    if (k < val) starSpans[k].classList.add('active');
+                                    else starSpans[k].classList.remove('active');
+                                }
+                            });
+                            star.addEventListener('click', function() {
+                                if (starsEl.classList.contains('disabled')) return;
+                                var val = parseInt(star.getAttribute('data-val'));
+                                submitRating(key, val, starsEl, infoEl);
+                            });
+                        })(starSpans[j]);
+                    }
+                    starsEl.addEventListener('mouseleave', function() {
+                        if (starsEl.classList.contains('disabled')) return;
+                        var cached = ratingCache[key];
+                        var rounded = cached ? Math.round(cached.score) : 0;
+                        for (var k = 0; k < starSpans.length; k++) {
+                            if (k < rounded) starSpans[k].classList.add('active');
+                            else starSpans[k].classList.remove('active');
+                        }
+                    });
+                })(allStars[idx2]);
+            }
+            if (keysToFetch.length > 0) {
+                fetchRatingsBatch(keysToFetch).then(function() {
+                    for (var i = 0; i < allStars.length; i++) {
+                        var k = allStars[i].getAttribute('data-key');
+                        if (ratingCache[k]) {
+                            updateRatingDisplay(allStars[i], allStars[i].nextElementSibling, ratingCache[k]);
+                        }
+                    }
+                });
+            }
+        }
+        function parseRelatedUrls(relatedField) {
+            if (!relatedField || typeof relatedField !== 'string' || !relatedField.trim()) return [];
+            var raw = relatedField.trim();
+            if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
+                raw = raw.slice(1, -1);
+            }
+            var urls = [];
+            var parts = raw.split(',');
+            for (var i = 0; i < parts.length; i++) {
+                var u = parts[i].trim().replace(/^["']+|["']+$/g, '');
+                if (u && /^https?:\/\//i.test(u)) urls.push(u);
+            }
+            var seen = {};
+            return urls.filter(function(u) { if (seen[u]) return false; seen[u] = true; return true; });
+        }
+        function resolveIcons(relatedUrls) {
+            var result = { nav: null, tg: null, github: null, custom: [] };
+            var consumed = {};
+            for (var i = 0; i < relatedUrls.length; i++) {
+                var lower = relatedUrls[i].toLowerCase();
+                if (!result.tg && (lower.includes('t.me') || lower.includes('discord') || lower.includes('tg'))) {
+                    result.tg = relatedUrls[i]; consumed[i] = true;
+                } else if (!result.github && lower.includes('github.com')) {
+                    result.github = relatedUrls[i]; consumed[i] = true;
+                }
+            }
+            for (var j = 0; j < relatedUrls.length; j++) {
+                if (!consumed[j]) { result.nav = relatedUrls[j]; consumed[j] = true; break; }
+            }
+            for (var k = 0; k < relatedUrls.length; k++) {
+                if (!consumed[k]) result.custom.push(relatedUrls[k]);
+            }
+            return result;
+        }
+        function renderCards(sites) {
+            var container = document.getElementById('cardContainer');
+            var countEl = document.getElementById('siteCount');
+            countEl.textContent = '共 ' + sites.length + ' 个站点';
+            if (sites.length === 0) { container.innerHTML = '<div class="loading">未找到匹配的站点</div>'; return; }
+            container.innerHTML = sites.map(function(s) {
+                var siteName = s.name || '未命名站点';
+                var primaryUrl = s.url || '';
+                var relatedUrls = parseRelatedUrls(s.related);
+                var rel = resolveIcons(relatedUrls);
+                var logoHtml = '';
+                if (s.logo && s.logo.trim()) {
+                    logoHtml = '<img class="site-logo" src="' + s.logo.trim() + '" alt="" onerror="this.style.display=\'none\'">';
+                }
+                var urlLink = primaryUrl
+                    ? '<a href="' + primaryUrl + '" target="_blank" rel="noopener">' + primaryUrl + '</a>' : '—';
+                var navIcon = rel.nav
+                    ? '<a class="related-icon icon-nav active" href="' + rel.nav + '" target="_blank" rel="noopener" title="导航/主页">📑</a>'
+                    : '<span class="related-icon icon-nav" title="无导航链接">📑</span>';
+                var tgIcon = rel.tg
+                    ? '<a class="related-icon icon-tg active" href="' + rel.tg + '" target="_blank" rel="noopener" title="Telegram/Discord">✈️</a>'
+                    : '<span class="related-icon icon-tg" title="无TG/Discord链接">✈️</span>';
+                var ghIcon = rel.github
+                    ? '<a class="related-icon icon-gh active" href="' + rel.github + '" target="_blank" rel="noopener" title="GitHub">' + GH_SVG + '</a>'
+                    : '<span class="related-icon icon-gh" title="无GitHub链接">' + GH_SVG + '</span>';
+                var iconsHtml = '<span class="related-icons">' + navIcon + tgIcon + ghIcon + '</span>';
+                var customLinksHtml = rel.custom.length > 0
+                    ? '<div class="custom-links-row">' + rel.custom.map(function(u) { return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>'; }).join('') + '</div>' : '';
+                var problemHtml = s.issue
+                    ? '<span class="meta-value problem">' + s.issue + '</span>'
+                    : '<span style="color:var(--text-sub)">暂无</span>';
+                var uidInlineHtml = '';
+                if (s.uid && s.uid.trim()) {
+                    uidInlineHtml = '<span class="uid-inline">UID: <span class="uid-val">' + s.uid.trim() + '</span></span>';
+                }
+                var categoryTag = isGlobalSearch && s._category
+                    ? '<span style="position:absolute;top:0;left:0;background:rgba(251,191,36,0.15);color:var(--accent-gold);font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:10px 0 8px 0;letter-spacing:0.5px;">' + s._category + '</span>'
+                    : '';
+                return '<div class="site-card">'
+                    + categoryTag
+                    + '<div class="site-name-row">' + logoHtml
+                    + '<div class="site-name" title="' + siteName + '">' + siteName + '</div></div>'
+                    + '<div class="links-toggle-row">'
+                    + '<div class="links-toggle" onclick="this.classList.toggle(\'open\');this.parentElement.nextElementSibling.classList.toggle(\'show\')">'
+                    + '<span class="arrow">▶</span> 查看链接</div>'
+                    + uidInlineHtml + '</div>'
+                    + '<div class="links-panel">'
+                    + '<div class="link-row"><span class="link-label">网址</span>' + urlLink + '</div>'
+                    + '<div class="link-row"><span class="link-label">相关</span>' + iconsHtml + '</div>'
+                    + customLinksHtml + '</div>'
+                    + '<div class="meta-row">'
+                    + '<div class="meta-item"><div class="meta-label">备注</div><div class="meta-value">' + (s.remark || '—') + '</div></div>'
+                    + '<div class="meta-item"><div class="meta-label">问题</div><div class="meta-value">' + problemHtml + '</div></div>'
+                    + '</div>'
+                    + buildRatingHtml(s) + '</div>';
+            }).join('');
+            bindRatingEvents();
+        }
+        function filterAndSort() {
+            var keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+            var sortMode = document.getElementById('sortSelect').value;
+            var titleEl = document.getElementById('categoryTitle');
+            if (keyword) {
+                isGlobalSearch = true;
+                titleEl.textContent = '🔍 全局搜索结果';
+                var allData = Object.values(globalCache).flat();
+                var filtered = allData.filter(function(s) {
+                    return [s.name, s.remark, s.url, s.related, s.issue, s.uid, s._category]
+                        .join(' ').toLowerCase().includes(keyword);
+                });
+                if (sortMode === 'name') filtered.sort(function(a, b) { return a._sortName.localeCompare(b._sortName); });
+                renderCards(filtered);
+            } else {
+                isGlobalSearch = false;
+                titleEl.textContent = currentLabel;
+                var filtered = allSites.slice();
+                if (sortMode === 'name') filtered.sort(function(a, b) { return a._sortName.localeCompare(b._sortName); });
+                renderCards(filtered);
+            }
+        }
+        document.getElementById('searchInput').addEventListener('input', filterAndSort);
+        document.getElementById('sortSelect').addEventListener('change', filterAndSort);
+        function preloadAllCategories() {
+            var links = document.querySelectorAll('.sidebar-link[data-json]');
+            var fetchPromises = Array.from(links).map(function(link) {
+                var jsonPath = link.dataset.json;
+                var label = link.dataset.label;
+                if (!jsonPath || globalCache[jsonPath]) return Promise.resolve();
+                return fetch(jsonPath)
+                    .then(function(res) { return res.ok ? res.json() : null; })
+                    .then(function(data) {
+                        if (data) {
+                            var sites = data.map(function(item) { return Object.assign({}, item, { _category: label }); });
+                            globalCache[jsonPath] = prepareSites(sites);
+                        }
+                    })
+                    .catch(function(e) { console.warn('preload failed: ' + jsonPath, e); });
+            });
+            return Promise.all(fetchPromises).then(function() {
+                console.log('Global index ready, cached ' + Object.keys(globalCache).length + ' categories');
+            });
+        }
+        function loadCategory(jsonPath, label) {
+            var container = document.getElementById('cardContainer');
+            var titleEl = document.getElementById('categoryTitle');
+            var searchInput = document.getElementById('searchInput');
+            currentLabel = label;
+            titleEl.textContent = label;
+            searchInput.value = '';
+            isGlobalSearch = false;
+            allSites = [];
+            syncMobileTabsActive(jsonPath);
+            if (!jsonPath) {
+                container.innerHTML = '<div class="loading">「' + label + '」的 JSON 数据路径尚未配置<br>请在 sidebar-link 的 data-json 属性中填写对应 .json 文件路径</div>';
+                document.getElementById('siteCount').textContent = '';
+                return;
+            }
+            container.innerHTML = '<div class="loading">加载中...</div>';
+            if (globalCache[jsonPath]) {
+                allSites = globalCache[jsonPath].map(function(item) { var copy = Object.assign({}, item); delete copy._category; return copy; });
+                prepareSites(allSites);
+                renderCards(allSites);
+            } else {
+                fetch(jsonPath)
+                    .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+                    .then(function(data) {
+                        allSites = prepareSites(data);
+                        renderCards(allSites);
+                    })
+                    .catch(function(e) {
+                        container.innerHTML = '<div class="loading" style="color:var(--danger)">数据加载失败: ' + e.message + '<br>请检查 ' + jsonPath + ' 是否存在且格式正确</div>';
+                        document.getElementById('siteCount').textContent = '';
+                    });
+            }
+        }
+        sidebarLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                sidebarLinks.forEach(function(l) { l.classList.remove('active'); });
+                link.classList.add('active');
+                currentJsonPath = link.dataset.json;
+                loadCategory(currentJsonPath, link.dataset.label);
+                if (window.innerWidth <= 768) toggleSidebar(false);
+            });
+        });
+        preloadAllCategories();
+        var firstLink = document.querySelector('.sidebar-link.active');
+        if (firstLink) {
+            currentJsonPath = firstLink.dataset.json;
+            currentLabel = firstLink.dataset.label;
+            loadCategory(currentJsonPath, currentLabel);
+        }
+    })();
+    </script>
+    <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
+</body>
+</html>
