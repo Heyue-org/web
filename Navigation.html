@@ -31,6 +31,7 @@
             --input-bg: rgba(255, 255, 255, 0.9);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; width: 100%; }
         body {
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
             background: var(--bg-dark);
@@ -228,7 +229,7 @@
         }
         .site-card {
             position: relative; background: var(--bg-card);
-            border: 1px solid var(--border-color); border-radius: 10px;
+            border: 1px solid var(--border-color); border-radius: 12px;
             padding: 1.2rem 1.4rem; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s, background 0.3s;
             display: flex; flex-direction: column; gap: 0.5rem;
         }
@@ -371,48 +372,48 @@
             .v-line { height: 22px; margin: 0 0.5rem; width: 2px; }
             .page-title { font-size: 1.1rem; letter-spacing: 1px; overflow: hidden; text-overflow: ellipsis; }
             .theme-toggle { padding: 0.3rem 0.5rem; font-size: 1rem; }
-            .main-content { padding: 0.8rem 0 3rem; }
-            .toolbar { gap: 0.6rem; padding: 0 0.6rem; }
+            .main-content { padding: 0.8rem 0.6rem 3rem; }
+            .toolbar { gap: 0.6rem; }
             .search-box { min-width: 0; padding: 0.5rem 0.8rem; font-size: 0.85rem; }
             .sort-select { padding: 0.5rem 0.6rem; font-size: 0.85rem; }
             .grid-toggle-btn { display: none !important; }
             .grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 0;
+                gap: 0.5rem;
                 width: 100%;
             }
             .grid.cols-3 {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 0;
+                gap: 0.5rem;
             }
             .site-card {
-                padding: 0.8rem;
-                border-radius: 0;
+                padding: 0.7rem 0.8rem;
+                border-radius: 12px;
                 gap: 0.3rem;
-                min-height: 0;
+                min-width: 0;
             }
             .site-card:hover { transform: none; box-shadow: none; }
             .site-name-row { gap: 0.4rem; padding-right: 0; }
             .site-logo { width: 20px; height: 20px; }
-            .site-name { font-size: 0.88rem; }
+            .site-name { font-size: 0.85rem; }
             .links-toggle-row { padding: 0.1rem 0; gap: 0.3rem; }
-            .links-toggle { font-size: 0.72rem; gap: 0.2rem; }
+            .links-toggle { font-size: 0.7rem; gap: 0.2rem; }
             .links-toggle .arrow { font-size: 0.6rem; }
-            .uid-inline { font-size: 0.62rem; }
+            .uid-inline { font-size: 0.6rem; }
             .links-panel { gap: 0.2rem; padding: 0.3rem 0; margin-top: 0.1rem; }
-            .link-row { font-size: 0.72rem; gap: 0.3rem; }
-            .link-label { font-size: 0.65rem; }
+            .link-row { font-size: 0.7rem; gap: 0.3rem; }
+            .link-label { font-size: 0.62rem; }
             .related-icons { gap: 4px; margin-left: 2px; }
-            .related-icon { width: 20px; height: 20px; font-size: 0.75rem; }
+            .related-icon { width: 20px; height: 20px; font-size: 0.72rem; }
             .related-icon.icon-gh svg { width: 12px; height: 12px; }
             .custom-links-row { padding-left: 0; gap: 0.2rem 0.5rem; margin-top: 0; }
-            .custom-links-row a { font-size: 0.68rem; }
-            .meta-row { gap: 0.4rem; font-size: 0.72rem; }
-            .meta-label { font-size: 0.65rem; margin-bottom: 0; }
+            .custom-links-row a { font-size: 0.65rem; }
+            .meta-row { gap: 0.4rem; font-size: 0.7rem; }
+            .meta-label { font-size: 0.62rem; margin-bottom: 0; }
             .rating-row { gap: 0.3rem; margin-top: 0.2rem; padding-top: 0.3rem; }
-            .rating-label { font-size: 0.65rem; }
-            .star { font-size: 0.85rem; }
-            .rating-info { font-size: 0.65rem; }
+            .rating-label { font-size: 0.62rem; }
+            .star { font-size: 0.8rem; }
+            .rating-info { font-size: 0.62rem; }
         }
     </style>
 </head>
