@@ -1,6 +1,6 @@
 # Visitor-ID Analytics（Upstash + Vercel）
 
-这是为 Heyue-org/web 提供的最小访问统计实现，使用前端生成的 visitor_id + Upstash Redis 集合做年度去重，部署到 Vercel Serverless。适合日流量 ≤ 1000 的站点，能在理想用户行为下把年独立访客识别率达到 ≥95%（前提：用户不清除本地存储/不更换设备/不换浏览器）。
+这是为 Heyue-org/web 提供的最小访问统计实现，使用前端生成的 visitor_id + Upstash Redis 集合做年度去重，部署到 Vercel Serverless。适合日流量 ≤ 1000 的站点[...] 
 
 文件说明
 - static/analytics.js — 前端脚本；将 visitor_id 写入 localStorage/cookie/indexedDB，并向 /api/collect 发送一次打点。
@@ -29,12 +29,12 @@
      ```liquid
      <!-- _layouts/default.html -->
      ...
-     {% include 'heyue-analytics.html' %}
+     {% raw %}{% include heyue-analytics.html %}{% endraw %}
      </body>
      ```
 
 4. 测试
-   - 部署完成后打开你的网站，使用浏览器开发者工具查看 Network，确认页面有一次 POST 到 `/api/collect`，返回 JSON：{ok:true, new_unique: true/false, total_unique: N}
+   - 部署完成后打开你的网站，使用浏览器开发者工具查看 Network，确认页面有一次 POST 到 `/api/collect`，返回 JSON：{ok:true, new_unique: true/false, total_unique[...]
    - 在 Upstash 控制台或用 curl 调用 REST API 来查看年度独立集合大小（示例）：
      ```bash
      curl -X POST <UPSTASH_REST_URL> \
@@ -50,12 +50,12 @@
 - 并发与一致性：使用 Upstash Redis 可避免 GitHub Contents 的 409 并发冲突；对于你目前的流量（≤1000/day），Upstash 免费 tier 足够。
 
 可选增强（非必须）
-- 指纹合并：如果希望对清除存储的用户做一定合并策略，可以在 server 端添加比对逻辑（例如把最近 7 天内 fingerprint 完全相同的记录合并为同一访客）。这需要更多存储与逻辑，但能进一步降低因清 cache 导致的重复计数。
+- 指纹合并：如果希望对清除存储的用户做一定合并策略，可以在 server 端添加比对逻辑（例如把最近 7 天内 fingerprint 完全相同的记录合并为同一访��[...]
 - Dashboard：可以再添加一个简单 dashboard 页面（Vercel serverless +前端）用来展示 SCARD/最近 N 个 visitor 的 last_seen 等。
 
 安全说明
 - 不要把 Upstash token 放到前端或仓库公开区域；必须在 Vercel 环境变量里配置。
-- analytics.js 仅发送非敏感数据（visitor_id 为 UUID，fingerprint 为非精确散列，ua/path/referrer），遵守隐私原则。如果你希望更隐私友好，可移除 ua/referrer 字段。
+- analytics.js 仅发送非敏感数据（visitor_id 为 UUID，fingerprint 为非精确散列，ua/path/referrer），遵守隐私原则。如果你希望更隐私友好，可移除 ua/referrer �[...]
 
 如果你同意，我会：
 - 把这些文件提交到 `analytics/visitor-id` 分支（我已创建），并发起一个 PR。PR 会包含上述说明与部署步骤。
