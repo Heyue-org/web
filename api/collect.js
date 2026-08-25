@@ -1,39 +1,47 @@
 // api/collect.js
-// Vercel Serverless handler. 需要在 Vercel 环境变量中设置:
-// UPSTASH_REST_URL 例如 https://xxx.upstash.io
-// UPSTASH_REST_TOKEN 例如 <token>
-// UNIQUE_WINDOW_DAYS  默认 365
-//
-// 工作流程（简化）:
-// 1) 接收 visitor_id（必需）
-// 2) yearKey = "unique:YYYY" (例如 unique:2026)，检查 SISMEMBER yearKey visitor_id
-// 3) 若未见过 -> SADD yearKey visitor_id 并设置年 key TTL（>365天），并认为是新 unique
-// 4) 更新 visitors:{visitor_id} hash 的 last_seen / fingerprint / ua
-// 5) 返回 whether-new 和当前年度独立访客总数（SCARD yearKey）
-
-const fetch = require('node-fetch');
+// Vercel Serverless handler (uses global fetch available in Vercel runtime).
+// Requires Vercel environment variables:
+// UPSTASH_REST_URL  (e.g. https://xxx.upstash.io)
+// UPSTASH_REST_TOKEN (the REST token)
+// UNIQUE_WINDOW_DAYS (optional, default 365)
 
 const UPSTASH_URL = process.env.UPSTASH_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REST_TOKEN;
 const UNIQUE_WINDOW_DAYS = Number(process.env.UNIQUE_WINDOW_DAYS || 365);
 
-if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-  console.error('Missing UPSTASH_REST_URL or UPSTASH_REST_TOKEN');
+function envCheck() {
+  return Boolean(UPSTASH_URL && UPSTASH_TOKEN);
 }
 
 async function upstashCmd(cmdArray){
+  // Upstash expects a JSON array as the POST body (e.g. ["PING"] or ["SISMEMBER","key","member"]).
+  // Use global fetch provided by Vercel's Node runtime (Node 18+).
+  if (typeof fetch === 'undefined') {
+    // If fetch is not available, surface a clear error so logs show the cause.
+    throw new Error('fetch_not_available_in_runtime');
+  }
+
   const res = await fetch(UPSTASH_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${UPSTASH_TOKEN}` },
-    body: JSON.stringify({ cmd: cmdArray })
+    body: JSON.stringify(cmdArray)
   });
-  if (!res.ok) throw new Error('Upstash cmd failed: ' + res.status + ' ' + await res.text());
-  return res.json();
+
+  const text = await res.text();
+  let json;
+  try { json = JSON.parse(text); } catch(e) { throw new Error('Upstash returned non-json: ' + text); }
+  if (!res.ok) throw new Error('Upstash cmd failed: ' + res.status + ' ' + (json && json.error ? JSON.stringify(json.error) : text));
+  return json;
 }
 
 module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).send('OK');
   if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
+
+  if (!envCheck()) {
+    console.error('Missing UPSTASH_REST_URL or UPSTASH_REST_TOKEN');
+    return res.status(500).json({ error: 'internal_error', reason: 'missing_upstash_credentials' });
+  }
 
   let body = req.body;
   if (!body) {
@@ -75,7 +83,8 @@ module.exports = async (req, res) => {
 
     return res.status(200).json({ ok: true, new_unique: isNewUnique, year: year, total_unique: totalUnique });
   } catch (e) {
-    console.error('collect error', e);
-    return res.status(500).json({ error: 'internal_error' });
+    console.error('collect error', e && e.message ? e.message : e);
+    // Provide limited error info for debugging without leaking secrets
+    return res.status(500).json({ error: 'internal_error', reason: e && e.message ? e.message : String(e) });
   }
 };
