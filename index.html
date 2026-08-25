@@ -338,7 +338,7 @@
 
             /* 图片保持横排两列，缩小间距和高度 */
             .images-grid {
-                grid-template-columns: repeat(2,1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 0.6rem;
                 margin-bottom: 1rem;
             }
@@ -448,12 +448,12 @@
                             <p>现提供在线文档和 Excel 表格下载，网页版见上“ACG站点目录”，此项目定期维护。</p>
                             <p>点击图片放大查看详情。</p>
                             <div class="doc-links-row">
-                                <a href="https://docs.google.com/spreadsheets/d/1wwj4RC_W1zDhI2dlt1NmsFE9DMUKGHs-02lwWbFe9Kk/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn[...]
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 [...]
+                                <a href="https://docs.google.com/spreadsheets/d/1wwj4RC_W1zDhI2dlt1NmsFE9DMUKGHs-02lwWbFe9Kk/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-download">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                                     查看在线文档
                                 </a>
                                 <a href="https://github.com/Heyue-org/HYT_ACG-Site-Directory/releases/" class="btn-download">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 [...]
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                     下载文档
                                 </a>
                             </div>
@@ -469,7 +469,7 @@
                             <p>诚招编辑</p>
                             <div class="doc-links-row">
                                 <a href="wiki.html" target="_blank" rel="noopener noreferrer" class="btn-download">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 [...]
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                                     WIKI
                                 </a>
                             </div>
@@ -492,7 +492,7 @@
             </div>
     <footer>
         <div class="container">
-            <p>&copy; 2024-2026 合月亭 (Heyue Pavilion). 本站内容采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh" target="_blank" rel="noopener noreferrer" style="co[...]
+            <p>&copy; 2024-2026 合月亭 (Heyue Pavilion). 本站内容采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh" target="_blank" rel="noopener noreferrer" style="color:var(--accent-gold);text-decoration:none;border-bottom:1px dashed var(--accent-gold);">CC BY-NC 4.0</a> 协议，禁止商业用途。</p>
         </div>
     </footer>
     <script>
@@ -530,7 +530,6 @@
         modal.addEventListener('click', e => { if (e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = 'auto'; } });
         document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('active')) { modal.classList.remove('active'); document.body.style.overflow = 'auto'; } });
     </script>
-    <script src="/static/analytics.js"></script>
     <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
 </body>
 </html>
