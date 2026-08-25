@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具 - 合月亭</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent-gold: #fbbf24;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --top-bar-bg: rgba(15, 23, 42, 0.6);
+        }
+        [data-theme="light"] {
+            --bg-dark: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --accent-gold: #d97706;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --top-bar-bg: rgba(255, 255, 255, 0.7);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, rgba(15, 23, 42, 0) 70%);
+            z-index: -1;
+            pointer-events: none;
+        }
+        [data-theme="light"] body::before {
+            background: radial-gradient(circle, rgba(217, 119, 6, 0.08) 0%, rgba(241, 245, 249, 0) 70%);
+        }
+        .top-bar {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--top-bar-bg);
+            backdrop-filter: blur(5px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .top-bar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            white-space: nowrap;
+        }
+        .logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--accent-gold);
+        }
+        .v-line {
+            width: 3px;
+            height: 36px;
+            background: var(--text-main);
+            margin: 0 1.5rem;
+            opacity: 0.9;
+            flex-shrink: 0;
+            border-radius: 2px;
+        }
+        .page-title {
+            font-size: 2.6rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            letter-spacing: 2px;
+            white-space: nowrap;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+        }
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.4rem 0.7rem;
+            cursor: pointer;
+            font-size: 1.1rem;
+            line-height: 1;
+            color: var(--text-main);
+            transition: all 0.3s;
+        }
+        .theme-toggle:hover {
+            border-color: var(--accent-gold);
+            color: var(--accent-gold);
+        }
+        .divider {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--accent-gold), transparent);
+            opacity: 0.4;
+        }
+        .content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 2rem 4rem;
+        }
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .tool-card {
+            display: block;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.5rem 1.8rem;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s, background 0.3s;
+            position: relative;
+            cursor: pointer;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(251, 191, 36, 0.4);
+        }
+        [data-theme="light"] .tool-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: rgba(251, 191, 36, 0.15);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .tool-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .tool-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-gold);
+            box-shadow: 0 0 6px var(--accent-gold);
+            flex-shrink: 0;
+        }
+        .tool-desc {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            line-height: 1.5;
+        }
+        .tool-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--accent-gold);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        @media (max-width: 600px) {
+            .top-bar { padding: 1rem 1.2rem; }
+            .logo { font-size: 2rem; }
+            .logo img { width: 30px; height: 30px; }
+            .v-line { height: 28px; margin: 0 1rem; width: 2px; }
+            .page-title { font-size: 2.2rem; }
+            .content { padding: 1.5rem 1.2rem 3rem; }
+            .tool-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .tool-card { padding: 1.2rem 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div class="top-bar-left">
+                <a href="index.html" class="logo">
+                    <img src="assets/css/images/biglogo.png" alt="合月亭">
+                    合月亭
+                </a>
+                <div class="v-line"></div>
+                <div class="page-title">工具</div>
+            </div>
+            <button class="theme-toggle" id="themeToggle" title="切换日/夜模式">🌙</button>
+        </div>
+    </div>
+    <div class="divider"></div>
+
+    <div class="content">
+        <div class="tool-grid">
+
+            <a class="tool-card" href="Gilbert.html" target="_blank" rel="noopener">
+                <div class="tool-icon">🖼️</div>
+                <div class="tool-name">图片混淆</div>
+                <div class="tool-desc">基于 Gilbert 曲线的无损像素重排技术，本地处理，安全隐私，支持一键还原。</div>
+                <span class="tool-badge">本地</span>
+            </a>
+
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            const THEME_KEY = 'heyue_tools_theme';
+            const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+            const themeToggle = document.getElementById('themeToggle');
+            applyTheme(savedTheme);
+            themeToggle.addEventListener('click', () => {
+                applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+            });
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+                localStorage.setItem(THEME_KEY, theme);
+            }
+        })();
+    </script>
+
+</body>
+</html>
