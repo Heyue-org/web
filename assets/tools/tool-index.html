@@ -156,8 +156,8 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
         }
         .tool-icon {
-            width: 48px;
-            height: 48px;
+            width: 64px;
+            height: 64px;
             border-radius: 12px;
             background: rgba(255, 255, 254, 0);
             border: 1px solid rgba(251, 191, 36, 0.3);
@@ -166,6 +166,14 @@
             justify-content: center;
             font-size: 1.5rem;
             margin-bottom: 0.8rem;
+            overflow: hidden;
+        }
+
+        .tool-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
         }
         .tool-name {
             font-size: 1.15rem;
@@ -238,21 +246,45 @@
                 <div class="tool-icon">🖼️</div>
                 <div class="tool-name">图片混淆</div>
                 <div class="tool-desc">基于 Gilbert 曲线的无损像素重排技术，本地处理，安全隐私，支持一键还原。</div>
-                <span class="tool-badge">本地</span>
+                <span class="tool-badge">站内</span>
             </a>
 
             <a class="tool-card" href="generator.html" target="_blank" rel="noopener">
                 <div class="tool-icon">🗒️</div>
                 <div class="tool-name">Execl数据导出</div>
                 <div class="tool-desc">站长专用<br>选择Excel表格导出数据文件</div>
-                <span class="tool-badge">本地</span>
+                <span class="tool-badge">站内</span>
             </a>
 
             <a class="tool-card" href="data-maintainer.html" target="_blank" rel="noopener">
                 <div class="tool-icon">⚙️</div>
                 <div class="tool-name">JSON 数据维护器</div>
                 <div class="tool-desc">站长专用<br>合并、显示数据差异</div>
-                <span class="tool-badge">本地</span>
+                <span class="tool-badge">站内</span>
+            </a>
+
+            <a class="tool-card" href="https://gomocalc.github.io/" target="_blank" rel="noopener">
+                <div class="tool-name">Gomocalc</div>
+                <div class="tool-desc">五子棋计算器</div>
+                <span class="tool-badge">外部</span>
+            </a>
+
+            <a class="tool-card" href="https://yanstory.github.io/5000choyen/" target="_blank" rel="noopener">
+                <div class="tool-name">5000兆円生成器</div>
+                <div class="tool-desc">5000兆円风格图像生成器。同时支持`欲しい!` 的生成。</div>
+                <span class="tool-badge">外部</span>
+            </a>
+
+            <a class="tool-card" href="https://gomocalc.github.io/" target="_blank" rel="noopener">
+                <div class="tool-name">RPG Maker MV & MZ 文件解密工具</div>
+                <div class="tool-desc">从游戏目录的System.json获取密钥，即可在此网站进行游戏数据的加密/解密</div>
+                <span class="tool-badge">外部</span>
+            </a>
+
+            <a class="tool-card" href="https://gomocalc.github.io/" target="_blank" rel="noopener">
+                <div class="tool-name">Gomocalc</div>
+                <div class="tool-desc">五子棋计算器</div>
+                <span class="tool-badge">外部</span>
             </a>
 
         </div>
