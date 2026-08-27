@@ -1,5 +1,5 @@
 {
-  "_exportedAt": "2026-08-27T03:49:13.205Z",
+  "_exportedAt": "2026-08-27T04:44:30.670Z",
   "members": [
     {
       "id": "m1787157249624",
@@ -57,13 +57,28 @@
           "label": "图片混淆"
         },
         {
-          "id": "sec-1787501167247",
+          "id": "sec-1787804210289",
           "label": "图种"
+        },
+        {
+          "id": "sec-1787804796723",
+          "label": "包内预览密码"
+        },
+        {
+          "id": "sec-1787804799609",
+          "label": "PPT打包"
+        },
+        {
+          "id": "sec-1787805440692",
+          "label": "文件属性里找密码"
         }
       ],
-      "authors": [],
-      "updated": "2026-08-27T03:49:13.205Z",
-      "content": "<section id=\"dec-tool\"><h2>ENC加密</h2><div>以解密工具<a href=\"https://paranoiaworks.mobi/download/\">Paranoia Works</a><span style=\"text-align:center\">作为示范</span></div><p>PC：打开软件=&gt;选择”Paranoia File Encryptiom”=&gt;在上方输入密码的两个栏中输入密码=&gt;把enc文件拖进来=&gt;解密完成。</p><p>安卓：打开软件=&gt;选择“文件/目录加密”=&gt;找到加密文件=&gt;点击一些来选择=&gt;选定后点击“解密文件”=&gt;不知道选什么就选”与源文件相同”=&gt;输入密码，解密完成。</p></section><p></p><section id=\"sec-1787501154185\"><h2>LZ4加密</h2></section><p></p><p>LZ4 Github：<a href=\"https://github.com/lz4/lz4/releases\">发布页</a></p><p>&nbsp; PC：打开解密文件夹=&gt;将lz4文件拖到名为lz4.exe的文件上=&gt;松手=&gt;文件源目录出现解压完成后的文件。\n<br>安卓：使用MT管理器直接解压即可。&nbsp;&nbsp;</p><p></p><p></p><section id=\"sec-1787501165615\"><h2>图片混淆</h2></section><p></p><div><span style=\"text-align:center\">基于 Gilbert 曲线的无损像素重排技术，本站</span></div><div><section id=\"sec-1787501167247\"><h2>图种</h2><div>如果你看到了一张体积奇大的图片，或者人家明确告诉你这就是图种，</div><div>一般直接把后缀改成ZIP解压就行了，不过把LZ4加密文件之类的做成图种来层层加密也是有可能的。</div></section></div><p></p>"
+      "authors": [
+        "Cintser",
+        "箐泽"
+      ],
+      "updated": "2026-08-27T04:44:30.670Z",
+      "content": "<section id=\"dec-tool\"><h2>ENC加密</h2><div>以解密工具<a href=\"https://paranoiaworks.mobi/download/\">Paranoia Works</a><span style=\"text-align:center\">作为示范</span></div><p>PC：打开软件=&gt;选择”Paranoia File Encryptiom”=&gt;在上方输入密码的两个栏中输入密码=&gt;把enc文件拖进来=&gt;解密完成。</p><p>安卓：打开软件=&gt;选择“文件/目录加密”=&gt;找到加密文件=&gt;点击一些来选择=&gt;选定后点击“解密文件”=&gt;不知道选什么就选”与源文件相同”=&gt;输入密码，解密完成。</p></section><p></p><section id=\"sec-1787501154185\"><h2>LZ4加密</h2></section><p></p><p>LZ4 Github：<a href=\"https://github.com/lz4/lz4/releases\">发布页</a></p><p>&nbsp; PC：打开解密文件夹=&gt;将lz4文件拖到名为lz4.exe的文件上=&gt;松手=&gt;文件源目录出现解压完成后的文件。\n<br>安卓：使用MT管理器直接解压即可。&nbsp;&nbsp;</p><p></p><p></p><section id=\"sec-1787501165615\"><h2>图片混淆</h2></section><p></p><div><span style=\"text-align:center\">基于 Gilbert 曲线的无损像素重排技术，本站</span></div><div><p></p><section id=\"sec-1787804210289\"><h2>图种</h2></section><p></p><div>如果你看到了一张体积奇大的图片，或者人家明确告诉你这就是图种，</div><div>一般直接把后缀改成ZIP解压就行了，不过把LZ4加密文件之类的做成图种来层层加密也是有可能的。</div><div><p></p><section id=\"sec-1787804796723\"><h2>包内预览密码</h2></section><p></p><div>有时候你下载完了才发现需要密码，而上传者并没有留下其他信息，不妨直接打开压缩包试试看</div><div><img src=\"assets\\css\\images\\wiki\\jym1.webp\" alt=\"\" style=\"width:50%;height:auto\"><p></p></div><div><img src=\"assets\\css\\images\\wiki\\jym2.webp\" alt=\"\"><p></p></div><div>有几率密码就在里面</div><div><section id=\"sec-1787804799609\"><h2>PPT打包</h2></section></div><div>有时候你下载完一个压缩包，或者干脆你下载到的时候就是ppt了，按照这个流程打开，不同办公软件大致逻辑都是一样的</div><div>打开PPT，右键文件图标，激活对象</div><div><img src=\"assets\\css\\images\\wiki\\ppt.webp\" alt=\"\" style=\"width:50%;height:auto\"><p></p></div><div>然后打开就可以了&nbsp;<span style=\"color:rgb(153, 153, 153)\">想了想还是用压缩包来示范</span></div><div><img src=\"assets\\css\\images\\wiki\\jym4.webp\" alt=\"\" style=\"width:50%;height:auto\"><p></p></div><div><br></div><div><section id=\"sec-1787805440692\"><h2>文件属性里找密码</h2><div><span style=\"color:rgb(214, 214, 214)\">编辑初中亲身经历并且鬼脑一动破解的（骄傲</span></div><div><span style=\"color:rgb(0, 0, 0)\">可以看到密码藏在了<b>文件属性-详细信息</b>-作者信息中</span></div><div><img src=\"assets\\css\\images\\wiki\\jym3.webp\" alt=\"\"><p></p></div></section></div></div></div><p></p>"
     },
     {
       "id": "page-unzip",
