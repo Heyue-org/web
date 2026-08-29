@@ -210,6 +210,44 @@
             font-weight: 600;
             letter-spacing: 0.5px;
         }
+        .hidden-tool {
+            display: none;
+        }
+        .admin-tools-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px dashed var(--accent-gold);
+        }
+        .admin-tools-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .toast-message {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent-gold);
+            color: #0f172a;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 999;
+            pointer-events: none;
+        }
+        .toast-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
         @media (max-width: 600px) {
             .top-bar { padding: 1rem 1.2rem; }
             .logo { font-size: 2rem; }
@@ -219,6 +257,8 @@
             .content { padding: 1.5rem 1.2rem 3rem; }
             .tool-grid { grid-template-columns: 1fr; gap: 1rem; }
             .tool-card { padding: 1.2rem 1.4rem; }
+            .toast-message { bottom: 1rem; right: 1rem; }
+            .admin-tools-section { margin-top: 2rem; }
         }
     </style>
 </head>
@@ -241,48 +281,59 @@
 
     <div class="content">
         <div class="tool-grid">
-
             <a class="tool-card" href="Gilbert.html" target="_blank" rel="noopener">
                 <div class="tool-icon">🖼️</div>
                 <div class="tool-name">图片混淆</div>
                 <div class="tool-desc">基于 Gilbert 曲线的无损像素重排技术，本地处理，安全隐私，支持一键还原。</div>
                 <span class="tool-badge">站内</span>
             </a>
-
-            <a class="tool-card" href="generator.html" target="_blank" rel="noopener">
-                <div class="tool-icon">🗒️</div>
-                <div class="tool-name">Execl数据导出</div>
-                <div class="tool-desc">站长专用<br>选择Excel表格导出数据文件</div>
-                <span class="tool-badge">站内</span>
-            </a>
-
-            <a class="tool-card" href="data-maintainer.html" target="_blank" rel="noopener">
-                <div class="tool-icon">⚙️</div>
-                <div class="tool-name">JSON 数据维护器</div>
-                <div class="tool-desc">站长专用<br>合并、显示数据差异</div>
-                <span class="tool-badge">站内</span>
-            </a>
-
             <a class="tool-card" href="https://yanstory.github.io/5000choyen/" target="_blank" rel="noopener">
                 <div class="tool-name">5000兆円生成器</div>
                 <div class="tool-desc">5000兆円风格图像生成器。同时支持`欲しい!` 的生成。</div>
                 <span class="tool-badge">外部</span>
             </a>
-
             <a class="tool-card" href="https://gomocalc.github.io/" target="_blank" rel="noopener">
                 <div class="tool-name">RPG Maker MV & MZ 文件解密工具</div>
                 <div class="tool-desc">从游戏目录的System.json获取密钥，即可在此网站进行游戏数据的加密/解密</div>
                 <span class="tool-badge">外部</span>
             </a>
-
             <a class="tool-card" href="http://unlock.music.hi.cn/" target="_blank" rel="noopener">
                 <div class="tool-name">音乐文件解锁</div>
                 <div class="tool-desc">暂不做介绍</div>
                 <span class="tool-badge">外部</span>
             </a>
+        </div>
 
+        <div class="admin-tools-section hidden-tool" id="adminToolsSection">
+            <div class="admin-tools-title">站长工具</div>
+            <div class="tool-grid">
+                <a class="tool-card" href="generator.html" target="_blank" rel="noopener">
+                    <div class="tool-icon">🗒️</div>
+                    <div class="tool-name">Execl数据导出</div>
+                    <div class="tool-desc">站长专用<br>选择Excel表格导出数据文件</div>
+                    <span class="tool-badge">站内</span>
+                </a>
+                <a class="tool-card" href="data-maintainer.html" target="_blank" rel="noopener">
+                    <div class="tool-icon">⚙️</div>
+                    <div class="tool-name">JSON 数据维护器</div>
+                    <div class="tool-desc">站长专用<br>合并、显示数据差异</div>
+                    <span class="tool-badge">站内</span>
+                </a>
+                <a class="tool-card" href="admin.html" target="_blank" rel="noopener">
+                    <div class="tool-name">评分系统后台</div>
+                    <div class="tool-desc">管理评分</div>
+                    <span class="tool-badge">站内</span>
+                </a>
+                <a class="tool-card" href="analyzer.html" target="_blank" rel="noopener">
+                    <div class="tool-name">评分风控系统</div>
+                    <div class="tool-desc">分析恶意评分</div>
+                    <span class="tool-badge">站内</span>
+                </a>
+            </div>
         </div>
     </div>
+
+    <div class="toast-message" id="toastMessage"></div>
 
     <script>
         (() => {
@@ -298,6 +349,35 @@
                 themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
                 localStorage.setItem(THEME_KEY, theme);
             }
+
+            const toast = document.getElementById('toastMessage');
+            let toastTimer;
+
+            function showToast(message) {
+                toast.textContent = message;
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+            let konamiIndex = 0;
+
+            document.addEventListener('keydown', function(e) {
+                if (e.code === konamiCode[konamiIndex]) {
+                    konamiIndex++;
+                    if (konamiIndex === konamiCode.length) {
+                        const adminSection = document.getElementById('adminToolsSection');
+                        if (adminSection) adminSection.classList.remove('hidden-tool');
+                        konamiIndex = 0;
+                        showToast('已显示站长工具');
+                    }
+                } else {
+                    konamiIndex = (e.code === konamiCode[0]) ? 1 : 0;
+                }
+            });
         })();
     </script>
 
