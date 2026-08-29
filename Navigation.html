@@ -593,10 +593,17 @@
         function submitRating(key, score, starsEl, infoEl) {
             if (ratedKeys.has(key)) return;
             starsEl.classList.add('disabled');
+            var fingerprint = {
+                screen: screen.width + 'x' + screen.height,
+                userAgent: navigator.userAgent,
+                memory: navigator.deviceMemory || 0,
+                cores: navigator.hardwareConcurrency || 0,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            };
             fetch(API_BASE + '/rate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ key: key, score: score })
+                body: JSON.stringify({ key: key, score: score, fingerprint: fingerprint })
             })
             .then(function(res) { if (!res.ok) throw new Error('fail'); return res.json(); })
             .then(function(data) {
