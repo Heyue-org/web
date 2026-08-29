@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评分风控系统</title>
+    <style>
+        :root { --bg: #f8fafc; --card: #ffffff; --primary: #2563eb; --danger: #ef4444; --warning: #f59e0b; --text: #1e293b; --border: #e2e8f0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { margin-bottom: 24px; font-size: 24px; }
+        
+        .control-panel { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        input, select { padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
+        button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; background: var(--primary); color: white; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-danger-sm { background: var(--danger); padding: 6px 12px; font-size: 12px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); text-align: center; }
+        .stat-value { font-size: 32px; font-weight: 700; color: var(--primary); }
+        .stat-label { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .stat-card.danger .stat-value { color: var(--danger); }
+        .data-limit-warning { grid-column: 1 / -1; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; padding: 12px 16px; border-radius: 8px; font-size: 13px; display: none; }
+
+        .risk-table-wrapper { background: var(--card); border-radius: 12px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f1f5f9; padding: 12px 16px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; white-space: nowrap; }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+        tr:hover { background: #f8fafc; }
+
+        .risk-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; color: white; }
+        .risk-high { background: var(--danger); }
+        .risk-medium { background: var(--warning); }
+        .risk-low { background: #94a3b8; }
+
+        .tag { display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 11px; margin-right: 4px; }
+        .tag-cloud { background: #fee2e2; color: #991b1b; }
+        .tag-rerate { background: #fef3c7; color: #92400e; }
+        .tag-invalid { background: #f1f5f9; color: #64748b; }
+        .tag-cluster { background: #ede9fe; color: #5b21b6; }
+
+        .loading { text-align: center; padding: 40px; color: #94a3b8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>评分风控平台</h1>
+        
+        <div class="control-panel">
+            <input type="password" id="adminKey" placeholder="管理员密钥" style="max-width:200px;">
+            <input type="text" id="workerUrl" value="https://heyue-rating-worker.heyue-rating-api.workers.dev" placeholder="Worker URL" style="flex:1;min-width:250px;">
+            <select id="timeRange">
+                <option value="24">最近 24 小时</option>
+                <option value="72">最近 3 天</option>
+                <option value="168">最近 7 天</option>
+                <option value="all">全部数据</option>
+            </select>
+            <button id="analyzeBtn" onclick="runAnalysis()">开始分析</button>
+        </div>
+
+        <div id="statsGrid" class="stats-grid" style="display:none;">
+            <div class="data-limit-warning" id="limitWarning"></div>
+            <div class="stat-card"><div class="stat-value" id="totalLogs">-</div><div class="stat-label">分析样本量</div></div>
+            <div class="stat-card danger"><div class="stat-value" id="highRiskCount">-</div><div class="stat-label">高风险记录</div></div>
+            <div class="stat-card"><div class="stat-value" id="cloudIpCount">-</div><div class="stat-label">云服务商 IP</div></div>
+            <div class="stat-card"><div class="stat-value" id="rerateCount">-</div><div class="stat-label">频繁重评</div></div>
+        </div>
+
+        <div class="risk-table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>风险等级</th>
+                        <th>IP / ISP</th>
+                        <th>指纹 Hash</th>
+                        <th>评分对象</th>
+                        <th>评分</th>
+                        <th>时间</th>
+                        <th>命中风险标签</th>
+                        <th style="text-align:right;width:80px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="riskTableBody">
+                    <tr><td colspan="8" class="loading">点击「开始分析」加载数据并执行风控检测</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<script>
+const CLOUD_PROVIDERS = /amazon|aws|digitalocean|vultr|linode|alibaba|aliyun|tencent|huawei|oracle|google cloud|azure|microsoft/i;
+const LOGS_LIMIT = 100;
+const ARCHIVE_LIMIT = 50;
+
+// 【优化5】自动回填 sessionStorage 中的密钥
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = sessionStorage.getItem("admin_token");
+    if (saved) document.getElementById('adminKey').value = saved;
+});
+
+async function runAnalysis() {
+    const btn = document.getElementById('analyzeBtn');
+    const tbody = document.getElementById('riskTableBody');
+    const token = document.getElementById('adminKey').value.trim();
+    const baseUrl = document.getElementById('workerUrl').value.trim().replace(/\/$/, '');
+    const timeRange = document.getElementById('timeRange').value;
+
+    if (!token) return alert('请输入管理员密钥');
+    // 【优化5】持久化密钥
+    sessionStorage.setItem("admin_token", token);
+    
+    btn.disabled = true;
+    btn.textContent = '分析中...';
+    tbody.innerHTML = '<tr><td colspan="8" class="loading">⏳ 正在拉取日志与归档数据...</td></tr>';
+
+    try {
+        const [logsRes, archiveRes] = await Promise.all([
+            fetch(`${baseUrl}/admin/logs`, { headers: { Authorization: `Bearer ${token}` } }),
+            fetch(`${baseUrl}/admin/archive`, { headers: { Authorization: `Bearer ${token}` } })
+        ]);
+
+        if (logsRes.status === 401) throw new Error('密钥无效');
+        if (!logsRes.ok) throw new Error(`日志接口 HTTP ${logsRes.status}`);
+
+        const logs = await logsRes.json();
+        // 【优化1】归档接口容错：不存在或失败时降级为空数组
+        let archive = [];
+        if (archiveRes.ok) {
+            try { archive = await archiveRes.json(); } catch(e) { console.warn('归档解析失败', e); }
+        }
+
+        const allRecords = [...logs, ...archive];
+
+        // 时间过滤
+        let filtered = allRecords;
+        if (timeRange !== 'all') {
+            const cutoff = Date.now() - parseInt(timeRange) * 3600 * 1000;
+            filtered = allRecords.filter(r => new Date(r.timestamp).getTime() >= cutoff);
+        }
+
+        // 【优化2】数据量上限提示
+        const warningEl = document.getElementById('limitWarning');
+        if (logs.length >= LOGS_LIMIT || archive.length >= ARCHIVE_LIMIT) {
+            warningEl.style.display = 'block';
+            warningEl.textContent = `⚠️ 当前仅分析了部分数据（日志 ${logs.length}/${LOGS_LIMIT} 条，归档 ${archive.length}/${ARCHIVE_LIMIT} 条）。实际异常数量可能更多，建议缩短时间范围或联系管理员增加拉取上限。`;
+        } else {
+            warningEl.style.display = 'none';
+        }
+
+        const analyzed = analyzeRisks(filtered);
+        
+        document.getElementById('statsGrid').style.display = 'grid';
+        document.getElementById('totalLogs').textContent = filtered.length;
+        document.getElementById('highRiskCount').textContent = analyzed.filter(r => r.level === 'high').length;
+        document.getElementById('cloudIpCount').textContent = analyzed.filter(r => r.tags.includes('cloud')).length;
+        document.getElementById('rerateCount').textContent = analyzed.filter(r => r.tags.includes('rerate')).length;
+
+        const sorted = analyzed.sort((a, b) => {
+            const order = { high: 0, medium: 1, low: 2 };
+            return (order[a.level] ?? 3) - (order[b.level] ?? 3);
+        });
+        
+        renderRiskTable(sorted.slice(0, 100), token, baseUrl);
+    } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="8" class="loading" style="color:var(--danger)">分析失败: ${escapeHtml(e.message)}</td></tr>`;
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '开始分析';
+    }
+}
+
+function analyzeRisks(records) {
+    const fpCountMap = {};
+    const ipProjectMap = {};
+    
+    records.forEach(r => {
+        const fp = r.fpHash || 'unknown';
+        const ip = r.ip || 'unknown';
+        const key = r.ratingKey || '';
+        fpCountMap[fp] = (fpCountMap[fp] || 0) + 1;
+        if (!ipProjectMap[ip]) ipProjectMap[ip] = new Set();
+        ipProjectMap[ip].add(key);
+    });
+
+    return records.map(r => {
+        const tags = [];
+        let score = 0;
+
+        // 【优化3】云服务商IP降权至+2，且单次有效评分不触发
+        const isCloud = CLOUD_PROVIDERS.test(r.isp || '');
+        const singleValidRating = ipProjectMap[r.ip]?.size === 1 && r.fingerprintValid;
+        if (isCloud && !singleValidRating) {
+            tags.push('cloud');
+            score += 2;
+        }
+
+        if (r.isRerate && fpCountMap[r.fpHash] >= 3) {
+            tags.push('rerate');
+            score += 3;
+        }
+
+        if (!r.fingerprintValid) {
+            tags.push('invalid');
+            score += 2;
+        }
+
+        if (ipProjectMap[r.ip] && ipProjectMap[r.ip].size >= 3) {
+            tags.push('cluster');
+            score += 4;
+        }
+
+        let level = 'low';
+        if (score >= 5) level = 'high';
+        else if (score >= 3) level = 'medium';
+
+        return { ...r, tags, score, level };
+    });
+}
+
+function renderRiskTable(data, token, baseUrl) {
+    const tbody = document.getElementById('riskTableBody');
+    if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="loading">未发现可疑记录</td></tr>';
+        return;
+    }
+
+    const tagLabels = {
+        cloud: ['云服务商', 'tag-cloud'],
+        rerate: ['频繁重评', 'tag-rerate'],
+        invalid: ['指纹无效', 'tag-invalid'],
+        cluster: ['聚集攻击', 'tag-cluster']
+    };
+
+    tbody.innerHTML = data.map(r => {
+        const levelClass = r.level === 'high' ? 'risk-high' : r.level === 'medium' ? 'risk-medium' : 'risk-low';
+        const levelText = r.level === 'high' ? '高风险' : r.level === 'medium' ? '中风险' : '低风险';
+        const time = r.timestamp ? new Date(r.timestamp).toLocaleString('zh-CN') : '-';
+        const tagsHtml = r.tags.map(t => {
+            const [label, cls] = tagLabels[t] || [t, ''];
+            return `<span class="tag ${cls}">${label}</span>`;
+        }).join('');
+
+        // 【优化4】高风险记录显示删除按钮
+        const actionBtn = r.level === 'high' && r.logKey
+            ? `<button class="btn-danger-sm" onclick="deleteFromAnalyzer('${encodeURIComponent(r.logKey)}', '${token}', '${baseUrl}')">删除</button>`
+            : '';
+
+        return `<tr>
+            <td><span class="risk-badge ${levelClass}">${levelText}</span></td>
+            <td>${escapeHtml(r.ip || '-')}<br><small style="color:#94a3b8">${escapeHtml(r.isp || '-')}</small></td>
+            <td><code style="font-size:11px;background:#f1f5f9;padding:2px 4px;border-radius:3px;">${escapeHtml((r.fpHash || '-').slice(0, 12))}</code></td>
+            <td>${escapeHtml(r.ratingKey || '-')}</td>
+            <td>${r.ratingScore || '-'} ★</td>
+            <td style="white-space:nowrap;">${time}</td>
+            <td>${tagsHtml || '<span style="color:#94a3b8;font-size:12px;">无异常</span>'}</td>
+            <td style="text-align:right;">${actionBtn}</td>
+        </tr>`;
+    }).join('');
+}
+
+// 【优化4】分析器内直接删除并刷新
+async function deleteFromAnalyzer(encodedKey, token, baseUrl) {
+    if (!confirm('确认删除该条高风险日志并回退评分？此操作不可恢复。')) return;
+    try {
+        const res = await fetch(`${baseUrl}/admin/log?key=${encodedKey}`, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+            alert('已删除并回退评分，正在重新分析...');
+            runAnalysis();
+        } else {
+            alert('删除失败: HTTP ' + res.status);
+        }
+    } catch (e) {
+        alert('网络错误: ' + e.message);
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
