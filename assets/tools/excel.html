@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel在线查看器 - 合月亭</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-solid: #1e293b;
+            --thead-bg: rgba(30, 41, 59, 0.95);
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --accent-gold: #fbbf24;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --top-bar-bg: rgba(15, 23, 42, 0.6);
+            --hover-bg: rgba(251, 191, 36, 0.1);
+        }
+        [data-theme="light"] {
+            --bg-dark: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.85);
+            --bg-solid: #ffffff;
+            --thead-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #1e293b;
+            --text-sub: #64748b;
+            --accent-gold: #d97706;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --top-bar-bg: rgba(255, 255, 255, 0.7);
+            --hover-bg: rgba(217, 119, 6, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .top-bar {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--top-bar-bg);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .top-bar-left { display: flex; align-items: center; gap: 1rem; }
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            text-decoration: none; color: var(--text-main);
+            font-size: 1.5rem; font-weight: 700; letter-spacing: 2px;
+        }
+        .logo img {
+            width: 32px; height: 32px; border-radius: 50%;
+            object-fit: cover; border: 1px solid var(--accent-gold);
+        }
+        .page-title { font-size: 1.5rem; font-weight: 600; color: var(--accent-gold); }
+        .controls { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+        .btn {
+            background: none; border: 1px solid var(--border-color);
+            border-radius: 6px; padding: 0.4rem 1rem; cursor: pointer;
+            font-size: 0.9rem; color: var(--text-main); transition: all 0.2s;
+        }
+        .btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); background: var(--hover-bg); }
+        .theme-toggle {
+            background: none; border: 1px solid var(--border-color);
+            border-radius: 8px; padding: 0.4rem 0.7rem; cursor: pointer;
+            font-size: 1.1rem; line-height: 1; color: var(--text-main);
+            transition: all 0.3s; display: flex; align-items: center;
+            justify-content: center; flex-shrink: 0;
+        }
+        .theme-toggle:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .search-input {
+            padding: 0.4rem 0.8rem; border: 1px solid var(--border-color);
+            border-radius: 6px; background: var(--bg-card);
+            color: var(--text-main); font-size: 0.9rem; outline: none; min-width: 200px;
+        }
+        .search-input:focus { border-color: var(--accent-gold); }
+        .sheet-tabs {
+            display: flex; overflow-x: auto; padding: 0.5rem 2rem;
+            background: var(--top-bar-bg); border-bottom: 1px solid var(--border-color);
+            gap: 0.3rem; flex-shrink: 0;
+        }
+        .sheet-tab {
+            padding: 0.4rem 1rem; border-radius: 4px 4px 0 0;
+            border: 1px solid var(--border-color); border-bottom: none;
+            background: var(--bg-card); color: var(--text-sub); cursor: pointer;
+            font-size: 0.85rem; white-space: nowrap; transition: all 0.2s;
+        }
+        .sheet-tab.active { background: var(--accent-gold); color: #0f172a; font-weight: 700; }
+        .sheet-tab:not(.active):hover { color: var(--accent-gold); border-color: var(--accent-gold); }
+        .main-content { flex: 1; overflow: auto; padding: 1rem 2rem; position: relative; }
+        .table-container {
+            max-width: 100%; max-height: 100%; overflow: auto;
+            border: 1px solid var(--border-color); border-radius: 8px;
+            background: var(--bg-card);
+        }
+        .table-container.intro-container {
+            overflow: visible;
+            max-height: none;
+            border: none;
+            background: transparent;
+        }
+        table.excel-table {
+            border-collapse: collapse; min-width: 100%;
+            font-size: 11pt;
+        }
+        table.excel-table.intro-mode {
+            min-width: 0;
+            width: auto;
+            font-size: 11pt;
+        }
+        table.excel-table th, table.excel-table td {
+            border: 1px solid var(--border-color);
+            padding: 0.3rem 0.6rem;
+            white-space: pre-wrap; word-break: break-all;
+            max-width: 400px; min-width: 30px;
+        }
+        table.excel-table.intro-mode th,
+        table.excel-table.intro-mode td {
+            max-width: none;
+            min-width: 0;
+            position: static !important;
+        }
+        table.excel-table:not(.intro-mode) thead th {
+            background: var(--thead-bg); font-weight: 700; text-align: center;
+            position: sticky; top: 0; z-index: 3;
+        }
+        table.excel-table:not(.intro-mode) thead th.corner {
+            width: 50px; min-width: 50px; max-width: 50px;
+        }
+        table.excel-table:not(.intro-mode) tbody th.row-label {
+            position: sticky; left: 0; z-index: 2;
+            background: var(--bg-solid); color: var(--text-sub);
+            font-weight: 400; text-align: center;
+            width: 50px; min-width: 50px; max-width: 50px;
+        }
+        table.excel-table.intro-mode th.row-label {
+            background: transparent;
+            color: var(--text-sub);
+            opacity: 0.4;
+            font-size: 0.7rem;
+            width: 50px; min-width: 50px; max-width: 50px;
+            text-align: center;
+            font-weight: 400;
+        }
+        table.excel-table.intro-mode thead th {
+            background: transparent;
+        }
+        table.excel-table td { background: var(--bg-card); }
+        table.excel-table.intro-mode td { background: transparent; }
+        table.excel-table tr:hover td { background: var(--hover-bg); }
+        table.excel-table.intro-mode tr:hover td { background: transparent; }
+        table.excel-table td.hl { background: rgba(251, 191, 36, 0.35) !important; }
+        [data-theme="light"] table.excel-table td.hl { background: rgba(217, 119, 6, 0.25) !important; }
+        .col-head { cursor: pointer; user-select: none; }
+        .col-head:hover { color: var(--accent-gold); }
+        .cell-link { color: var(--accent-gold); text-decoration: none; }
+        .cell-link:hover { text-decoration: underline; }
+        .load-more-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem; padding: 0.6rem 0.8rem; border-top: 1px solid var(--border-color);
+            color: var(--text-sub); font-size: 0.85rem;
+            position: sticky; bottom: 0; background: var(--bg-solid); z-index: 5;
+        }
+        .empty-message { text-align: center; color: var(--text-sub); padding: 3rem; font-size: 1.2rem; }
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        .modal-box {
+            background: var(--bg-solid); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 2rem 2.5rem; text-align: center;
+            max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal-box h3 { color: var(--accent-gold); margin-bottom: 0.8rem; font-size: 1.3rem; }
+        .modal-box p { color: var(--text-sub); margin-bottom: 1.5rem; }
+        .modal-box .btn { padding: 0.5rem 2rem; font-size: 1rem; }
+        .toast {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: var(--accent-gold); color: #0f172a;
+            padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 600;
+            opacity: 0; transform: translateY(20px); transition: all 0.3s;
+            z-index: 999; pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        @media (max-width: 768px) {
+            .top-bar { padding: 0.8rem; }
+            .main-content { padding: 0.5rem; }
+            .sheet-tabs { padding: 0.3rem 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <a href="index.html" class="logo">
+                <img src="../css/images/biglogo.png" alt="合月亭" onerror="this.style.display='none'">
+                合月亭
+            </a>
+            <span class="page-title">Excel 查看器</span>
+        </div>
+        <div class="controls">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索当前工作表...">
+            <button class="btn" id="zoomOutBtn" title="缩小">－</button>
+            <span id="zoomLevel" style="min-width:50px;text-align:center;font-size:0.9rem;">100%</span>
+            <button class="btn" id="zoomInBtn" title="放大">＋</button>
+            <button class="btn" id="fileBtn" title="打开其他 Excel 文件">📂 打开文件</button>
+            <input type="file" id="fileInput" accept=".xlsx,.xls,.xlsm,.csv" style="display:none;">
+            <button class="theme-toggle" id="themeToggle" title="切换日/夜模式">🌙</button>
+        </div>
+    </div>
+    <div class="sheet-tabs" id="sheetTabs"></div>
+    <div class="main-content" id="mainContent">
+        <div class="empty-message" id="emptyMessage">正在加载默认文件...</div>
+        <div class="table-container" id="tableContainer" style="display:none;"></div>
+    </div>
+    <div class="modal-overlay" id="noIntroModal">
+        <div class="modal-box">
+            <h3>⚠️ 提示</h3>
+            <p>未检测到「前言」工作表</p>
+            <button class="btn" id="modalConfirmBtn">我知道了</button>
+        </div>
+    </div>
+    <div class="toast" id="toast"></div>
+    <script>
+    (() => {
+        const DEFAULT_FILE = '../css/excel/GAL站点目录v1.2.xlsm';
+        const MAX_ROWS = 500;
+        const MAX_COLS = 100;
+        const MAX_MODEL_ROWS = 50000;
+        const THEME_KEY = 'heyue_excel_theme';
+        const ROW_LABEL_W = 50;
+        const URL_REGEX = /https?:\/\/[^\s<>"')\]]+/gi;
+
+        let workbook = null;
+        let currentSheetName = '';
+        let model = null;
+        let visibleRows = MAX_ROWS;
+        let sortCol = -1;
+        let sortDir = 1;
+        let searchTerm = '';
+        let zoomLevel = 1;
+        let searchTimer = null;
+        let isIntroMode = false;
+
+        const tableContainer = document.getElementById('tableContainer');
+        const emptyMessage = document.getElementById('emptyMessage');
+        const sheetTabs = document.getElementById('sheetTabs');
+        const searchInput = document.getElementById('searchInput');
+        const toast = document.getElementById('toast');
+        const themeBtn = document.getElementById('themeToggle');
+        const htmlEl = document.documentElement;
+        const noIntroModal = document.getElementById('noIntroModal');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+
+        const SORT_LOCALE = (() => {
+            try { 'a'.localeCompare('b', 'zh-Hans-CN-u-co-pinyin'); return 'zh-Hans-CN-u-co-pinyin'; }
+            catch (e) { return 'zh-CN'; }
+        })();
+
+        function applyTheme(theme) {
+            htmlEl.setAttribute('data-theme', theme);
+            themeBtn.textContent = theme === 'dark' ? '🌙' : '☀️';
+            localStorage.setItem(THEME_KEY, theme);
+        }
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        if (savedTheme) applyTheme(savedTheme);
+        themeBtn.addEventListener('click', () => {
+            applyTheme(htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+        });
+
+        function showToast(msg, duration = 3000) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), duration);
+        }
+
+        function escapeHtml(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function linkifyText(text) {
+            const escaped = escapeHtml(text);
+            return escaped.replace(URL_REGEX, match => {
+                return `<a class="cell-link" href="${match}" target="_blank" rel="noopener">${match}</a>`;
+            });
+        }
+
+        function parseFontColor(color) {
+            if (!color) return '';
+            if (color.rgb) {
+                let hex = String(color.rgb);
+                if (hex.length === 8) hex = hex.substring(2);
+                if (/^[0-9a-fA-F]{6}$/.test(hex)) return `color:#${hex};`;
+            }
+            return '';
+        }
+
+        function cmpVals(a, b) {
+            if (typeof a === 'number' && typeof b === 'number') return a - b;
+            const sa = (a === undefined || a === null) ? '' : String(a);
+            const sb = (b === undefined || b === null) ? '' : String(b);
+            if (sa === '' && sb === '') return 0;
+            if (sa === '') return -1;
+            if (sb === '') return 1;
+            const na = Number(sa), nb = Number(sb);
+            if (!isNaN(na) && !isNaN(nb)) return na - nb;
+            return sa.localeCompare(sb, SORT_LOCALE, { sensitivity: 'base' });
+        }
+
+        function checkIsIntro(name) {
+            if (!name) return false;
+            const clean = name.replace(/[\s\u3000]/g, '').toLowerCase();
+            return clean === '前言' || clean === 'ｑｉａｎｙａｎ' ||
+                   clean === 'foreword' || clean === 'preface' || clean === 'introduction';
+        }
+
+        function findIntroIndex(sheetNames) {
+            for (let i = 0; i < sheetNames.length; i++) {
+                if (checkIsIntro(sheetNames[i])) return i;
+            }
+            return -1;
+        }
+
+        function colWpx(col) {
+            if (!col) return 64;
+            if (col.wpx) return col.wpx;
+            if (col.wch) return Math.round(col.wch * 7 + 5);
+            if (col.width) return Math.round(col.width * 7 + 5);
+            return 64;
+        }
+
+        function rowHpx(row) {
+            if (!row) return null;
+            if (row.hpx) return row.hpx;
+            if (row.hpt) return Math.round(row.hpt * 4 / 3);
+            return null;
+        }
+
+        function buildModel(sheetName) {
+            const sheet = workbook.Sheets[sheetName];
+            if (!sheet) return null;
+
+            let minR = Infinity, minC = Infinity, maxR = -1, maxC = -1;
+            const keys = Object.keys(sheet);
+            for (let i = 0; i < keys.length; i++) {
+                const k = keys[i];
+                if (k.charCodeAt(0) === 33) continue;
+                const a = XLSX.utils.decode_cell(k);
+                if (a.r < minR) minR = a.r;
+                if (a.r > maxR) maxR = a.r;
+                if (a.c < minC) minC = a.c;
+                if (a.c > maxC) maxC = a.c;
+            }
+            if (maxR < 0) return { empty: true };
+
+            let cappedCols = false;
+            if (maxC - minC + 1 > MAX_COLS) { maxC = minC + MAX_COLS - 1; cappedCols = true; }
+            let cappedRows = false;
+            if (maxR - minR + 1 > MAX_MODEL_ROWS) { maxR = minR + MAX_MODEL_ROWS - 1; cappedRows = true; }
+
+            const mergeStart = {};
+            const covered = {};
+            let dataHasMerges = false;
+
+            (sheet['!merges'] || []).forEach(m => {
+                if (m.s.r === m.e.r && m.s.c === m.e.c) return;
+                const sR = Math.max(m.s.r, minR), sC = Math.max(m.s.c, minC);
+                const eR = Math.min(m.e.r, maxR), eC = Math.min(m.e.c, maxC);
+                if (eR < sR || eC < sC) return;
+
+                mergeStart[sR + ',' + sC] = { cs: eC - sC + 1, rs: eR - sR + 1 };
+                for (let r = sR; r <= eR; r++) {
+                    for (let c = sC; c <= eC; c++) {
+                        if (r === sR && c === sC) continue;
+                        covered[r + ',' + c] = true;
+                    }
+                }
+                if (eR > minR) dataHasMerges = true;
+            });
+
+            const getCell = (r, c) => {
+                const addr = XLSX.utils.encode_cell({ r, c });
+                const cell = sheet[addr];
+                if (!cell) return { d: '', v: '', style: '', href: '' };
+                let d = cell.w !== undefined ? cell.w : cell.v;
+                if (d === undefined || d === null) d = '';
+                if (d instanceof Date) {
+                    const y = d.getFullYear();
+                    const mo = String(d.getMonth() + 1).padStart(2, '0');
+                    const da = String(d.getDate()).padStart(2, '0');
+                    const h = String(d.getHours()).padStart(2, '0');
+                    const mi = String(d.getMinutes()).padStart(2, '0');
+                    d = (h === '00' && mi === '00') ? `${y}-${mo}-${da}` : `${y}-${mo}-${da} ${h}:${mi}`;
+                }
+                const v = cell.v !== undefined ? cell.v : d;
+                let style = '';
+                let href = '';
+                if (cell.s) {
+                    if (cell.s.font) {
+                        if (cell.s.font.sz) style += `font-size:${cell.s.font.sz}pt;`;
+                        if (cell.s.font.b) style += 'font-weight:bold;';
+                        if (cell.s.font.i) style += 'font-style:italic;';
+                        if (cell.s.font.color) style += parseFontColor(cell.s.font.color);
+                    }
+                    if (cell.s.alignment) {
+                        if (cell.s.alignment.horizontal) style += `text-align:${cell.s.alignment.horizontal};`;
+                        if (cell.s.alignment.vertical) style += `vertical-align:${cell.s.alignment.vertical};`;
+                        if (cell.s.alignment.wrapText) style += 'white-space:pre-wrap;';
+                    }
+                }
+                if (cell.l && cell.l.Target) {
+                    href = cell.l.Target;
+                }
+                return { d, v, style, href };
+            };
+
+            const headerCells = [];
+            for (let c = minC; c <= maxC; c++) {
+                const key = minR + ',' + c;
+                if (covered[key]) { headerCells.push({ skip: true }); continue; }
+                const o = getCell(minR, c);
+                const ms = mergeStart[key];
+                if (ms) { o.cs = ms.cs; o.rs = ms.rs; }
+                headerCells.push(o);
+            }
+
+            const rows = [];
+            for (let r = minR + 1; r <= maxR; r++) {
+                const cells = [];
+                for (let c = minC; c <= maxC; c++) {
+                    const key = r + ',' + c;
+                    if (covered[key]) { cells.push({ skip: true }); continue; }
+                    const o = getCell(r, c);
+                    const ms = mergeStart[key];
+                    if (ms) { o.cs = ms.cs; o.rs = ms.rs; }
+                    cells.push(o);
+                }
+                rows.push({ label: r + 1, cells });
+            }
+
+            const colWidths = [];
+            if (sheet['!cols']) {
+                for (let c = minC; c <= maxC; c++) {
+                    colWidths.push(colWpx(sheet['!cols'][c]));
+                }
+            } else {
+                for (let c = minC; c <= maxC; c++) {
+                    colWidths.push(64);
+                }
+            }
+
+            const rowHeightMap = {};
+            if (sheet['!rows']) {
+                for (let r = minR; r <= maxR; r++) {
+                    const h = rowHpx(sheet['!rows'][r]);
+                    if (h !== null) rowHeightMap[r] = h;
+                }
+            }
+
+            return { headerCells, rows, dataHasMerges, cappedCols, cappedRows, empty: false, colWidths, rowHeightMap, minR };
+        }
+
+        function sortIndicator(i) {
+            if (isIntroMode || sortCol !== i) return '';
+            return sortDir === 1 ? ' ▲' : ' ▼';
+        }
+
+        function getSortedRows() {
+            if (isIntroMode || sortCol < 0 || !model) return model.rows;
+            const arr = model.rows.slice();
+            const dir = sortDir;
+            const col = sortCol;
+            arr.sort((ra, rb) => {
+                const ca = ra.cells[col];
+                const cb = rb.cells[col];
+                const a = ca && !ca.skip ? ca.v : '';
+                const b = cb && !cb.skip ? cb.v : '';
+                return dir * cmpVals(a, b);
+            });
+            return arr;
+        }
+
+        function renderCellContent(cell) {
+            if (cell.href) {
+                return `<a class="cell-link" href="${escapeHtml(cell.href)}" target="_blank" rel="noopener">${escapeHtml(cell.d)}</a>`;
+            }
+            return linkifyText(String(cell.d));
+        }
+
+        function buildColgroup() {
+            if (!model.colWidths || model.colWidths.length === 0) return '';
+            let html = '<colgroup>';
+            html += `<col style="width:${ROW_LABEL_W}px;min-width:${ROW_LABEL_W}px;max-width:${ROW_LABEL_W}px;">`;
+            for (let i = 0; i < model.colWidths.length; i++) {
+                const w = model.colWidths[i];
+                html += `<col style="width:${w}px;">`;
+            }
+            html += '</colgroup>';
+            return html;
+        }
+
+        function renderTable() {
+            if (!model || model.empty) {
+                tableContainer.style.display = 'none';
+                tableContainer.innerHTML = '';
+                emptyMessage.style.display = 'block';
+                emptyMessage.textContent = !model ? '工作表不存在' : '当前工作表无数据';
+                return;
+            }
+
+            const rows = getSortedRows();
+            const n = Math.min(visibleRows, rows.length);
+            const parts = [];
+
+            const tableClass = isIntroMode ? 'excel-table intro-mode' : 'excel-table';
+            parts.push(`<table class="${tableClass}">`);
+            parts.push(buildColgroup());
+
+            if (isIntroMode) {
+                parts.push('<tbody>');
+
+                let firstRowStyle = '';
+                if (model.rowHeightMap && model.rowHeightMap[model.minR] !== undefined) {
+                    firstRowStyle = ` style="height:${model.rowHeightMap[model.minR]}px;"`;
+                }
+                parts.push(`<tr${firstRowStyle}>`);
+                parts.push(`<th class="row-label">${model.minR + 1}</th>`);
+                for (let i = 0; i < model.headerCells.length; i++) {
+                    const cell = model.headerCells[i];
+                    if (cell.skip) continue;
+                    let tag = '<td';
+                    if (cell.cs > 1) tag += ` colspan="${cell.cs}"`;
+                    if (cell.rs > 1) tag += ` rowspan="${cell.rs}"`;
+                    if (cell.style) tag += ` style="${cell.style}"`;
+                    tag += `>${renderCellContent(cell)}</td>`;
+                    parts.push(tag);
+                }
+                parts.push('</tr>');
+
+                for (let ri = 0; ri < n; ri++) {
+                    const row = rows[ri];
+                    let trStyle = '';
+                    if (model.rowHeightMap) {
+                        const origRowIdx = model.minR + 1 + ri;
+                        if (model.rowHeightMap[origRowIdx] !== undefined) {
+                            trStyle = ` style="height:${model.rowHeightMap[origRowIdx]}px;"`;
+                        }
+                    }
+                    parts.push(`<tr${trStyle}>`);
+                    parts.push(`<th class="row-label">${row.label}</th>`);
+                    for (let ci = 0; ci < row.cells.length; ci++) {
+                        const cell = row.cells[ci];
+                        if (cell.skip) continue;
+                        let tag = '<td';
+                        if (cell.cs > 1) tag += ` colspan="${cell.cs}"`;
+                        if (cell.rs > 1) tag += ` rowspan="${cell.rs}"`;
+                        if (cell.style) tag += ` style="${cell.style}"`;
+                        tag += `>${renderCellContent(cell)}</td>`;
+                        parts.push(tag);
+                    }
+                    parts.push('</tr>');
+                }
+                parts.push('</tbody></table>');
+            } else {
+                parts.push('<thead><tr>');
+                parts.push(`<th class="corner"></th>`);
+                for (let i = 0; i < model.headerCells.length; i++) {
+                    const cell = model.headerCells[i];
+                    if (cell.skip) continue;
+                    let tag = '<th';
+                    tag += ` class="col-head" data-col="${i}" title="点击按首字母排序"`;
+                    if (cell.cs > 1) tag += ` colspan="${cell.cs}"`;
+                    if (cell.rs > 1) tag += ` rowspan="${cell.rs}"`;
+                    if (cell.style) tag += ` style="${cell.style}"`;
+                    tag += `>${escapeHtml(cell.d)}${sortIndicator(i)}</th>`;
+                    parts.push(tag);
+                }
+                parts.push('</tr></thead><tbody>');
+
+                for (let ri = 0; ri < n; ri++) {
+                    const row = rows[ri];
+                    parts.push('<tr>');
+                    parts.push(`<th class="row-label">${row.label}</th>`);
+                    for (let ci = 0; ci < row.cells.length; ci++) {
+                        const cell = row.cells[ci];
+                        if (cell.skip) continue;
+                        let tag = '<td';
+                        if (cell.cs > 1) tag += ` colspan="${cell.cs}"`;
+                        if (cell.rs > 1) tag += ` rowspan="${cell.rs}"`;
+                        if (cell.style) tag += ` style="${cell.style}"`;
+                        tag += `>${renderCellContent(cell)}</td>`;
+                        parts.push(tag);
+                    }
+                    parts.push('</tr>');
+                }
+                parts.push('</tbody></table>');
+            }
+
+            let bar = '<div class="load-more-bar"><span>已显示 ' + n + ' / ' + rows.length + ' 行';
+            if (model.cappedRows) bar += '（数据过大，仅载入部分）';
+            if (model.cappedCols) bar += ' · 列数过多，仅显示前 ' + MAX_COLS + ' 列';
+            bar += '</span>';
+            if (n < rows.length) bar += '<button class="btn" id="loadMoreBtn">加载更多 +' + MAX_ROWS + ' 行</button>';
+            bar += '</div>';
+            parts.push(bar);
+
+            tableContainer.innerHTML = parts.join('');
+            tableContainer.style.display = 'block';
+            emptyMessage.style.display = 'none';
+
+            applyZoom();
+            applySearchHighlight();
+
+            requestAnimationFrame(() => {
+                balanceColumns();
+            });
+        }
+
+        function balanceColumns() {
+            const table = tableContainer.querySelector('table');
+            if (!table) return;
+
+            const firstRow = table.querySelector('tr');
+            if (!firstRow) return;
+
+            const mergedCells = firstRow.querySelectorAll('[colspan]');
+            if (mergedCells.length === 0) return;
+
+            let colgroup = table.querySelector('colgroup');
+            if (!colgroup) {
+                colgroup = document.createElement('colgroup');
+                table.insertBefore(colgroup, table.firstChild);
+            }
+
+            const cols = colgroup.querySelectorAll('col');
+
+            mergedCells.forEach(mc => {
+                const cs = parseInt(mc.getAttribute('colspan') || '1', 10);
+                if (cs < 2) return;
+
+                let startCol = 0;
+                let sibling = mc.previousElementSibling;
+                while (sibling) {
+                    startCol += parseInt(sibling.getAttribute('colspan') || '1', 10);
+                    sibling = sibling.previousElementSibling;
+                }
+
+                const totalWidth = mc.offsetWidth;
+                if (totalWidth === 0) return;
+                const colWidth = Math.floor(totalWidth / cs);
+
+                for (let i = 0; i < cs; i++) {
+                    const colIdx = startCol + i;
+                    while (colgroup.children.length <= colIdx) {
+                        const newCol = document.createElement('col');
+                        colgroup.appendChild(newCol);
+                    }
+                    const targetCol = colgroup.children[colIdx];
+                    if (targetCol) {
+                        targetCol.style.width = colWidth + 'px';
+                    }
+                }
+            });
+        }
+
+        function applySearchHighlight() {
+            const table = tableContainer.querySelector('table');
+            if (!table) return;
+            const lower = searchTerm.toLowerCase();
+            const cells = table.querySelectorAll('tbody td');
+            cells.forEach(td => {
+                if (searchTerm && td.textContent.toLowerCase().includes(lower)) td.classList.add('hl');
+                else td.classList.remove('hl');
+            });
+        }
+
+        function handleSort(col) {
+            if (isIntroMode) return;
+            if (!model || model.empty) return;
+            if (model.dataHasMerges) { showToast('该工作表数据区域含合并单元格，暂不支持排序'); return; }
+            if (sortCol === col) sortDir *= -1;
+            else { sortCol = col; sortDir = 1; }
+            renderTable();
+        }
+
+        function updateSheetTabs() {
+            if (!workbook) return;
+            sheetTabs.innerHTML = '';
+            workbook.SheetNames.forEach(name => {
+                const tab = document.createElement('div');
+                tab.className = 'sheet-tab' + (name === currentSheetName ? ' active' : '');
+                tab.textContent = name;
+                tab.addEventListener('click', () => switchSheet(name));
+                sheetTabs.appendChild(tab);
+            });
+        }
+
+        function switchSheet(name) {
+            currentSheetName = name;
+            sortCol = -1;
+            sortDir = 1;
+            visibleRows = MAX_ROWS;
+            isIntroMode = checkIsIntro(name);
+
+            if (isIntroMode) {
+                searchInput.value = '';
+                searchTerm = '';
+                tableContainer.classList.add('intro-container');
+            } else {
+                tableContainer.classList.remove('intro-container');
+            }
+
+            model = buildModel(name);
+            updateSheetTabs();
+            renderTable();
+        }
+
+        async function loadWorkbook(data) {
+            try {
+                workbook = XLSX.read(data, { type: 'array', cellStyles: true });
+                if (workbook.SheetNames.length === 0) throw new Error('没有找到工作表');
+
+                const introIdx = findIntroIndex(workbook.SheetNames);
+
+                if (introIdx >= 0) {
+                    const introName = workbook.SheetNames.splice(introIdx, 1)[0];
+                    workbook.SheetNames.unshift(introName);
+                    switchSheet(workbook.SheetNames[0]);
+                    showToast('文件加载成功');
+                } else {
+                    noIntroModal.classList.add('show');
+                    switchSheet(workbook.SheetNames[0]);
+                }
+            } catch (e) {
+                console.error(e);
+                emptyMessage.textContent = '文件解析失败：' + e.message;
+                tableContainer.style.display = 'none';
+                emptyMessage.style.display = 'block';
+            }
+        }
+
+        modalConfirmBtn.addEventListener('click', () => {
+            noIntroModal.classList.remove('show');
+        });
+
+        async function loadDefaultFile() {
+            try {
+                const response = await fetch(DEFAULT_FILE);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const data = await response.arrayBuffer();
+                await loadWorkbook(data);
+            } catch (e) {
+                console.warn('默认文件加载失败，请手动上传', e);
+                emptyMessage.textContent = '默认文件加载失败，请点击右上角"打开文件"选择 Excel 文件';
+                tableContainer.style.display = 'none';
+                emptyMessage.style.display = 'block';
+            }
+        }
+
+        function applyZoom() {
+            document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+            const table = tableContainer.querySelector('table');
+            if (!table) return;
+            if ('zoom' in table.style) {
+                table.style.zoom = zoomLevel;
+                tableContainer.style.transform = 'none';
+            } else {
+                tableContainer.style.transform = `scale(${zoomLevel})`;
+            }
+        }
+
+        tableContainer.addEventListener('click', e => {
+            if (e.target.closest('#loadMoreBtn')) {
+                visibleRows += MAX_ROWS;
+                renderTable();
+                return;
+            }
+            const head = e.target.closest('.col-head');
+            if (head) handleSort(parseInt(head.dataset.col, 10));
+        });
+
+        document.getElementById('fileBtn').addEventListener('click', () => {
+            document.getElementById('fileInput').click();
+        });
+        document.getElementById('fileInput').addEventListener('change', async e => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const data = await file.arrayBuffer();
+            await loadWorkbook(data);
+        });
+
+        searchInput.addEventListener('input', e => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                searchTerm = e.target.value.trim();
+                applySearchHighlight();
+            }, 200);
+        });
+
+        document.getElementById('zoomInBtn').addEventListener('click', () => {
+            zoomLevel = Math.min(2, zoomLevel + 0.1);
+            applyZoom();
+        });
+        document.getElementById('zoomOutBtn').addEventListener('click', () => {
+            zoomLevel = Math.max(0.5, zoomLevel - 0.1);
+            applyZoom();
+        });
+
+        document.addEventListener('keydown', e => {
+            if (!workbook) return;
+            if (e.ctrlKey && e.key === 'ArrowRight') {
+                e.preventDefault();
+                const idx = workbook.SheetNames.indexOf(currentSheetName);
+                if (idx < workbook.SheetNames.length - 1) switchSheet(workbook.SheetNames[idx + 1]);
+            } else if (e.ctrlKey && e.key === 'ArrowLeft') {
+                e.preventDefault();
+                const idx = workbook.SheetNames.indexOf(currentSheetName);
+                if (idx > 0) switchSheet(workbook.SheetNames[idx - 1]);
+            }
+        });
+
+        loadDefaultFile();
+    })();
+    </script>
+</body>
+</html>
