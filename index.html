@@ -58,6 +58,15 @@
         body.light-mode .project-main-title { color: #1e293b; }
         body.light-mode .doc-link-box { border-color: #d97706; color: #d97706; background: rgba(217,119,6,0.08); }
         body.light-mode .doc-link-box:hover { background: rgba(217,119,6,0.18); box-shadow: 0 0 12px rgba(217,119,6,0.25); }
+        body.light-mode .about-intro { color: #475569; }
+        body.light-mode .value-item { background: rgba(217,119,6,0.04); }
+        body.light-mode .value-item:hover { background: rgba(217,119,6,0.08); border-color: rgba(217,119,6,0.2); }
+        body.light-mode .value-item h4 { color: #1e293b; }
+        body.light-mode .value-item p { color: #64748b; }
+        body.light-mode .about-subtitle { color: #1e293b; }
+        body.light-mode .member-name { color: #1e293b; }
+        body.light-mode .member-role { color: #64748b; }
+
         .btn-download {
             display: inline-flex;
             align-items: center;
@@ -228,6 +237,9 @@
             padding: 3rem 2rem;
             backdrop-filter: blur(6px);
         }
+        .about-section-container {
+            margin-top: 4rem;
+        }
         .section-title { text-align: center; font-size: 2rem; margin-bottom: 3rem; }
         .projects-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
         .project-card {
@@ -306,7 +318,103 @@
         }
         .modal-close:hover { background: rgba(255,255,255,0.3); transform: scale(1.1) rotate(90deg); }
 
-        /* ===== 移动端适配 ===== */
+        /* ===== 关于我们 ===== */
+        .about-intro {
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--text-sub);
+            max-width: 720px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.9;
+        }
+        .about-values {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .value-item {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-radius: 12px;
+            background: rgba(251,191,36,0.04);
+            border: 1px solid transparent;
+        }
+        .value-item svg {
+            width: 36px; height: 36px;
+            color: var(--accent-gold);
+            margin-bottom: 0.8rem;
+        }
+        .value-item h4 {
+            font-size: 1.1rem;
+            color: var(--text-main);
+            margin-bottom: 0.4rem;
+        }
+        .value-item p {
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            line-height: 1.6;
+        }
+        .about-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            margin-bottom: 1.2rem;
+        }
+        .members-grid {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2.5rem;
+        }
+        .member-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+            border-radius: 12px;
+            padding: 0.8rem;
+        }
+        .member-card img {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            border: 2px solid var(--accent-gold);
+            object-fit: cover;
+        }
+        .member-name {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+        .member-role {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+        a.member-card {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        }
+        a.member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(251,191,36,0.2);
+            background: rgba(251,191,36,0.06);
+        }
+        a.member-card img {
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        a.member-card:hover img {
+            transform: scale(1.1);
+            border-color: #fff;
+        }
+        .about-contact {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
         @media (max-width: 768px) {
             .logo-text { display: none; }
             .logo { gap: 0; }
@@ -317,13 +425,13 @@
             .hero-actions { flex-direction: column; width: 100%; padding: 0 2rem; }
             .btn { width: 100%; text-align: center; }
 
-            /* 核心修改：让外框贴近屏幕边缘，内框紧凑 */
             .container { padding: 0 0.5rem; }
             .projects-section { padding: 2rem 0 3rem; }
             .projects-wrapper {
                 padding: 1rem 0.6rem;
                 border-radius: 12px;
             }
+            .about-section-container { margin-top: 2rem; }
             .section-title {
                 font-size: 1.4rem;
                 margin-bottom: 1.2rem;
@@ -336,7 +444,6 @@
             .project-header { margin-bottom: 0.8rem; }
             .project-main-title { font-size: 1.15rem; }
 
-            /* 图片保持横排两列，缩小间距和高度 */
             .images-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 0.6rem;
@@ -373,7 +480,18 @@
             .icon-btn { margin-left: 0.8rem; }
             .modal-content { max-width: 90vw; max-height: 60vh; }
             .text-links { margin-top: 1.5rem; }
-        }
+
+            .about-intro { font-size: 0.95rem; margin-bottom: 1.5rem; padding: 0 0.5rem; }
+            .about-values { grid-template-columns: 1fr; gap: 0.8rem; margin-bottom: 1.5rem; }
+            .value-item { padding: 1rem; }
+            .value-item svg { width: 28px; height: 28px; }
+            .members-grid { gap: 1.2rem; margin-bottom: 1.5rem; }
+            .member-card img { width: 52px; height: 52px; }
+            .about-contact { flex-direction: column; align-items: center; }
+            .about-contact .btn-download { width: 100%; justify-content: center; }
+
+            .l2d-widget-container {display: none !important;}
+        }        
     </style>
 </head>
 <body>
@@ -445,14 +563,14 @@
                         </div>
                         <div class="future-annotations">
                             <p>旨在收录免费提供二次元资源的网站，涵盖动漫、音声、游戏、轻小说等分类。</p>
-                            <p>现提供在线文档和 Excel 表格下载，网页版见上“ACG站点目录”，此项目定期维护。</p>
+                            <p>现提供在线文档和 Excel 表格下载，网页版见上"ACG站点目录"，此项目定期维护。</p>
                             <p>点击图片放大查看详情。</p>
                             <div class="doc-links-row">
-                                <a href="https://docs.google.com/spreadsheets/d/1wwj4RC_W1zDhI2dlt1NmsFE9DMUKGHs-02lwWbFe9Kk/edit?usp=sharing" target="_blank" rel="noopener noreferrer" class="btn-download">
+                                <a href="assets/tools/excel.html" target="_blank" rel="noopener noreferrer" class="btn-download">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                                     查看在线文档
                                 </a>
-                                <a href="https://github.com/Heyue-org/HYT_ACG-Site-Directory/releases/" class="btn-download">
+                                <a href="https://github.com/Heyue-org/HYT_ACG-Site-Directory/releases/download/v1.2/HYT-ACG-VBA-v1.2.xlsm" class="btn-download">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                                     下载文档
                                 </a>
@@ -478,6 +596,48 @@
                 </div>
             </div>
         </div>
+
+        <div class="container about-section-container">
+            <div class="projects-wrapper">
+                <h2 class="section-title">关于我们</h2>
+                <div class="about-content">
+                    <p class="about-intro">
+                        合月亭（Heyue Pavilion）是一个由 ACG 爱好者自发组建的非营利开源社区。我们致力于整理、收录并分享免费的二次元资源站点与 Galgame 相关工具，希望为同好们提供一份实用可靠的导航与指南。
+                    </p>
+
+                    <div class="about-members">
+                        <h3 class="about-subtitle">核心成员</h3>
+                        <div class="members-grid">
+                            <a href="https://blog.example.com/cintser" target="_blank" rel="noopener noreferrer" class="member-card">
+                                <img src="https://q1.qlogo.cn/g?b=qq&nk=3439327248&s=640" alt="Cintser">
+                                <span class="member-name">Cintser</span>
+                                <span class="member-role">项目统筹 / 数据维护</span>
+                            </a>
+                            <div class="member-card">
+                                <img src="https://q1.qlogo.cn/g?b=qq&nk=1877210339&s=640" alt="箐泽">
+                                <span class="member-name">箐泽</span>
+                                <span class="member-role">职责描述</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="about-contact">
+                        <a href="https://github.com/Heyue-org" target="_blank" rel="noopener noreferrer" class="btn-download">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                            GitHub
+                        </a>
+                        <a href="qq.html" class="btn-download">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            加入编辑群
+                        </a>
+                        <a href="comments.html" class="btn-download">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                            给我们留言
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     <div class="image-modal" id="imageModal">
         <div class="modal-content">
@@ -485,11 +645,11 @@
             <img src="" alt="放大图片" class="modal-image" id="modalImage">
         </div>
     </div>
-     <div class="text-links">
-                <a href="Friend_Links.html">友情链接</a>
-                <span>|</span>
-                <a href="ContactDMCA.html">联系我们</a>
-            </div>
+    <div class="text-links">
+        <a href="Friend_Links.html">友情链接</a>
+        <span>|</span>
+        <a href="ContactDMCA.html">联系我们</a>
+    </div>
     <footer>
         <div class="container">
             <p>&copy; 2024-2026 合月亭 (Heyue Pavilion). 本站内容采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.zh" target="_blank" rel="noopener noreferrer" style="color:var(--accent-gold);text-decoration:none;border-bottom:1px dashed var(--accent-gold);">CC BY-NC 4.0</a> 协议，禁止商业用途。</p>
@@ -530,6 +690,229 @@
         modal.addEventListener('click', e => { if (e.target === modal) { modal.classList.remove('active'); document.body.style.overflow = 'auto'; } });
         document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('active')) { modal.classList.remove('active'); document.body.style.overflow = 'auto'; } });
     </script>
+
+<style>
+  #model-list-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+  }
+  #model-list-overlay.show { display: flex; }
+  #model-list-panel {
+    background: #1e293b;
+    border: none;
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 400px;
+    width: 90%;
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  #model-list-panel h3 {
+    color: #fbbf24;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  .model-list-item {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.4rem;
+    background: #0f172a;
+    border: none;
+    border-radius: 6px;
+    color: #e2e8f0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .model-list-item:hover {
+    background: rgba(251,191,36,0.15);
+    color: #fbbf24;
+  }
+  .model-list-item.active {
+    background: rgba(251,191,36,0.2);
+    color: #fbbf24;
+  }
+  #model-list-close {
+    display: block;
+    margin: 1rem auto 0;
+    padding: 0.4rem 1.5rem;
+    background: #fbbf24;
+    color: #0f172a;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+</style>
+
+<div id="model-list-overlay">
+  <div id="model-list-panel">
+    <h3>选择模型</h3>
+    <div id="model-list-items"></div>
+    <button id="model-list-close">关闭</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/live2dcubismcore@6.0.0/dist/live2dcubismcore.min.js"></script>
+<script src="assets/l2d/l2d-widget.min.js"></script>
+
+<script>
+  (() => {
+    const baseModelOptions = [
+      { path: 'assets/l2d/models/HK416-1-normal/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/HK416-2-destroy/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/HK416-2-normal/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/hibiki/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/Kar98k-normal/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/kobayaxi/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/kp31/model.json', scale: 1.8, offset: [0, 0.8] },
+      { path: 'assets/l2d/models/mai/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/murakumo/model.json', scale: 1, offset: [0, -0.3] },
+      { path: 'assets/l2d/models/Pio/model.json', scale: 1, offset: [0, -0.3] },
+      { path: 'assets/l2d/models/potion-Maker-Pio/index.json', scale: 1, offset: [0, -0.3] },
+      { path: 'assets/l2d/models/rem/model.json', scale: 1, offset: [0, -0.1] },
+      { path: 'assets/l2d/models/shizuku/shizuku.model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/terisa/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/tia/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/uni/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/xisitina/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/z16/z16.model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/bilibili-22/index.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/bilibili-33/index.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/chino/model.json', scale: 1, offset: [0, 0] },
+      { path: 'assets/l2d/models/hallo/model.json', scale: 1.1, offset: [0, 0] },
+    ];
+
+    const quotes = [
+  '欢迎来到合月亭！',
+  '为什么是静态站？当然是我们已经穷到吃草了喵~',
+  '有什么可以帮你的吗？（暂时还没有w）',
+  '骚年要节制呀~',
+  '收录的网站爆炸了/全是广告？请在顶栏留言区反馈！',
+  '欢迎米娜投稿自己喜爱的ACG站点~',
+  '常来看看呀！'
+];
+
+const modelOptions = baseModelOptions.map(opt => ({
+  ...opt,
+  tips: {
+    welcomeMessage: quotes,
+    messages: quotes,
+    duration: 3000,
+    interval: 15000,
+    typing: { speed: 100 },
+    offset: { x: 20, y: -10 },
+    style: {
+    maxWidth: '180px', 
+    width: '180px',
+    wordWrap: 'break-word',
+    whiteSpace: 'normal',
+    lineHeight: '1.5',
+    padding: '8px 12px',
+    borderRadius: '10px',
+    fontSize: '14px',
+    boxSizing: 'border-box'
+    }
+  }
+}));
+
+    let currentIndex = 0;
+    let isSwitching = false;
+    let widget = null;
+
+    function showModelList() {
+      const overlay = document.getElementById('model-list-overlay');
+      const itemsContainer = document.getElementById('model-list-items');
+      itemsContainer.innerHTML = '';
+      modelOptions.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'model-list-item' + (i === currentIndex ? ' active' : '');
+        const parts = opt.path.split('/');
+        btn.textContent = parts[parts.length - 2] || `模型 ${i+1}`;
+        btn.addEventListener('click', async () => {
+          overlay.classList.remove('show');
+          await switchToModel(i);
+        });
+        itemsContainer.appendChild(btn);
+      });
+      overlay.classList.add('show');
+    }
+
+    document.getElementById('model-list-close').addEventListener('click', () => {
+      document.getElementById('model-list-overlay').classList.remove('show');
+    });
+    document.getElementById('model-list-overlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        document.getElementById('model-list-overlay').classList.remove('show');
+      }
+    });
+
+    async function switchToModel(index) {
+      if (isSwitching || index === currentIndex) return;
+      isSwitching = true;
+      try {
+        await widget.switchModel(index);
+        currentIndex = index;
+      } catch (e) {
+        console.warn('切换失败', e);
+      }
+      isSwitching = false;
+    }
+
+    widget = L2D_WIDGET.createWidget({
+      position: 'bottom-right',
+      size: { width: 300, height: 400 },
+      transitionType: 'slide',
+      transitionDuration: 1000,
+      primaryColor: 'rgba(251, 191, 36, 0.9)',
+      model: modelOptions,
+      menus: {
+        items: [
+          {
+            icon: 'mdi:format-list-bulleted',
+            label: '模型列表',
+            onClick: showModelList
+          },
+          {
+            icon: 'mdi:shuffle-variant',
+            label: '切换模型',
+            onClick: async () => {
+              const next = (currentIndex + 1) % modelOptions.length;
+              await switchToModel(next);
+            }
+          },
+          {
+            icon: 'mdi:bed',
+            label: '休眠',
+            onClick: (w) => w.sleep()
+          }
+        ]
+      }
+    });
+
+    setTimeout(() => {
+      const canvas = document.querySelector('canvas');
+      if (canvas) {
+        let container = canvas.parentElement;
+        while (container && container !== document.body && getComputedStyle(container).position !== 'fixed') {
+          container = container.parentElement;
+        }
+        if (container) {
+          container.classList.add('l2d-widget-container');
+        }
+      }
+    }, 800);
+  })();
+</script>
     <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
 </body>
 </html>
