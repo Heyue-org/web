@@ -1,150 +1,44 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>评分监控面板</title>
-    <style>
-        :root { --bg: #f8fafc; --card: #ffffff; --primary: #2563eb; --danger: #ef4444; --success: #10b981; --text: #1e293b; --border: #e2e8f0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
-        
-        .login-card { max-width: 420px; margin: 80px auto; background: var(--card); padding: 32px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
-        .login-card h2 { margin-bottom: 24px; text-align: center; }
-        .login-msg { color: var(--danger); font-size: 13px; min-height: 20px; margin-bottom: 8px; text-align: center; }
-        input, select { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
-        input:focus { border-color: var(--primary); }
-        button { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-primary { background: var(--primary); color: white; width: 100%; margin-top: 16px; }
-        .btn-danger { background: var(--danger); color: white; padding: 6px 12px; font-size: 12px; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 16px; font-size: 13px; }
+<!-- 登录框 -->
+<div id="loginBox" class="login-box">
+    <h3>管理员登录</h3>
+    <div id="loginMsg" style="color:red;font-size:13px;min-height:18px;margin-bottom:4px;"></div>
+    <input type="password" id="adminKey" placeholder="输入管理员密钥">
+    <button id="loginBtn" onclick="login()">进入后台</button>
+</div>
 
-        .dashboard { display: none; max-width: 1700px; margin: 0 auto; }
-        .toolbar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
-        .toolbar-left { display: flex; gap: 12px; flex-wrap: wrap; flex: 1; }
-        .search-input { max-width: 300px; }
-        
-        .table-wrapper { background: var(--card); border-radius: 12px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: #f1f5f9; padding: 14px 16px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; white-space: nowrap; }
-        td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; white-space: nowrap; }
-        td.wrap { white-space: normal; word-break: break-all; }
-
-        tr:last-child td { border-bottom: none; }
-        tr:hover { background: #f8fafc; }
-        
-        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
-        .tag-cloud { background: #fee2e2; color: #991b1b; }
-        .tag-score { background: #dbeafe; color: #1e40af; }
-        .tag-valid { background: #d1fae5; color: #065f46; }
-        .tag-invalid { background: #fef3c7; color: #92400e; }
-        .ip-cell small { display: block; color: #94a3b8; font-size: 11px; margin-top: 2px; }
-        .fp-detail { font-size: 12px; color: #64748b; line-height: 1.8; }
-        .fp-detail code { background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 11px; }
-        .ua-toggle { color: var(--primary); cursor: pointer; user-select: none; }
-        .ua-toggle:hover { text-decoration: underline; }
-        .ua-full { display: none; margin-top: 4px; }
-        .ua-full.show { display: block; }
-        
-        .loading { text-align: center; padding: 40px; color: #94a3b8; }
-        .empty-state { text-align: center; padding: 60px 20px; color: #94a3b8; }
-        
-        @media (max-width: 768px) {
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .search-input { max-width: 100%; }
-        }
-    </style>
-</head>
-<body>
-
-    <div id="loginBox" class="login-card">
-        <h2>管理员登录</h2>
-        <div id="loginMsg" class="login-msg"></div>
-        <form onsubmit="handleLogin(); return false;">
-            <input type="password" id="adminKey" placeholder="请输入管理员密钥" autocomplete="current-password">
-            <button class="btn-primary" type="submit" id="loginBtn">进入后台</button>
-        </form>
-    </div>
-
-    <div id="dashboard" class="dashboard">
-        <div class="toolbar">
-            <div class="toolbar-left">
-                <input type="text" class="search-input" id="searchInput" placeholder="搜索 IP / ISP / 指纹 / UA..." oninput="filterLogs()">
-                <select id="scoreFilter" onchange="filterLogs()" style="max-width:140px;">
-                    <option value="">全部评分</option>
-                    <option value="5">5星</option>
-                    <option value="4">4星</option>
-                    <option value="3">3星</option>
-                    <option value="2">2星</option>
-                    <option value="1">1星</option>
-                </select>
-                <select id="fpFilter" onchange="filterLogs()" style="max-width:140px;">
-                    <option value="">全部指纹</option>
-                    <option value="valid">有效指纹</option>
-                    <option value="invalid">无效指纹</option>
-                </select>
-            </div>
-            <div style="display:flex;gap:8px;">
-                <button class="btn-outline" onclick="exportCSV()">导出 CSV</button>
-                <button class="btn-outline" onclick="exportArchive()">导出归档</button>
-                <button class="btn-outline" onclick="fetchLogs()">刷新</button>
-                <button class="btn-outline" onclick="logout()" style="color:#ef4444;border-color:#fecaca;">退出</button>
-            </div>
-        </div>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>时间</th>
-                        <th>IP / ISP</th>
-                        <th>语言</th>
-                        <th>设备指纹</th>
-                        <th>评分</th>
-                        <th>Referer</th>
-                        <th style="text-align:right; width:80px;">操作</th>
-                    </tr>
-                </thead>
-                <tbody id="logTable">
-                    <tr><td colspan="7" class="loading">加载中...</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <div id="statsBar" style="margin-top:12px;font-size:13px;color:#64748b;"></div>
-    </div>
+<style>
+    .login-box { max-width: 400px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .login-box input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; }
+    .login-box button { width: 100%; padding: 10px; background: #333; color: white; border: none; cursor: pointer; }
+    .login-box button:disabled { opacity: 0.6; cursor: not-allowed; }
+</style>
 
 <script>
-    const WORKER_URL = "https://heyue-rating-worker.heyue-rating-api.workers.dev";
-    
-    let token = sessionStorage.getItem("admin_token") || "";
-    let allLogs = [];
-    let filteredLogs = [];
+    let token = "";
+    const WORKER_URL = "https://你的worker域名.workers.dev";
 
-    if (token) {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
-        fetchLogs();
-    }
+    // 支持回车登录
+    document.getElementById("adminKey").addEventListener("keydown", function(e) {
+        if (e.key === "Enter") login();
+    });
 
-    async function handleLogin() {
+    async function login() {
         const keyInput = document.getElementById("adminKey");
         const btn = document.getElementById("loginBtn");
         const msg = document.getElementById("loginMsg");
-        const key = keyInput.value.trim();
 
+        token = keyInput.value.trim();
         msg.textContent = "";
 
-        if (!key) {
+        if (!token) {
             msg.textContent = "请输入管理员密钥";
             keyInput.focus();
             return;
         }
 
+        // 加载状态
         btn.disabled = true;
         btn.textContent = "验证中...";
-        token = key;
 
         try {
             const res = await fetch(`${WORKER_URL}/admin/logs`, {
@@ -152,228 +46,23 @@
             });
 
             if (res.status === 401) {
-                msg.textContent = "密钥错误，请重新输入";
+                msg.textContent = "密钥错误！";
                 keyInput.value = "";
                 keyInput.focus();
                 token = "";
-                sessionStorage.removeItem("admin_token");
             } else if (res.ok) {
-                sessionStorage.setItem("admin_token", token);
+                // ✅ 登录成功，显示面板并加载数据
                 document.getElementById("loginBox").style.display = "none";
                 document.getElementById("dashboard").style.display = "block";
                 fetchLogs();
             } else {
                 msg.textContent = `请求失败 (${res.status})`;
-                token = "";
             }
         } catch (err) {
             msg.textContent = "网络异常，请检查连接";
-            token = "";
         } finally {
             btn.disabled = false;
             btn.textContent = "进入后台";
         }
     }
-
-    function logout() {
-        token = "";
-        allLogs = [];
-        sessionStorage.removeItem("admin_token");
-        location.reload();
-    }
-
-    async function fetchLogs() {
-        const tbody = document.getElementById("logTable");
-        tbody.innerHTML = '<tr><td colspan="7" class="loading">⏳ 正在获取数据...</td></tr>';
-        
-        try {
-            const res = await fetch(`${WORKER_URL}/admin/logs`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-            
-            if (res.status === 401) {
-                logout();
-                return;
-            }
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-            allLogs = await res.json();
-            filterLogs();
-        } catch (e) {
-            tbody.innerHTML = `<tr><td colspan="7" class="empty-state">请求失败: ${escapeHtml(e.message)}<br><small>请检查网络或 Worker 地址</small></td></tr>`;
-        }
-    }
-
-    function filterLogs() {
-        const keyword = document.getElementById("searchInput").value.toLowerCase();
-        const scoreVal = document.getElementById("scoreFilter").value;
-        const fpVal = document.getElementById("fpFilter").value;
-
-        filteredLogs = allLogs.filter(log => {
-            const matchScore = !scoreVal || String(log.ratingScore) === scoreVal;
-            const matchFp = !fpVal || (fpVal === "valid" ? log.fingerprintValid : !log.fingerprintValid);
-            const fp = log.fingerprint || {};
-            const searchText = [log.ip, log.isp, log.acceptLanguage, fp.screen, fp.userAgent, fp.timezone, log.referer]
-                .filter(Boolean).join(" ").toLowerCase();
-            const matchKeyword = !keyword || searchText.includes(keyword);
-            return matchScore && matchFp && matchKeyword;
-        });
-
-        renderTable();
-    }
-
-    function renderTable() {
-        const tbody = document.getElementById("logTable");
-        
-        if (filteredLogs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">暂无匹配的日志记录</td></tr>';
-            document.getElementById("statsBar").textContent = "";
-            return;
-        }
-
-        tbody.innerHTML = filteredLogs.map((log, i) => {
-            const fp = log.fingerprint || {};
-            const isCloud = /amazon|digitalocean|vultr|linode|alibaba|tencent|huawei/i.test(log.isp || "");
-            const time = log.timestamp ? new Date(log.timestamp).toLocaleString("zh-CN") : "-";
-            const fpTag = log.fingerprintValid
-                ? '<span class="tag tag-valid">有效</span>'
-                : '<span class="tag tag-invalid">无效</span>';
-            const fpDetail = [
-                fp.screen ? `<code>${escapeHtml(fp.screen)}</code>` : null,
-                fp.memory ? `${fp.memory}GB` : null,
-                fp.cores ? `${fp.cores}核` : null,
-                fp.timezone ? escapeHtml(fp.timezone) : null
-            ].filter(Boolean).join(' / ');
-            const ua = fp.userAgent ? escapeHtml(fp.userAgent) : '-';
-            const uaShort = fp.userAgent ? escapeHtml(fp.userAgent.slice(0, 40)) + '...' : '-';
-            
-            return `<tr>
-                <td style="white-space:nowrap;">${time}</td>
-                <td class="ip-cell">
-                    ${escapeHtml(log.ip || "-")}
-                    <small>${isCloud ? '<span class="tag tag-cloud">云服务商</span>' : escapeHtml(log.isp || "-")}</small>
-                </td>
-                <td>${escapeHtml(log.acceptLanguage || "-")}</td>
-                <td style="max-width:320px;">
-                    <div>${fpTag} ${fpDetail || '-'}</div>
-                    <div class="fp-detail">
-                        <span class="ua-toggle" onclick="toggleUA(${i})">UA: ${uaShort}</span>
-                        <div class="ua-full" id="ua-${i}">${ua}</div>
-                    </div>
-                </td>
-                <td><span class="tag tag-score">${log.ratingScore || "-"} ★</span></td>
-                <td class="wrap" style="max-width:250px;">${escapeHtml(log.referer || "-")}</td>
-                <td style="text-align:right;">
-                    <button class="btn-danger" onclick="deleteLog('${encodeURIComponent(log.logKey || "")}')">删除</button>
-                </td>
-            </tr>`;
-        }).join("");
-
-        const validCount = filteredLogs.filter(l => l.fingerprintValid).length;
-        document.getElementById("statsBar").textContent = 
-            `共 ${allLogs.length} 条记录，当前显示 ${filteredLogs.length} 条（其中 ${validCount} 条指纹有效）`;
-    }
-
-    function toggleUA(i) {
-        document.getElementById("ua-" + i).classList.toggle("show");
-    }
-
-    async function deleteLog(encodedKey) {
-        if (!encodedKey) return;
-        const log = allLogs.find(l => encodeURIComponent(l.logKey) === encodedKey);
-        const detail = log ? `（${log.ratingKey || "?"} / ${log.ratingScore || "?"}★）` : "";
-        if (!confirm("确认删除这条日志并回退评分" + detail + "？\n此操作不可恢复。")) return;
-        try {
-            const res = await fetch(`${WORKER_URL}/admin/log?key=${encodedKey}`, {
-                method: "DELETE",
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-            if (res.status === 401) { logout(); return; }
-            if (res.ok) {
-                const data = await res.json();
-                allLogs = allLogs.filter(l => encodeURIComponent(l.logKey) !== encodedKey);
-                filterLogs();
-                if (data.rolledBack) {
-                    alert("已删除日志并回退评分");
-                } else {
-                    alert("已删除日志（评分未回退）");
-                }
-            } else {
-                alert("删除失败: " + res.status);
-            }
-        } catch (e) {
-            alert("网络错误: " + e.message);
-        }
-    }
-
-    function exportCSV() {
-        if (filteredLogs.length === 0) return alert("没有可导出的数据");
-        const headers = ["时间","IP","ISP","语言","屏幕","内存","核心","时区","UA","指纹有效","评分","Referer"];
-        const rows = filteredLogs.map(l => {
-            const fp = l.fingerprint || {};
-            return [l.timestamp, l.ip, l.isp, l.acceptLanguage, fp.screen, fp.memory, fp.cores, fp.timezone, fp.userAgent, l.fingerprintValid, l.ratingScore, l.referer]
-                .map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",");
-        });
-        const csv = "\uFEFF" + [headers.join(","), ...rows].join("\n");
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `rating_logs_${new Date().toISOString().slice(0,10)}.csv`;
-        a.click();
-    }
-
-    async function exportArchive() {
-        try {
-            const res = await fetch(`${WORKER_URL}/admin/archive`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
-            if (res.status === 401) { logout(); return; }
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            if (!data || data.length === 0) { alert("暂无归档记录"); return; }
-
-            const headers = ["归档时间", "归档原因", "原日志Key", "评分时间", "IP", "ISP", "语言", "评分对象", "评分", "指纹有效", "重评", "指纹Hash", "屏幕", "内存", "UA"];
-            const rows = data.map(r => [
-                r.archivedAt || "",
-                r.archiveReason || "",
-                r.archiveKey || r.logKey || "",
-                r.timestamp || "",
-                r.ip || "",
-                r.isp || "",
-                r.acceptLanguage || "",
-                r.ratingKey || "",
-                r.ratingScore || "",
-                r.fingerprintValid ? "是" : "否",
-                r.isRerate ? "是" : "否",
-                r.fpHash || "",
-                (r.fingerprint || {}).screen || "",
-                (r.fingerprint || {}).memory || "",
-                (r.fingerprint || {}).userAgent || ""
-            ]);
-
-            let csv = "\uFEFF" + headers.join(",") + "\n";
-            rows.forEach(row => {
-                csv += row.map(cell => {
-                    const s = String(cell).replace(/"/g, '""');
-                    return /[",\n]/.test(s) ? `"${s}"` : s;
-                }).join(",") + "\n";
-            });
-
-            const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = `archive_${new Date().toISOString().slice(0, 10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(a.href);
-        } catch (e) {
-            alert("导出失败: " + e.message);
-        }
-    }
-
-    function escapeHtml(str) {
-        if (!str) return "";
-        return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-    }
 </script>
-</body>
-</html>
