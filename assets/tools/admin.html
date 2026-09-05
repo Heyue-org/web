@@ -11,10 +11,12 @@
         
         .login-card { max-width: 420px; margin: 80px auto; background: var(--card); padding: 32px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
         .login-card h2 { margin-bottom: 24px; text-align: center; }
+        .login-msg { color: var(--danger); font-size: 13px; min-height: 20px; margin-bottom: 8px; text-align: center; }
         input, select { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
         input:focus { border-color: var(--primary); }
         button { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: opacity 0.2s; }
         button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
         .btn-primary { background: var(--primary); color: white; width: 100%; margin-top: 16px; }
         .btn-danger { background: var(--danger); color: white; padding: 6px 12px; font-size: 12px; }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 16px; font-size: 13px; }
@@ -59,7 +61,8 @@
 
     <div id="loginBox" class="login-card">
         <h2>管理员登录</h2>
-        <form onsubmit="login(); return false;">
+        <div id="loginMsg" class="login-msg"></div>
+        <form onsubmit="handleLogin(); return false;">
             <input type="password" id="adminKey" placeholder="请输入管理员密钥" autocomplete="current-password">
             <button class="btn-primary" type="submit" id="loginBtn">进入后台</button>
         </form>
@@ -125,13 +128,51 @@
         fetchLogs();
     }
 
-    function login() {
-        const key = document.getElementById("adminKey").value.trim();
-        if (!key) return alert("请输入密钥");
+    async function handleLogin() {
+        const keyInput = document.getElementById("adminKey");
+        const btn = document.getElementById("loginBtn");
+        const msg = document.getElementById("loginMsg");
+        const key = keyInput.value.trim();
+
+        msg.textContent = "";
+
+        if (!key) {
+            msg.textContent = "请输入管理员密钥";
+            keyInput.focus();
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "验证中...";
         token = key;
-        sessionStorage.setItem("admin_token", token);
-        document.getElementById("loginBtn").textContent = "验证中...";
-        fetchLogs();
+
+        try {
+            const res = await fetch(`${WORKER_URL}/admin/logs`, {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+
+            if (res.status === 401) {
+                msg.textContent = "密钥错误，请重新输入";
+                keyInput.value = "";
+                keyInput.focus();
+                token = "";
+                sessionStorage.removeItem("admin_token");
+            } else if (res.ok) {
+                sessionStorage.setItem("admin_token", token);
+                document.getElementById("loginBox").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+                fetchLogs();
+            } else {
+                msg.textContent = `请求失败 (${res.status})`;
+                token = "";
+            }
+        } catch (err) {
+            msg.textContent = "网络异常，请检查连接";
+            token = "";
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "进入后台";
+        }
     }
 
     function logout() {
@@ -151,7 +192,6 @@
             });
             
             if (res.status === 401) {
-                alert("密钥无效或已过期");
                 logout();
                 return;
             }
@@ -159,13 +199,8 @@
 
             allLogs = await res.json();
             filterLogs();
-            
-            document.getElementById("loginBox").style.display = "none";
-            document.getElementById("dashboard").style.display = "block";
-            document.getElementById("loginBtn").textContent = "进入后台";
         } catch (e) {
             tbody.innerHTML = `<tr><td colspan="7" class="empty-state">请求失败: ${escapeHtml(e.message)}<br><small>请检查网络或 Worker 地址</small></td></tr>`;
-            document.getElementById("loginBtn").textContent = "进入后台";
         }
     }
 
@@ -271,7 +306,6 @@
         }
     }
 
-
     function exportCSV() {
         if (filteredLogs.length === 0) return alert("没有可导出的数据");
         const headers = ["时间","IP","ISP","语言","屏幕","内存","核心","时区","UA","指纹有效","评分","Referer"];
@@ -335,7 +369,6 @@
             alert("导出失败: " + e.message);
         }
     }
-
 
     function escapeHtml(str) {
         if (!str) return "";
