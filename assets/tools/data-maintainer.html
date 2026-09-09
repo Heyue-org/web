@@ -211,10 +211,10 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
       <button class="btn btn-o btn-sm" onclick="showAddPartitionModal()" style="padding:2px 8px;font-size:10px" title="新建数据分区">+ 新建</button>
     </div>
     <div class="p-list" id="partitionList"></div>
-    <div class="sec-title"><span>系统</span></div>
+    <div class="sec-title"><span>系统设置</span></div>
     <div class="p-list" style="flex:0 0 auto;padding-bottom:12px">
-      <div class="p-item" onclick="showHistoryPanel()"><span class="p-name">📜 操作历史</span></div>
-      <div class="p-item" onclick="showWhitelistModal()"><span class="p-name">🔖 域名白名单</span></div>
+      <div class="p-item" onclick="showHistoryPanel()"><span class="p-name">操作历史</span></div>
+      <div class="p-item" onclick="showWhitelistModal()"><span class="p-name">域名白名单</span></div>
     </div>
   </div>
 
@@ -236,7 +236,7 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
         <span class="badge" id="statsConflicts">冲突: 0</span>
         <span class="badge" id="statsValidation" style="color:var(--wn)">违规: 0</span>
         <div class="sep"></div>
-        <button class="btn btn-p btn-sm" onclick="startAutoProcessFromSelection()" title="仅处理当前勾选的异常数据">🪄 自动处理</button>
+        <button class="btn btn-p btn-sm" onclick="startAutoProcessFromSelection()" title="仅处理当前勾选的异常数据">自动处理</button>
         <button class="btn btn-o btn-sm" onclick="showAutoProcessHelp()" title="自动处理逻辑说明">❓</button>
         <div class="sep"></div>
         <button class="btn btn-o btn-sm" onclick="exportSourceData()" title="导出原始JSON文件">📥</button>
@@ -264,7 +264,7 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
     <div class="log-panel open" id="logPanel">
       <div class="log-hd" onclick="toggleLog()">
         <span class="log-toggle">▶</span>
-        <span>📜 操作日志 (<span id="logCount">0</span>)</span>
+        <span>操作日志 (<span id="logCount">0</span>)</span>
         <div class="log-actions">
           <button class="btn btn-o btn-sm" onclick="event.stopPropagation();exportLog()" style="padding:2px 8px;font-size:10px" title="导出日志文本">💾 导出日志</button>
           <button class="btn btn-o btn-sm" onclick="event.stopPropagation();clearLog()" style="padding:2px 8px;font-size:10px" title="清空当前日志">清空</button>
@@ -342,7 +342,6 @@ function getPartNameByFi(fi){const file=S.files[fi];if(!file)return '未知';con
 function rebuildOffsets(){S.fileOffsets=new Map();let off=0;S.files.forEach(f=>{S.fileOffsets.set(f,off);off+=f.data.length;});}
 function getGI(file,ii){return(S.fileOffsets.get(file)??0)+ii;}
 
-// === Toast ===
 function toast(m,t='info',d=3000,undoFn=null){
   const c=document.getElementById('toastContainer'),e=document.createElement('div');
   e.className='toast';
@@ -356,7 +355,6 @@ function toast(m,t='info',d=3000,undoFn=null){
   setTimeout(()=>{clearInterval(interval);e.style.opacity='0';e.style.transform='translateY(30px)';e.style.transition='.3s';setTimeout(()=>e.remove(),300);},d);
 }
 
-// === Logging ===
 function log(msg,tag='info',detail=null){
   const now=new Date();const time=now.toTimeString().slice(0,8);
   const entry={time,tag,msg,detail,id:Date.now()+Math.random()};
@@ -386,7 +384,6 @@ function exportLog(){
   toast('日志已导出','ok');
 }
 
-// === Validation ===
 function runValidation(){
   S.validationErrors.clear();
   let totalChecked=0,totalViolations=0;
@@ -411,15 +408,14 @@ function runValidation(){
   if(totalViolations>0){
     log(`⚠️ 验证违规: ${totalViolations}/${totalChecked} 条缺少核心字段`,'warn',violationDetails.join('\n')+(totalViolations>10?`\n...及其他 ${totalViolations-10} 条违规`:''));
   } else {
-    log(`✅ 验证通过: 所有条目均包含名称、URL、UID`,'ok');
+    log(`验证通过: 所有条目均包含名称、URL、UID`,'ok');
   }
   updateStats();
 }
 
-// === Main Scan ===
 function detectConflicts(){
   resetLog();
-  log(`🔍 ═══ 开始扫描 (v3.5) ═══`,'analysis',
+  log(`🔍 ═══ 开始扫描 (v1.7) ═══`,'analysis',
     `总文件数: ${S.files.length}\n总条目数: ${S.files.reduce((s,f)=>s+f.data.length,0)}\n平台域名白名单: ${PLATFORM_DOMAINS.length}个\n名称相似度阈值: ${(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)}%`);
 
   const uc=new Set(), sc=new Set(), dupSet=new Set();
@@ -443,7 +439,6 @@ function detectConflicts(){
   const sf=urlR?urlR.field:null;
   const nf=nameR?nameR.field:null;
 
-  // --- UID冲突检测 ---
   if(uf){
     log(`🔍 ── UID冲突检测 ──`,'analysis',`条件: 相同"${uf}" + 不同URL域名`);
     const um={};
@@ -451,7 +446,7 @@ function detectConflicts(){
       const u=String(r.item[uf]||'').trim();
       if(!u)return;
       if(!um[u])um[u]=[];
-      um[u].push({gi:r.gi,fi:r.fi,ii:r.ii,url:sf?normUrl(String(r.item[sf]||'').trim()):'',rawUrl:sf?String(r.item[sf]||'').trim():'',fn:r.fn,item:r.item});
+      um[u].push({gi:r.gi,fi:r.fi,ii:r.ii,url:sf?normUrl(String(r.item[sf]||'').trim()):'',rawUrl:sf?String(r.item[sf]||'').trim():'',related:r.item['related']||'',fn:r.fn,item:r.item});
     });
     let cc=0,skippedPlatform=0,skippedSimilarity=0,skippedWhitelist=0;
     for(const[uid,entries]of Object.entries(um)){
@@ -475,18 +470,42 @@ function detectConflicts(){
           if(check.same)hasRealConflict=true;
         }
       }
+      if(!hasRealConflict && sf){
+        const relatedDomains = nonPlatformEntries.map(e=>{
+          const related = String(e.item['related']||'');
+          if(!related) return new Set();
+          const links = related.split(/[,;，；\s]+/).filter(Boolean);
+          const domains = new Set();
+          links.forEach(link=>{
+            const dom=normUrl(link);
+            if(dom) domains.add(dom);
+          });
+          return domains;
+        });
+        let commonRelated = false;
+        outerLoop: for(let i=0;i<relatedDomains.length;i++){
+          for(let j=i+1;j<relatedDomains.length;j++){
+            const intersection = [...relatedDomains[i]].filter(d=>relatedDomains[j].has(d));
+            if(intersection.length>0){
+              commonRelated = true;
+              break outerLoop;
+            }
+          }
+        }
+        if(commonRelated) hasRealConflict = true;
+      }
       if(!hasRealConflict){
         skippedSimilarity++;
-        log(`<span class="log-skip-tag">⏭️ UID冲突跳过 #${uid}</span> 名称相似度不足`,'skip',`【跳过原因】名称差异较大，判定为不同实体`);
+        log(`<span class="log-skip-tag">⏭️ UID冲突跳过 #${uid}</span> 名称相似度不足且无共同关联链接`,'skip',`【跳过原因】名称差异较大，且RELATED字段无共同域名，判定为不同实体`);
         continue;
       }
       cc++;
       entries.forEach(e=>uc.add(e.gi));
       S.issueGroups.uidConflicts.push({uid, items: entries});
       const entryDetails=entries.map((e,i)=>{
-        return `┌─ 条目 #${i+1}\n│ 来源: ${e.fn}[${e.ii}]\n│ 所属分区: ${getPartNameByFi(e.fi)}\n│ 全局索引: ${e.gi}\n│ ${uf}: "${uid}"\n│ URL原始: "${e.rawUrl}"\n│ URL规范: "${e.url}"\n│ 完整数据:\n${jsonBlock(e.item)}\n└─`;
+        return `┌─ 条目 #${i+1}\n│ 来源: ${e.fn}[${e.ii}]\n│ 所属分区: ${getPartNameByFi(e.fi)}\n│ 全局索引: ${e.gi}\n│ ${uf}: "${uid}"\n│ URL原始: "${e.rawUrl}"\n│ URL规范: "${e.url}"\n│ RELATED: "${e.related}"\n│ 完整数据:\n${jsonBlock(e.item)}\n└─`;
       }).join('\n\n');
-      log(`<span class="log-conflict-tag">⚠️ UID冲突 #${cc}</span> uid="<b>${esc(uid)}</b>" ${urls.size}个不同域名`,'conflict',`【冲突原因】相同UID但域名不同且名称相似\n\n【涉及的全部条目及完整数据】\n${entryDetails}`);
+      log(`<span class="log-conflict-tag">⚠️ UID冲突 #${cc}</span> uid="<b>${esc(uid)}</b>" ${urls.size}个不同域名`,'conflict',`【冲突原因】相同UID但域名不同，且名称相似或RELATED字段有共同链接\n\n【涉及的全部条目及完整数据】\n${entryDetails}`);
     }
     log(`UID冲突检测完成: ${cc}组真实冲突, ${skippedPlatform}组平台域名跳过, ${skippedSimilarity}组低相似度跳过, ${skippedWhitelist}组白名单跳过`,cc?'warn':'ok');
   }
@@ -499,7 +518,7 @@ function detectConflicts(){
       const u=String(r.item[uf]||'').trim();
       if(!url||!u)return;
       if(!sm[url])sm[url]=[];
-      sm[url].push({gi:r.gi,fi:r.fi,ii:r.ii,uid:u,fn:r.fn,item:r.item});
+      sm[url].push({gi:r.gi,fi:r.fi,ii:r.ii,uid:u,related:r.item['related']||'',fn:r.fn,item:r.item});
     });
     let scc=0,skippedPlatform=0,skippedSimilarity=0,skippedWhitelist=0;
     for(const[domain,entries]of Object.entries(sm)){
@@ -509,7 +528,7 @@ function detectConflicts(){
       if(isWhitelistedDomain(domain)){skippedWhitelist++;continue;}
       if(isPlatformDomain(domain)){
         skippedPlatform++;
-        log(`<span class="log-skip-tag">⏭️ 站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" (${uids.size}个UID)`,'skip',`【跳过原因】"${domain}" 是平台型域名`);
+        log(`<span class="log-skip-tag">站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" (${uids.size}个UID)`,'skip',`【跳过原因】"${domain}" 是平台型域名`);
         continue;
       }
       let hasRealConflict=false;
@@ -520,49 +539,76 @@ function detectConflicts(){
           if(check.same){hasRealConflict=true;conflictPairInfo=`触发配对: "${String(entries[i].item[nf]||'')}" vs "${String(entries[j].item[nf]||'')}" (${check.reason})`;break outer;}
         }
       }
+      if(!hasRealConflict && sf){
+        const relatedDomains = entries.map(e=>{
+          const related = String(e.item['related']||'');
+          if(!related) return new Set();
+          const links = related.split(/[,;，；\s]+/).filter(Boolean);
+          const domains = new Set();
+          links.forEach(link=>{
+            const dom=normUrl(link);
+            if(dom) domains.add(dom);
+          });
+          return domains;
+        });
+        let commonRelated = false;
+        outerLoop2: for(let i=0;i<relatedDomains.length;i++){
+          for(let j=i+1;j<relatedDomains.length;j++){
+            const intersection = [...relatedDomains[i]].filter(d=>relatedDomains[j].has(d));
+            if(intersection.length>0){
+              commonRelated = true;
+              break outerLoop2;
+            }
+          }
+        }
+        if(commonRelated) hasRealConflict = true;
+      }
       if(!hasRealConflict){
         skippedSimilarity++;
-        log(`<span class="log-skip-tag">⏭️ 站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" (${uids.size}个UID)`,'skip',`【跳过原因】名称差异较大，判定为同一站点下的不同资源页面`);
+        log(`<span class="log-skip-tag">⏭️ 站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" (${uids.size}个UID)`,'skip',`【跳过原因】名称差异较大且RELATED无共同链接，判定为同一站点下的不同资源页面`);
         continue;
       }
       scc++;
       entries.forEach(e=>sc.add(e.gi));
       S.issueGroups.siteConflicts.push({domain, items: entries});
       const entryDetails=entries.map((e,i)=>{
-        return `┌─ 条目 #${i+1}\n│ 来源: ${e.fn}[${e.ii}]\n│ 所属分区: ${getPartNameByFi(e.fi)}\n│ 全局索引: ${e.gi}\n│ ${uf}: "${e.uid}"\n│ 域名: "${domain}"\n│ 完整数据:\n${jsonBlock(e.item)}\n└─`;
+        return `┌─ 条目 #${i+1}\n│ 来源: ${e.fn}[${e.ii}]\n│ 所属分区: ${getPartNameByFi(e.fi)}\n│ 全局索引: ${e.gi}\n│ ${uf}: "${e.uid}"\n│ 域名: "${domain}"\n│ RELATED: "${e.related}"\n│ 完整数据:\n${jsonBlock(e.item)}\n└─`;
       }).join('\n\n');
-      log(`<span class="log-conflict-tag">⚠️ 站点冲突 #${scc}</span> 域名="<b>${esc(domain)}</b>" ${uids.size}个不同UID`,'conflict',`【冲突原因】相同域名但UID不同且名称相似\n${conflictPairInfo}\n\n【涉及的全部条目及完整数据】\n${entryDetails}`);
+      log(`<span class="log-conflict-tag">⚠️ 站点冲突 #${scc}</span> 域名="<b>${esc(domain)}</b>" ${uids.size}个不同UID`,'conflict',`【冲突原因】相同域名但UID不同，且名称相似或RELATED字段有共同链接\n${conflictPairInfo}\n\n【涉及的全部条目及完整数据】\n${entryDetails}`);
     }
     log(`站点冲突检测完成: ${scc}组真实冲突, ${skippedPlatform}组平台域名跳过, ${skippedSimilarity}组低相似度跳过, ${skippedWhitelist}组白名单跳过`,scc?'warn':'ok');
   }
 
-  log(`🔍 ── 同分区重复检测 ──`,'analysis',`匹配方式: partitionId + 除uid外所有字段的JSON序列化哈希(键排序)`);
+  log(`🔍 ── 同分区重复检测 ──`,'analysis',`条件: 同一分区内相同UID`);
   const dupMap=new Map();
   rows.forEach(r=>{
-    const clone={...r.item};
-    if(uf && clone[uf]!==undefined) delete clone[uf];
-    const sortedKeys=Object.keys(clone).sort();
-    const sortedObj={};
-    sortedKeys.forEach(k=>{sortedObj[k]=clone[k];});
-    const hash=JSON.stringify(sortedObj);
-    const key=`${r.pid}::${hash}`;
-    if(!dupMap.has(key)) dupMap.set(key,[]);
+    if(!uf)return;
+    const uid=String(r.item[uf]||'').trim();
+    if(!uid)return;
+    const key=`${r.pid}::${uid}`;
+    if(!dupMap.has(key))dupMap.set(key,[]);
     dupMap.get(key).push(r);
   });
   let dupGroups=0;
   for(const[key,group]of dupMap.entries()){
     if(group.length<=1) continue;
+    // 按非空字段数量降序排序，使字段最全的条目成为保留项
+    group.sort((a,b)=>{
+      const fa = Object.keys(a.item).filter(k => String(a.item[k]).trim() !== '').length;
+      const fb = Object.keys(b.item).filter(k => String(b.item[k]).trim() !== '').length;
+      return fb - fa;
+    });
     dupGroups++;
     group.forEach(r=>dupSet.add(r.gi));
     S.issueGroups.duplicates.push({partitionId: group[0].pid, key, items: group});
     const kept=group[0];
     const partName=getPartNameByFi(kept.fi);
     const entryDetails=group.map((r,i)=>{
-      return `┌─ ${i===0?'保留项 (UID最小)':'删除项'}\n│ 来源: ${r.fn}[${r.ii}]\n│ 所属分区: ${getPartNameByFi(r.fi)}\n│ 全局索引: ${r.gi}\n│ ${uf}: "${String(r.item[uf]||'')}"\n│ 完整数据:\n${jsonBlock(r.item)}\n└─`;
+      return `┌─ ${i===0?'保留项 (字段最全)':'重复项'}\n│ 来源: ${r.fn}[${r.ii}]\n│ 所属分区: ${getPartNameByFi(r.fi)}\n│ 全局索引: ${r.gi}\n│ ${uf}: "${String(r.item[uf]||'')}"\n│ 完整数据:\n${jsonBlock(r.item)}\n└─`;
     }).join('\n\n');
-    log(`<span class="log-conflict-tag">🗑️ 重复组 #${dupGroups}</span> 分区="${partName}" ${group.length}条`,'conflict',`【保留项】${kept.fn}[${kept.ii}] (分区:${getPartNameByFi(kept.fi)}) uid="${String(kept.item[uf]||'')}"\n\n【删除项】\n${group.slice(1).map(r=>`${r.fn}[${r.ii}] (分区:${getPartNameByFi(r.fi)}) uid="${String(r.item[uf]||'')}"`).join('\n')}\n\n完整数据详情:\n${entryDetails}`);
+    log(`<span class="log-conflict-tag">🗑️ 同分区UID重复 #${dupGroups}</span> 分区="${partName}" UID="${String(kept.item[uf]||'')}" ${group.length}条`,'conflict',`【保留项】${kept.fn}[${kept.ii}] (分区:${getPartNameByFi(kept.fi)}) uid="${String(kept.item[uf]||'')}"\n\n【重复项】\n${group.slice(1).map(r=>`${r.fn}[${r.ii}] (分区:${getPartNameByFi(r.fi)}) uid="${String(r.item[uf]||'')}"`).join('\n')}\n\n完整数据详情:\n${entryDetails}`);
   }
-  if(dupGroups===0) log(`✅ 同分区去重: 无重复数据`,'ok');
+  if(dupGroups===0) log(`同分区重复: 无重复数据`,'ok');
   else log(`同分区重复检测完成: ${dupGroups}组`,'analysis');
 
   S.conflicts={uid:uc, site:sc};
@@ -573,7 +619,6 @@ function detectConflicts(){
   runValidation();
 }
 
-// === Auto Process ===
 function startAutoProcessFromSelection(){
   if(S.selection.size===0){toast('请先在主表格中勾选需要处理的数据','wn');return;}
   const selectedGis = S.selection;
@@ -599,11 +644,17 @@ function showAutoProcessPreview(groups){
                   `重复组 #${idx+1} (分区="${getPartNameByFi(group.items[0].fi)}")`;
     html+=`<div class="preview-card"><div class="preview-card-header"><span class="preview-card-title">${esc(title)}</span></div>`;
     
-    // 收集所有字段
     const allFields = [...new Set(group.items.flatMap(it=>Object.keys(it.item)))];
-    // 判断是否需要字段选择（非重复组且存在除关键字段外的差异）
     let showFieldSelector = false;
-    if(type !== 'dup'){
+    if(type === 'dup'){
+      const fields = Object.keys(group.items[0].item);
+      const keyFields = [detectField(group.items.map(it=>it.item), UID_FIELDS)?.field];
+      for(const f of fields){
+        if(keyFields.includes(f)) continue;
+        const vals = new Set(group.items.map(it=>it.item[f]));
+        if(vals.size > 1){ showFieldSelector = true; break; }
+      }
+    } else {
       const keyFields = type==='uid' ? ['uid','url'] : ['uid','url'];
       for(const f of allFields){
         if(keyFields.includes(f)) continue;
@@ -612,19 +663,17 @@ function showAutoProcessPreview(groups){
       }
     }
 
-    // 表格开始
     html+=`<div class="preview-tbl-wrap"><table><thead><tr>`;
     html+=`<th style="width:40px">处理</th>`;
-    html+=`<th style="width:80px">分区</th>`; // 新增分区列
+    html+=`<th style="width:80px">分区</th>`; 
     allFields.forEach(f=>{html+=`<th data-field="${esc(f)}">${esc(f)}</th>`;});
     html+=`</tr>`;
 
-    // 如果启用字段选择，添加字段选择行
     if(showFieldSelector){
       html+=`<tr class="field-selector-row">`;
-      html+=`<td></td><td></td>`; // 处理列和分区列占位
+      html+=`<td></td><td></td>`; 
       allFields.forEach(f=>{
-        const keyFields = type==='uid' ? ['uid','url'] : ['uid','url'];
+        const keyFields = type==='uid' ? ['uid','url'] : (type==='site' ? ['uid','url'] : ['uid']);
         if(keyFields.includes(f)){
           html+=`<td><span style="color:var(--t3)">自动</span></td>`;
         } else {
@@ -646,7 +695,7 @@ function showAutoProcessPreview(groups){
       const isKept = (type==='dup' && i===0) || (type==='uid' && i===0) || (type==='site' && i===0);
       html+=`<tr style="${isKept?'opacity:0.6;':''}">`;
       html+=`<td>${isKept?'<span style="color:var(--t3)">-</span>':`<input type="checkbox" class="process-check" data-gi="${item.gi}" checked>`}</td>`;
-      html+=`<td style="font-size:11px">${esc(getPartNameByFi(item.fi))}</td>`; // 分区列
+      html+=`<td style="font-size:11px">${esc(getPartNameByFi(item.fi))}</td>`;
       allFields.forEach(f=>{
         const val=item.item[f];
         html+=`<td title="${esc(String(val??''))}">${esc(trunc(String(val??''),40))}</td>`;
@@ -655,8 +704,8 @@ function showAutoProcessPreview(groups){
     });
     html+=`</tbody></table></div></div>`;
   });
-  html+=`<div style="margin-top:12px;font-size:12px;color:var(--t3)">说明：勾选复选框表示将处理该项；字段选择仅适用于存在差异的冲突组。</div>`;
-  showModal('🪄 自动处理预览',html,`<button class="btn btn-o" onclick="closeModal()">取消</button><button class="btn btn-p" id="confirmAutoProcess">✅ 确认执行</button>`);
+  html+=`<div style="margin-top:12px;font-size:12px;color:var(--t3)">说明：首行的灰色条目为系统默认保留的，勾选复选框表示将删除该项，若不勾选将会保留并在下次扫描继续报警；字段选择仅适用于存在差异的冲突组。</div>`;
+  showModal('自动处理预览',html,`<button class="btn btn-o" onclick="closeModal()">取消</button><button class="btn btn-p" id="confirmAutoProcess">✅ 确认执行</button>`);
   
   document.getElementById('confirmAutoProcess').onclick=()=>{
     const checkedGis = new Set(Array.from(document.querySelectorAll('.process-check:checked')).map(cb=>Number(cb.dataset.gi)));
@@ -671,29 +720,26 @@ function showAutoProcessPreview(groups){
   };
 }
 
-function toggleFieldPreview(btn){
-  btn.classList.toggle('active');
-  const field=btn.dataset.field;
-  document.querySelectorAll(`.preview-tbl-wrap th[data-field="${field}"]`).forEach(th=>{
-    th.style.display=th.style.display==='none'?'':'none';
-  });
-  document.querySelectorAll(`.preview-tbl-wrap td[data-field="${field}"]`).forEach(td=>{
-    td.style.display=td.style.display==='none'?'':'none';
-  });
-}
-
 function executeAutoProcess(groups, checkedGis, fieldChoices = {}){
   const snapshot = JSON.parse(JSON.stringify(S.files));
   let totalUidUnify = 0, totalUidReassign = 0, totalDupDelete = 0, totalFieldUpdate = 0;
-  const uidField = detectField(S.files.flatMap(f => f.data), UID_FIELDS)?.field; // 全局 UID 字段
+  const uidField = detectField(S.files.flatMap(f => f.data), UID_FIELDS)?.field;
 
   groups.forEach(({type, group}) => {
     if (type === 'dup') {
+      const kept = group.items[0];
       const toDelete = group.items.filter(it => !it.isKept && checkedGis.has(it.gi));
+      if (Object.keys(fieldChoices).length > 0) {
+        Object.entries(fieldChoices).forEach(([field, value]) => {
+          if (field !== uidField) {
+            const fi = kept.fi, ii = kept.ii;
+            if (S.files[fi] && S.files[fi].data[ii]) S.files[fi].data[ii][field] = value;
+          }
+        });
+        totalFieldUpdate++;
+      }
       const deleteSet = new Set(toDelete.map(it => it.gi));
-      S.files.forEach(f => {
-        f.data = f.data.filter((_, ii) => !deleteSet.has(getGI(f, ii)));
-      });
+      S.files.forEach(f => { f.data = f.data.filter((_, ii) => !deleteSet.has(getGI(f, ii))); });
       totalDupDelete += toDelete.length;
     } else {
       const keyFields = type === 'uid' ? [uidField, 'url'] : [uidField, 'url'];
@@ -727,7 +773,6 @@ function executeAutoProcess(groups, checkedGis, fieldChoices = {}){
         });
         totalUidUnify += toChange.length;
       } else if (type === 'uid') {
-        // UID冲突：重新分配全局未使用的最小四位 UID
         const toReassign = group.items.filter(it => !it.isKept && checkedGis.has(it.gi));
         if (toReassign.length > 0) {
           const usedUids = new Set();
@@ -735,13 +780,11 @@ function executeAutoProcess(groups, checkedGis, fieldChoices = {}){
             if (item[uidField] !== undefined) usedUids.add(String(item[uidField]).trim());
           }));
           let newUidNum = 1;
-          toReassign.forEach(() => {
+          toReassign.forEach(it => {
             while (usedUids.has(String(newUidNum).padStart(4, '0'))) {
               newUidNum++;
             }
             const newUidStr = String(newUidNum).padStart(4, '0');
-            // 将该新 UID 分配给当前条目
-            const it = toReassign.shift(); // 注意：这样会修改数组，但无妨
             const fi = it.fi, ii = it.ii;
             if (S.files[fi] && S.files[fi].data[ii]) {
               S.files[fi].data[ii][uidField] = newUidStr;
@@ -749,14 +792,14 @@ function executeAutoProcess(groups, checkedGis, fieldChoices = {}){
             usedUids.add(newUidStr);
             newUidNum++;
           });
-          totalUidReassign += toReassign.length + (toReassign.length ? 0 : 0); // 因为已经 shift，长度变化，我们重新计算
+          totalUidReassign += toReassign.length;
         }
       }
     }
   });
 
   rebuildOffsets();
-  detectConflicts();   // 重新扫描
+  detectConflicts();
   refreshUI();
   saveState();
   const desc = `自动处理: 字段更新${totalFieldUpdate}条, UID统一${totalUidUnify}条, UID重分配${totalUidReassign}条, 删除重复${totalDupDelete}条`;
@@ -764,7 +807,6 @@ function executeAutoProcess(groups, checkedGis, fieldChoices = {}){
   toast(`✅ ${esc(desc)}`, 'ok', 5000, () => undoLast(snapshot));
 }
 
-// === History & Undo ===
 function addHistory(desc,snapshot){
   const entry={id:Date.now(),ts:new Date().toISOString(),desc,snapshot};
   S.history.unshift(entry);
@@ -780,7 +822,7 @@ function undoLast(snapshotOverride){
   S.files=JSON.parse(JSON.stringify(snap));
   if(!snapshotOverride&&S.history.length){const removed=S.history.shift();dbDeleteHistory(removed.id);}
   rebuildOffsets();detectConflicts();refreshUI();saveState();
-  toast('↩️ 已撤销','ok');
+  toast('已撤销','ok');
 }
 function showHistoryPanel(){
   let html='';
@@ -788,7 +830,7 @@ function showHistoryPanel(){
   else S.history.forEach(h=>{
     html+=`<div class="preview-item"><div class="pi-hd"><span style="font-size:12px;color:var(--t3)">${new Date(h.ts).toLocaleString()}</span><button class="btn btn-o btn-sm" onclick="undoFromHistory('${h.id}')" title="撤销此步操作">↩️ 撤销</button></div><div style="font-size:13px">${esc(h.desc)}</div></div>`;
   });
-  showModal('📜 操作历史',html,'<button class="btn btn-o" onclick="closeModal()">关闭</button>');
+  showModal('操作历史',html,'<button class="btn btn-o" onclick="closeModal()">关闭</button>');
 }
 async function undoFromHistory(id){
   const entry=S.history.find(h=>h.id==id);if(!entry)return;
@@ -813,7 +855,6 @@ function batchDelete(){
   toast(`✅ ${esc(desc)}`,'ok',5000,()=>undoLast(snapshot));
 }
 
-// === UI Rendering ===
 function refreshUI(){renderPartitions();renderFileBar();detectAllFields();renderTable();updateStats();updateDropZone();}
 function updateDropZone(){const dz=document.getElementById('dropZone');if(S.files.length>0)dz.classList.add('compact');else dz.classList.remove('compact');}
 function renderPartitions(){
@@ -832,7 +873,6 @@ function renderPartitions(){
     </div>`;
   });
   el.innerHTML=h;
-  // 绑定眼睛按钮事件
   el.querySelectorAll('.eye-btn').forEach(btn=>{
     btn.addEventListener('click',(e)=>{
       e.stopPropagation();
@@ -918,7 +958,6 @@ function updateStats(){
   document.getElementById('statsValidation').textContent=`违规: ${valC}`;
 }
 
-// === File Handling ===
 function matchFileToPartition(filename){const base=filename.replace(/\.[^.]+$/,'').toLowerCase().trim();if(FILE_PARTITION_MAP[base])return{matched:true,partition:FILE_PARTITION_MAP[base],rule:`精确匹配: "${base}" → "${FILE_PARTITION_MAP[base]}"`};const norm=base.replace(/[-_\s]+/g,'');for(const[k,p]of Object.entries(FILE_PARTITION_MAP)){if(k.replace(/[-_\s]+/g,'')===norm)return{matched:true,partition:p,rule:`模糊匹配: "${base}"→"${norm}" ≈ "${k}" → "${p}"`};}return{matched:false,partition:null,rule:`未匹配: "${base}" 无对应映射`};}
 async function handleFileSelect(e){const fs=Array.from(e.target.files);e.target.value='';if(fs.length)await processFiles(fs);}
 async function processFiles(fileList){
@@ -953,7 +992,6 @@ async function processFiles(fileList){
   rebuildOffsets();await saveState();detectConflicts();refreshUI();
 }
 
-// === Editor ===
 function openEd(fi,ii){
   const item=S.files[fi].data[ii];
   S.editing={fi,ii,orig:item,item:{...item}};
@@ -1001,7 +1039,6 @@ async function saveEditor(){
   addHistory(`编辑条目 ${S.files[fi].name}[${ii}]`,snapshot);toast('✅ 已保存','ok');
 }
 
-// === Whitelist ===
 function showWhitelistModal(){
   let html=`<div class="fg"><label>忽略域名白名单（以下域名将被完全忽略，不参与任何检测）</label></div>`;
   html+=`<div id="whitelistList" style="margin-bottom:12px">`;
@@ -1041,19 +1078,17 @@ function removeWhitelistDomain(idx){
   detectConflicts();refreshUI();
 }
 
-// === Help ===
 function showAutoProcessHelp(){
   const body=`<div style="line-height:2;font-size:13px">
-    <h4 style="color:var(--ac);margin-bottom:8px">🪄 自动处理逻辑</h4>
-    <p><b>1. UID冲突（同UID不同站）</b><br>当多个条目具有相同UID但域名不同且名称相似时，系统将它们识别为同一实体但错误地分配了相同UID。自动处理时，保留一个站点的原UID，其余站点条目分配全局未使用的最小UID。</p>
-    <p style="margin-top:12px"><b>2. 站点冲突（同站不同UID）</b><br>当多个条目具有相同域名但UID不同且名称相似时，系统将它们识别为同一实体但存在重复条目。自动处理时，将UID统一为该组内数值最小的UID；若条目间存在其他字段差异，用户可通过字段选择合成最终条目。</p>
-    <p style="margin-top:12px"><b>3. 同分区重复</b><br>在同一分区内，除UID外所有字段完全一致的条目被视为重复。自动处理时，保留UID最小的条目，删除其余重复项。</p>
+    <h4 style="color:var(--ac);margin-bottom:8px">自动处理逻辑</h4>
+    <p><b>1. UID冲突（同UID不同站）</b><br>多个条目具有相同UID但域名不同，且名称相似度达到阈值（≥35%）或RELATED字段有共同链接时，系统判定它们为同一网站的不同域名，但错误地使用了相同的UID。自动处理时，保留一个站点的原UID，其余站点条目重新分配一个全局未使用的最小四位UID。</p>
+    <p style="margin-top:12px"><b>2. 站点冲突（同站不同UID）</b><br>多个条目具有相同域名但UID不同，且名称相似度达到阈值或RELATED字段有共同链接时，系统判定它们为同一实体的重复记录。自动处理时，将UID统一为组内数值最小的UID（保留四位格式）；若条目间存在其他字段差异，用户可通过字段选择合并最终条目。</p>
+    <p style="margin-top:12px"><b>3. 同分区重复</b><br>在同一分区内，相同UID的条目被视为重复。自动处理时，保留一个条目（默认为第一个），用户可通过字段选择合并其他条目的差异化字段，然后删除多余条目。</p>
     <p style="margin-top:12px"><b>4. 选择性处理</b><br>在主表格中勾选需要处理的条目后点击“自动处理”，系统会弹出预览，仅对勾选的待处理项执行操作。所有操作支持撤销。</p>
   </div>`;
   showModal('❓ 自动处理说明',body,'<button class="btn btn-p" onclick="closeModal()">我知道了</button>');
 }
 
-// === Misc ===
 function selPart(n){S.activePartition=n;S.page=1;saveState();refreshUI();}
 function toggleSort(f){if(S.sortField===f)S.sortDir=S.sortDir==='asc'?'desc':'asc';else{S.sortField=f;S.sortDir='asc';}renderTable();}
 function goPg(p){S.page=p;renderTable();document.getElementById('tableContainer').scrollTop=0;}
