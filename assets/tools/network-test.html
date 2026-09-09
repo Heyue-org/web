@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网络质量测试</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: #ffffff;
+            max-width: 900px;
+            width: 100%;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 24px;
+            border-left: 3px solid #3b82f6;
+            padding-left: 14px;
+            background: #f8fafc;
+            border-radius: 0 6px 6px 0;
+            padding: 8px 16px;
+        }
+        .subtitle code {
+            background: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #1e293b;
+            word-break: break-all;
+        }
+
+        .control-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .control-bar input {
+            flex: 1;
+            min-width: 240px;
+            padding: 10px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+            background: #f8fafc;
+        }
+        .control-bar input:focus {
+            border-color: #3b82f6;
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .control-bar select {
+            padding: 10px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 10px;
+            background: #f8fafc;
+            font-size: 14px;
+            outline: none;
+        }
+        .btn {
+            padding: 10px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.15s;
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        .btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-outline {
+            background: transparent;
+            color: #475569;
+            box-shadow: none;
+            border: 1.5px solid #e2e8f0;
+        }
+        .btn-outline:hover {
+            background: #f1f5f9;
+        }
+
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 8px 0;
+        }
+        .progress-wrapper progress {
+            flex: 1;
+            height: 8px;
+            border-radius: 4px;
+            appearance: none;
+            -webkit-appearance: none;
+            background: #e2e8f0;
+        }
+        .progress-wrapper progress::-webkit-progress-bar {
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+        .progress-wrapper progress::-webkit-progress-value {
+            background: #3b82f6;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .progress-wrapper progress::-moz-progress-bar {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+        .progress-text {
+            font-size: 14px;
+            color: #475569;
+            min-width: 70px;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: #f8fafc;
+            padding: 16px 12px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        .stat-card.good .stat-value {
+            color: #10b981;
+        }
+        .stat-card.bad .stat-value {
+            color: #ef4444;
+        }
+        .stat-card.warn .stat-value {
+            color: #f59e0b;
+        }
+
+        .log-area {
+            background: #0f172a;
+            border-radius: 12px;
+            padding: 16px 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Menlo', 'Cascadia Code', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #e2e8f0;
+            margin-bottom: 16px;
+        }
+        .log-area .line {
+            display: flex;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding: 2px 0;
+        }
+        .log-area .idx {
+            color: #64748b;
+            min-width: 40px;
+        }
+        .log-area .ok {
+            color: #34d399;
+        }
+        .log-area .err {
+            color: #f87171;
+        }
+        .log-area .info {
+            color: #60a5fa;
+        }
+        .log-area .warn {
+            color: #fbbf24;
+        }
+
+        .result-summary {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .score-box {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .score-box span {
+            background: #0f172a;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 40px;
+        }
+        .tag {
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .notice {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 13px;
+            color: #1e40af;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 16px;
+            }
+            .control-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .progress-wrapper {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌐 网络质量测试</h1>
+    <div class="subtitle">
+        目标服务器：<code id="displayUrl">https://heyue-rating-worker.heyue-rating-api.workers.dev</code>
+    </div>
+
+    <div class="notice">
+        只要请求没有报错就代表网络可达，无法读取返回的状态码和内容属正常情况。
+    </div>
+
+    <div class="control-bar">
+        <input type="text" id="targetUrl" value="https://heyue-rating-worker.heyue-rating-api.workers.dev"
+               placeholder="输入 Worker 地址">
+        <select id="testCount">
+            <option value="5">5 次</option>
+            <option value="8" selected>8 次 (推荐)</option>
+            <option value="12">12 次</option>
+            <option value="20">20 次 (深度)</option>
+        </select>
+        <button class="btn" id="startBtn" onclick="startDiagnosis()">开始诊断</button>
+        <button class="btn btn-outline" onclick="clearLogs()">清空日志</button>
+    </div>
+
+    <div class="progress-wrapper">
+        <progress id="progressBar" value="0" max="100"></progress>
+        <span class="progress-text" id="progressText">0%</span>
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-value" id="sAvg">-</div><div class="stat-label">平均延迟 (ms)</div></div>
+        <div class="stat-card"><div class="stat-value" id="sMin">-</div><div class="stat-label">最低延迟</div></div>
+        <div class="stat-card"><div class="stat-value" id="sMax">-</div><div class="stat-label">最高延迟</div></div>
+        <div class="stat-card"><div class="stat-value" id="sLoss">-</div><div class="stat-label">丢包率 (失败率)</div></div>
+        <div class="stat-card"><div class="stat-value" id="sScore">-</div><div class="stat-label">综合评分</div></div>
+        <div class="stat-card"><div class="stat-value" id="sStability">-</div><div class="stat-label">波动 (标准差)</div></div>
+    </div>
+
+    <div class="log-area" id="logArea">
+        <div class="line"><span class="info">点击「开始诊断」测试网络质量</span></div>
+    </div>
+
+    <div class="result-summary">
+        <div class="score-box" id="finalVerdict">等待测试...</div>
+        <div class="tag" id="detailInfo">基于 no-cors HEAD 请求测量连通性延迟</div>
+    </div>
+</div>
+
+<script>
+    let isRunning = false;
+
+    function log(message, type = 'info') {
+        const area = document.getElementById('logArea');
+        const line = document.createElement('div');
+        line.className = 'line';
+        const idx = area.children.length;
+        const time = new Date().toLocaleTimeString();
+        const cls = type === 'ok' ? 'ok' : type === 'err' ? 'err' : type === 'warn' ? 'warn' : 'info';
+        line.innerHTML = `<span class="idx">#${idx}</span><span class="${cls}">${time} · ${message}</span>`;
+        area.appendChild(line);
+        area.scrollTop = area.scrollHeight;
+    }
+
+    function clearLogs() {
+        const area = document.getElementById('logArea');
+        area.innerHTML = `<div class="line"><span class="info">日志已清空</span></div>`;
+        ['sAvg','sMin','sMax','sLoss','sScore','sStability'].forEach(id => document.getElementById(id).textContent = '-');
+        document.getElementById('finalVerdict').textContent = '等待测试...';
+        document.getElementById('progressBar').value = 0;
+        document.getElementById('progressText').textContent = '0%';
+    }
+
+    function updateStats(latencies, errors) {
+        const total = latencies.length + errors.length;
+        const loss = total > 0 ? (errors.length / total * 100) : 0;
+
+        let avg = '-', min = '-', max = '-', stdev = '-';
+        if (latencies.length > 0) {
+            const sum = latencies.reduce((a,b) => a + b, 0);
+            avg = (sum / latencies.length).toFixed(2);
+            min = Math.min(...latencies).toFixed(2);
+            max = Math.max(...latencies).toFixed(2);
+            if (latencies.length > 1) {
+                const mean = sum / latencies.length;
+                const sqDiff = latencies.reduce((a,b) => a + (b - mean) ** 2, 0);
+                stdev = Math.sqrt(sqDiff / (latencies.length - 1)).toFixed(2);
+            } else {
+                stdev = '0.00';
+            }
+        }
+
+        document.getElementById('sAvg').textContent = avg !== '-' ? avg : '∞';
+        document.getElementById('sMin').textContent = min;
+        document.getElementById('sMax').textContent = max;
+        document.getElementById('sLoss').textContent = loss.toFixed(1) + '%';
+        document.getElementById('sStability').textContent = stdev;
+
+        let score = 0;
+        const avgNum = parseFloat(avg);
+        if (!isNaN(avgNum) && avgNum > 0) {
+            if (avgNum < 80) score += 40;
+            else if (avgNum < 150) score += 30;
+            else if (avgNum < 300) score += 15;
+            else score += 5;
+        }
+        if (loss < 1) score += 30;
+        else if (loss < 5) score += 20;
+        else if (loss < 15) score += 10;
+        if (latencies.length === total && total > 3) score += 30;
+        else if (total > 0 && latencies.length / total >= 0.7) score += 15;
+
+        document.getElementById('sScore').textContent = score + '分';
+
+        const verdict = document.getElementById('finalVerdict');
+        let color = '#64748b';
+        let text = '数据不足';
+        if (total > 2) {
+            if (score >= 80) { text = '✅ 优秀 · 非常适合运营'; color = '#10b981'; }
+            else if (score >= 60) { text = '⚠️ 良好 · 偶尔波动可接受'; color = '#f59e0b'; }
+            else { text = '❌ 较差 · 建议更换网络环境'; color = '#ef4444'; }
+        }
+        verdict.innerHTML = `<span style="background:${color};color:white;padding:4px 16px;border-radius:40px;font-size:16px;">${text}</span>`;
+    }
+
+    async function startDiagnosis() {
+        if (isRunning) return;
+        const btn = document.getElementById('startBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ 测试中...';
+        isRunning = true;
+
+        const area = document.getElementById('logArea');
+        area.innerHTML = `<div class="line"><span class="info">⏳ 正在连接目标服务器...</span></div>`;
+
+        const url = document.getElementById('targetUrl').value.trim();
+        const count = parseInt(document.getElementById('testCount').value);
+        if (!url) {
+            log('❌ 请输入有效的 URL', 'err');
+            btn.disabled = false;
+            btn.textContent = '🚀 开始诊断';
+            isRunning = false;
+            return;
+        }
+
+        document.getElementById('displayUrl').textContent = url;
+
+        const latencies = [];
+        const errors = [];
+
+        try {
+            const baseUrl = new URL(url);
+            log(`🌐 目标主机: ${baseUrl.hostname} (端口 ${baseUrl.port || (baseUrl.protocol === 'https:' ? 443 : 80)})`, 'info');
+            log(`📊 测试轮次: ${count} 次`, 'info');
+            log(`🔧 模式: no-cors HEAD（不读取响应内容，仅测连通性）`, 'info');
+        } catch (e) {
+            log(`❌ URL 格式错误: ${e.message}`, 'err');
+            btn.disabled = false;
+            btn.textContent = '🚀 开始诊断';
+            isRunning = false;
+            return;
+        }
+
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+
+        for (let i = 1; i <= count; i++) {
+            if (!isRunning) break;
+
+            const startTime = performance.now();
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+                const res = await fetch(url, {
+                    method: 'HEAD',
+                    cache: 'no-store',
+                    mode: 'no-cors',
+                    redirect: 'follow',
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                const endTime = performance.now();
+                const elapsed = endTime - startTime;
+
+                latencies.push(elapsed);
+                log(`第 ${i}/${count} 轮: ✅ 连通 · 耗时 ${elapsed.toFixed(2)} ms`, 'ok');
+
+                try {
+                    const entries = performance.getEntriesByName(url, 'resource');
+                    if (entries.length > 0) {
+                        const last = entries[entries.length - 1];
+                        const dns = last.domainLookupEnd - last.domainLookupStart;
+                        const tcp = last.connectEnd - last.connectStart;
+                        const ssl = last.secureConnectionStart > 0 ? (last.connectEnd - last.secureConnectionStart) : 0;
+                        const ttfb = last.responseStart - last.requestStart;
+                        const parts = [];
+                        if (dns > 0) parts.push(`DNS: ${dns.toFixed(0)}ms`);
+                        if (tcp > 0) parts.push(`TCP: ${tcp.toFixed(0)}ms`);
+                        if (ssl > 0) parts.push(`SSL: ${ssl.toFixed(0)}ms`);
+                        if (ttfb > 0) parts.push(`TTFB: ${ttfb.toFixed(0)}ms`);
+                        if (parts.length > 0) {
+                            log(`   ${parts.join(' | ')}`, 'info');
+                        }
+                    }
+                } catch (e) {}
+
+            } catch (err) {
+                const endTime = performance.now();
+                const elapsed = endTime - startTime;
+                const errorMsg = err.name === 'AbortError' ? '超时 (15s)' : (err.message || '请求失败');
+                errors.push(elapsed);
+                log(`第 ${i}/${count} 轮: ❌ 失败 (${errorMsg}) 耗时 ${elapsed.toFixed(0)}ms`, 'err');
+            }
+
+            const percent = Math.round((i / count) * 100);
+            progressBar.value = percent;
+            progressText.textContent = percent + '%';
+
+            updateStats(latencies, errors);
+
+            if (i < count) {
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        }
+
+        log('📋 测试完成！', 'info');
+        updateStats(latencies, errors);
+
+        if (latencies.length === 0 && errors.length > 0) {
+            log('💡 提示：全部请求失败，请检查网络、代理或目标地址是否可达', 'warn');
+        }
+
+        btn.disabled = false;
+        btn.textContent = '🔄 重新测试';
+        isRunning = false;
+    }
+
+    window.onload = function() {
+        const defaultUrl = 'https://heyue-rating-worker.heyue-rating-api.workers.dev';
+        document.getElementById('targetUrl').value = defaultUrl;
+        document.getElementById('displayUrl').textContent = defaultUrl;
+        log('输入目标 URL 后点击「开始诊断」', 'info');
+        log(`默认地址为 Worker 根路径，测试连通性`, 'info');
+        document.getElementById('progressBar').value = 0;
+        document.getElementById('progressText').textContent = '0%';
+    };
+</script>
+</body>
+</html>
