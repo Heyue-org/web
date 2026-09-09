@@ -1,1059 +1,1155 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="dark">
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSON 数据维护器 - 合月亭</title>
-    <style>
-        :root {
-            --bg-dark: #0f172a;
-            --bg-card: rgba(30, 41, 59, 0.7);
-            --bg-card-solid: #1e293b;
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --accent-gold: #fbbf24;
-            --border-color: rgba(255, 255, 255, 0.1);
-            --green: #34d399;
-            --green-bg: rgba(52, 211, 153, 0.1);
-            --green-border: rgba(52, 211, 153, 0.3);
-            --red: #f87171;
-            --red-bg: rgba(248, 113, 113, 0.1);
-            --red-border: rgba(248, 113, 113, 0.3);
-            --blue: #60a5fa;
-            --blue-bg: rgba(96, 165, 250, 0.1);
-            --blue-border: rgba(96, 165, 250, 0.3);
-            --orange: #fb923c;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-main);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-        .top-bar {
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--border-color);
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 100;
-        }
-        .top-bar h1 {
-            font-size: 1.4rem; font-weight: 700;
-            color: var(--accent-gold); letter-spacing: 2px;
-        }
-        .top-bar .subtitle {
-            font-size: 0.8rem; color: var(--text-sub);
-            margin-left: 1rem;
-        }
-        .container {
-            max-width: 1200px; margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* ===== Upload Section ===== */
-        .upload-section {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 1.5rem; margin-bottom: 1.5rem;
-        }
-        .upload-zone {
-            border: 2px dashed var(--border-color);
-            border-radius: 12px; padding: 2rem;
-            text-align: center; cursor: pointer;
-            transition: all 0.3s; position: relative;
-            min-height: 140px; display: flex;
-            flex-direction: column; align-items: center;
-            justify-content: center;
-        }
-        .upload-zone:hover { border-color: var(--accent-gold); background: rgba(251, 191, 36, 0.05); }
-        .upload-zone.loaded {
-            border-color: var(--green); border-style: solid;
-            background: var(--green-bg);
-        }
-        .upload-zone .icon { font-size: 2rem; margin-bottom: 0.5rem; }
-        .upload-zone .label {
-            font-size: 1rem; font-weight: 600;
-            margin-bottom: 0.3rem;
-        }
-        .upload-zone .hint {
-            font-size: 0.8rem; color: var(--text-sub);
-        }
-        .upload-zone .file-info {
-            margin-top: 0.5rem; font-size: 0.8rem;
-            color: var(--green); font-weight: 600;
-        }
-        .upload-zone input[type="file"] {
-            position: absolute; inset: 0;
-            opacity: 0; cursor: pointer;
-        }
-
-        /* ===== Compare Button ===== */
-        .compare-btn {
-            display: block; width: 100%; max-width: 300px;
-            margin: 0 auto 2rem; padding: 0.8rem 2rem;
-            background: var(--accent-gold); color: #0f172a;
-            border: none; border-radius: 8px;
-            font-size: 1rem; font-weight: 700;
-            cursor: pointer; transition: all 0.3s;
-            letter-spacing: 1px;
-        }
-        .compare-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3); }
-        .compare-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-
-        /* ===== Summary ===== */
-        .summary-bar {
-            display: none; grid-template-columns: repeat(4, 1fr);
-            gap: 1rem; margin-bottom: 1.5rem;
-        }
-        .summary-bar.show { display: grid; }
-        .summary-item {
-            padding: 1rem; border-radius: 10px;
-            text-align: center; border: 1px solid;
-        }
-        .summary-item .num {
-            font-size: 1.8rem; font-weight: 800;
-            line-height: 1.2;
-        }
-        .summary-item .desc {
-            font-size: 0.8rem; color: var(--text-sub);
-            margin-top: 0.2rem;
-        }
-        .summary-added { background: var(--green-bg); border-color: var(--green-border); }
-        .summary-added .num { color: var(--green); }
-        .summary-removed { background: var(--red-bg); border-color: var(--red-border); }
-        .summary-removed .num { color: var(--red); }
-        .summary-modified { background: var(--blue-bg); border-color: var(--blue-border); }
-        .summary-modified .num { color: var(--blue); }
-        .summary-unchanged { background: rgba(148, 163, 184, 0.1); border-color: rgba(148, 163, 184, 0.2); }
-        .summary-unchanged .num { color: var(--text-sub); }
-
-        /* ===== Tabs ===== */
-        .tabs {
-            display: none; gap: 0; margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .tabs.show { display: flex; }
-        .tab-btn {
-            padding: 0.7rem 1.5rem; background: none;
-            border: none; color: var(--text-sub);
-            font-size: 0.95rem; cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s; font-weight: 600;
-        }
-        .tab-btn:hover { color: var(--text-main); }
-        .tab-btn.active { color: var(--accent-gold); border-bottom-color: var(--accent-gold); }
-        .tab-btn .badge {
-            display: inline-block; padding: 0.1rem 0.5rem;
-            border-radius: 10px; font-size: 0.75rem;
-            margin-left: 0.4rem; font-weight: 700;
-        }
-        .tab-btn.tab-added .badge { background: var(--green-bg); color: var(--green); }
-        .tab-btn.tab-removed .badge { background: var(--red-bg); color: var(--red); }
-        .tab-btn.tab-modified .badge { background: var(--blue-bg); color: var(--blue); }
-
-        /* ===== Batch Actions ===== */
-        .batch-actions {
-            display: none; align-items: center;
-            gap: 0.8rem; margin-bottom: 1rem;
-            padding: 0.6rem 1rem; border-radius: 8px;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid var(--border-color);
-        }
-        .batch-actions.show { display: flex; }
-        .batch-actions .label {
-            font-size: 0.85rem; color: var(--text-sub);
-            margin-right: auto;
-        }
-        .batch-btn {
-            padding: 0.4rem 1rem; border-radius: 6px;
-            font-size: 0.82rem; font-weight: 600;
-            cursor: pointer; border: 1px solid;
-            transition: all 0.2s; background: none;
-        }
-        .batch-btn.accept-all {
-            color: var(--green); border-color: var(--green-border);
-        }
-        .batch-btn.accept-all:hover { background: var(--green-bg); }
-        .batch-btn.reject-all {
-            color: var(--red); border-color: var(--red-border);
-        }
-        .batch-btn.reject-all:hover { background: var(--red-bg); }
-
-        /* ===== Diff Items ===== */
-        .diff-section { display: none; }
-        .diff-section.active { display: block; }
-        .diff-empty {
-            text-align: center; padding: 3rem;
-            color: var(--text-sub); font-size: 0.95rem;
-        }
-        .diff-item {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 10px; margin-bottom: 0.8rem;
-            overflow: hidden; transition: border-color 0.3s;
-        }
-        .diff-item.accepted { border-color: var(--green-border); }
-        .diff-item.rejected { border-color: var(--red-border); opacity: 0.6; }
-        .diff-item-header {
-            display: flex; align-items: center;
-            padding: 0.8rem 1.2rem; cursor: pointer;
-            gap: 0.8rem; user-select: none;
-        }
-        .diff-item-header:hover { background: rgba(255,255,255,0.03); }
-        .diff-item .expand-arrow {
-            font-size: 0.7rem; color: var(--text-sub);
-            transition: transform 0.2s; flex-shrink: 0;
-        }
-        .diff-item.expanded .expand-arrow { transform: rotate(90deg); }
-        .diff-item .item-name {
-            font-weight: 700; font-size: 0.95rem;
-            flex: 1; min-width: 0; overflow: hidden;
-            text-overflow: ellipsis; white-space: nowrap;
-        }
-        .diff-item .item-uid {
-            font-size: 0.75rem; color: var(--text-sub);
-            font-family: 'Fira Code', 'Consolas', monospace;
-            flex-shrink: 0;
-        }
-        .diff-item .status-badge {
-            padding: 0.2rem 0.7rem; border-radius: 6px;
-            font-size: 0.75rem; font-weight: 700;
-            flex-shrink: 0; letter-spacing: 0.5px;
-        }
-        .status-badge.pending { background: rgba(148, 163, 184, 0.15); color: var(--text-sub); }
-        .status-badge.accept { background: var(--green-bg); color: var(--green); }
-        .status-badge.reject { background: var(--red-bg); color: var(--red); }
-        .diff-item-body {
-            display: none; padding: 0 1.2rem 1rem;
-            border-top: 1px solid var(--border-color);
-        }
-        .diff-item.expanded .diff-item-body { display: block; }
-
-        /* ===== Field Diff ===== */
-        .field-diff {
-            display: grid; grid-template-columns: 80px 1fr 1fr;
-            gap: 0; font-size: 0.82rem;
-            margin-top: 0.5rem; border-radius: 6px;
-            overflow: hidden; border: 1px solid var(--border-color);
-        }
-        .field-diff .fd-header {
-            background: rgba(255,255,255,0.05);
-            padding: 0.4rem 0.6rem; font-weight: 700;
-            font-size: 0.75rem; color: var(--text-sub);
-        }
-        .field-diff .fd-label {
-            padding: 0.4rem 0.6rem; font-weight: 600;
-            color: var(--text-sub); background: rgba(255,255,255,0.02);
-            border-top: 1px solid var(--border-color);
-            display: flex; align-items: center;
-        }
-        .field-diff .fd-old, .field-diff .fd-new {
-            padding: 0.4rem 0.6rem; word-break: break-all;
-            border-top: 1px solid var(--border-color);
-        }
-        .fd-old.changed { background: var(--red-bg); }
-        .fd-new.changed { background: var(--green-bg); }
-        .fd-old.empty { color: var(--text-sub); font-style: italic; }
-        .fd-new.empty { color: var(--text-sub); font-style: italic; }
-
-        /* ===== New Item Preview ===== */
-        .preview-card {
-            margin-top: 0.5rem; padding: 0.8rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: 6px; font-size: 0.82rem;
-            border: 1px solid var(--border-color);
-        }
-        .preview-row {
-            display: flex; gap: 0.5rem;
-            padding: 0.2rem 0;
-        }
-        .preview-row .pk {
-            color: var(--text-sub); font-weight: 600;
-            min-width: 60px; flex-shrink: 0;
-        }
-        .preview-row .pv { word-break: break-all; }
-
-        /* ===== Extra Fields Notice ===== */
-        .extra-fields {
-            margin-top: 0.5rem; padding: 0.5rem 0.8rem;
-            background: rgba(251, 191, 36, 0.08);
-            border: 1px dashed rgba(251, 191, 36, 0.3);
-            border-radius: 6px; font-size: 0.78rem;
-            color: var(--orange);
-        }
-
-        /* ===== Item Action Buttons ===== */
-        .item-actions {
-            display: flex; gap: 0.5rem;
-            margin-top: 0.8rem; padding-top: 0.6rem;
-            border-top: 1px dashed var(--border-color);
-        }
-        .item-btn {
-            padding: 0.4rem 1.2rem; border-radius: 6px;
-            font-size: 0.82rem; font-weight: 600;
-            cursor: pointer; border: 1px solid;
-            transition: all 0.2s; background: none;
-        }
-        .item-btn.btn-accept { color: var(--green); border-color: var(--green-border); }
-        .item-btn.btn-accept:hover { background: var(--green-bg); }
-        .item-btn.btn-accept.active { background: var(--green); color: #fff; border-color: var(--green); }
-        .item-btn.btn-reject { color: var(--red); border-color: var(--red-border); }
-        .item-btn.btn-reject:hover { background: var(--red-bg); }
-        .item-btn.btn-reject.active { background: var(--red); color: #fff; border-color: var(--red); }
-
-        /* ===== Export Section ===== */
-        .export-section {
-            display: none; margin-top: 2rem;
-            padding: 1.5rem; border-radius: 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-        }
-        .export-section.show { display: block; }
-        .export-section h3 {
-            font-size: 1.1rem; color: var(--accent-gold);
-            margin-bottom: 1rem;
-        }
-        .export-stats {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 0.8rem; margin-bottom: 1rem;
-            font-size: 0.85rem;
-        }
-        .export-stat {
-            padding: 0.6rem; border-radius: 6px;
-            background: rgba(255,255,255,0.03);
-            text-align: center;
-        }
-        .export-stat .es-num {
-            font-size: 1.4rem; font-weight: 800;
-        }
-        .export-stat .es-label {
-            font-size: 0.75rem; color: var(--text-sub);
-        }
-        .export-btn {
-            display: block; width: 100%; padding: 0.8rem;
-            background: var(--green); color: #fff;
-            border: none; border-radius: 8px;
-            font-size: 1rem; font-weight: 700;
-            cursor: pointer; transition: all 0.3s;
-            margin-top: 0.5rem;
-        }
-        .export-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(52, 211, 153, 0.3); }
-        .export-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-        .export-warn {
-            margin-top: 0.5rem; padding: 0.5rem 0.8rem;
-            background: var(--red-bg); border: 1px solid var(--red-border);
-            border-radius: 6px; font-size: 0.82rem; color: var(--red);
-            display: none;
-        }
-        .export-warn.show { display: block; }
-
-        /* ===== No Change Banner ===== */
-        .no-change-banner {
-            display: none; text-align: center;
-            padding: 2rem; margin-bottom: 1.5rem;
-            background: var(--green-bg);
-            border: 1px solid var(--green-border);
-            border-radius: 12px;
-        }
-        .no-change-banner.show { display: block; }
-        .no-change-banner .big { font-size: 2rem; margin-bottom: 0.5rem; }
-        .no-change-banner .msg { color: var(--green); font-weight: 600; font-size: 1.1rem; }
-
-        /* ===== Settings Row ===== */
-        .settings-row {
-            display: flex; gap: 1rem; align-items: center;
-            margin-bottom: 1.5rem; flex-wrap: wrap;
-            padding: 0.8rem 1rem; border-radius: 8px;
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid var(--border-color);
-            font-size: 0.85rem;
-        }
-        .settings-row label {
-            display: flex; align-items: center;
-            gap: 0.4rem; cursor: pointer;
-            color: var(--text-sub);
-        }
-        .settings-row input[type="checkbox"] {
-            accent-color: var(--accent-gold);
-        }
-
-        @media (max-width: 768px) {
-            .upload-section { grid-template-columns: 1fr; }
-            .summary-bar { grid-template-columns: repeat(2, 1fr); }
-            .container { padding: 1rem; }
-            .top-bar { padding: 0.8rem 1rem; }
-            .top-bar h1 { font-size: 1.1rem; }
-            .top-bar .subtitle { display: none; }
-            .field-diff { grid-template-columns: 60px 1fr 1fr; font-size: 0.75rem; }
-            .export-stats { grid-template-columns: 1fr; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据管理器</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg0:#0f1117;--bg1:#1a1d27;--bg2:#242836;--bg3:#2d3244;--bg4:#363b50;
+  --bd:#2e3348;--bd2:#3a3f55;
+  --t1:#e4e6f0;--t2:#9498b0;--t3:#6b7094;
+  --ac:#6c8cff;--ac2:#8aa4ff;--acd:rgba(108,140,255,.15);
+  --dg:#ff5c6c;--dgd:rgba(255,92,108,.15);
+  --wn:#ffb347;--wnd:rgba(255,179,71,.15);
+  --ok:#4ecdc4;--okd:rgba(78,205,196,.15);
+  --lg:#a78bfa;--lgd:rgba(167,139,250,.15);
+  --cf:#ff4444;--cfd:rgba(255,68,68,.12);
+  --hl-uid:#ff6b9d;--hl-uid-bg:rgba(255,107,157,.12);
+  --hl-site:#c084fc;--hl-site-bg:rgba(192,132,252,.12);
+  --hl-dup:#4ecdc4;--hl-dup-bg:rgba(78,205,196,.12);
+  --val-err:#ffb347;--val-err-bg:rgba(255,179,71,.1);
+  --r:8px;--rl:12px;--sh:0 4px 24px rgba(0,0,0,.3);--tr:.2s ease;
+  --sw:260px;--hh:56px;
+}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg0);color:var(--t1);font-size:14px;line-height:1.5;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+input,select,textarea{font-family:inherit;font-size:inherit;color:var(--t1);background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:8px 12px;outline:none;transition:border-color var(--tr)}
+input:focus,select:focus,textarea:focus{border-color:var(--ac)}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--t3)}
+.app{display:flex;height:100vh}
+.sidebar{width:var(--sw);min-width:var(--sw);background:var(--bg1);border-right:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden;z-index:50;transition:left .3s ease}
+.sidebar-hd{padding:16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.sidebar-hd h2{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+.sidebar-act{padding:12px 16px;display:flex;flex-direction:column;gap:8px;border-bottom:1px solid var(--bd)}
+.sec-title{padding:12px 16px 6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--t3);display:flex;justify-content:space-between;align-items:center}
+.p-list{flex:1;overflow-y:auto;padding:4px 8px}
+.p-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:var(--r);cursor:pointer;transition:all var(--tr);margin-bottom:2px}
+.p-item:hover{background:var(--bg3)}
+.p-item.active{background:var(--acd);color:var(--ac)}
+.p-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
+.p-cnt{font-size:11px;color:var(--t3);background:var(--bg2);padding:2px 8px;border-radius:10px;min-width:28px;text-align:center}
+.p-item.active .p-cnt{background:var(--ac);color:#fff}
+.p-del{opacity:0;margin-left:4px;color:var(--dg);font-size:12px;padding:2px 4px;border-radius:4px;transition:opacity var(--tr)}
+.p-item:hover .p-del{opacity:1}
+.p-del:hover{background:var(--dgd)}
+.eye-btn{margin-left:4px;cursor:pointer;font-size:14px;opacity:.5;transition:opacity var(--tr)}
+.eye-btn:hover{opacity:1}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.toolbar{height:var(--hh);min-height:var(--hh);display:flex;align-items:center;padding:0 20px;gap:10px;border-bottom:1px solid var(--bd);background:var(--bg1)}
+.sep{width:1px;height:24px;background:var(--bd)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--r);font-size:13px;font-weight:500;transition:all var(--tr);white-space:nowrap}
+.btn-p{background:var(--ac);color:#fff}.btn-p:hover{background:var(--ac2)}
+.btn-o{border:1px solid var(--bd);color:var(--t2)}.btn-o:hover{border-color:var(--ac);color:var(--ac);background:var(--acd)}
+.btn-d{background:var(--dg);color:#fff}.btn-d:hover{opacity:.85}
+.btn-sm{padding:5px 10px;font-size:12px}
+.search-box{position:relative;flex:0 1 280px}
+.search-box input{width:100%;padding-left:32px}
+.search-box::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none}
+.tb-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.badge{font-size:12px;color:var(--t3);padding:4px 10px;background:var(--bg2);border-radius:10px}
+.batch-bar{height:48px;background:var(--ac);color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;font-size:13px;font-weight:600;animation:slideDown .2s ease}
+.batch-bar .btn{background:rgba(255,255,255,.2);color:#fff;border:none}
+.batch-bar .btn:hover{background:rgba(255,255,255,.3)}
+@keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
+.content{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.drop-zone{margin:16px 20px;padding:32px;border:2px dashed var(--bd);border-radius:var(--rl);text-align:center;transition:all var(--tr);cursor:pointer;background:var(--bg1)}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--ac);background:var(--acd)}
+.drop-zone.compact{padding:12px;margin:8px 20px}
+.drop-zone.compact .dz-icon,.drop-zone.compact .dz-hint{display:none}
+.dz-icon{font-size:36px;margin-bottom:8px}
+.dz-text{color:var(--t2);font-size:14px}
+.dz-hint{color:var(--t3);font-size:12px;margin-top:4px}
+.file-bar{padding:0 20px;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.ftag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;font-size:11px;background:var(--bg2);color:var(--t2);border:1px solid var(--bd)}
+.ftag .fdel{cursor:pointer;opacity:.5;font-size:10px}.ftag .fdel:hover{opacity:1;color:var(--dg)}
+.ftag.conflict{border-color:var(--wn);color:var(--wn)}
+.ftag.hidden{opacity:.4}
+.tbl-wrap{flex:1;overflow:auto;margin:0 20px 16px;border:1px solid var(--bd);border-radius:var(--rl);background:var(--bg1)}
+.tbl-wrap table{width:100%;border-collapse:collapse;min-width:600px}
+.tbl-wrap thead{position:sticky;top:0;z-index:10}
+.tbl-wrap th{background:var(--bg2);padding:10px 14px;text-align:left;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);border-bottom:1px solid var(--bd);white-space:nowrap;cursor:pointer;user-select:none}
+.tbl-wrap th:hover{color:var(--t1)}
+.tbl-wrap th.sa::after{content:' ▲';font-size:10px}
+.tbl-wrap th.sd::after{content:' ▼';font-size:10px}
+.tbl-wrap td{padding:8px 14px;border-bottom:1px solid var(--bd);font-size:13px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+.tbl-wrap tr:hover td{background:var(--bg3)}
+.tbl-wrap tr:last-child td{border-bottom:none}
+.tbl-wrap tr.uc td{background:var(--hl-uid-bg)}
+.tbl-wrap tr.uc td.uid-c{color:var(--hl-uid);font-weight:600}
+.tbl-wrap tr.sc td{background:var(--hl-site-bg)}
+.tbl-wrap tr.sc td.site-c{color:var(--hl-site);font-weight:600}
+.tbl-wrap tr.dup td{background:var(--hl-dup-bg)}
+.tbl-wrap tr.val-err td{background:var(--val-err-bg)}
+.cell-act{opacity:0;transition:opacity var(--tr)}
+.tbl-wrap tr:hover .cell-act{opacity:1}
+.ce-btn{font-size:12px;padding:2px 6px;border-radius:4px;color:var(--ac)}.ce-btn:hover{background:var(--acd)}
+.cd-btn{font-size:12px;padding:2px 6px;border-radius:4px;color:var(--dg)}.cd-btn:hover{background:var(--dgd)}
+.empty{padding:60px 20px;text-align:center;color:var(--t3)}
+.empty .ei{font-size:48px;margin-bottom:12px}
+.no-res{padding:40px;text-align:center;color:var(--t3);font-size:14px}
+a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
+.legend{display:flex;gap:16px;padding:8px 20px;font-size:12px;color:var(--t3)}
+.lg-i{display:flex;align-items:center;gap:6px}
+.lg-d{width:10px;height:10px;border-radius:50%}
+.lg-d.u{background:var(--hl-uid)}.lg-d.s{background:var(--hl-site)}.lg-d.d{background:var(--hl-dup)}.lg-d.v{background:var(--val-err)}
+.pg{display:flex;align-items:center;justify-content:center;gap:4px;padding:12px 20px;border-top:1px solid var(--bd)}
+.pg button{padding:5px 10px;border-radius:var(--r);font-size:12px;color:var(--t2);border:1px solid var(--bd)}
+.pg button:hover:not(:disabled){border-color:var(--ac);color:var(--ac)}
+.pg button:disabled{opacity:.3;cursor:not-allowed}
+.pg button.pa{background:var(--ac);color:#fff;border-color:var(--ac)}
+.pg .pi{font-size:12px;color:var(--t3);margin:0 8px}
+.log-panel{border-top:1px solid var(--bd);background:var(--bg1);display:flex;flex-direction:column;transition:height .3s ease;overflow:hidden}
+.log-panel.open{height:300px}
+.log-panel.closed{height:36px}
+.log-hd{padding:8px 16px;font-size:12px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:10px;background:var(--bg2);cursor:pointer;user-select:none}
+.log-hd:hover{background:var(--bg3)}
+.log-toggle{font-size:10px;color:var(--t3);transition:transform .3s}
+.log-panel.open .log-toggle{transform:rotate(90deg)}
+.log-panel.closed .log-toggle{transform:rotate(0deg)}
+.log-actions{margin-left:auto;display:flex;gap:8px}
+.log-bd{flex:1;overflow-y:auto;padding:8px 16px;font-family:'Menlo','Consolas','Courier New',monospace;font-size:12px;line-height:1.7}
+.log-entry{padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.log-line{display:flex;gap:10px;align-items:baseline}
+.log-time{color:var(--t3);white-space:nowrap;min-width:70px;flex-shrink:0}
+.log-tag{font-weight:700;min-width:70px;text-transform:uppercase;flex-shrink:0}
+.log-tag.info{color:var(--ac)}.log-tag.ok{color:var(--ok)}.log-tag.warn{color:var(--wn)}.log-tag.error{color:var(--dg)}.log-tag.match{color:var(--lg)}.log-tag.analysis{color:#f97316}.log-tag.conflict{color:var(--cf)}.log-tag.skip{color:var(--t3)}.log-tag.history{color:var(--lg)}
+.log-msg{color:var(--t2);word-break:break-all}
+.log-msg b{color:var(--t1);font-weight:600}
+.log-detail{margin:6px 0 6px 80px;padding:8px 12px;background:var(--bg3);border-radius:6px;font-size:11px;line-height:1.8;border-left:3px solid var(--ac);white-space:pre-wrap;word-break:break-all}
+.log-detail.warn{border-left-color:var(--wn)}
+.log-detail.error{border-left-color:var(--dg)}
+.log-detail.conflict{border-left-color:var(--cf);background:var(--cfd)}
+.log-detail.skip{border-left-color:var(--t3);opacity:.8}
+.log-json{display:block;margin-top:6px;padding:6px 10px;background:var(--bg0);border-radius:4px;font-size:10px;color:var(--t2);max-height:150px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;border:1px solid var(--bd)}
+.log-kv{color:var(--ac);background:var(--acd);padding:1px 5px;border-radius:3px;font-size:11px}
+.log-conflict-tag{color:var(--cf);background:var(--cfd);padding:1px 6px;border-radius:3px;font-size:11px;font-weight:700}
+.log-skip-tag{color:var(--t3);background:rgba(107,112,148,.15);padding:1px 6px;border-radius:3px;font-size:11px;font-weight:700}
+.ed-bd{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:998;opacity:0;pointer-events:none;transition:opacity .3s}
+.ed-bd.show{opacity:1;pointer-events:auto}
+.ed-panel{position:fixed;right:-520px;top:0;width:520px;height:100vh;background:var(--bg1);border-left:1px solid var(--bd);z-index:999;display:flex;flex-direction:column;box-shadow:-8px 0 32px rgba(0,0,0,.3);transition:right .3s ease}
+.ed-panel.open{right:0}
+.ed-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bd)}
+.ed-hd h3{font-size:15px;font-weight:600}
+.ed-body{flex:1;overflow-y:auto;padding:20px}
+.ed-ft{padding:12px 20px;border-top:1px solid var(--bd);display:flex;gap:8px;justify-content:flex-end}
+.ed-field{margin-bottom:14px}
+.ed-field label{display:block;font-size:11px;font-weight:600;color:var(--t3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.ed-field input,.ed-field textarea{width:100%}
+.ed-field textarea{min-height:60px;resize:vertical}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(4px)}
+.modal-ov.show{opacity:1;pointer-events:auto}
+.modal{background:var(--bg1);border:1px solid var(--bd);border-radius:var(--rl);width:95%;max-width:1200px;max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--sh);transform:translateY(20px) scale(.97);transition:transform .25s}
+.modal-ov.show .modal{transform:translateY(0) scale(1)}
+.m-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bd)}
+.m-hd h3{font-size:16px;font-weight:600}
+.m-close{font-size:20px;color:var(--t3);padding:4px 8px;border-radius:var(--r)}.m-close:hover{background:var(--bg3);color:var(--t1)}
+.m-bd{padding:20px;overflow-y:auto;flex:1}
+.m-ft{padding:12px 20px;border-top:1px solid var(--bd);display:flex;justify-content:flex-end;gap:8px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.fg input,.fg select,.fg textarea{width:100%}
+.preview-card{background:var(--bg2);border-radius:var(--r);margin-bottom:16px;border:1px solid var(--bd);overflow:hidden}
+.preview-card-header{background:var(--bg3);padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bd)}
+.preview-card-title{font-size:14px;font-weight:600}
+.field-toggle-panel{display:flex;flex-wrap:wrap;gap:4px;margin:8px 16px}
+.field-toggle-btn{font-size:11px;padding:2px 8px;border-radius:4px;background:var(--bg0);color:var(--t3);border:1px solid var(--bd);cursor:pointer}
+.field-toggle-btn.active{background:var(--ac);color:#fff;border-color:var(--ac)}
+.preview-tbl-wrap{overflow:auto;max-height:300px;border:none}
+.preview-tbl-wrap table{width:100%;border-collapse:collapse;min-width:800px}
+.preview-tbl-wrap th{background:var(--bg2);padding:8px 12px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);border-bottom:1px solid var(--bd);white-space:nowrap;position:sticky;top:0;z-index:2}
+.preview-tbl-wrap td{padding:6px 12px;border-bottom:1px solid var(--bd);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+.preview-tbl-wrap tr:hover td{background:var(--bg3)}
+.preview-tbl-wrap tr.selected td{background:var(--acd)}
+.preview-tbl-wrap .tag-uid{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;background:var(--hl-uid-bg);color:var(--hl-uid)}
+.preview-tbl-wrap .tag-dup{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;background:var(--hl-dup-bg);color:var(--hl-dup)}
+.preview-tbl-wrap .tag-site{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;background:var(--hl-site-bg);color:var(--hl-site)}
+.diff-old{color:var(--dg);text-decoration:line-through;margin-right:6px}
+.diff-new{color:var(--ok);font-weight:600}
+.toast-c{position:fixed;bottom:20px;right:20px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 20px;border-radius:var(--r);font-size:13px;font-weight:500;box-shadow:var(--sh);animation:tIn .3s ease;max-width:400px;display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--bd);color:var(--t1)}
+.toast .undo-btn{color:var(--ac);font-weight:700;cursor:pointer;text-decoration:underline;white-space:nowrap}
+.toast .timer{width:24px;height:24px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--t3)}
+@keyframes tIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.chk{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px}
+.chk input[type="checkbox"]{width:16px;height:16px;accent-color:var(--ac)}
+.menu-toggle{display:none;font-size:20px;padding:4px 8px;margin-right:8px}
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-260px;top:0;height:100vh;box-shadow:4px 0 20px rgba(0,0,0,.5)}
+  .sidebar.open{left:0}
+  .menu-toggle{display:block}
+  .ed-panel{width:100%;right:-100%}
+  .toolbar{padding:0 12px;gap:6px}
+  .search-box{flex:1;min-width:0}
+  .tb-r .btn span{display:none}
+  .drop-zone{margin:8px 12px;padding:20px}
+  .tbl-wrap{margin:0 12px 12px}
+}
+</style>
 </head>
 <body>
-    <div class="top-bar">
-        <div style="display:flex;align-items:center;">
-            <h1>JSON 数据维护器</h1>
-            <span class="subtitle">呃呃</span>
-        </div>
+<div class="app">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-hd"><h2>数据维护器 v1.7</h2><button class="m-close" onclick="toggleSidebar()" style="display:none" id="sidebarClose" title="关闭侧边栏">✕</button></div>
+    <div class="sidebar-act">
+      <button class="btn btn-p" onclick="document.getElementById('fileInput').click()" style="width:100%;justify-content:center" title="加载JSON数据文件">📂 加载数据文件</button>
+      <input type="file" id="fileInput" multiple accept=".json" style="display:none">
+    </div>
+    <div class="sec-title">
+      <span>数据分区</span>
+      <button class="btn btn-o btn-sm" onclick="showAddPartitionModal()" style="padding:2px 8px;font-size:10px" title="新建数据分区">+ 新建</button>
+    </div>
+    <div class="p-list" id="partitionList"></div>
+    <div class="sec-title"><span>系统</span></div>
+    <div class="p-list" style="flex:0 0 auto;padding-bottom:12px">
+      <div class="p-item" onclick="showHistoryPanel()"><span class="p-name">📜 操作历史</span></div>
+      <div class="p-item" onclick="showWhitelistModal()"><span class="p-name">🔖 域名白名单</span></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="batch-bar" id="batchBar" style="display:none">
+      <span>已选择 <b id="batchCount">0</b> 条</span>
+      <div style="flex:1"></div>
+      <button class="btn btn-sm" onclick="clearSelection()" title="取消所有选择">取消选择</button>
+      <button class="btn btn-sm" onclick="batchDelete()" style="background:rgba(255,92,108,.8)" title="批量删除选中条目">批量删除</button>
     </div>
 
-    <div class="container">
-        <!-- Settings -->
-        <div class="settings-row">
-            <strong style="color:var(--text-main);">设置：</strong>
-            <label>
-                <input type="checkbox" id="matchByName" checked>
-                无UID时用名称匹配
-            </label>
-            <label>
-                <input type="checkbox" id="caseSensitive">
-                区分大小比较
-            </label>
-            <label>
-                <input type="checkbox" id="preserveAllExtras" checked>
-                保留原始文件独有字段
-            </label>
-        </div>
-
-        <!-- Upload -->
-        <div class="upload-section">
-            <div class="upload-zone" id="origZone">
-                <div class="icon">📁</div>
-                <div class="label">原始 JSON 文件</div>
-                <div class="hint">包含加工数据的版本（以此为基础合并）</div>
-                <div class="file-info" id="origInfo"></div>
-                <input type="file" accept=".json" id="origFile">
-            </div>
-            <div class="upload-zone" id="newZone">
-                <div class="icon">📋</div>
-                <div class="label">新导出 JSON 文件</div>
-                <div class="hint">从表格导出的最新版本</div>
-                <div class="file-info" id="newInfo"></div>
-                <input type="file" accept=".json" id="newFile">
-            </div>
-        </div>
-
-        <!-- Compare Button -->
-        <button class="compare-btn" id="compareBtn" disabled>开始对比</button>
-
-        <!-- No Change Banner -->
-        <div class="no-change-banner" id="noChangeBanner">
-            <div class="big">✅</div>
-            <div class="msg">两个文件完全一致，无需合并</div>
-        </div>
-
-        <!-- Summary -->
-        <div class="summary-bar" id="summaryBar">
-            <div class="summary-item summary-added">
-                <div class="num" id="sumAdded">0</div>
-                <div class="desc">新增条目</div>
-            </div>
-            <div class="summary-item summary-removed">
-                <div class="num" id="sumRemoved">0</div>
-                <div class="desc">移除条目</div>
-            </div>
-            <div class="summary-item summary-modified">
-                <div class="num" id="sumModified">0</div>
-                <div class="desc">变更条目</div>
-            </div>
-            <div class="summary-item summary-unchanged">
-                <div class="num" id="sumUnchanged">0</div>
-                <div class="desc">未变更</div>
-            </div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="tabs" id="tabsBar">
-            <button class="tab-btn tab-added active" data-tab="added">
-                🟢 新增 <span class="badge" id="tabAddedBadge">0</span>
-            </button>
-            <button class="tab-btn tab-removed" data-tab="removed">
-                🔴 移除 <span class="badge" id="tabRemovedBadge">0</span>
-            </button>
-            <button class="tab-btn tab-modified" data-tab="modified">
-                🔵 变更 <span class="badge" id="tabModifiedBadge">0</span>
-            </button>
-        </div>
-
-        <!-- Batch Actions -->
-        <div class="batch-actions" id="batchActions">
-            <span class="label">批量操作当前分类：</span>
-            <button class="batch-btn accept-all" id="batchAcceptAll">✓ 全部接受</button>
-            <button class="batch-btn reject-all" id="batchRejectAll">✕ 全部拒绝</button>
-        </div>
-
-        <!-- Diff Sections -->
-        <div class="diff-section active" id="sectionAdded"></div>
-        <div class="diff-section" id="sectionRemoved"></div>
-        <div class="diff-section" id="sectionModified"></div>
-
-        <!-- Export -->
-        <div class="export-section" id="exportSection">
-            <h3>📦 合并导出</h3>
-            <div class="export-stats" id="exportStats"></div>
-            <div class="export-warn" id="exportWarn"></div>
-            <button class="export-btn" id="exportBtn">下载合并后的 JSON</button>
-        </div>
+    <div class="toolbar">
+      <button class="menu-toggle" onclick="toggleSidebar()" title="菜单">☰</button>
+      <div class="search-box"><input type="text" id="searchInput" placeholder="搜索名称、URL、UID..."></div>
+      <div class="sep"></div>
+      <label class="chk" title="仅显示冲突或违规数据"><input type="checkbox" id="showConflictsOnly"><span>仅异常</span></label>
+      <div class="tb-r">
+        <span class="badge" id="statsTotal">总计: 0</span>
+        <span class="badge" id="statsConflicts">冲突: 0</span>
+        <span class="badge" id="statsValidation" style="color:var(--wn)">违规: 0</span>
+        <div class="sep"></div>
+        <button class="btn btn-p btn-sm" onclick="startAutoProcessFromSelection()" title="仅处理当前勾选的异常数据">🪄 自动处理</button>
+        <button class="btn btn-o btn-sm" onclick="showAutoProcessHelp()" title="自动处理逻辑说明">❓</button>
+        <div class="sep"></div>
+        <button class="btn btn-o btn-sm" onclick="exportSourceData()" title="导出原始JSON文件">📥</button>
+        <button class="btn btn-o btn-sm" onclick="exportPartitionData()" title="按分区导出数据">📤</button>
+        <div class="sep"></div>
+        <button class="btn btn-o btn-sm" onclick="exportAllBundle()" title="保存完整工程包">💾</button>
+        <button class="btn btn-o btn-sm" onclick="document.getElementById('bundleInput').click()" title="加载完整工程包">📦</button>
+        <input type="file" id="bundleInput" accept=".json" style="display:none">
+      </div>
     </div>
 
-    <script>
-    (() => {
-        // ===== State =====
-        var origData = null;
-        var newData = null;
-        var diffResult = null;
-        var currentTab = 'added';
+    <div class="content">
+      <div class="drop-zone" id="dropZone"><div class="dz-icon">📁</div><div class="dz-text">拖拽 JSON 文件到此处，或点击选择（可多选）</div><div class="dz-hint">支持: gal / voice_music / comic_illustration / hub / gal-info / ln / anime / mmd / wiki / acg-nav / tools / search / valhalla</div></div>
+      <div class="file-bar" id="fileStatusBar"></div>
+      <div class="legend" id="conflictLegend" style="display:none">
+        <div class="lg-i"><div class="lg-d u"></div><span>UID冲突</span></div>
+        <div class="lg-i"><div class="lg-d s"></div><span>站点冲突</span></div>
+        <div class="lg-i"><div class="lg-d d"></div><span>同分区重复</span></div>
+        <div class="lg-i"><div class="lg-d v"></div><span>验证违规</span></div>
+      </div>
+      <div class="tbl-wrap" id="tableContainer"><div class="empty" id="emptyState"><div class="ei">📋</div><div>暂无数据，请加载数据文件</div></div></div>
+      <div class="pg" id="pagination" style="display:none"></div>
+    </div>
 
-        // Decisions: { added: {key: 'accept'|'reject'}, removed: {key: ...}, modified: {key: ...} }
-        var decisions = { added: {}, removed: {}, modified: {} };
+    <div class="log-panel open" id="logPanel">
+      <div class="log-hd" onclick="toggleLog()">
+        <span class="log-toggle">▶</span>
+        <span>📜 操作日志 (<span id="logCount">0</span>)</span>
+        <div class="log-actions">
+          <button class="btn btn-o btn-sm" onclick="event.stopPropagation();exportLog()" style="padding:2px 8px;font-size:10px" title="导出日志文本">💾 导出日志</button>
+          <button class="btn btn-o btn-sm" onclick="event.stopPropagation();clearLog()" style="padding:2px 8px;font-size:10px" title="清空当前日志">清空</button>
+        </div>
+      </div>
+      <div class="log-bd" id="logBody"></div>
+    </div>
+  </div>
+</div>
 
-        // ===== File Loading =====
-        var origFileInput = document.getElementById('origFile');
-        var newFileInput = document.getElementById('newFile');
-        var origZone = document.getElementById('origZone');
-        var newZone = document.getElementById('newZone');
-        var origInfo = document.getElementById('origInfo');
-        var newInfo = document.getElementById('newInfo');
-        var compareBtn = document.getElementById('compareBtn');
+<div class="ed-bd" id="editorBackdrop"></div>
+<div class="ed-panel" id="editorPanel">
+  <div class="ed-hd"><h3 id="editorTitle">✏️ 编辑数据</h3><button class="m-close" id="editorClose" title="关闭编辑器">✕</button></div>
+  <div class="ed-body" id="editorBody"></div>
+  <div class="ed-ft"><button class="btn btn-o" id="editorCancel">取消</button><button class="btn btn-p" id="editorSave" title="保存修改">💾 保存</button></div>
+</div>
 
-        function loadJson(file, callback) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    var data = JSON.parse(e.target.result);
-                    if (!Array.isArray(data)) {
-                        alert('JSON 文件必须是数组格式（[...]）');
-                        return;
-                    }
-                    callback(data, file.name);
-                } catch (err) {
-                    alert('JSON 解析失败: ' + err.message);
-                }
-            };
-            reader.readAsText(file);
+<div class="modal-ov" id="modalOverlay">
+  <div class="modal">
+    <div class="m-hd"><h3 id="modalTitle">提示</h3><button class="m-close" id="modalClose" title="关闭窗口">✕</button></div>
+    <div class="m-bd" id="modalBody"></div>
+    <div class="m-ft" id="modalFooter"></div>
+  </div>
+</div>
+<div class="toast-c" id="toastContainer"></div>
+
+<script>
+const DEFAULT_PARTITIONS=['GAL','音声/音乐','漫画/插画/本子','综合资源站','GAL情报/入正','轻小说','动漫','MMD','WIKI','二次元导航站','工具','搜索引擎','英灵殿'];
+const FILE_PARTITION_MAP={'gal':'GAL','voice_music':'音声/音乐','comic_illustration':'漫画/插画/本子','hub':'综合资源站','gal-info':'GAL情报/入正','ln':'轻小说','anime':'动漫','mmd':'MMD','wiki':'WIKI','acg-nav':'二次元导航站','tools':'工具','search':'搜索引擎','valhalla':'英灵殿'};
+const UID_FIELDS=['uid','id','UID','userId','user_id','siteId','site_id','rid','UUID','uuid','编号','标识'];
+const URL_FIELDS=['url','URL','link','website','domain','href','site','站点','网址','地址'];
+const NAME_FIELDS=['name','Name','title','Title','名称','标题','siteName','site_name','网站名','站名'];
+const DB_NAME='DataMaintainerDB';
+const DB_VER=4;
+const PLATFORM_DOMAINS=['github.com','gitlab.com','gitee.com','bitbucket.org','sourceforge.net','codeberg.org','greasyfork.org','userscripts.org','npmjs.com','pypi.org','crates.io','maven.org','docker.com','hub.docker.com','steamcommunity.com','store.steampowered.com','itch.io','gamejolt.com','discord.com','discord.gg','t.me','telegram.org','twitter.com','x.com','weibo.com','bilibili.com','youtube.com','nicovideo.jp','wikipedia.org','wikia.com','fandom.com','archive.org','pastebin.com','gist.github.com'];
+const NAME_SIMILARITY_THRESHOLD=0.35;
+let S={
+  db:null, partitions:[], files:[], activePartition:'all', page:1, pageSize:50, query:'', sortField:null, sortDir:'asc',
+  editing:null, allFields:[], conflicts:{uid:new Set(), site:new Set()}, duplicates:new Set(), validationErrors:new Set(),
+  fileOffsets:new Map(), logs:[], selection:new Set(), history:[], domainWhitelist:[], hiddenPartitions:new Set(),
+  issueGroups:{uidConflicts:[], siteConflicts:[], duplicates:[]}
+};
+
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VER);r.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains('appdata'))db.createObjectStore('appdata',{keyPath:'key'});if(!db.objectStoreNames.contains('history'))db.createObjectStore('history',{keyPath:'id'});};r.onsuccess=e=>{S.db=e.target.result;res(S.db);};r.onerror=e=>rej(e.target.error);});}
+function dbSaveAll(data){return new Promise((res,rej)=>{const tx=S.db.transaction('appdata','readwrite');const store=tx.objectStore('appdata');for(const[k,v]of Object.entries(data))store.put({key:k,value:v,ts:Date.now()});tx.oncomplete=()=>res();tx.onerror=e=>rej(e.target.error);});}
+function dbGet(k){return new Promise((res,rej)=>{const tx=S.db.transaction('appdata','readonly');const r=tx.objectStore('appdata').get(k);r.onsuccess=()=>res(r.result?r.result.value:null);r.onerror=e=>rej(e.target.error);});}
+function dbAddHistory(entry){return new Promise((res,rej)=>{const tx=S.db.transaction('history','readwrite');tx.objectStore('history').put(entry);tx.oncomplete=()=>res();tx.onerror=e=>rej(e.target.error);});}
+function dbGetAllHistory(){return new Promise((res,rej)=>{const tx=S.db.transaction('history','readonly');const r=tx.objectStore('history').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=e=>rej(e.target.error);});}
+function dbDeleteHistory(id){return new Promise((res,rej)=>{const tx=S.db.transaction('history','readwrite');tx.objectStore('history').delete(id);tx.oncomplete=()=>res();tx.onerror=e=>rej(e.target.error);});}
+async function saveState(){try{await dbSaveAll({partitions:S.partitions,files:S.files,activePartition:S.activePartition,domainWhitelist:S.domainWhitelist,hiddenPartitions:[...S.hiddenPartitions]});}catch(e){log(`存储失败: ${e.message}`,'error');}}
+async function loadState(){
+  try{
+    const p=await dbGet('partitions');const f=await dbGet('files');const a=await dbGet('activePartition');const wl=await dbGet('domainWhitelist');const hp=await dbGet('hiddenPartitions');
+    if(p)S.partitions=p;if(f)S.files=f;if(a)S.activePartition=a;if(wl)S.domainWhitelist=wl;if(hp)S.hiddenPartitions=new Set(hp);
+    S.history=await dbGetAllHistory();
+  }catch(e){log(`加载状态失败: ${e.message}`,'error');}
+  DEFAULT_PARTITIONS.forEach(n=>{if(!S.partitions.find(p=>p.name===n))S.partitions.push({name:n,id:gid()});});
+}
+
+function gid(){return 'id_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);}
+function esc(s){return s==null?'':String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function trunc(s,n=60){if(!s)return'';s=String(s);return s.length>n?s.slice(0,n)+'...':s;}
+function readText(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=()=>rej(new Error('读取失败'));r.readAsText(f,'UTF-8');});}
+function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};}
+function dlBlob(b,n){const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(u),100);}
+function jsonBlock(obj){return `<span class="log-json">${esc(JSON.stringify(obj,null,2))}</span>`;}
+function stripHtml(s){return s.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");}
+function normUrl(u){if(!u)return '';try{return new URL(u).hostname.replace(/^www\./,'');}catch{return u.replace(/^https?:\/\/(www\.)?/,'').split('/')[0];}}
+function isPlatformDomain(domain){if(!domain)return false;const d=domain.toLowerCase();for(const pd of PLATFORM_DOMAINS){if(d===pd||d.endsWith('.'+pd))return true;}return false;}
+function isWhitelistedDomain(domain){if(!domain)return false;return S.domainWhitelist.some(w=>w.toLowerCase()===domain.toLowerCase());}
+function stringSimilarity(a,b){if(!a||!b)return 0;a=String(a).toLowerCase().trim();b=String(b).toLowerCase().trim();if(a===b)return 1;if(a.length<2||b.length<2)return 0;const bigrams=new Map();for(let i=0;i<a.length-1;i++){const bg=a.substring(i,i+2);bigrams.set(bg,(bigrams.get(bg)||0)+1);}let matches=0;for(let i=0;i<b.length-1;i++){const bg=b.substring(i,i+2);const cnt=bigrams.get(bg);if(cnt&&cnt>0){matches++;bigrams.set(bg,cnt-1);}}return(2*matches)/(a.length-1+b.length-1);}
+function isSameEntity(a,b,nameField){if(!nameField)return{same:true,reason:'无名称字段，无法区分实体',similarity:-1};const nameA=String(a[nameField]||'').trim();const nameB=String(b[nameField]||'').trim();if(!nameA||!nameB)return{same:true,reason:'名称字段至少一方为空',similarity:-1};const sim=stringSimilarity(nameA,nameB);if(sim>=NAME_SIMILARITY_THRESHOLD)return{same:true,reason:'名称相似度 '+(sim*100).toFixed(1)+'% ≥ 阈值'+(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)+'%',similarity:sim};return{same:false,reason:'名称相似度 '+(sim*100).toFixed(1)+'% < 阈值'+(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)+'%，判定为不同实体',similarity:sim};}
+function detectField(items,cands){if(!items.length)return null;const freq=new Map();for(const it of items){for(const k of Object.keys(it)){const lk=k.toLowerCase();const e=freq.get(lk)||{key:k,count:0};e.count++;freq.set(lk,e);}}for(const c of cands){const e=freq.get(c.toLowerCase());if(e)return{field:e.key,count:e.count,total:items.length};}return null;}
+function getPartNameByFi(fi){const file=S.files[fi];if(!file)return '未知';const part=S.partitions.find(p=>p.id===file.partitionId);return part?part.name:'未知';}
+function rebuildOffsets(){S.fileOffsets=new Map();let off=0;S.files.forEach(f=>{S.fileOffsets.set(f,off);off+=f.data.length;});}
+function getGI(file,ii){return(S.fileOffsets.get(file)??0)+ii;}
+
+// === Toast ===
+function toast(m,t='info',d=3000,undoFn=null){
+  const c=document.getElementById('toastContainer'),e=document.createElement('div');
+  e.className='toast';
+  const safeMsg=String(m).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  let html=`<span>${safeMsg}</span>`;
+  if(undoFn){html+=`<span class="undo-btn">撤销</span><span class="timer">5</span>`;d=5000;}
+  e.innerHTML=html;c.appendChild(e);
+  let timer=d/1000;const timerEl=e.querySelector('.timer');
+  const interval=setInterval(()=>{timer--;if(timerEl)timerEl.textContent=timer;if(timer<=0)clearInterval(interval);},1000);
+  if(undoFn){e.querySelector('.undo-btn').onclick=()=>{clearInterval(interval);e.remove();undoFn();};}
+  setTimeout(()=>{clearInterval(interval);e.style.opacity='0';e.style.transform='translateY(30px)';e.style.transition='.3s';setTimeout(()=>e.remove(),300);},d);
+}
+
+// === Logging ===
+function log(msg,tag='info',detail=null){
+  const now=new Date();const time=now.toTimeString().slice(0,8);
+  const entry={time,tag,msg,detail,id:Date.now()+Math.random()};
+  S.logs.push(entry);if(S.logs.length>2000)S.logs.shift();renderLog();
+}
+function renderLog(){
+  const el=document.getElementById('logBody');const countEl=document.getElementById('logCount');if(!el)return;
+  countEl.textContent=S.logs.length;let html='';
+  for(const l of S.logs){
+    html+=`<div class="log-entry"><div class="log-line"><span class="log-time">${l.time}</span><span class="log-tag ${l.tag}">${l.tag}</span><span class="log-msg">${l.msg}</span></div>`;
+    if(l.detail){
+      const cls=l.tag==='conflict'?'conflict':(l.tag==='skip'?'skip':(l.tag==='warn'||l.tag==='error'?l.tag:''));
+      html+=`<div class="log-detail ${cls}">${l.detail}</div>`;
+    }
+    html+=`</div>`;
+  }
+  el.innerHTML=html;el.scrollTop=el.scrollHeight;
+}
+function clearLog(){S.logs=[];renderLog();}
+function resetLog(){S.logs=[];renderLog();}
+function toggleLog(){const p=document.getElementById('logPanel');p.classList.toggle('open');p.classList.toggle('closed');}
+function exportLog(){
+  if(!S.logs.length){toast('日志为空','wn');return;}
+  const lines=S.logs.map(l=>{let line=`[${l.time}] [${l.tag.toUpperCase()}] ${stripHtml(l.msg)}`;if(l.detail)line+=`\n--- DETAIL START ---\n${stripHtml(l.detail)}\n--- DETAIL END ---`;return line;});
+  const header=['# Data Maintainer Log Export v3.5',`# Generated: ${new Date().toISOString()}`,`# Total Entries: ${S.logs.length}`,'='.repeat(80),''].join('\n');
+  dlBlob(new Blob([header+lines.join('\n\n')],{type:'text/plain;charset=utf-8'}),`maintainer_log_${new Date().toISOString().replace(/[:.]/g,'-')}.txt`);
+  toast('日志已导出','ok');
+}
+
+// === Validation ===
+function runValidation(){
+  S.validationErrors.clear();
+  let totalChecked=0,totalViolations=0;
+  const violationDetails=[];
+  S.files.forEach((f,fi)=>{
+    f.data.forEach((item,ii)=>{
+      totalChecked++;
+      const uidField=detectField([item],UID_FIELDS)?.field;
+      const urlField=detectField([item],URL_FIELDS)?.field;
+      const nameField=detectField([item],NAME_FIELDS)?.field;
+      const errors=[];
+      if(!nameField || !String(item[nameField]||'').trim()) errors.push('名称缺失');
+      if(!urlField || !String(item[urlField]||'').trim()) errors.push('URL缺失');
+      if(!uidField || !String(item[uidField]||'').trim()) errors.push('UID缺失');
+      if(errors.length>0){
+        S.validationErrors.add(getGI(f,ii));
+        totalViolations++;
+        if(violationDetails.length<10) violationDetails.push(`📄 ${esc(f.name)}[${ii}] (${esc(getPartNameByFi(fi))}): ${errors.join(', ')}`);
+      }
+    });
+  });
+  if(totalViolations>0){
+    log(`⚠️ 验证违规: ${totalViolations}/${totalChecked} 条缺少核心字段`,'warn',violationDetails.join('\n')+(totalViolations>10?`\n...及其他 ${totalViolations-10} 条违规`:''));
+  } else {
+    log(`✅ 验证通过: 所有条目均包含名称、URL、UID`,'ok');
+  }
+  updateStats();
+}
+
+// === Main Scan ===
+function detectConflicts(){
+  resetLog();
+  log(`🔍 ═══ 开始扫描 (v3.5) ═══`,'analysis',
+    `总文件数: ${S.files.length}\n总条目数: ${S.files.reduce((s,f)=>s+f.data.length,0)}\n平台域名白名单: ${PLATFORM_DOMAINS.length}个\n名称相似度阈值: ${(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)}%`);
+
+  const uc=new Set(), sc=new Set(), dupSet=new Set();
+  S.issueGroups={uidConflicts:[], siteConflicts:[], duplicates:[]};
+
+  const rows=[];
+  S.files.forEach((f,fi)=>f.data.forEach((item,ii)=>{rows.push({gi:getGI(f,ii),fi,ii,item,fn:f.name,pid:f.partitionId});}));
+
+  const uidR=detectField(rows.map(r=>r.item),UID_FIELDS);
+  const urlR=detectField(rows.map(r=>r.item),URL_FIELDS);
+  const nameR=detectField(rows.map(r=>r.item),NAME_FIELDS);
+
+  if(uidR)log(`🔑 UID字段: "${uidR.field}" (${uidR.count}/${uidR.total}, ${(uidR.count/uidR.total*100).toFixed(1)}%)`,'analysis');
+  else log(`🔑 UID字段未找到，UID冲突检测跳过`,'warn');
+  if(urlR)log(`🌐 URL字段: "${urlR.field}" (${urlR.count}/${urlR.total}, ${(urlR.count/urlR.total*100).toFixed(1)}%)`,'analysis');
+  else log(`🌐 URL字段未找到，站点冲突检测跳过`,'warn');
+  if(nameR)log(`📛 名称字段: "${nameR.field}" (用于实体相似度判断)`,'analysis');
+  else log(`📛 名称字段未找到，实体相似度判断将降级为保守模式`,'warn');
+
+  const uf=uidR?uidR.field:null;
+  const sf=urlR?urlR.field:null;
+  const nf=nameR?nameR.field:null;
+
+  // --- UID冲突检测 ---
+  if(uf){
+    log(`🔍 ── UID冲突检测 ──`,'analysis',`条件: 相同"${uf}" + 不同URL域名`);
+    const um={};
+    rows.forEach(r=>{
+      const u=String(r.item[uf]||'').trim();
+      if(!u)return;
+      if(!um[u])um[u]=[];
+      um[u].push({gi:r.gi,fi:r.fi,ii:r.ii,url:sf?normUrl(String(r.item[sf]||'').trim()):'',rawUrl:sf?String(r.item[sf]||'').trim():'',fn:r.fn,item:r.item});
+    });
+    let cc=0,skippedPlatform=0,skippedSimilarity=0,skippedWhitelist=0;
+    for(const[uid,entries]of Object.entries(um)){
+      if(entries.length<=1)continue;
+      const urls=new Set(entries.map(e=>e.url).filter(Boolean));
+      if(urls.size<=1)continue;
+      const firstDomain=entries[0]?.url;
+      if(isWhitelistedDomain(firstDomain)){skippedWhitelist++;continue;}
+      const platformUrls=[...urls].filter(u=>isPlatformDomain(u));
+      if(platformUrls.length===urls.size){
+        skippedPlatform++;
+        log(`<span class="log-skip-tag">⏭️ UID冲突跳过 #${uid}</span> 全部为平台域名`,'skip',`【跳过原因】所有${urls.size}个域名均为平台型域名: ${[...urls].join(', ')}`);
+        continue;
+      }
+      const nonPlatformEntries=entries.filter(e=>!isPlatformDomain(e.url));
+      if(nonPlatformEntries.length<=1){skippedPlatform++;continue;}
+      let hasRealConflict=false;
+      for(let i=0;i<nonPlatformEntries.length&&!hasRealConflict;i++){
+        for(let j=i+1;j<nonPlatformEntries.length&&!hasRealConflict;j++){
+          const check=isSameEntity(nonPlatformEntries[i].item,nonPlatformEntries[j].item,nf);
+          if(check.same)hasRealConflict=true;
         }
+      }
+      if(!hasRealConflict){
+        skippedSimilarity++;
+        log(`<span class="log-skip-tag">⏭️ UID冲突跳过 #${uid}</span> 名称相似度不足`,'skip',`【跳过原因】名称差异较大，判定为不同实体`);
+        continue;
+      }
+      cc++;
+      entries.forEach(e=>uc.add(e.gi));
+      S.issueGroups.uidConflicts.push({uid, items: entries});
+      const entryDetails=entries.map((e,i)=>{
+        return `┌─ 条目 #${i+1}\n│ 来源: ${e.fn}[${e.ii}]\n│ 所属分区: ${getPartNameByFi(e.fi)}\n│ 全局索引: ${e.gi}\n│ ${uf}: "${uid}"\n│ URL原始: "${e.rawUrl}"\n│ URL规范: "${e.url}"\n│ 完整数据:\n${jsonBlock(e.item)}\n└─`;
+      }).join('\n\n');
+      log(`<span class="log-conflict-tag">⚠️ UID冲突 #${cc}</span> uid="<b>${esc(uid)}</b>" ${urls.size}个不同域名`,'conflict',`【冲突原因】相同UID但域名不同且名称相似\n\n【涉及的全部条目及完整数据】\n${entryDetails}`);
+    }
+    log(`UID冲突检测完成: ${cc}组真实冲突, ${skippedPlatform}组平台域名跳过, ${skippedSimilarity}组低相似度跳过, ${skippedWhitelist}组白名单跳过`,cc?'warn':'ok');
+  }
 
-        origFileInput.addEventListener('change', function(e) {
-            if (!e.target.files[0]) return;
-            loadJson(e.target.files[0], function(data, name) {
-                origData = data;
-                origZone.classList.add('loaded');
-                origInfo.textContent = '✓ ' + name + ' (' + data.length + ' 条)';
-                checkReady();
-            });
+  if(uf&&sf){
+    log(`🔍 ── 站点冲突检测 ──`,'analysis',`条件: 相同URL域名 + 不同"${uf}"值`);
+    const sm={};
+    rows.forEach(r=>{
+      const url=normUrl(String(r.item[sf]||'').trim());
+      const u=String(r.item[uf]||'').trim();
+      if(!url||!u)return;
+      if(!sm[url])sm[url]=[];
+      sm[url].push({gi:r.gi,fi:r.fi,ii:r.ii,uid:u,fn:r.fn,item:r.item});
+    });
+    let scc=0,skippedPlatform=0,skippedSimilarity=0,skippedWhitelist=0;
+    for(const[domain,entries]of Object.entries(sm)){
+      if(entries.length<=1)continue;
+      const uids=new Set(entries.map(e=>e.uid));
+      if(uids.size<=1)continue;
+      if(isWhitelistedDomain(domain)){skippedWhitelist++;continue;}
+      if(isPlatformDomain(domain)){
+        skippedPlatform++;
+        log(`<span class="log-skip-tag">⏭️ 站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" (${uids.size}个UID)`,'skip',`【跳过原因】"${domain}" 是平台型域名`);
+        continue;
+      }
+      let hasRealConflict=false;
+      let conflictPairInfo='';
+      outer:for(let i=0;i<entries.length;i++){
+        for(let j=i+1;j<entries.length;j++){
+          const check=isSameEntity(entries[i].item,entries[j].item,nf);
+          if(check.same){hasRealConflict=true;conflictPairInfo=`触发配对: "${String(entries[i].item[nf]||'')}" vs "${String(entries[j].item[nf]||'')}" (${check.reason})`;break outer;}
+        }
+      }
+      if(!hasRealConflict){
+        skippedSimilarity++;
+        log(`<span class="log-skip-tag">⏭️ 站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" (${uids.size}个UID)`,'skip',`【跳过原因】名称差异较大，判定为同一站点下的不同资源页面`);
+        continue;
+      }
+      scc++;
+      entries.forEach(e=>sc.add(e.gi));
+      S.issueGroups.siteConflicts.push({domain, items: entries});
+      const entryDetails=entries.map((e,i)=>{
+        return `┌─ 条目 #${i+1}\n│ 来源: ${e.fn}[${e.ii}]\n│ 所属分区: ${getPartNameByFi(e.fi)}\n│ 全局索引: ${e.gi}\n│ ${uf}: "${e.uid}"\n│ 域名: "${domain}"\n│ 完整数据:\n${jsonBlock(e.item)}\n└─`;
+      }).join('\n\n');
+      log(`<span class="log-conflict-tag">⚠️ 站点冲突 #${scc}</span> 域名="<b>${esc(domain)}</b>" ${uids.size}个不同UID`,'conflict',`【冲突原因】相同域名但UID不同且名称相似\n${conflictPairInfo}\n\n【涉及的全部条目及完整数据】\n${entryDetails}`);
+    }
+    log(`站点冲突检测完成: ${scc}组真实冲突, ${skippedPlatform}组平台域名跳过, ${skippedSimilarity}组低相似度跳过, ${skippedWhitelist}组白名单跳过`,scc?'warn':'ok');
+  }
+
+  log(`🔍 ── 同分区重复检测 ──`,'analysis',`匹配方式: partitionId + 除uid外所有字段的JSON序列化哈希(键排序)`);
+  const dupMap=new Map();
+  rows.forEach(r=>{
+    const clone={...r.item};
+    if(uf && clone[uf]!==undefined) delete clone[uf];
+    const sortedKeys=Object.keys(clone).sort();
+    const sortedObj={};
+    sortedKeys.forEach(k=>{sortedObj[k]=clone[k];});
+    const hash=JSON.stringify(sortedObj);
+    const key=`${r.pid}::${hash}`;
+    if(!dupMap.has(key)) dupMap.set(key,[]);
+    dupMap.get(key).push(r);
+  });
+  let dupGroups=0;
+  for(const[key,group]of dupMap.entries()){
+    if(group.length<=1) continue;
+    dupGroups++;
+    group.forEach(r=>dupSet.add(r.gi));
+    S.issueGroups.duplicates.push({partitionId: group[0].pid, key, items: group});
+    const kept=group[0];
+    const partName=getPartNameByFi(kept.fi);
+    const entryDetails=group.map((r,i)=>{
+      return `┌─ ${i===0?'保留项 (UID最小)':'删除项'}\n│ 来源: ${r.fn}[${r.ii}]\n│ 所属分区: ${getPartNameByFi(r.fi)}\n│ 全局索引: ${r.gi}\n│ ${uf}: "${String(r.item[uf]||'')}"\n│ 完整数据:\n${jsonBlock(r.item)}\n└─`;
+    }).join('\n\n');
+    log(`<span class="log-conflict-tag">🗑️ 重复组 #${dupGroups}</span> 分区="${partName}" ${group.length}条`,'conflict',`【保留项】${kept.fn}[${kept.ii}] (分区:${getPartNameByFi(kept.fi)}) uid="${String(kept.item[uf]||'')}"\n\n【删除项】\n${group.slice(1).map(r=>`${r.fn}[${r.ii}] (分区:${getPartNameByFi(r.fi)}) uid="${String(r.item[uf]||'')}"`).join('\n')}\n\n完整数据详情:\n${entryDetails}`);
+  }
+  if(dupGroups===0) log(`✅ 同分区去重: 无重复数据`,'ok');
+  else log(`同分区重复检测完成: ${dupGroups}组`,'analysis');
+
+  S.conflicts={uid:uc, site:sc};
+  S.duplicates=dupSet;
+  const totalIssues=new Set([...uc,...sc,...dupSet]).size;
+  log(`🔍 ═══ 扫描结束 ═══`,'analysis',`UID冲突条目: ${uc.size}\n站点冲突条目: ${sc.size}\n重复条目: ${dupSet.size}\n受影响总条目: ${totalIssues}\n总数据量: ${rows.length}`);
+
+  runValidation();
+}
+
+// === Auto Process ===
+function startAutoProcessFromSelection(){
+  if(S.selection.size===0){toast('请先在主表格中勾选需要处理的数据','wn');return;}
+  const selectedGis = S.selection;
+  const relevantGroups = [];
+  S.issueGroups.uidConflicts.forEach(group=>{
+    if(group.items.some(it=>selectedGis.has(it.gi))) relevantGroups.push({type:'uid', group});
+  });
+  S.issueGroups.siteConflicts.forEach(group=>{
+    if(group.items.some(it=>selectedGis.has(it.gi))) relevantGroups.push({type:'site', group});
+  });
+  S.issueGroups.duplicates.forEach(group=>{
+    if(group.items.some(it=>selectedGis.has(it.gi))) relevantGroups.push({type:'dup', group});
+  });
+  if(relevantGroups.length===0){toast('所选数据中没有可处理项','wn');return;}
+  showAutoProcessPreview(relevantGroups);
+}
+
+function showAutoProcessPreview(groups){
+  let html=`<div style="margin-bottom:12px;color:var(--t2)">共 ${groups.length} 个问题组，请确认处理方案。</div>`;
+  groups.forEach(({type, group}, idx)=>{
+    const title = type==='uid' ? `UID冲突组 #${idx+1} (UID="${group.uid}")` :
+                  type==='site' ? `站点冲突组 #${idx+1} (域名="${group.domain}")` :
+                  `重复组 #${idx+1} (分区="${getPartNameByFi(group.items[0].fi)}")`;
+    html+=`<div class="preview-card"><div class="preview-card-header"><span class="preview-card-title">${esc(title)}</span></div>`;
+    
+    // 收集所有字段
+    const allFields = [...new Set(group.items.flatMap(it=>Object.keys(it.item)))];
+    // 判断是否需要字段选择（非重复组且存在除关键字段外的差异）
+    let showFieldSelector = false;
+    if(type !== 'dup'){
+      const keyFields = type==='uid' ? ['uid','url'] : ['uid','url'];
+      for(const f of allFields){
+        if(keyFields.includes(f)) continue;
+        const vals = new Set(group.items.map(it=>it.item[f]));
+        if(vals.size > 1){ showFieldSelector = true; break; }
+      }
+    }
+
+    // 表格开始
+    html+=`<div class="preview-tbl-wrap"><table><thead><tr>`;
+    html+=`<th style="width:40px">处理</th>`;
+    html+=`<th style="width:80px">分区</th>`; // 新增分区列
+    allFields.forEach(f=>{html+=`<th data-field="${esc(f)}">${esc(f)}</th>`;});
+    html+=`</tr>`;
+
+    // 如果启用字段选择，添加字段选择行
+    if(showFieldSelector){
+      html+=`<tr class="field-selector-row">`;
+      html+=`<td></td><td></td>`; // 处理列和分区列占位
+      allFields.forEach(f=>{
+        const keyFields = type==='uid' ? ['uid','url'] : ['uid','url'];
+        if(keyFields.includes(f)){
+          html+=`<td><span style="color:var(--t3)">自动</span></td>`;
+        } else {
+          const values = [...new Set(group.items.map(it=>it.item[f]))];
+          const defaultVal = group.items[0].item[f];
+          html+=`<td><select class="field-select" data-field="${esc(f)}">`;
+          values.forEach(v=>{
+            const selected = (v === defaultVal) ? 'selected' : '';
+            html+=`<option value="${esc(String(v))}" ${selected}>${esc(trunc(String(v),30))}</option>`;
+          });
+          html+=`</select></td>`;
+        }
+      });
+      html+=`</tr>`;
+    }
+
+    html+=`</thead><tbody>`;
+    group.items.forEach((item, i)=>{
+      const isKept = (type==='dup' && i===0) || (type==='uid' && i===0) || (type==='site' && i===0);
+      html+=`<tr style="${isKept?'opacity:0.6;':''}">`;
+      html+=`<td>${isKept?'<span style="color:var(--t3)">-</span>':`<input type="checkbox" class="process-check" data-gi="${item.gi}" checked>`}</td>`;
+      html+=`<td style="font-size:11px">${esc(getPartNameByFi(item.fi))}</td>`; // 分区列
+      allFields.forEach(f=>{
+        const val=item.item[f];
+        html+=`<td title="${esc(String(val??''))}">${esc(trunc(String(val??''),40))}</td>`;
+      });
+      html+=`</tr>`;
+    });
+    html+=`</tbody></table></div></div>`;
+  });
+  html+=`<div style="margin-top:12px;font-size:12px;color:var(--t3)">说明：勾选复选框表示将处理该项；字段选择仅适用于存在差异的冲突组。</div>`;
+  showModal('🪄 自动处理预览',html,`<button class="btn btn-o" onclick="closeModal()">取消</button><button class="btn btn-p" id="confirmAutoProcess">✅ 确认执行</button>`);
+  
+  document.getElementById('confirmAutoProcess').onclick=()=>{
+    const checkedGis = new Set(Array.from(document.querySelectorAll('.process-check:checked')).map(cb=>Number(cb.dataset.gi)));
+    const fieldChoices = {};
+    document.querySelectorAll('.field-select').forEach(sel=>{
+      fieldChoices[sel.dataset.field] = sel.value;
+    });
+    executeAutoProcess(groups, checkedGis, fieldChoices);
+    closeModal();
+    S.selection.clear();
+    updateBatchBar();
+  };
+}
+
+function toggleFieldPreview(btn){
+  btn.classList.toggle('active');
+  const field=btn.dataset.field;
+  document.querySelectorAll(`.preview-tbl-wrap th[data-field="${field}"]`).forEach(th=>{
+    th.style.display=th.style.display==='none'?'':'none';
+  });
+  document.querySelectorAll(`.preview-tbl-wrap td[data-field="${field}"]`).forEach(td=>{
+    td.style.display=td.style.display==='none'?'':'none';
+  });
+}
+
+function executeAutoProcess(groups, checkedGis, fieldChoices = {}){
+  const snapshot = JSON.parse(JSON.stringify(S.files));
+  let totalUidUnify = 0, totalUidReassign = 0, totalDupDelete = 0, totalFieldUpdate = 0;
+  const uidField = detectField(S.files.flatMap(f => f.data), UID_FIELDS)?.field; // 全局 UID 字段
+
+  groups.forEach(({type, group}) => {
+    if (type === 'dup') {
+      const toDelete = group.items.filter(it => !it.isKept && checkedGis.has(it.gi));
+      const deleteSet = new Set(toDelete.map(it => it.gi));
+      S.files.forEach(f => {
+        f.data = f.data.filter((_, ii) => !deleteSet.has(getGI(f, ii)));
+      });
+      totalDupDelete += toDelete.length;
+    } else {
+      const keyFields = type === 'uid' ? [uidField, 'url'] : [uidField, 'url'];
+      const updateFields = Object.keys(fieldChoices).filter(f => !keyFields.includes(f));
+
+      group.items.forEach(item => {
+        const fi = item.fi, ii = item.ii;
+        if (!S.files[fi] || !S.files[fi].data[ii]) return;
+        updateFields.forEach(field => {
+          S.files[fi].data[ii][field] = fieldChoices[field];
         });
+        totalFieldUpdate++;
+      });
 
-        newFileInput.addEventListener('change', function(e) {
-            if (!e.target.files[0]) return;
-            loadJson(e.target.files[0], function(data, name) {
-                newData = data;
-                newZone.classList.add('loaded');
-                newInfo.textContent = '✓ ' + name + ' (' + data.length + ' 条)';
-                checkReady();
-            });
+      if (type === 'site') {
+        let minUidNum = Infinity;
+        let minUidStr = '';
+        group.items.forEach(it => {
+          const num = parseInt(it.item[uidField]) || 0;
+          if (num > 0 && num < minUidNum) {
+            minUidNum = num;
+            minUidStr = String(it.item[uidField]).trim();
+          }
         });
-
-        function checkReady() {
-            compareBtn.disabled = !(origData && newData);
-        }
-
-        // ===== Comparison =====
-        compareBtn.addEventListener('click', function() {
-            if (!origData || !newData) return;
-            diffResult = compareData(origData, newData);
-            decisions = { added: {}, removed: {}, modified: {} };
-            renderResults();
+        const toChange = group.items.filter(it => !it.isKept && checkedGis.has(it.gi));
+        toChange.forEach(it => {
+          const fi = it.fi, ii = it.ii;
+          if (S.files[fi] && S.files[fi].data[ii]) {
+            S.files[fi].data[ii][uidField] = minUidStr;
+          }
         });
-
-        function getKey(item) {
-            if (item.uid && String(item.uid).trim()) {
-                return 'uid:' + String(item.uid).trim();
+        totalUidUnify += toChange.length;
+      } else if (type === 'uid') {
+        // UID冲突：重新分配全局未使用的最小四位 UID
+        const toReassign = group.items.filter(it => !it.isKept && checkedGis.has(it.gi));
+        if (toReassign.length > 0) {
+          const usedUids = new Set();
+          S.files.forEach(f => f.data.forEach(item => {
+            if (item[uidField] !== undefined) usedUids.add(String(item[uidField]).trim());
+          }));
+          let newUidNum = 1;
+          toReassign.forEach(() => {
+            while (usedUids.has(String(newUidNum).padStart(4, '0'))) {
+              newUidNum++;
             }
-            if (document.getElementById('matchByName').checked && item.name) {
-                return 'name:' + String(item.name).trim();
+            const newUidStr = String(newUidNum).padStart(4, '0');
+            // 将该新 UID 分配给当前条目
+            const it = toReassign.shift(); // 注意：这样会修改数组，但无妨
+            const fi = it.fi, ii = it.ii;
+            if (S.files[fi] && S.files[fi].data[ii]) {
+              S.files[fi].data[ii][uidField] = newUidStr;
             }
-            return null;
+            usedUids.add(newUidStr);
+            newUidNum++;
+          });
+          totalUidReassign += toReassign.length + (toReassign.length ? 0 : 0); // 因为已经 shift，长度变化，我们重新计算
         }
+      }
+    }
+  });
 
-        function normalizeVal(v) {
-            if (v === null || v === undefined) return '';
-            if (typeof v === 'string') return v.trim();
-            return v;
-        }
+  rebuildOffsets();
+  detectConflicts();   // 重新扫描
+  refreshUI();
+  saveState();
+  const desc = `自动处理: 字段更新${totalFieldUpdate}条, UID统一${totalUidUnify}条, UID重分配${totalUidReassign}条, 删除重复${totalDupDelete}条`;
+  addHistory(desc, snapshot);
+  toast(`✅ ${esc(desc)}`, 'ok', 5000, () => undoLast(snapshot));
+}
 
-        function valsEqual(a, b) {
-            var na = normalizeVal(a);
-            var nb = normalizeVal(b);
-            if (na === nb) return true;
-            if (na === '' && nb === '') return true;
-            if (!document.getElementById('caseSensitive').checked) {
-                if (typeof na === 'string' && typeof nb === 'string') {
-                    return na.toLowerCase() === nb.toLowerCase();
-                }
-            }
-            return String(na) === String(nb);
-        }
+// === History & Undo ===
+function addHistory(desc,snapshot){
+  const entry={id:Date.now(),ts:new Date().toISOString(),desc,snapshot};
+  S.history.unshift(entry);
+  while(S.history.length>50){
+    const removed=S.history.pop();
+    if(removed) dbDeleteHistory(removed.id);
+  }
+  dbAddHistory(entry);
+}
+function undoLast(snapshotOverride){
+  const snap=snapshotOverride||(S.history[0]&&S.history[0].snapshot);
+  if(!snap){toast('没有可撤销的操作','wn');return;}
+  S.files=JSON.parse(JSON.stringify(snap));
+  if(!snapshotOverride&&S.history.length){const removed=S.history.shift();dbDeleteHistory(removed.id);}
+  rebuildOffsets();detectConflicts();refreshUI();saveState();
+  toast('↩️ 已撤销','ok');
+}
+function showHistoryPanel(){
+  let html='';
+  if(!S.history.length) html='<div style="text-align:center;color:var(--t3);padding:40px">暂无操作历史</div>';
+  else S.history.forEach(h=>{
+    html+=`<div class="preview-item"><div class="pi-hd"><span style="font-size:12px;color:var(--t3)">${new Date(h.ts).toLocaleString()}</span><button class="btn btn-o btn-sm" onclick="undoFromHistory('${h.id}')" title="撤销此步操作">↩️ 撤销</button></div><div style="font-size:13px">${esc(h.desc)}</div></div>`;
+  });
+  showModal('📜 操作历史',html,'<button class="btn btn-o" onclick="closeModal()">关闭</button>');
+}
+async function undoFromHistory(id){
+  const entry=S.history.find(h=>h.id==id);if(!entry)return;
+  undoLast(entry.snapshot);
+  const idx=S.history.findIndex(h=>h.id==id);
+  const toRemove=S.history.splice(0,idx+1);
+  for(const r of toRemove) await dbDeleteHistory(r.id);
+  closeModal();showHistoryPanel();
+}
 
-        function getBaseFields() {
-            // Collect all base fields from both datasets
-            var fields = {};
-            var knownFields = ['name', 'url', 'related', 'remark', 'issue', 'logo', 'uid'];
-            knownFields.forEach(function(f) { fields[f] = true; });
-            return Object.keys(fields);
-        }
+function toggleSelect(gi){if(S.selection.has(gi))S.selection.delete(gi);else S.selection.add(gi);updateBatchBar();renderTable();}
+function toggleSelectAll(){const rows=getFD();const allSelected=rows.every(r=>S.selection.has(r.gi));if(allSelected)rows.forEach(r=>S.selection.delete(r.gi));else rows.forEach(r=>S.selection.add(r.gi));updateBatchBar();renderTable();}
+function clearSelection(){S.selection.clear();updateBatchBar();renderTable();}
+function updateBatchBar(){const bar=document.getElementById('batchBar');const cnt=document.getElementById('batchCount');if(S.selection.size>0){bar.style.display='flex';cnt.textContent=S.selection.size;}else{bar.style.display='none';}}
+function batchDelete(){
+  if(!S.selection.size)return;
+  const snapshot=JSON.parse(JSON.stringify(S.files));const count=S.selection.size;
+  S.files.forEach(f=>{f.data=f.data.filter((_,ii)=>!S.selection.has(getGI(f,ii)));});
+  S.selection.clear();rebuildOffsets();detectConflicts();refreshUI();saveState();updateBatchBar();
+  const desc=`批量删除 ${count} 条数据`;
+  addHistory(desc,snapshot);
+  toast(`✅ ${esc(desc)}`,'ok',5000,()=>undoLast(snapshot));
+}
 
-        function compareData(orig, newD) {
-            var origMap = {};
-            var newMap = {};
-            var origKeys = [];
-            var newKeys = [];
+// === UI Rendering ===
+function refreshUI(){renderPartitions();renderFileBar();detectAllFields();renderTable();updateStats();updateDropZone();}
+function updateDropZone(){const dz=document.getElementById('dropZone');if(S.files.length>0)dz.classList.add('compact');else dz.classList.remove('compact');}
+function renderPartitions(){
+  const el=document.getElementById('partitionList');
+  const allCnt=S.files.reduce((s,f)=>s+f.data.length,0);
+  let h=`<div class="p-item ${S.activePartition==='all'?'active':''}" data-part="all"><span class="p-name">📋 全部数据</span><span class="p-cnt">${allCnt}</span></div>`;
+  S.partitions.forEach(p=>{
+    const cnt=S.files.filter(f=>f.partitionId===p.id).reduce((s,f)=>s+f.data.length,0);
+    if(cnt===0&&!S.files.some(f=>f.partitionId===p.id))return;
+    const hidden = S.hiddenPartitions.has(p.id);
+    h+=`<div class="p-item ${S.activePartition===p.name?'active':''}" data-part="${esc(p.name)}" style="${hidden?'opacity:.5':''}">
+      <span class="p-name">${esc(p.name)}</span>
+      <span class="p-cnt">${cnt}</span>
+      <span class="eye-btn" data-eye="${p.id}" title="点击切换屏蔽">${hidden?'🚫':'👁️'}</span>
+      <button class="p-del" data-delpart="${p.id}" title="删除分区">✕</button>
+    </div>`;
+  });
+  el.innerHTML=h;
+  // 绑定眼睛按钮事件
+  el.querySelectorAll('.eye-btn').forEach(btn=>{
+    btn.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      const pid=btn.dataset.eye;
+      togglePartitionHidden(pid);
+    });
+  });
+}
+function togglePartitionHidden(pid){
+  if(S.hiddenPartitions.has(pid)){
+    S.hiddenPartitions.delete(pid);
+  } else {
+    S.hiddenPartitions.add(pid);
+  }
+  saveState();
+  refreshUI();
+}
+function renderFileBar(){
+  const el=document.getElementById('fileStatusBar');
+  if(!S.files.length){el.innerHTML='';return;}
+  el.innerHTML=S.files.map((f,i)=>{
+    const pn=(S.partitions.find(p=>p.id===f.partitionId)||{}).name||'未分类';
+    const hidden = S.hiddenPartitions.has(f.partitionId);
+    const hc=f.data.some((_,j)=>{const g=getGI(f,j);return S.conflicts.uid.has(g)||S.conflicts.site.has(g)||S.duplicates.has(g)||S.validationErrors.has(g);});
+    return `<div class="ftag ${hc?'conflict':''} ${hidden?'hidden':''}">📄 ${esc(f.name)} → ${esc(pn)} (${f.data.length})<span class="fdel" data-rmfile="${i}" title="移除文件">✕</span></div>`;
+  }).join('');
+}
+function detectAllFields(){const fs=new Set();getFF().forEach(f=>f.data.forEach(item=>Object.keys(item).forEach(k=>fs.add(k))));S.allFields=Array.from(fs);}
+function getFF(){
+  if(!S.activePartition||S.activePartition==='all'){
+    return S.files.filter(f=>!S.hiddenPartitions.has(f.partitionId));
+  }
+  const p=S.partitions.find(p=>p.name===S.activePartition);
+  if(!p) return [];
+  if(S.hiddenPartitions.has(p.id)) return [];
+  return S.files.filter(f=>f.partitionId===p.id);
+}
+function getFD(){
+  const ff=getFF();let rows=[];
+  ff.forEach(f=>{const fi=S.files.indexOf(f);f.data.forEach((item,ii)=>{rows.push({item,fi,ii,gi:getGI(f,ii),fn:f.name});});});
+  if(S.query){const q=S.query.toLowerCase();rows=rows.filter(r=>Object.values(r.item).some(v=>String(v).toLowerCase().includes(q)));}
+  const onlyErr=document.getElementById('showConflictsOnly')?.checked;
+  if(onlyErr){
+    rows=rows.filter(r=>S.conflicts.uid.has(r.gi)||S.conflicts.site.has(r.gi)||S.duplicates.has(r.gi)||S.validationErrors.has(r.gi));
+  }
+  if(S.sortField){rows.sort((a,b)=>{const va=a.item[S.sortField]??'',vb=b.item[S.sortField]??'';const c=typeof va==='number'&&typeof vb==='number'?va-vb:String(va).localeCompare(String(vb),'zh');return S.sortDir==='asc'?c:-c;});}
+  return rows;
+}
+function renderTable(){
+  const ct=document.getElementById('tableContainer');const all=getFD();
+  if(!all.length){ct.innerHTML=S.files.length===0?'<div class="empty"><div class="ei">📋</div><div>暂无数据，请加载数据文件</div></div>':'<div class="no-res">🔍 没有匹配的数据</div>';document.getElementById('pagination').style.display='none';document.getElementById('conflictLegend').style.display='none';return;}
+  const hc=all.some(r=>S.conflicts.uid.has(r.gi)||S.conflicts.site.has(r.gi)||S.duplicates.has(r.gi)||S.validationErrors.has(r.gi));
+  document.getElementById('conflictLegend').style.display=hc?'flex':'none';
+  const tp=Math.ceil(all.length/S.pageSize);if(S.page>tp)S.page=tp;if(S.page<1)S.page=1;const si=(S.page-1)*S.pageSize,pr=all.slice(si,si+S.pageSize);
+  const uf=detectField(all.map(r=>r.item),UID_FIELDS);const sf=detectField(all.map(r=>r.item),URL_FIELDS);const nf=detectField(all.map(r=>r.item),NAME_FIELDS);
+  const cols=[...new Set([nf?nf.field:null,uf?uf.field:null,sf?sf.field:null,...S.allFields].filter(Boolean))].slice(0,10);
+  const allPageSelected=pr.length>0&&pr.every(r=>S.selection.has(r.gi));
+  let h=`<table><thead><tr><th style="width:40px"><input type="checkbox" ${allPageSelected?'checked':''} onclick="toggleSelectAll()" title="全选/取消全选当前页"></th><th style="width:40px">#</th><th style="width:100px">来源</th>`;
+  cols.forEach(c=>{const sc=S.sortField===c?(S.sortDir==='asc'?'sa':'sd'):'';h+=`<th class="${sc}" data-sort="${esc(c)}">${esc(c)}</th>`;});
+  h+='<th style="width:80px">操作</th></tr></thead><tbody>';
+  pr.forEach((r,di)=>{
+    const iuc=S.conflicts.uid.has(r.gi),isc=S.conflicts.site.has(r.gi),idup=S.duplicates.has(r.gi),ival=S.validationErrors.has(r.gi);
+    const isSel=S.selection.has(r.gi);
+    let rc='';if(iuc)rc+=' uc';if(isc)rc+=' sc';if(idup)rc+=' dup';if(ival)rc+=' val-err';
+    h+=`<tr class="${rc.trim()}"><td><input type="checkbox" ${isSel?'checked':''} onclick="event.stopPropagation();toggleSelect(${r.gi})"></td><td style="color:var(--t3)">${si+di+1}</td><td style="font-size:11px;color:var(--t3)">${esc(trunc(r.fn,15))}</td>`;
+    cols.forEach(c=>{const v=r.item[c],cc=(uf&&c===uf.field&&iuc)?'uid-c':(sf&&c===sf.field&&isc)?'site-c':'';let dv='';if(v!=null){const sv=String(v);dv=(sf&&c===sf.field&&(sv.startsWith('http://')||sv.startsWith('https://')))?`<a href="${esc(sv)}" target="_blank" rel="noopener">${esc(trunc(sv,45))}</a>`:esc(trunc(sv,50));}h+=`<td class="${cc}" title="${esc(String(v??''))}">${dv}</td>`;});
+    h+=`<td><div class="cell-act"><button class="ce-btn" data-edit="${r.fi},${r.ii}" title="编辑条目">✏️</button><button class="cd-btn" data-del="${r.fi},${r.ii}" title="删除条目">🗑️</button></div></td></tr>`;
+  });
+  h+='</tbody></table>';ct.innerHTML=h;renderPg(all.length,tp);
+}
+function renderPg(total,tp){const pg=document.getElementById('pagination');if(tp<=1){pg.style.display='none';return;}pg.style.display='flex';let h=`<button ${S.page<=1?'disabled':''} data-pg="1" title="首页">«</button><button ${S.page<=1?'disabled':''} data-pg="${S.page-1}" title="上一页">‹</button>`;const mv=7;let st=Math.max(1,S.page-Math.floor(mv/2)),en=Math.min(tp,st+mv-1);if(en-st<mv-1)st=Math.max(1,en-mv+1);if(st>1){h+=`<button data-pg="1">1</button>`;if(st>2)h+=`<span class="pi">...</span>`;}for(let i=st;i<=en;i++)h+=`<button class="${i===S.page?'pa':''}" data-pg="${i}">${i}</button>`;if(en<tp){if(en<tp-1)h+=`<span class="pi">...</span>`;h+=`<button data-pg="${tp}">${tp}</button>`;}h+=`<button ${S.page>=tp?'disabled':''} data-pg="${S.page+1}" title="下一页">›</button><button ${S.page>=tp?'disabled':''} data-pg="${tp}" title="末页">»</button><span class="pi">${total}条</span>`;pg.innerHTML=h;}
+function updateStats(){
+  const visibleFiles = getFF();
+  const t=visibleFiles.reduce((s,f)=>s+f.data.length,0);
+  const visibleGis = new Set();
+  visibleFiles.forEach(f=>{const fi=S.files.indexOf(f);f.data.forEach((_,ii)=>visibleGis.add(getGI(f,ii)));});
+  const uidC = [...S.conflicts.uid].filter(gi=>visibleGis.has(gi)).length;
+  const siteC = [...S.conflicts.site].filter(gi=>visibleGis.has(gi)).length;
+  const dupC = [...S.duplicates].filter(gi=>visibleGis.has(gi)).length;
+  const valC = [...S.validationErrors].filter(gi=>visibleGis.has(gi)).length;
+  document.getElementById('statsTotal').textContent=`总计: ${t}`;
+  document.getElementById('statsConflicts').textContent=`冲突: ${uidC+siteC}`;
+  document.getElementById('statsValidation').textContent=`违规: ${valC}`;
+}
 
-            orig.forEach(function(item) {
-                var key = getKey(item);
-                if (key) {
-                    origMap[key] = item;
-                    origKeys.push(key);
-                }
-            });
+// === File Handling ===
+function matchFileToPartition(filename){const base=filename.replace(/\.[^.]+$/,'').toLowerCase().trim();if(FILE_PARTITION_MAP[base])return{matched:true,partition:FILE_PARTITION_MAP[base],rule:`精确匹配: "${base}" → "${FILE_PARTITION_MAP[base]}"`};const norm=base.replace(/[-_\s]+/g,'');for(const[k,p]of Object.entries(FILE_PARTITION_MAP)){if(k.replace(/[-_\s]+/g,'')===norm)return{matched:true,partition:p,rule:`模糊匹配: "${base}"→"${norm}" ≈ "${k}" → "${p}"`};}return{matched:false,partition:null,rule:`未匹配: "${base}" 无对应映射`};}
+async function handleFileSelect(e){const fs=Array.from(e.target.files);e.target.value='';if(fs.length)await processFiles(fs);}
+async function processFiles(fileList){
+  for(const file of fileList){
+    try{
+      const text=await readText(file);let data;
+      try{data=JSON.parse(text);}catch(pe){toast(`❌ ${esc(file.name)} 不是有效JSON`,'error');continue;}
+      let items;
+      if(Array.isArray(data)){items=data;}
+      else if(typeof data==='object'){const ak=Object.keys(data).find(k=>Array.isArray(data[k])&&data[k].length>0);items=ak?data[ak]:[data];}
+      else{toast(`❌ ${esc(file.name)} 不支持的类型`,'error');continue;}
+      if(!items.length){toast(`⚠️ ${esc(file.name)} 数据为空`,'warn');continue;}
+      const normName=file.name.replace(/\.[^.]+$/,'').trim();
+      const existIdx=S.files.findIndex(f=>f.name===normName);
+      const mr=matchFileToPartition(file.name);
+      if(existIdx>=0){
+        const ef=S.files[existIdx];const ep=S.partitions.find(p=>p.id===ef.partitionId);const partName=ep?ep.name:mr.partition;
+        const action=await showConfirm(`文件"${esc(normName)}"已存在`,'选择操作：',[{text:'🔄 替换',value:'replace'},{text:'➕ 合并',value:'merge'},{text:'取消',value:'cancel'}]);
+        if(action==='cancel')continue;
+        if(action==='replace'){ef.data=items;ef.lastModified=Date.now();toast(`✅ ${esc(normName)} 已替换`,'ok');}
+        else{ef.data=[...ef.data,...items];ef.lastModified=Date.now();toast(`✅ ${esc(normName)} 已合并`,'ok');}
+      }else{
+        let partName=mr.partition;
+        if(!partName){partName=await showNewPartModal(normName);if(!partName)continue;}
+        let part=S.partitions.find(p=>p.name===partName);
+        if(!part){part={name:partName,id:gid()};S.partitions.push(part);}
+        S.files.push({name:normName,partitionId:part.id,data:items,lastModified:Date.now()});
+        toast(`✅ ${esc(normName)} → ${esc(partName)}`,'ok');
+      }
+    }catch(e){toast(`❌ ${esc(file.name)}: ${esc(e.message)}`,'error');}
+  }
+  rebuildOffsets();await saveState();detectConflicts();refreshUI();
+}
 
-            newD.forEach(function(item) {
-                var key = getKey(item);
-                if (key) {
-                    newMap[key] = item;
-                    newKeys.push(key);
-                }
-            });
+// === Editor ===
+function openEd(fi,ii){
+  const item=S.files[fi].data[ii];
+  S.editing={fi,ii,orig:item,item:{...item}};
+  const bd=document.getElementById('editorBody');
+  const keys=new Set([...Object.keys(item),...S.allFields]);
+  let h='';
+  keys.forEach(k=>{
+    const v=item[k]??'';const isC=typeof v==='object'&&v!==null;const long=isC||String(v).length>80;
+    const dv=isC?JSON.stringify(v,null,2):String(v);
+    h+=`<div class="ed-field"><label>${esc(k)}${isC?' (JSON)':''}</label>${long?`<textarea data-f="${esc(k)}" data-complex="${isC}">${esc(dv)}</textarea>`:`<input type="text" data-f="${esc(k)}" value="${esc(dv)}">`}</div>`;
+  });
+  if(S.partitions.length>1){
+    const currentPart=S.partitions.find(p=>p.id===S.files[fi].partitionId);
+    let partOpts=S.partitions.filter(p=>p.id!==S.files[fi].partitionId).map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('');
+    h+=`<div class="ed-field" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--bd)"><label>🔀 移动到其他分区</label><div style="display:flex;gap:8px"><select id="movePartSel" style="flex:1"><option value="">选择目标分区...</option>${partOpts}</select><button class="btn btn-o btn-sm" onclick="moveItemToPartition(${fi},${ii})" title="移动条目到所选分区">移动</button></div><div style="font-size:11px;color:var(--t3);margin-top:4px">当前分区: ${esc(currentPart?.name||'未知')}</div></div>`;
+  }
+  h+=`<div class="ed-field" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bd)"><label>➕ 添加新字段</label><div style="display:flex;gap:8px"><input type="text" id="nfN" placeholder="字段名" style="flex:1"><input type="text" id="nfV" placeholder="值" style="flex:1"><button class="btn btn-o btn-sm" onclick="addEF()" title="添加字段">添加</button></div></div>`;
+  bd.innerHTML=h;
+  document.getElementById('editorTitle').textContent='✏️ 编辑数据';
+  document.getElementById('editorPanel').classList.add('open');
+  document.getElementById('editorBackdrop').classList.add('show');
+}
+async function moveItemToPartition(fi,ii){
+  const sel=document.getElementById('movePartSel');const targetId=sel?.value;
+  if(!targetId){toast('请选择目标分区','wn');return;}
+  const targetPart=S.partitions.find(p=>p.id===targetId);
+  const sourcePart=S.partitions.find(p=>p.id===S.files[fi].partitionId);
+  const item=S.files[fi].data[ii];const sourceFileName=S.files[fi].name;
+  const targetFile=S.files.find(f=>f.partitionId===targetId&&f.name===sourceFileName);
+  if(targetFile){targetFile.data.push({...item});targetFile.lastModified=Date.now();}
+  else{S.files.push({name:sourceFileName,partitionId:targetId,data:[{...item}],lastModified:Date.now()});}
+  S.files[fi].data.splice(ii,1);
+  if(S.files[fi].data.length===0){S.files.splice(fi,1);}
+  rebuildOffsets();await saveState();detectConflicts();closeEditor();refreshUI();
+  toast(`已移动到 "${esc(targetPart?.name)}"`,'ok');
+}
+function addEF(){const n=document.getElementById('nfN').value.trim(),v=document.getElementById('nfV').value.trim();if(!n){toast('请输入字段名','wn');return;}const bd=document.getElementById('editorBody'),d=document.createElement('div');d.className='ed-field';d.innerHTML=`<label>${esc(n)}</label><input type="text" data-f="${esc(n)}" value="${esc(v)}">`;bd.insertBefore(d,bd.querySelector('.ed-field:last-child'));document.getElementById('nfN').value='';document.getElementById('nfV').value='';toast(`已添加"${esc(n)}"`,'ok');}
+function closeEditor(){document.getElementById('editorPanel').classList.remove('open');document.getElementById('editorBackdrop').classList.remove('show');S.editing=null;}
+async function saveEditor(){
+  if(!S.editing)return;const{fi,ii,orig}=S.editing;const snapshot=JSON.parse(JSON.stringify(S.files));
+  const ni={};const inputs=document.querySelectorAll('#editorBody [data-f]');
+  for(const el of inputs){const k=el.getAttribute('data-f');const v=el.value;const isC=el.getAttribute('data-complex')==='true';if(isC){try{ni[k]=JSON.parse(v);}catch{ni[k]=v;}}else if(v===''){ni[k]='';}else if(typeof orig[k]==='number'&&v.trim()!==''&&!isNaN(v)){ni[k]=Number(v);}else if(v==='true'){ni[k]=true;}else if(v==='false'){ni[k]=false;}else{ni[k]=v;}}
+  S.files[fi].data[ii]=ni;S.files[fi].lastModified=Date.now();
+  rebuildOffsets();await saveState();detectConflicts();closeEditor();refreshUI();
+  addHistory(`编辑条目 ${S.files[fi].name}[${ii}]`,snapshot);toast('✅ 已保存','ok');
+}
 
-            var added = [];
-            var removed = [];
-            var modified = [];
-            var unchanged = 0;
+// === Whitelist ===
+function showWhitelistModal(){
+  let html=`<div class="fg"><label>忽略域名白名单（以下域名将被完全忽略，不参与任何检测）</label></div>`;
+  html+=`<div id="whitelistList" style="margin-bottom:12px">`;
+  if(S.domainWhitelist.length===0){
+    html+=`<div style="color:var(--t3);padding:8px 0">暂无白名单域名</div>`;
+  } else {
+    S.domainWhitelist.forEach((domain,idx)=>{
+      html+=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+        <span style="flex:1">${esc(domain)}</span>
+        <button class="btn btn-d btn-sm" onclick="removeWhitelistDomain(${idx})">✕</button>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+  html+=`<div style="display:flex;gap:8px">
+    <input type="text" id="newWhitelistDomain" placeholder="输入域名，如 example.com" style="flex:1">
+    <button class="btn btn-p btn-sm" onclick="addWhitelistDomain()">添加</button>
+  </div>`;
+  showModal('🔖 域名白名单', html, `<button class="btn btn-o" onclick="closeModal()">关闭</button>`);
+}
+function addWhitelistDomain(){
+  const input=document.getElementById('newWhitelistDomain');
+  const domain=input.value.trim().toLowerCase();
+  if(!domain){toast('请输入域名','wn');return;}
+  if(S.domainWhitelist.includes(domain)){toast('域名已存在','wn');return;}
+  S.domainWhitelist.push(domain);
+  saveState();
+  showWhitelistModal();
+  toast(`已添加白名单域名: ${esc(domain)}`,'ok');
+  detectConflicts();refreshUI();
+}
+function removeWhitelistDomain(idx){
+  const removed=S.domainWhitelist.splice(idx,1)[0];
+  saveState();
+  showWhitelistModal();
+  toast(`已移除白名单域名: ${esc(removed)}`,'ok');
+  detectConflicts();refreshUI();
+}
 
-            // Find added (in new but not in orig)
-            newKeys.forEach(function(key) {
-                if (!origMap[key]) {
-                    added.push({ key: key, item: newMap[key] });
-                }
-            });
+// === Help ===
+function showAutoProcessHelp(){
+  const body=`<div style="line-height:2;font-size:13px">
+    <h4 style="color:var(--ac);margin-bottom:8px">🪄 自动处理逻辑</h4>
+    <p><b>1. UID冲突（同UID不同站）</b><br>当多个条目具有相同UID但域名不同且名称相似时，系统将它们识别为同一实体但错误地分配了相同UID。自动处理时，保留一个站点的原UID，其余站点条目分配全局未使用的最小UID。</p>
+    <p style="margin-top:12px"><b>2. 站点冲突（同站不同UID）</b><br>当多个条目具有相同域名但UID不同且名称相似时，系统将它们识别为同一实体但存在重复条目。自动处理时，将UID统一为该组内数值最小的UID；若条目间存在其他字段差异，用户可通过字段选择合成最终条目。</p>
+    <p style="margin-top:12px"><b>3. 同分区重复</b><br>在同一分区内，除UID外所有字段完全一致的条目被视为重复。自动处理时，保留UID最小的条目，删除其余重复项。</p>
+    <p style="margin-top:12px"><b>4. 选择性处理</b><br>在主表格中勾选需要处理的条目后点击“自动处理”，系统会弹出预览，仅对勾选的待处理项执行操作。所有操作支持撤销。</p>
+  </div>`;
+  showModal('❓ 自动处理说明',body,'<button class="btn btn-p" onclick="closeModal()">我知道了</button>');
+}
 
-            // Find removed (in orig but not in new)
-            origKeys.forEach(function(key) {
-                if (!newMap[key]) {
-                    removed.push({ key: key, item: origMap[key] });
-                }
-            });
+// === Misc ===
+function selPart(n){S.activePartition=n;S.page=1;saveState();refreshUI();}
+function toggleSort(f){if(S.sortField===f)S.sortDir=S.sortDir==='asc'?'desc':'asc';else{S.sortField=f;S.sortDir='asc';}renderTable();}
+function goPg(p){S.page=p;renderTable();document.getElementById('tableContainer').scrollTop=0;}
+async function rmFile(i){
+  const f=S.files[i];
+  if(await showConfirm('确认移除',`确定移除"${esc(f.name)}"？`,[{text:'确定',value:'y',danger:true},{text:'取消',value:'n'}])!=='y')return;
+  const snap=JSON.parse(JSON.stringify(S.files));S.files.splice(i,1);
+  rebuildOffsets();await saveState();detectConflicts();refreshUI();
+  addHistory(`移除文件 ${f.name}`,snap);
+  toast(`已移除 ${esc(f.name)}`,'info',5000,()=>undoLast(snap));
+}
+async function delItem(fi,ii){
+  if(await showConfirm('确认删除','确定删除这条数据？',[{text:'确定',value:'y',danger:true},{text:'取消',value:'n'}])!=='y')return;
+  const snap=JSON.parse(JSON.stringify(S.files));const item=S.files[fi].data[ii];
+  S.files[fi].data.splice(ii,1);rebuildOffsets();await saveState();detectConflicts();refreshUI();
+  addHistory(`删除单条 ${S.files[fi].name}[${ii}]`,snap);
+  toast('已删除','info',5000,()=>undoLast(snap));
+}
+async function delPart(pid){
+  const p=S.partitions.find(x=>x.id===pid);if(!p)return;
+  const fc=S.files.filter(f=>f.partitionId===pid).length;
+  if(await showConfirm('删除分区',`确定删除"${esc(p.name)}"？${fc?`\n该分区下${fc}个文件也将被删除。`:''}`,[{text:'确定',value:'y',danger:true},{text:'取消',value:'n'}])!=='y')return;
+  const snap=JSON.parse(JSON.stringify(S.files));
+  S.files=S.files.filter(f=>f.partitionId!==pid);
+  S.partitions=S.partitions.filter(x=>x.id!==pid);
+  if(S.activePartition===p.name)S.activePartition='all';
+  rebuildOffsets();await saveState();detectConflicts();refreshUI();
+  addHistory(`删除分区 ${p.name}`,snap);
+  toast(`"${esc(p.name)}"已删除`,'info',5000,()=>undoLast(snap));
+}
 
-            // Find modified or unchanged
-            var baseFields = ['name', 'url', 'related', 'remark', 'issue', 'logo', 'uid'];
-            // Also discover any additional base fields present in new data
-            newKeys.forEach(function(key) {
-                if (!origMap[key]) return; // added, already handled
-                var origItem = origMap[key];
-                var newItem = newMap[key];
-                var changes = {};
-                var hasChange = false;
+function exportSourceData(){if(!S.files.length){toast('无数据','wn');return;}S.files.forEach(f=>dlBlob(new Blob([JSON.stringify(f.data,null,2)],{type:'application/json'}),`${f.name}.json`));toast(`已导出${S.files.length}个源文件`,'ok');}
+function exportPartitionData(){if(!S.files.length){toast('无数据','wn');return;}const pd={};S.files.forEach(f=>{const pn=(S.partitions.find(p=>p.id===f.partitionId)||{}).name||'未分类';if(!pd[pn])pd[pn]=[];pd[pn]=[...pd[pn],...f.data];});for(const[n,d]of Object.entries(pd))dlBlob(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}),`partition_${n.replace(/[\/\\:*?"<>|]/g,'_')}.json`);toast(`已导出${Object.keys(pd).length}个分区`,'ok');}
+function exportAllBundle(){const b={version:3,date:new Date().toISOString(),partitions:S.partitions,files:S.files.map(f=>({name:f.name,partitionId:f.partitionId,data:f.data,lastModified:f.lastModified}))};dlBlob(new Blob([JSON.stringify(b,null,2)],{type:'application/json'}),`data_bundle_v3_${new Date().toISOString().slice(0,10)}.json`);toast('数据包已导出','ok');}
+async function handleBundleImport(e){
+  const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{
+    const t=await readText(f),b=JSON.parse(t);
+    if(!b.partitions||!b.files){toast('无效数据包','er');return;}
+    const act=await showConfirm('导入数据包',`${b.partitions.length}个分区，${b.files.length}个文件`,[{text:'🔄 替换',value:'replace'},{text:'➕ 合并',value:'merge'},{text:'取消',value:'cancel'}]);
+    if(act==='cancel')return;
+    const snap=JSON.parse(JSON.stringify(S.files));
+    if(act==='replace'){S.partitions=b.partitions;S.files=b.files.map(f=>({...f}));}
+    else{b.partitions.forEach(p=>{if(!S.partitions.find(ep=>ep.name===p.name))S.partitions.push(p);});b.files.forEach(f=>{const ex=S.files.find(ef=>ef.name===f.name);if(ex)ex.data=[...ex.data,...f.data];else S.files.push({...f});});}
+    rebuildOffsets();await saveState();detectConflicts();refreshUI();addHistory('导入数据包',snap);toast('导入成功','ok');
+  }catch(err){toast('导入失败:'+err.message,'er');}
+}
 
-                // Compare all fields present in either item (excluding _ prefixed internal fields)
-                var allFields = {};
-                Object.keys(origItem).forEach(function(f) { if (f[0] !== '_') allFields[f] = true; });
-                Object.keys(newItem).forEach(function(f) { if (f[0] !== '_') allFields[f] = true; });
+function showModal(title,body,footer){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modalFooter').innerHTML=footer;document.getElementById('modalOverlay').classList.add('show');}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
+function showConfirm(title,msg,btns){
+  const safeTitle=esc(title);
+  const safeMsg=esc(msg);
+  return new Promise(res=>{
+    window._mr=res;let fh='';
+    btns.forEach(b=>{const c=b.danger?'btn-d':(b===btns[0]?'btn-p':'btn-o');fh+=`<button class="btn ${c}" id="mc_${b.value}">${esc(b.text)}</button>`;});
+    showModal(safeTitle,`<p>${safeMsg}</p>`,fh);
+    btns.forEach(b=>{document.getElementById(`mc_${b.value}`).addEventListener('click',()=>{closeModal();window._mr(b.value);});});
+  });
+}
+function showNewPartModal(fn){return new Promise(res=>{window._mr=v=>{if(v==='ok'){const s=document.getElementById('pmSel').value;res(s==='__new__'?document.getElementById('pmNew').value.trim()||null:s);}else res(null);};let oh=`<div class="fg"><label>选择已有分区或创建新分区</label><select id="pmSel" style="width:100%;margin-bottom:12px"><option value="__new__">🆕 创建新分区...</option>`;S.partitions.forEach(p=>oh+=`<option value="${esc(p.name)}">${esc(p.name)}</option>`);oh+=`</select><div id="pmNewWrap" style="display:none"><input type="text" id="pmNew" placeholder="新分区名称" value="${esc(fn)}" style="width:100%"></div></div>`;showModal(`📂 "${esc(fn)}" 未匹配分区`,oh,`<button class="btn btn-o" id="mc_cancel">取消</button><button class="btn btn-p" id="mc_ok">确认</button>`);document.getElementById('mc_cancel').addEventListener('click',()=>{closeModal();window._mr('cancel');});document.getElementById('mc_ok').addEventListener('click',()=>{closeModal();window._mr('ok');});setTimeout(()=>{const s=document.getElementById('pmSel'),nw=document.getElementById('pmNewWrap');s.addEventListener('change',()=>nw.style.display=s.value==='__new__'?'block':'none');},50);});}
+function showAddPartitionModal(){showModal('新建分区',`<div class="fg"><label>分区名称</label><input type="text" id="newPartName" placeholder="输入分区名称" style="width:100%"></div>`,`<button class="btn btn-o" id="ap_cancel">取消</button><button class="btn btn-p" id="ap_ok">创建</button>`);document.getElementById('ap_cancel').addEventListener('click',closeModal);document.getElementById('ap_ok').addEventListener('click',()=>{const n=document.getElementById('newPartName').value.trim();if(!n){toast('请输入名称','wn');return;}if(S.partitions.find(p=>p.name===n)){toast('已存在','wn');return;}S.partitions.push({name:n,id:gid()});saveState();refreshUI();closeModal();toast(`"${esc(n)}"已创建`,'ok');});setTimeout(()=>document.getElementById('newPartName')?.focus(),100);}
+function toggleSidebar(){const sb=document.getElementById('sidebar');const cl=document.getElementById('sidebarClose');sb.classList.toggle('open');cl.style.display=sb.classList.contains('open')?'block':'none';}
 
-                Object.keys(allFields).forEach(function(field) {
-                    if (field === 'uid') return; // UID is the match key, skip
-                    var oldVal = origItem[field];
-                    var newVal = newItem[field];
-                    if (!valsEqual(oldVal, newVal)) {
-                        changes[field] = { old: normalizeVal(oldVal), new: normalizeVal(newVal) };
-                        hasChange = true;
-                    }
-                });
+function initDD(){const dz=document.getElementById('dropZone');['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();ev.stopPropagation();dz.classList.add('drag-over');}));['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();ev.stopPropagation();dz.classList.remove('drag-over');}));dz.addEventListener('drop',e=>{const fs=Array.from(e.dataTransfer.files).filter(f=>f.name.endsWith('.json'));fs.length?processFiles(fs):toast('请拖入JSON','wn');});document.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});document.addEventListener('dragleave',e=>{if(!e.relatedTarget||!document.contains(e.relatedTarget))dz.classList.remove('drag-over');});document.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');});}
 
-                // Check for extra fields in original (not in new)
-                var extraInOrig = [];
-                Object.keys(origItem).forEach(function(f) {
-                    if (f[0] === '_') return;
-                    if (!(f in newItem) && normalizeVal(origItem[f]) !== '') {
-                        extraInOrig.push(f);
-                    }
-                });
+function initEvents(){
+  document.getElementById('partitionList').addEventListener('click',e=>{
+    const eyeBtn=e.target.closest('.eye-btn');
+    if(eyeBtn){e.stopPropagation();const pid=eyeBtn.dataset.eye;togglePartitionHidden(pid);return;}
+    const d=e.target.closest('[data-delpart]');if(d){e.stopPropagation();delPart(d.dataset.delpart);return;}
+    const i=e.target.closest('.p-item');if(i)selPart(i.dataset.part);
+  });
+  document.getElementById('fileStatusBar').addEventListener('click',e=>{const d=e.target.closest('[data-rmfile]');if(d)rmFile(parseInt(d.dataset.rmfile));});
+  document.getElementById('tableContainer').addEventListener('click',e=>{const th=e.target.closest('[data-sort]');if(th){toggleSort(th.dataset.sort);return;}const eb=e.target.closest('[data-edit]');if(eb){const[fi,ii]=eb.dataset.edit.split(',').map(Number);openEd(fi,ii);return;}const db=e.target.closest('[data-del]');if(db){const[fi,ii]=db.dataset.del.split(',').map(Number);delItem(fi,ii);return;}});
+  document.getElementById('pagination').addEventListener('click',e=>{const b=e.target.closest('[data-pg]');if(b&&!b.disabled)goPg(parseInt(b.dataset.pg));});
+  document.getElementById('searchInput').addEventListener('input',debounce(()=>{S.query=document.getElementById('searchInput').value.trim();S.page=1;renderTable();},200));
+  document.getElementById('showConflictsOnly').addEventListener('change',()=>{S.page=1;renderTable();});
+  document.getElementById('fileInput').addEventListener('change',handleFileSelect);
+  document.getElementById('bundleInput').addEventListener('change',handleBundleImport);
+  document.getElementById('editorBackdrop').addEventListener('click',closeEditor);
+  document.getElementById('editorClose').addEventListener('click',closeEditor);
+  document.getElementById('editorCancel').addEventListener('click',closeEditor);
+  document.getElementById('editorSave').addEventListener('click',saveEditor);
+  document.getElementById('modalClose').addEventListener('click',closeModal);
+  document.getElementById('dropZone').addEventListener('click',()=>document.getElementById('fileInput').click());
+  document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();document.getElementById('searchInput').focus();}if(e.key==='Escape'){closeEditor();closeModal();}});
+}
 
-                if (hasChange) {
-                    modified.push({
-                        key: key,
-                        origItem: origItem,
-                        newItem: newItem,
-                        changes: changes,
-                        extraInOrig: extraInOrig
-                    });
-                } else {
-                    unchanged++;
-                }
-            });
-
-            return { added: added, removed: removed, modified: modified, unchanged: unchanged };
-        }
-
-        // ===== Rendering =====
-        function renderResults() {
-            var r = diffResult;
-
-            // Show/hide no-change banner
-            var noChanges = r.added.length === 0 && r.removed.length === 0 && r.modified.length === 0;
-            document.getElementById('noChangeBanner').classList.toggle('show', noChanges);
-
-            // Summary
-            var sumBar = document.getElementById('summaryBar');
-            sumBar.classList.toggle('show', !noChanges);
-            document.getElementById('sumAdded').textContent = r.added.length;
-            document.getElementById('sumRemoved').textContent = r.removed.length;
-            document.getElementById('sumModified').textContent = r.modified.length;
-            document.getElementById('sumUnchanged').textContent = r.unchanged;
-
-            // Tabs
-            var tabsBar = document.getElementById('tabsBar');
-            tabsBar.classList.toggle('show', !noChanges);
-            document.getElementById('tabAddedBadge').textContent = r.added.length;
-            document.getElementById('tabRemovedBadge').textContent = r.removed.length;
-            document.getElementById('tabModifiedBadge').textContent = r.modified.length;
-
-            // Batch actions
-            document.getElementById('batchActions').classList.toggle('show', !noChanges);
-
-            // Render each section
-            renderAddedSection();
-            renderRemovedSection();
-            renderModifiedSection();
-
-            // Export
-            document.getElementById('exportSection').classList.toggle('show', !noChanges);
-            if (!noChanges) updateExportPreview();
-
-            // Hide compare button after first compare
-            compareBtn.style.display = 'none';
-        }
-
-        function escapeHtml(str) {
-            if (str === null || str === undefined) return '';
-            var div = document.createElement('div');
-            div.textContent = String(str);
-            return div.innerHTML;
-        }
-
-        function displayVal(v) {
-            var s = normalizeVal(v);
-            if (s === '' || s === null || s === undefined) return '<span style="color:var(--text-sub);font-style:italic">(空)</span>';
-            return escapeHtml(s);
-        }
-
-        function keyLabel(key) {
-            if (key.startsWith('uid:')) return key.slice(4);
-            if (key.startsWith('name:')) return key.slice(5);
-            return key;
-        }
-
-        // ===== Added Section =====
-        function renderAddedSection() {
-            var container = document.getElementById('sectionAdded');
-            if (diffResult.added.length === 0) {
-                container.innerHTML = '<div class="diff-empty">🎉 没有新增条目</div>';
-                return;
-            }
-            var html = '';
-            diffResult.added.forEach(function(entry, idx) {
-                var id = 'added_' + idx;
-                var decision = decisions.added[entry.key] || 'pending';
-                var item = entry.item;
-                html += '<div class="diff-item ' + (decision !== 'pending' ? decision + 'd' : '') + '" data-id="' + id + '" data-category="added" data-key="' + escapeHtml(entry.key) + '">'
-                    + '<div class="diff-item-header" onclick="toggleExpand(this)">'
-                    + '<span class="expand-arrow">▶</span>'
-                    + '<span class="item-name">' + escapeHtml(item.name || '未命名') + '</span>'
-                    + '<span class="item-uid">' + escapeHtml(keyLabel(entry.key)) + '</span>'
-                    + '<span class="status-badge ' + decision + '">' + (decision === 'accept' ? '✓ 接受' : decision === 'reject' ? '✕ 拒绝' : '待审批') + '</span>'
-                    + '</div>'
-                    + '<div class="diff-item-body">'
-                    + renderPreview(item)
-                    + '<div class="item-actions">'
-                    + '<button class="item-btn btn-accept ' + (decision === 'accept' ? 'active' : '') + '" onclick="setDecision(\'added\',\'' + escapeHtml(entry.key) + '\',\'accept\',this)">✓ 接受（添加到合并结果）</button>'
-                    + '<button class="item-btn btn-reject ' + (decision === 'reject' ? 'active' : '') + '" onclick="setDecision(\'added\',\'' + escapeHtml(entry.key) + '\',\'reject\',this)">✕ 拒绝（不添加）</button>'
-                    + '</div></div></div>';
-            });
-            container.innerHTML = html;
-        }
-
-        // ===== Removed Section =====
-        function renderRemovedSection() {
-            var container = document.getElementById('sectionRemoved');
-            if (diffResult.removed.length === 0) {
-                container.innerHTML = '<div class="diff-empty">🎉 没有移除条目</div>';
-                return;
-            }
-            var html = '';
-            diffResult.removed.forEach(function(entry, idx) {
-                var id = 'removed_' + idx;
-                var decision = decisions.removed[entry.key] || 'pending';
-                var item = entry.item;
-
-                // Check for extra fields in original
-                var extraFields = Object.keys(item).filter(function(f) {
-                    return f[0] !== '_' && normalizeVal(item[f]) !== '';
-                });
-
-                html += '<div class="diff-item ' + (decision !== 'pending' ? decision + 'd' : '') + '" data-id="' + id + '" data-category="removed" data-key="' + escapeHtml(entry.key) + '">'
-                    + '<div class="diff-item-header" onclick="toggleExpand(this)">'
-                    + '<span class="expand-arrow">▶</span>'
-                    + '<span class="item-name">' + escapeHtml(item.name || '未命名') + '</span>'
-                    + '<span class="item-uid">' + escapeHtml(keyLabel(entry.key)) + '</span>'
-                    + '<span class="status-badge ' + decision + '">' + (decision === 'accept' ? '✓ 移除' : decision === 'reject' ? '✕ 保留' : '待审批') + '</span>'
-                    + '</div>'
-                    + '<div class="diff-item-body">'
-                    + renderPreview(item)
-                    + (extraFields.length > 0 ? '<div class="extra-fields">⚠️ 此条目包含 ' + extraFields.length + ' 个字段，移除后将丢失这些数据</div>' : '')
-                    + '<div class="item-actions">'
-                    + '<button class="item-btn btn-accept ' + (decision === 'accept' ? 'active' : '') + '" onclick="setDecision(\'removed\',\'' + escapeHtml(entry.key) + '\',\'accept\',this)">✓ 确认移除</button>'
-                    + '<button class="item-btn btn-reject ' + (decision === 'reject' ? 'active' : '') + '" onclick="setDecision(\'removed\',\'' + escapeHtml(entry.key) + '\',\'reject\',this)">✕ 保留此条目</button>'
-                    + '</div></div></div>';
-            });
-            container.innerHTML = html;
-        }
-
-        // ===== Modified Section =====
-        function renderModifiedSection() {
-            var container = document.getElementById('sectionModified');
-            if (diffResult.modified.length === 0) {
-                container.innerHTML = '<div class="diff-empty">🎉 没有变更条目</div>';
-                return;
-            }
-            var html = '';
-            diffResult.modified.forEach(function(entry, idx) {
-                var id = 'modified_' + idx;
-                var decision = decisions.modified[entry.key] || 'pending';
-
-                // Build field diff table
-                var fieldHtml = '<div class="field-diff">'
-                    + '<div class="fd-header">字段</div><div class="fd-header">原始值</div><div class="fd-header">新值</div>';
-                var changeFields = Object.keys(entry.changes);
-                changeFields.forEach(function(field) {
-                    var c = entry.changes[field];
-                    var oldEmpty = (normalizeVal(c.old) === '');
-                    var newEmpty = (normalizeVal(c.new) === '');
-                    fieldHtml += '<div class="fd-label">' + escapeHtml(field) + '</div>'
-                        + '<div class="fd-old changed' + (oldEmpty ? ' empty' : '') + '">' + displayVal(c.old) + '</div>'
-                        + '<div class="fd-new changed' + (newEmpty ? ' empty' : '') + '">' + displayVal(c.new) + '</div>';
-                });
-                fieldHtml += '</div>';
-
-                var extraHtml = '';
-                if (entry.extraInOrig && entry.extraInOrig.length > 0 && document.getElementById('preserveAllExtras').checked) {
-                    extraHtml = '<div class="extra-fields">🛡️ 保留字段（原始文件独有，合并时自动保留）：' + entry.extraInOrig.map(escapeHtml).join('、') + '</div>';
-                }
-
-                html += '<div class="diff-item ' + (decision !== 'pending' ? decision + 'd' : '') + '" data-id="' + id + '" data-category="modified" data-key="' + escapeHtml(entry.key) + '">'
-                    + '<div class="diff-item-header" onclick="toggleExpand(this)">'
-                    + '<span class="expand-arrow">▶</span>'
-                    + '<span class="item-name">' + escapeHtml(entry.newItem.name || entry.origItem.name || '未命名') + '</span>'
-                    + '<span class="item-uid">' + escapeHtml(keyLabel(entry.key)) + ' · ' + changeFields.length + '处变更</span>'
-                    + '<span class="status-badge ' + decision + '">' + (decision === 'accept' ? '✓ 更新' : decision === 'reject' ? '✕ 保留原值' : '待审批') + '</span>'
-                    + '</div>'
-                    + '<div class="diff-item-body">'
-                    + fieldHtml
-                    + extraHtml
-                    + '<div class="item-actions">'
-                    + '<button class="item-btn btn-accept ' + (decision === 'accept' ? 'active' : '') + '" onclick="setDecision(\'modified\',\'' + escapeHtml(entry.key) + '\',\'accept\',this)">✓ 接受更新</button>'
-                    + '<button class="item-btn btn-reject ' + (decision === 'reject' ? 'active' : '') + '" onclick="setDecision(\'modified\',\'' + escapeHtml(entry.key) + '\',\'reject\',this)">✕ 保留原值</button>'
-                    + '</div></div></div>';
-            });
-            container.innerHTML = html;
-        }
-
-        function renderPreview(item) {
-            var fields = ['name', 'uid', 'url', 'related', 'remark', 'issue', 'logo'];
-            var rows = '';
-            fields.forEach(function(f) {
-                var v = normalizeVal(item[f]);
-                if (v !== '' && v !== null && v !== undefined) {
-                    rows += '<div class="preview-row"><span class="pk">' + f + '</span><span class="pv">' + escapeHtml(v) + '</span></div>';
-                }
-            });
-            return '<div class="preview-card">' + rows + '</div>';
-        }
-
-        // ===== Interactions =====
-        window.toggleExpand = function(header) {
-            var item = header.closest('.diff-item');
-            item.classList.toggle('expanded');
-        };
-
-        window.setDecision = function(category, key, decision, btn) {
-            decisions[category][key] = decision;
-            // Re-render the affected section
-            if (category === 'added') renderAddedSection();
-            else if (category === 'removed') renderRemovedSection();
-            else if (category === 'modified') renderModifiedSection();
-            updateExportPreview();
-        };
-
-        // Tab switching
-        document.querySelectorAll('.tab-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                var tab = btn.dataset.tab;
-                currentTab = tab;
-                document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-                btn.classList.add('active');
-                document.querySelectorAll('.diff-section').forEach(function(s) { s.classList.remove('active'); });
-                document.getElementById('section' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-            });
-        });
-
-        // Batch actions
-        document.getElementById('batchAcceptAll').addEventListener('click', function() {
-            var list = diffResult[currentTab];
-            list.forEach(function(entry) {
-                decisions[currentTab][entry.key] = 'accept';
-            });
-            rerenderCurrentTab();
-            updateExportPreview();
-        });
-
-        document.getElementById('batchRejectAll').addEventListener('click', function() {
-            var list = diffResult[currentTab];
-            list.forEach(function(entry) {
-                decisions[currentTab][entry.key] = 'reject';
-            });
-            rerenderCurrentTab();
-            updateExportPreview();
-        });
-
-        function rerenderCurrentTab() {
-            if (currentTab === 'added') renderAddedSection();
-            else if (currentTab === 'removed') renderRemovedSection();
-            else if (currentTab === 'modified') renderModifiedSection();
-        }
-
-        // ===== Merge & Export =====
-        function buildMergedData() {
-            var result = [];
-            var origMap = {};
-            var newMap = {};
-
-            origData.forEach(function(item) {
-                var key = getKey(item);
-                if (key) origMap[key] = item;
-            });
-            newData.forEach(function(item) {
-                var key = getKey(item);
-                if (key) newMap[key] = item;
-            });
-
-            var preserveExtras = document.getElementById('preserveAllExtras').checked;
-
-            // Process each original item
-            origData.forEach(function(origItem) {
-                var key = getKey(origItem);
-                if (!key) {
-                    // Items without key are kept as-is
-                    result.push(origItem);
-                    return;
-                }
-
-                if (!newMap[key]) {
-                    // This item was removed from new
-                    var removedDecision = decisions.removed[key];
-                    if (removedDecision === 'accept') {
-                        // Confirmed removal: skip
-                        return;
-                    } else {
-                        // Default: keep (pending or reject)
-                        result.push(origItem);
-                        return;
-                    }
-                }
-
-                // Item exists in both
-                var newItem = newMap[key];
-                var modifiedDecision = decisions.modified[key];
-                if (modifiedDecision === 'accept') {
-                    // Accept update: use new data, preserve extra fields from original
-                    var merged = Object.assign({}, newItem);
-                    if (preserveExtras) {
-                        Object.keys(origItem).forEach(function(f) {
-                            if (!(f in newItem) && f[0] !== '_') {
-                                merged[f] = origItem[f];
-                            }
-                        });
-                    }
-                    result.push(merged);
-                } else {
-                    // Keep original (pending or reject)
-                    result.push(origItem);
-                }
-            });
-
-            // Process added items
-            diffResult.added.forEach(function(entry) {
-                var addedDecision = decisions.added[entry.key];
-                if (addedDecision === 'accept') {
-                    result.push(entry.item);
-                }
-                // Default: don't add (pending or reject)
-            });
-
-            return result;
-        }
-
-        function updateExportPreview() {
-            var merged = buildMergedData();
-            var statsEl = document.getElementById('exportStats');
-            var warnEl = document.getElementById('exportWarn');
-
-            // Count decisions
-            var pendingCount = 0;
-            var acceptedCount = 0;
-            var rejectedCount = 0;
-            ['added', 'removed', 'modified'].forEach(function(cat) {
-                diffResult[cat].forEach(function(entry) {
-                    var d = decisions[cat][entry.key];
-                    if (d === 'accept') acceptedCount++;
-                    else if (d === 'reject') rejectedCount++;
-                    else pendingCount++;
-                });
-            });
-
-            statsEl.innerHTML = '<div class="export-stat"><div class="es-num" style="color:var(--text-main)">' + merged.length + '</div><div class="es-label">合并后总条目</div></div>'
-                + '<div class="export-stat"><div class="es-num" style="color:var(--green)">' + acceptedCount + '</div><div class="es-label">已审批（接受）</div></div>'
-                + '<div class="export-stat"><div class="es-num" style="color:var(--orange)">' + pendingCount + '</div><div class="es-label">待审批（默认保留原值/不添加）</div></div>';
-
-            if (pendingCount > 0) {
-                warnEl.textContent = '⚠️ 还有 ' + pendingCount + ' 项未审批。未审批项将按默认处理：新增项不添加，移除项保留，变更项保留原值。';
-                warnEl.classList.add('show');
-            } else {
-                warnEl.classList.remove('show');
-            }
-        }
-
-        document.getElementById('exportBtn').addEventListener('click', function() {
-            var merged = buildMergedData();
-            var jsonStr = JSON.stringify(merged, null, 2);
-            var blob = new Blob([jsonStr], { type: 'application/json' });
-            var url = URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            // Generate filename with timestamp
-            var now = new Date();
-            var ts = now.getFullYear()
-                + String(now.getMonth() + 1).padStart(2, '0')
-                + String(now.getDate()).padStart(2, '0')
-                + '_'
-                + String(now.getHours()).padStart(2, '0')
-                + String(now.getMinutes()).padStart(2, '0');
-            a.download = 'merged_' + ts + '.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        });
-
-    })();
-    </script>
+async function init(){
+  try{
+    await openDB();await loadState();rebuildOffsets();detectConflicts();refreshUI();initDD();initEvents();
+    toast('✅ 就绪','ok',2000);
+  }catch(e){console.error(e);toast('初始化失败:'+e.message,'er');}
+}
+init();
+</script>
 </body>
 </html>
