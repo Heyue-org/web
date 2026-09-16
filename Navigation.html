@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="dark">
 <head>
+    <link rel="icon" type="image/png" href="assets/css/images/biglogo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ACG资源站点导航 - 合月亭</title>
+    <meta name="description" content="合月亭 ACG 资源站点导航，分类收录免费二次元资源网站，涵盖动漫、漫画、游戏、轻小说、音乐、壁纸等，持续整理更新。">
+    <meta name="keywords" content="ACG资源导航,二次元网站收录,动漫资源站,漫画网站,游戏资源,合月亭">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
     <style>
         :root {
             --bg-dark: #0f172a;
@@ -416,6 +422,16 @@
             .rating-info { font-size: 0.62rem; }
         }
     </style>
+<!-- SEO-AUTO-START -->
+    <link rel="canonical" href="https://heyue-org.github.io/web/Navigation.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="合月亭">
+    <meta property="og:url" content="https://heyue-org.github.io/web/Navigation.html">
+    <meta property="og:title" content="ACG资源站点导航 - 合月亭">
+    <meta property="og:description" content="合月亭 ACG 资源站点导航，分类收录免费二次元资源网站，涵盖动漫、漫画、游戏、轻小说、音乐、壁纸等，持续整理更新。">
+    <meta name="twitter:title" content="ACG资源站点导航 - 合月亭">
+    <meta name="twitter:description" content="合月亭 ACG 资源站点导航，分类收录免费二次元资源网站，涵盖动漫、漫画、游戏、轻小说、音乐、壁纸等，持续整理更新。">
+    <!-- SEO-AUTO-END -->
 </head>
 <body>
     <div class="top-bar">
@@ -471,10 +487,11 @@
             </div>
         </main>
     </div>
-    <script>
+        <script>
     (() => {
         var API_BASE = 'https://heyue-rating-worker.heyue-rating-api.workers.dev';
         var THEME_KEY = 'heyue_nav_theme';
+        var RATED_KEY = 'heyue_rated_keys';
         var htmlEl = document.documentElement;
         var themeBtn = document.getElementById('themeToggle');
         function applyTheme(theme) {
@@ -557,7 +574,12 @@
         var currentJsonPath = '';
         var currentLabel = '';
         var ratingCache = {};
-        var ratedKeys = new Set();
+        var ratedKeys = {};
+        try { ratedKeys = JSON.parse(localStorage.getItem(RATED_KEY) || '{}'); } catch(e) { ratedKeys = {}; }
+        function saveRatedKey(key, score) {
+            ratedKeys[key] = score;
+            localStorage.setItem(RATED_KEY, JSON.stringify(ratedKeys));
+        }
         function getRatingKey(site) {
             if (site.uid && site.uid.trim()) return 'uid:' + site.uid.trim();
             return 'site:' + (site.name || '') + '_' + (site.url || '').replace(/\s+/g, '_');
@@ -591,8 +613,6 @@
             .catch(function(e) { console.warn('batch rating fetch failed:', e); });
         }
         function submitRating(key, score, starsEl, infoEl) {
-            if (ratedKeys.has(key)) return;
-            starsEl.classList.add('disabled');
             var fingerprint = {
                 screen: screen.width + 'x' + screen.height,
                 userAgent: navigator.userAgent,
@@ -608,19 +628,27 @@
             .then(function(res) { if (!res.ok) throw new Error('fail'); return res.json(); })
             .then(function(data) {
                 ratingCache[key] = data;
-                ratedKeys.add(key);
-                updateRatingDisplay(starsEl, infoEl, data);
+                saveRatedKey(key, score);
+                updateRatingDisplay(starsEl, infoEl, data, score);
             })
-            .catch(function(e) { console.warn('rating submit failed:', e); starsEl.classList.remove('disabled'); });
+            .catch(function(e) { console.warn('rating submit failed:', e); });
         }
-        function updateRatingDisplay(starsEl, infoEl, data) {
-            var rounded = Math.round(data.score);
+        function updateRatingDisplay(starsEl, infoEl, data, userScore) {
+            var key = starsEl.getAttribute('data-key');
+            var myScore = userScore || ratedKeys[key] || 0;
+            var avgRounded = data ? Math.round(data.score) : 0;
             var starSpans = starsEl.querySelectorAll('.star');
             for (var i = 0; i < starSpans.length; i++) {
-                if (i < rounded) starSpans[i].classList.add('active');
+                if (i < myScore) starSpans[i].classList.add('active');
                 else starSpans[i].classList.remove('active');
             }
-            infoEl.innerHTML = '<span class="score-val">' + data.score + '</span> (' + data.count + ')';
+            if (myScore && data) {
+                infoEl.innerHTML = '你的评分: ' + myScore + '★ | 均分: <span class="score-val">' + data.score + '</span> (' + data.count + ')';
+            } else if (data) {
+                infoEl.innerHTML = '<span class="score-val">' + data.score + '</span> (' + data.count + ')';
+            } else {
+                infoEl.textContent = '暂无评分';
+            }
         }
         function buildRatingHtml(site) {
             var key = getRatingKey(site);
@@ -645,12 +673,12 @@
                     var starSpans = starsEl.querySelectorAll('.star');
                     if (ratingCache[key]) {
                         updateRatingDisplay(starsEl, infoEl, ratingCache[key]);
+                    } else if (ratedKeys[key]) {
+                        updateRatingDisplay(starsEl, infoEl, null);
                     }
-                    if (ratedKeys.has(key)) { starsEl.classList.add('disabled'); return; }
                     for (var j = 0; j < starSpans.length; j++) {
                         (function(star) {
                             star.addEventListener('mouseenter', function() {
-                                if (starsEl.classList.contains('disabled')) return;
                                 var val = parseInt(star.getAttribute('data-val'));
                                 for (var k = 0; k < starSpans.length; k++) {
                                     if (k < val) starSpans[k].classList.add('active');
@@ -658,18 +686,17 @@
                                 }
                             });
                             star.addEventListener('click', function() {
-                                if (starsEl.classList.contains('disabled')) return;
                                 var val = parseInt(star.getAttribute('data-val'));
                                 submitRating(key, val, starsEl, infoEl);
                             });
                         })(starSpans[j]);
                     }
                     starsEl.addEventListener('mouseleave', function() {
-                        if (starsEl.classList.contains('disabled')) return;
                         var cached = ratingCache[key];
-                        var rounded = cached ? Math.round(cached.score) : 0;
+                        var myScore = ratedKeys[key] || 0;
+                        var displayScore = myScore || (cached ? Math.round(cached.score) : 0);
                         for (var k = 0; k < starSpans.length; k++) {
-                            if (k < rounded) starSpans[k].classList.add('active');
+                            if (k < displayScore) starSpans[k].classList.add('active');
                             else starSpans[k].classList.remove('active');
                         }
                     });
