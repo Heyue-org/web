@@ -23,6 +23,8 @@
             --top-bar-bg: rgba(15, 23, 42, 0.6);
             --input-bg: rgba(30, 41, 59, 0.8);
             --sidebar-w: 220px;
+            /* 顶栏吸顶后的实际高度，由 JS 实测写入；这里是首帧渲染的兜底值 */
+            --topbar-h: 60px;
         }
         [data-theme="light"] {
             --bg-dark: #f1f5f9;
@@ -37,7 +39,11 @@
             --input-bg: rgba(255, 255, 255, 0.9);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { overflow-x: hidden; width: 100%; }
+        /* 注意：这里千万不能给 body 设 overflow-x:hidden —— 那会把 body 变成滚动容器，
+           而真正滚动的是 viewport，sticky 相对它永远算不出偏移，侧栏就会跟着页面一起滑走。
+           clip 同样能裁掉横向溢出，但不会创建滚动容器，sticky 才能正常生效。 */
+        html { overflow-x: hidden; width: 100%; }
+        body { overflow-x: clip; width: 100%; }
         body {
             font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
             background: var(--bg-dark);
@@ -62,16 +68,21 @@
             background: radial-gradient(circle, rgba(217,119,6,0.08) 0%, transparent 70%);
         }
         .top-bar {
-            padding: 1rem 2rem;
+            /* 上下 1rem → 0.833rem（缩短六分之一） */
+            padding: 0.833rem 2rem;
             border-bottom: 1px solid var(--border-color);
             background: var(--top-bar-bg);
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             transition: background 0.3s, border-color 0.3s;
             flex-shrink: 0;
+            /* 吸顶：用 sticky 而不是 fixed —— 不脱离 flex 流，下面的内容不用补 padding-top */
+            position: sticky; top: 0;
             z-index: 200;
         }
         .top-bar-inner {
-            max-width: 1400px; margin: 0 auto;
+            /* 去掉 1400 居中，和靠左的侧栏对齐；顶栏本身有 2rem 内边距，不会真贴死边缘 */
+            margin: 0 auto;
             display: flex; align-items: center; justify-content: space-between;
         }
         .logo {
@@ -90,6 +101,8 @@
             border-radius: 2px; transition: background 0.3s;
         }
         .page-title {
+            /* 现在是 h1（SEO），h1 自带 margin-block 会把顶栏撑高，必须清零 */
+            margin: 0;
             font-size: 1.8rem; font-weight: 600; color: var(--accent-gold);
             letter-spacing: 2px; white-space: nowrap;
             text-shadow: 0 0 10px rgba(251,191,36,0.3);
@@ -106,7 +119,8 @@
         .mobile-sticky-tabs {
             display: none;
             position: sticky;
-            top: 0;
+            /* 顶栏吸顶在 top:0，移动端这排分类 tab 要贴在它下面 */
+            top: var(--topbar-h);
             z-index: 199;
             background: var(--top-bar-bg);
             backdrop-filter: blur(10px);
@@ -154,18 +168,37 @@
             color: var(--accent-gold);
         }
         .layout {
-            display: flex; flex: 1; max-width: 1400px;
-            margin: 0 auto; width: 100%;
+            /* 原来 max-width:1400px + margin:0 auto 会把整块内容居中，
+               屏幕比 1400px 宽时左右各空一大段，侧栏就被推离屏幕边缘了。
+               这里改成靠左铺开，宽度上限交给 .main-content 自己管。 */
+            display: flex; flex: 1; max-width: none;
+            margin: 0; width: 100%;
         }
         .sidebar {
             width: var(--sidebar-w); flex-shrink: 0;
             border-right: 1px solid var(--border-color);
-            padding: 1.5rem 0; overflow-y: auto;
-            position: sticky; top: 0; height: calc(100vh - 60px);
+            padding: 1.5rem 0;
+            /* sticky 要能粘住，元素必须比包含块矮、留出余量。所以：
+               align-self:flex-start —— 高度跟内容走，别被 flex 的 stretch 拉成和正文一样长（那样余量为 0，直接失效）；
+               max-height —— 卡住上限，内容超高时才压缩。
+               两个一起才有余量可粘。 */
+            align-self: flex-start;
+            max-height: calc(100vh - var(--topbar-h));
+            overflow-y: auto;
+            /* 滚动条只隐藏不禁用：内容超高时照样能滚（不会丢分类），只是看不到滑块 */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            position: sticky; top: var(--topbar-h);
             transition: border-color 0.3s;
         }
+        .sidebar::-webkit-scrollbar { display: none; }
         .sidebar-section-label {
             padding: 0.6rem 1.5rem 0.4rem;
+            /* 分组标签「— 资源站 —」在侧栏里居中 */
+            text-align: center;
+            /* letter-spacing:3px 会在最后一个字右边多出 3px 空隙，居中时字会偏左 1.5px，
+               右边内距减掉这 3px 才算真正居中（左右内距差 = letter-spacing） */
+            padding-right: calc(1.5rem - 3px);
             font-size: 0.75rem; font-weight: 600;
             color: var(--text-sub); letter-spacing: 3px;
             text-transform: uppercase; transition: color 0.3s;
@@ -187,11 +220,15 @@
             font-weight: 600;
         }
         .main-content {
-            flex: 1; min-width: 0; padding: 1.5rem 2rem 4rem;
+            /* 侧栏贴左之后正文仍要有宽度上限，否则超宽屏上卡片会被拉得过长 */
+            flex: 1; min-width: 0; max-width: 1400px;
+            /* 上 1.5rem → 1.25rem（缩短六分之一）：这段就是「分区名称上方的空位」，
+               再按用户要求整体上移 10px → 0.625rem */
+            padding: 0.625rem 2rem 4rem;
         }
         .content-header {
             display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.8rem;
+            align-items: center; margin-bottom: 0.833rem; flex-wrap: wrap; gap: 0.8rem;
         }
         .current-category {
             font-size: 1.4rem; font-weight: 700;
@@ -216,7 +253,10 @@
             outline: none; cursor: pointer; transition: all 0.3s;
         }
         .grid-toggle-btn {
-            display: none;
+            /* 以前是 display:none（老 bug：按钮在 DOM 里、JS 也在跑，就是看不见）。
+               现在它是「3列/4列」切换，放在排序下拉右边，要显示出来。
+               移动端媒体查询里仍然是 display:none !important（那边固定 2 列，切了没意义）。 */
+            display: inline-flex;
             align-items: center; justify-content: center;
             padding: 0.55rem 0.8rem;
             background: var(--input-bg);
@@ -231,13 +271,35 @@
         .grid-toggle-btn:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
         .grid-toggle-btn.active { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(251,191,36,0.1); }
         .grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+            /* 必须 minmax(0,1fr)：1fr 的最小尺寸是 auto，长站名会把所在列顶宽，
+               同一行卡片就变成宽窄不一了。站名放大后这个问题才暴露出来。 */
+            /* align-items:start —— 卡片高度只跟着自己的内容走，不填充行高。
+               之前用 grid-auto-rows:1fr 强行把所有行拉成等高，结果内容短的卡片底部被垫出一大截空白
+               （留白要么落在中间、要么落在按钮下面，怎么都不对）。现在底部直接贴着内容收口。 */
+            /* 默认 4 列（从实验文件合并过来），3 列由 .cols-3 覆盖 */
+            display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+            /* align-items:stretch —— 同一行内所有卡片都拉到该行最高的那张（被文本撑得最大的那张）一样高。
+               注意只做「行内」等高：grid 默认就是每行各自算，不要再加 grid-auto-rows:1fr，
+               那个会把所有行也拉成同一高度，内容少的整行底部会垫出一大截空白。 */
+            align-items: stretch;
+            /* 4 列更密，间距也收一档 */
+            gap: 0.7rem 0.8rem;
         }
+        /* 3 列模式（点工具栏那个「3列/4列」按钮）：列数变 3，
+           卡片也一起回到宽松尺寸 —— 4 列那套小字号、窄内距是配密排的，
+           拿来放 3 列会显得卡片里空荡荡。这里把合并前 3 列的取值原样搬回来。 */
+        .grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem 1rem; }
+        .grid.cols-3 .site-card { padding-left: 1.26rem; padding-right: 1.26rem; gap: 0.45rem; }
+        .grid.cols-3 .site-name { font-size: 1.35rem; }
+        .grid.cols-3 .links-panel { padding: 0.4rem 0; }
+        .grid.cols-3 .rating-row { padding-top: 0.4rem; }
         .site-card {
             position: relative; background: var(--bg-card);
-            border: 1px solid var(--border-color); border-radius: 12px;
-            padding: 1.2rem 1.4rem; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s, background 0.3s;
-            display: flex; flex-direction: column; gap: 0.5rem;
+            border: 1px solid var(--border-color); border-radius: 11px;
+            /* 卡片本体按 0.9 缩放（1.2/1.4rem → 1.08/1.26rem） */
+            /* 4 列下卡片更窄，左右内边距收一档；内部 gap 也收（压高度） */
+            padding: 0.25rem 1rem; transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s, background 0.3s;
+            display: flex; flex-direction: column; gap: 0.3rem;
         }
         .site-card:hover {
             transform: translateY(-2px);
@@ -246,16 +308,32 @@
         }
         [data-theme="light"] .site-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
         .site-name-row {
-            display: flex; align-items: center; gap: 0.6rem;
+            /* stretch 而不是 center：让 logo 纵向撑满「站名+UID」这块的高度，
+               这样它上下就只差卡片上侧、下方虚线那几像素了（center 会让它上下各空一块） */
+            display: flex; align-items: stretch; gap: 0.85rem;
             padding-right: 3rem; overflow: hidden;
+            /* 站名整体下移。上方间距要略大于下方（gap 0.45rem）才视觉齐平 ——
+               站名 1.35rem + line-height 1.25，字形上下各带约 2.4px 的行内留白，
+               会把「文字到卡片顶」撑大、「文字到下一行」撑小，所以这里多给一点找平。
+               卡片高度不能变，这笔高度在 .detail-row 上等量扣回。 */
+            margin-top: 0.35rem;
+        }
+        /* 站名 + UID 竖着装在右边一整块里，左边留给 logo */
+        .head-text {
+            display: flex; flex-direction: column; gap: 0.1rem;
+            min-width: 0; flex: 1;
         }
         .site-logo {
-            width: 24px; height: 24px; border-radius: 4px;
+            /* 22px → 40px → 48px。高度交给 stretch 撑满，不写死，
+               这样以后改站名字号 / UID 行高，logo 会跟着长，不用手动同步。 */
+            width: 48px; height: auto; border-radius: 6px;
             object-fit: cover; flex-shrink: 0;
             border: 1px solid var(--border-color);
         }
         .site-name {
-            font-size: 1.05rem; font-weight: 700; color: var(--text-main);
+            /* 原始 1.05rem × 1.5 = 1.575rem，再按用户要求往回收几像素；4 列下再收一档 */
+            font-size: 1.15rem; font-weight: 700; color: var(--text-main);
+            line-height: 1.25;
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
         }
         .links-toggle-row {
@@ -280,7 +358,7 @@
         .uid-inline .uid-val { color: var(--accent-gold); }
         .links-panel {
             display: none; flex-direction: column; gap: 0.3rem;
-            padding: 0.4rem 0; border-top: 1px dashed var(--border-color); margin-top: 0.2rem;
+            padding: 0.3rem 0; border-top: 1px dashed var(--border-color); margin-top: 0.2rem;
         }
         .links-panel.show { display: flex; }
         .link-row {
@@ -293,27 +371,45 @@
             border-bottom: 1px dashed rgba(251,191,36,0.4); word-break: break-all;
         }
         .link-row a:hover { border-bottom-style: solid; }
-        .related-icons { display: inline-flex; gap: 6px; margin-left: 4px; align-items: center; }
-        .related-icon {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 24px; height: 24px; border-radius: 4px;
-            font-size: 0.85rem; cursor: default; opacity: 0.25;
-            text-decoration: none !important; border-bottom: none !important; line-height: 1;
+        .uid-detail {
+            display: flex; align-items: center; gap: 0.45rem;
+            min-width: 0; flex-shrink: 0;
+            /* 缩进不用了：UID 现在和站名一起装在 .head-text 里，整块已经在 logo 右侧 */
         }
-        .related-icon.active { opacity: 1; cursor: pointer; }
-        .related-icon.active:hover { transform: scale(1.15); }
-        .related-icon.icon-nav.active { background: rgba(251,191,36,0.2); }
-        .related-icon.icon-tg.active { background: rgba(38,166,227,0.2); color: #26a6e3; }
-        .related-icon.icon-gh svg { width: 14px; height: 14px; fill: var(--text-sub); }
-        .related-icon.icon-gh.active svg { fill: var(--text-main); }
-        .related-icon.icon-gh.active { background: rgba(255,255,255,0.12); }
-        [data-theme="light"] .related-icon.icon-gh.active { background: rgba(0,0,0,0.08); }
-        [data-theme="light"] .related-icon.icon-gh.active svg { fill: #1e293b; }
-        .custom-links-row {
-            display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem;
-            padding-left: 3.2rem; margin-top: 0.1rem;
+        .detail-btn {
+            display: inline-flex; align-items: center; gap: 0.2rem;
+            font-size: 0.72rem; font-weight: 600; color: var(--accent-gold);
+            border: 1px solid rgba(251,191,36,0.45); border-radius: 999px;
+            padding: 0.1rem 0.55rem; text-decoration: none; white-space: nowrap;
+            flex-shrink: 0; transition: all 0.2s; background: rgba(251,191,36,0.08);
         }
-        .meta-row { display: flex; gap: 0.8rem; font-size: 0.82rem; line-height: 1.5; }
+        .detail-btn:hover {
+            /* 悬停不要变成纯黄：只在原本的 0.08 淡黄底上再叠一层半透明黄，
+               底色质感和金色文字都保留，只是"亮一度" */
+            background: rgba(251,191,36,0.22);
+            border-color: rgba(251,191,36,0.75);
+        }
+        /* 原来这里是 color:#fff（配纯黄底才需要）。现在底色是半透明的，
+           白字在亮色主题下会看不清，所以亮色下也不改字色、维持金色 */
+        [data-theme="light"] .detail-btn:hover { color: var(--accent-gold); }
+        /* 紧跟评分行，只靠卡片自身的 gap 0.45rem 拉开 —— 之前用 margin-top:auto 把它锚到底部，
+           结果内容短的卡片里按钮被推得离评分很远。留白改由 .meta-row 的 flex:1 吸收。 */
+        /* 紧跟评分行。负值是拿它抵掉 .site-name-row 多出来的 0.2rem，
+           好让站名下移的同时卡片总高度不变、按钮离卡片底部那条缝也不变 */
+        /* 按钮在卡片里居中 */
+        .detail-row { margin-top: -0.35rem; text-align: center; }
+        .detail-row .detail-btn {
+            /* 不再撑满卡片：宽度跟着文字走。min-width 是按「详情页」3 个字算出来的 +70%：
+               3×0.82rem 字宽 + 0.7rem×2 内距 + 2px 边框 ≈ 3.99rem，×1.7 ≈ 6.8rem。
+               文字更长时会自动继续变宽（min-width 不是写死宽度）。 */
+            min-width: 6.8rem; justify-content: center;
+            padding: 0.35rem 0.7rem; font-size: 0.82rem; border-radius: 8px;
+        }
+        /* flex:1 —— 把卡片里多出来的高度全部吸收在「备注/问题 → 评分虚线」之间。
+           这样同一行内（行高由文本最多的那张卡片撑出来）评分上方那条虚线
+           都落在同一个高度上，按钮也一起贴到卡片底部。
+           之前不撑满时，短文本卡片的虚线和按钮会往上跑、各行参差。 */
+        .meta-row { display: flex; gap: 0.8rem; font-size: 0.82rem; line-height: 1.5; flex: 1; }
         .meta-item { flex: 1; min-width: 0; }
         .meta-label { color: var(--text-sub); font-size: 0.75rem; margin-bottom: 0.1rem; }
         .meta-value { word-break: break-all; }
@@ -338,7 +434,9 @@
         }
         .rating-row {
             display: flex; align-items: center; gap: 0.5rem;
-            margin-top: 0.3rem; padding-top: 0.4rem;
+            /* margin-top 0.2rem 和 .links-panel 保持一致 —— 两条虚线上方的距离都是
+               gap + 0.2rem，不然卡片里两条虚线的间距看着不齐 */
+            margin-top: 0.2rem; padding-top: 0.3rem;
             border-top: 1px dashed var(--border-color);
         }
         .rating-label { color: var(--text-sub); font-size: 0.75rem; flex-shrink: 0; }
@@ -356,8 +454,12 @@
         .rating-info .score-val { color: var(--accent-gold); font-weight: 700; }
         .stars.disabled { cursor: default; opacity: 0.6; }
         .stars.disabled .star:hover { transform: none; }
+        @media (max-width: 1100px) {
+            /* 屏幕不够宽时 4 列会太挤，先降到 3 列（.grid.cols-3 特异性更高，不受影响） */
+            .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
         @media (max-width: 900px) {
-            .grid { grid-template-columns: repeat(2, 1fr); }
+            .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         }
         @media (max-width: 768px) {
             .mobile-sticky-tabs { display: block; }
@@ -367,6 +469,10 @@
                 width: 260px; z-index: 300; background: var(--bg-dark);
                 border-right: 1px solid var(--border-color);
                 transition: left 0.3s ease; height: 100vh;
+                /* 抽屉是锁死高度的浮层：要盖掉桌面的 max-height（否则底部空一截），
+                   且这里必须能滚，否则分类多了下面的点不到 */
+                max-height: 100vh;
+                overflow-y: auto;
             }
             .sidebar.open { left: 0; }
             .sidebar-overlay.active { display: block; }
@@ -384,24 +490,25 @@
             .sort-select { padding: 0.5rem 0.6rem; font-size: 0.85rem; }
             .grid-toggle-btn { display: none !important; }
             .grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 0.5rem;
                 width: 100%;
             }
             .grid.cols-3 {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 0.5rem;
             }
             .site-card {
-                padding: 0.7rem 0.8rem;
-                border-radius: 12px;
-                gap: 0.3rem;
+                /* 同样按 0.9 缩放（0.7/0.8rem → 0.63/0.72rem） */
+                padding: 0.63rem 0.72rem;
+                border-radius: 11px;
+                gap: 0.27rem;
                 min-width: 0;
             }
             .site-card:hover { transform: none; box-shadow: none; }
             .site-name-row { gap: 0.4rem; padding-right: 0; }
-            .site-logo { width: 20px; height: 20px; }
-            .site-name { font-size: 0.85rem; }
+            .site-logo { width: 18px; height: 18px; }
+            .site-name { font-size: 1.275rem; }
             .links-toggle-row { padding: 0.1rem 0; gap: 0.3rem; }
             .links-toggle { font-size: 0.7rem; gap: 0.2rem; }
             .links-toggle .arrow { font-size: 0.6rem; }
@@ -409,11 +516,8 @@
             .links-panel { gap: 0.2rem; padding: 0.3rem 0; margin-top: 0.1rem; }
             .link-row { font-size: 0.7rem; gap: 0.3rem; }
             .link-label { font-size: 0.62rem; }
-            .related-icons { gap: 4px; margin-left: 2px; }
-            .related-icon { width: 20px; height: 20px; font-size: 0.72rem; }
-            .related-icon.icon-gh svg { width: 12px; height: 12px; }
-            .custom-links-row { padding-left: 0; gap: 0.2rem 0.5rem; margin-top: 0; }
-            .custom-links-row a { font-size: 0.65rem; }
+            .uid-detail { gap: 0.25rem; }
+            .detail-btn { font-size: 0.62rem; padding: 0.08rem 0.45rem; }
             .meta-row { gap: 0.4rem; font-size: 0.7rem; }
             .meta-label { font-size: 0.62rem; margin-bottom: 0; }
             .rating-row { gap: 0.3rem; margin-top: 0.2rem; padding-top: 0.3rem; }
@@ -442,7 +546,7 @@
                     <img src="assets/css/images/biglogo.png" alt="合月亭"><span class="logo-text">合月亭</span>
                 </a>
                 <div class="v-line"></div>
-                <div class="page-title">ACG资源站点导航</div>
+                <h1 class="page-title">ACG资源站点导航</h1>
             </div>
             <button class="theme-toggle" id="themeToggle" title="切换日/夜模式">🌙</button>
         </div>
@@ -454,20 +558,20 @@
     <div class="layout">
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-section-label">— 资源站 —</div>
-            <a class="sidebar-link active" data-json="assets/nav-pages/gal.json" data-label="GAL">GAL</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/voice_music.json" data-label="音声/音乐">音声/音乐</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/comic_illustration.json" data-label="漫画/插画/本子">漫画/插画/本子</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/hub.json" data-label="综合资源站">综合资源站</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/gal-info.json" data-label="GAL情报/入正">GAL情报/入正</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/ln.json" data-label="轻小说">轻小说</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/anime.json" data-label="动漫">动漫</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/mmd.json" data-label="MMD">MMD</a>
+            <a class="sidebar-link active" data-cat="gal" data-label="GAL">GAL</a>
+            <a class="sidebar-link" data-cat="voice_music" data-label="音声/音乐">音声/音乐</a>
+            <a class="sidebar-link" data-cat="comic_illustration" data-label="漫画/插画/本子">漫画/插画/本子</a>
+            <a class="sidebar-link" data-cat="hub" data-label="综合资源站">综合资源站</a>
+            <a class="sidebar-link" data-cat="gal-info" data-label="GAL情报/入正">GAL情报/入正</a>
+            <a class="sidebar-link" data-cat="ln" data-label="轻小说">轻小说</a>
+            <a class="sidebar-link" data-cat="anime" data-label="动漫">动漫</a>
+            <a class="sidebar-link" data-cat="mmd" data-label="MMD">MMD</a>
             <div class="sidebar-section-label" style="margin-top:1rem;">— 工具 —</div>
-            <a class="sidebar-link" data-json="assets/nav-pages/wiki.json" data-label="WIKI">WIKI</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/acg-nav.json" data-label="二次元导航站">二次元导航站</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/tools.json" data-label="工具">工具</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/search.json" data-label="搜索引擎">搜索引擎</a>
-            <a class="sidebar-link" data-json="assets/nav-pages/valhalla.json" data-label="英灵殿">英灵殿</a>
+            <a class="sidebar-link" data-cat="wiki" data-label="WIKI">WIKI</a>
+            <a class="sidebar-link" data-cat="acg-nav" data-label="二次元导航站">二次元导航站</a>
+            <a class="sidebar-link" data-cat="tools" data-label="工具">工具</a>
+            <a class="sidebar-link" data-cat="search" data-label="搜索引擎">搜索引擎</a>
+            <a class="sidebar-link" data-cat="valhalla" data-label="英灵殿">英灵殿</a>
         </nav>
         <main class="main-content">
             <div class="content-header">
@@ -477,10 +581,10 @@
             <div class="toolbar">
                 <input type="text" class="search-box" id="searchInput" placeholder="搜索站点名称、备注或链接或UID...">
                 <select class="sort-select" id="sortSelect">
-                    <option value="default">默认排序</option>
+                    <option value="random" selected>默认</option>
                     <option value="name">按名称排序 (A-Z)</option>
                 </select>
-                <button class="grid-toggle-btn" id="gridToggleBtn" title="切换每行卡片数">2列</button>
+                <button class="grid-toggle-btn" id="gridToggleBtn" type="button" title="切换每行卡片数（3 列 / 4 列）">4列</button>
             </div>
             <div class="grid" id="cardContainer">
                 <div class="loading">请选择左侧分类加载数据</div>
@@ -514,32 +618,32 @@
         menuBtn.addEventListener('click', function() { toggleSidebar(true); });
         overlay.addEventListener('click', function() { toggleSidebar(false); });
         var mobileTabsScroll = document.getElementById('mobileTabsScroll');
-        var sidebarLinks = document.querySelectorAll('.sidebar-link[data-json]');
+        var sidebarLinks = document.querySelectorAll('.sidebar-link[data-cat]');
         function buildMobileTabs() {
             mobileTabsScroll.innerHTML = '';
             sidebarLinks.forEach(function(link) {
                 var tab = document.createElement('a');
                 tab.className = 'mobile-tab-item';
                 tab.textContent = link.dataset.label;
-                tab.dataset.json = link.dataset.json;
+                tab.dataset.cat = link.dataset.cat;
                 tab.dataset.label = link.dataset.label;
                 if (link.classList.contains('active')) tab.classList.add('active');
                 tab.addEventListener('click', function() {
                     document.querySelectorAll('.mobile-tab-item').forEach(function(t) { t.classList.remove('active'); });
                     tab.classList.add('active');
                     sidebarLinks.forEach(function(l) { l.classList.remove('active'); });
-                    var matchedLink = document.querySelector('.sidebar-link[data-json="' + link.dataset.json + '"]');
+                    var matchedLink = document.querySelector('.sidebar-link[data-cat="' + link.dataset.cat + '"]');
                     if (matchedLink) matchedLink.classList.add('active');
-                    currentJsonPath = link.dataset.json;
-                    loadCategory(currentJsonPath, link.dataset.label);
+                    currentCat = link.dataset.cat;
+                    loadCategory(currentCat, link.dataset.label);
                 });
                 mobileTabsScroll.appendChild(tab);
             });
         }
         buildMobileTabs();
-        function syncMobileTabsActive(jsonPath) {
+        function syncMobileTabsActive(cat) {
             document.querySelectorAll('.mobile-tab-item').forEach(function(t) {
-                t.classList.toggle('active', t.dataset.json === jsonPath);
+                t.classList.toggle('active', t.dataset.cat === cat);
             });
             var activeTab = mobileTabsScroll.querySelector('.mobile-tab-item.active');
             if (activeTab) {
@@ -549,7 +653,10 @@
         var GRID_COLS_KEY = 'heyue_nav_grid_cols';
         var gridToggleBtn = document.getElementById('gridToggleBtn');
         var cardContainer = document.getElementById('cardContainer');
-        var currentCols = parseInt(localStorage.getItem(GRID_COLS_KEY)) || 2;
+        /* 默认 4 列（无 .cols-3 类），按钮在 3 / 4 之间切。
+           老存档可能是 2 或 3：只有 3 还认，其余一律按 4 列处理。 */
+        var savedCols = parseInt(localStorage.getItem(GRID_COLS_KEY));
+        var currentCols = savedCols === 3 ? 3 : 4;
         function applyGridCols(cols) {
             currentCols = cols;
             localStorage.setItem(GRID_COLS_KEY, cols);
@@ -559,19 +666,57 @@
                 gridToggleBtn.classList.add('active');
             } else {
                 cardContainer.classList.remove('cols-3');
-                gridToggleBtn.textContent = '2列';
+                gridToggleBtn.textContent = '4列';
                 gridToggleBtn.classList.remove('active');
             }
+            gridToggleBtn.title = '每行卡片数：' + cols + ' 列（点击切换为 ' + (cols === 3 ? 4 : 3) + ' 列）';
         }
         applyGridCols(currentCols);
         gridToggleBtn.addEventListener('click', function() {
-            applyGridCols(currentCols === 2 ? 3 : 2);
+            applyGridCols(currentCols === 4 ? 3 : 4);
         });
-        var GH_SVG = '<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>';
-        var globalCache = {};
+        /* ── 数据加载：单个 data.json，分类作为顶层 key ── */
+        var DATA_URL = 'assets/nav-pages/data.json';
+        var globalData = null;      // 原始 JSON：{ gal: [...], mmd: [...] }
+        var globalCache = {};       // cat -> 带 _category/_cat/_search 的站点数组
+        var dataPromise = null;
+        function loadData() {
+            if (!dataPromise) {
+                dataPromise = fetch(DATA_URL)
+                    .then(function(res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.json();
+                    })
+                    .then(function(json) {
+                        if (!json || typeof json !== 'object' || Array.isArray(json)) {
+                            throw new Error('data.json 顶层应是 {分类: [条目...]} 对象');
+                        }
+                        globalData = json;
+                        buildCache();
+                        /* 用户一进来就洗一次牌，保证每次打开页面顺序都不一样 */
+                        reshuffleRandom();
+                    })
+                    .catch(function(e) { dataPromise = null; throw e; });
+            }
+            return dataPromise;
+        }
+        function labelOf(cat) {
+            var link = document.querySelector('.sidebar-link[data-cat="' + cat + '"]');
+            return link ? link.dataset.label : cat;
+        }
+        function buildCache() {
+            globalCache = {};
+            Object.keys(globalData).forEach(function(cat) {
+                if (!Array.isArray(globalData[cat])) return;
+                var label = labelOf(cat);
+                globalCache[cat] = prepareSites(globalData[cat].map(function(item) {
+                    return Object.assign({}, item, { _category: label, _cat: cat, _rand: Math.random() });
+                }));
+            });
+        }
         var allSites = [];
         var isGlobalSearch = false;
-        var currentJsonPath = '';
+        var currentCat = '';
         var currentLabel = '';
         var ratingCache = {};
         var ratedKeys = {};
@@ -588,10 +733,41 @@
             if (!str) return '';
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
         }
+        /* related / community 兼容读取：新格式 {标签:链接}，兼容旧格式（逗号分隔URL字符串 / URL数组） */
+        function parseLinkPairs(field) {
+            var pairs = [];
+            if (!field) return pairs;
+            if (Array.isArray(field)) {
+                field.forEach(function(x) { pairs.push([null, String(x)]); });
+            } else if (typeof field === 'object') {
+                Object.keys(field).forEach(function(k) { pairs.push([k, String(field[k])]); });
+            } else {
+                String(field).split(/[,;，；]+/).forEach(function(x) { pairs.push([null, x.trim()]); });
+            }
+            return pairs.map(function(p) {
+                var label = p[0], val = String(p[1] || '').trim().replace(/^["']+|["']+$/g, '');
+                if (label === null) {
+                    // 旧格式：纯 URL，没有标签。若形如 "标签|链接" 也顺手拆开
+                    if (val.indexOf('|') >= 0) { label = val.slice(0, val.indexOf('|')).trim(); val = val.slice(val.indexOf('|') + 1).trim(); }
+                    else label = '';
+                }
+                return { label: label, url: val };
+            }).filter(function(p) { return p.url; });
+        }
+        function siteSearchBlob(s) {
+            var blob = [s.name, s.url, s.remark, s.issue, s.uid];
+            ['related', 'community'].forEach(function(k) {
+                parseLinkPairs(s[k]).forEach(function(p) { blob.push(p.label, p.url); });
+            });
+            return blob.join(' ');
+        }
         function prepareSites(data) {
             for (var i = 0; i < data.length; i++) {
                 if (!data[i]._sortName) {
                     data[i]._sortName = getPinyin(data[i].name);
+                }
+                if (!data[i]._search) {
+                    data[i]._search = siteSearchBlob(data[i]).toLowerCase();
                 }
             }
             return data;
@@ -713,40 +889,6 @@
                 });
             }
         }
-        function parseRelatedUrls(relatedField) {
-            if (!relatedField || typeof relatedField !== 'string' || !relatedField.trim()) return [];
-            var raw = relatedField.trim();
-            if ((raw.startsWith('"') && raw.endsWith('"')) || (raw.startsWith("'") && raw.endsWith("'"))) {
-                raw = raw.slice(1, -1);
-            }
-            var urls = [];
-            var parts = raw.split(',');
-            for (var i = 0; i < parts.length; i++) {
-                var u = parts[i].trim().replace(/^["']+|["']+$/g, '');
-                if (u && /^https?:\/\//i.test(u)) urls.push(u);
-            }
-            var seen = {};
-            return urls.filter(function(u) { if (seen[u]) return false; seen[u] = true; return true; });
-        }
-        function resolveIcons(relatedUrls) {
-            var result = { nav: null, tg: null, github: null, custom: [] };
-            var consumed = {};
-            for (var i = 0; i < relatedUrls.length; i++) {
-                var lower = relatedUrls[i].toLowerCase();
-                if (!result.tg && (lower.includes('t.me') || lower.includes('discord') || lower.includes('tg'))) {
-                    result.tg = relatedUrls[i]; consumed[i] = true;
-                } else if (!result.github && lower.includes('github.com')) {
-                    result.github = relatedUrls[i]; consumed[i] = true;
-                }
-            }
-            for (var j = 0; j < relatedUrls.length; j++) {
-                if (!consumed[j]) { result.nav = relatedUrls[j]; consumed[j] = true; break; }
-            }
-            for (var k = 0; k < relatedUrls.length; k++) {
-                if (!consumed[k]) result.custom.push(relatedUrls[k]);
-            }
-            return result;
-        }
         function renderCards(sites) {
             var container = document.getElementById('cardContainer');
             var countEl = document.getElementById('siteCount');
@@ -755,32 +897,23 @@
             container.innerHTML = sites.map(function(s) {
                 var siteName = s.name || '未命名站点';
                 var primaryUrl = s.url || '';
-                var relatedUrls = parseRelatedUrls(s.related);
-                var rel = resolveIcons(relatedUrls);
                 var logoHtml = '';
                 if (s.logo && s.logo.trim()) {
                     logoHtml = '<img class="site-logo" src="' + s.logo.trim() + '" alt="" onerror="this.style.display=\'none\'">';
                 }
                 var urlLink = primaryUrl
                     ? '<a href="' + primaryUrl + '" target="_blank" rel="noopener">' + primaryUrl + '</a>' : '—';
-                var navIcon = rel.nav
-                    ? '<a class="related-icon icon-nav active" href="' + rel.nav + '" target="_blank" rel="noopener" title="导航/主页">📑</a>'
-                    : '<span class="related-icon icon-nav" title="无导航链接">📑</span>';
-                var tgIcon = rel.tg
-                    ? '<a class="related-icon icon-tg active" href="' + rel.tg + '" target="_blank" rel="noopener" title="Telegram/Discord">✈️</a>'
-                    : '<span class="related-icon icon-tg" title="无TG/Discord链接">✈️</span>';
-                var ghIcon = rel.github
-                    ? '<a class="related-icon icon-gh active" href="' + rel.github + '" target="_blank" rel="noopener" title="GitHub">' + GH_SVG + '</a>'
-                    : '<span class="related-icon icon-gh" title="无GitHub链接">' + GH_SVG + '</span>';
-                var iconsHtml = '<span class="related-icons">' + navIcon + tgIcon + ghIcon + '</span>';
-                var customLinksHtml = rel.custom.length > 0
-                    ? '<div class="custom-links-row">' + rel.custom.map(function(u) { return '<a href="' + u + '" target="_blank" rel="noopener">' + u + '</a>'; }).join('') + '</div>' : '';
                 var problemHtml = s.issue
                     ? '<span class="meta-value problem">' + s.issue + '</span>'
                     : '<span style="color:var(--text-sub)">暂无</span>';
                 var uidInlineHtml = '';
-                if (s.uid && s.uid.trim()) {
+                var detailHtml = '';
+                if (s.uid && String(s.uid).trim()) {
                     uidInlineHtml = '<span class="uid-inline">UID: <span class="uid-val">' + s.uid.trim() + '</span></span>';
+                    var hash = s._cat
+                        ? encodeURIComponent(s._cat) + '/' + encodeURIComponent(String(s.uid).trim())
+                        : encodeURIComponent(String(s.uid).trim());
+                    detailHtml = '<a class="detail-btn" href="detail.html#' + hash + '" target="_blank" rel="noopener" title="打开站点详情页">详情页</a>';
                 }
                 var categoryTag = isGlobalSearch && s._category
                     ? '<span style="position:absolute;top:0;left:0;background:rgba(251,191,36,0.15);color:var(--accent-gold);font-size:0.65rem;font-weight:600;padding:2px 8px;border-radius:10px 0 8px 0;letter-spacing:0.5px;">' + s._category + '</span>'
@@ -788,22 +921,36 @@
                 return '<div class="site-card">'
                     + categoryTag
                     + '<div class="site-name-row">' + logoHtml
-                    + '<div class="site-name" title="' + siteName + '">' + siteName + '</div></div>'
-                    + '<div class="links-toggle-row">'
-                    + '<div class="links-toggle" onclick="this.classList.toggle(\'open\');this.parentElement.nextElementSibling.classList.toggle(\'show\')">'
-                    + '<span class="arrow">▶</span> 查看链接</div>'
-                    + uidInlineHtml + '</div>'
-                    + '<div class="links-panel">'
+                    + '<div class="head-text">'
+                    + '<div class="site-name" title="' + siteName + '">' + siteName + '</div>'
+                    + '<div class="uid-detail">' + uidInlineHtml + '</div>'
+                    + '</div></div>'
+                    + '<div class="links-panel show">'
                     + '<div class="link-row"><span class="link-label">网址</span>' + urlLink + '</div>'
-                    + '<div class="link-row"><span class="link-label">相关</span>' + iconsHtml + '</div>'
-                    + customLinksHtml + '</div>'
-                    + '<div class="meta-row">'
-                    + '<div class="meta-item"><div class="meta-label">备注</div><div class="meta-value">' + (s.remark || '—') + '</div></div>'
-                    + '<div class="meta-item"><div class="meta-label">问题</div><div class="meta-value">' + problemHtml + '</div></div>'
                     + '</div>'
-                    + buildRatingHtml(s) + '</div>';
+                    + '<div class="meta-row">'
+                    + '<div class="meta-item"><div class="meta-value">' + (s.remark || '—') + '</div></div>'
+                    + '<div class="meta-item"><div class="meta-value">' + problemHtml + '</div></div>'
+                    + '</div>'
+                    + buildRatingHtml(s)
+                    + (detailHtml ? '<div class="detail-row">' + detailHtml + '</div>' : '')
+                    + '</div>';
             }).join('');
             bindRatingEvents();
+        }
+        /* 随机排序用建缓存时一次性生成的 _rand，保证同一次会话里顺序稳定，
+           不会因为你多敲一个搜索字就整页重新洗牌 */
+        function applySort(list, mode) {
+            if (mode === 'name') list.sort(function(a, b) { return a._sortName.localeCompare(b._sortName); });
+            else if (mode === 'random') list.sort(function(a, b) { return (a._rand || 0) - (b._rand || 0); });
+            return list;
+        }
+        /* 重新洗牌：给所有条目换一批 _rand，下次按 random 排就是新顺序 */
+        function reshuffleRandom() {
+            Object.keys(globalCache).forEach(function(cat) {
+                (globalCache[cat] || []).forEach(function(s) { s._rand = Math.random(); });
+            });
+            allSites.forEach(function(s) { s._rand = Math.random(); });
         }
         function filterAndSort() {
             var keyword = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -814,42 +961,24 @@
                 titleEl.textContent = '🔍 全局搜索结果';
                 var allData = Object.values(globalCache).flat();
                 var filtered = allData.filter(function(s) {
-                    return [s.name, s.remark, s.url, s.related, s.issue, s.uid, s._category]
-                        .join(' ').toLowerCase().includes(keyword);
+                    return ((s._search || '') + ' ' + (s._category || '')).toLowerCase().includes(keyword);
                 });
-                if (sortMode === 'name') filtered.sort(function(a, b) { return a._sortName.localeCompare(b._sortName); });
+                applySort(filtered, sortMode);
                 renderCards(filtered);
             } else {
                 isGlobalSearch = false;
                 titleEl.textContent = currentLabel;
                 var filtered = allSites.slice();
-                if (sortMode === 'name') filtered.sort(function(a, b) { return a._sortName.localeCompare(b._sortName); });
+                applySort(filtered, sortMode);
                 renderCards(filtered);
             }
         }
         document.getElementById('searchInput').addEventListener('input', filterAndSort);
-        document.getElementById('sortSelect').addEventListener('change', filterAndSort);
-        function preloadAllCategories() {
-            var links = document.querySelectorAll('.sidebar-link[data-json]');
-            var fetchPromises = Array.from(links).map(function(link) {
-                var jsonPath = link.dataset.json;
-                var label = link.dataset.label;
-                if (!jsonPath || globalCache[jsonPath]) return Promise.resolve();
-                return fetch(jsonPath)
-                    .then(function(res) { return res.ok ? res.json() : null; })
-                    .then(function(data) {
-                        if (data) {
-                            var sites = data.map(function(item) { return Object.assign({}, item, { _category: label }); });
-                            globalCache[jsonPath] = prepareSites(sites);
-                        }
-                    })
-                    .catch(function(e) { console.warn('preload failed: ' + jsonPath, e); });
-            });
-            return Promise.all(fetchPromises).then(function() {
-                console.log('Global index ready, cached ' + Object.keys(globalCache).length + ' categories');
-            });
-        }
-        function loadCategory(jsonPath, label) {
+        document.getElementById('sortSelect').addEventListener('change', function () {
+            if (this.value === 'random') reshuffleRandom();
+            filterAndSort();
+        });
+        function loadCategory(cat, label) {
             var container = document.getElementById('cardContainer');
             var titleEl = document.getElementById('categoryTitle');
             var searchInput = document.getElementById('searchInput');
@@ -858,46 +987,65 @@
             searchInput.value = '';
             isGlobalSearch = false;
             allSites = [];
-            syncMobileTabsActive(jsonPath);
-            if (!jsonPath) {
-                container.innerHTML = '<div class="loading">「' + label + '」的 JSON 数据路径尚未配置<br>请在 sidebar-link 的 data-json 属性中填写对应 .json 文件路径</div>';
+            syncMobileTabsActive(cat);
+            if (!cat) {
+                container.innerHTML = '<div class="loading">「' + label + '」未配置分类<br>请在 sidebar-link 的 data-cat 属性中填写 data.json 里的分类 key</div>';
                 document.getElementById('siteCount').textContent = '';
                 return;
             }
             container.innerHTML = '<div class="loading">加载中...</div>';
-            if (globalCache[jsonPath]) {
-                allSites = globalCache[jsonPath].map(function(item) { var copy = Object.assign({}, item); delete copy._category; return copy; });
+            loadData().then(function() {
+                var cached = globalCache[cat];
+                if (!cached) {
+                    container.innerHTML = '<div class="loading" style="color:var(--danger)">data.json 中找不到分类「' + cat + '」<br>请检查侧栏 data-cat 与 data.json 的顶层 key 是否一致</div>';
+                    document.getElementById('siteCount').textContent = '';
+                    return;
+                }
+                allSites = cached.map(function(item) { var copy = Object.assign({}, item); delete copy._category; return copy; });
                 prepareSites(allSites);
-                renderCards(allSites);
-            } else {
-                fetch(jsonPath)
-                    .then(function(res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
-                    .then(function(data) {
-                        allSites = prepareSites(data);
-                        renderCards(allSites);
-                    })
-                    .catch(function(e) {
-                        container.innerHTML = '<div class="loading" style="color:var(--danger)">数据加载失败: ' + e.message + '<br>请检查 ' + jsonPath + ' 是否存在且格式正确</div>';
-                        document.getElementById('siteCount').textContent = '';
-                    });
-            }
+                /* 必须走 filterAndSort()，不能直接 renderCards(allSites)：
+                   那条路不会调 applySort，卡片就是 data.json 的原始顺序 ——
+                   表现为"刷新页面根本没随机"（洗牌洗了但没人排）。
+                   filterAndSort 会读下拉的当前值（默认 random）排序后再渲染。 */
+                filterAndSort();
+            }).catch(function(e) {
+                container.innerHTML = '<div class="loading" style="color:var(--danger)">数据加载失败: ' + e.message
+                    + '<br>请检查 ' + DATA_URL + ' 是否存在且格式正确'
+                    + ' <a href="javascript:location.reload()" style="color:var(--accent-gold)">重试</a></div>';
+                document.getElementById('siteCount').textContent = '';
+            });
         }
         sidebarLinks.forEach(function(link) {
             link.addEventListener('click', function() {
                 sidebarLinks.forEach(function(l) { l.classList.remove('active'); });
                 link.classList.add('active');
-                currentJsonPath = link.dataset.json;
-                loadCategory(currentJsonPath, link.dataset.label);
+                currentCat = link.dataset.cat;
+                loadCategory(currentCat, link.dataset.label);
                 if (window.innerWidth <= 768) toggleSidebar(false);
             });
         });
-        preloadAllCategories();
         var firstLink = document.querySelector('.sidebar-link.active');
         if (firstLink) {
-            currentJsonPath = firstLink.dataset.json;
+            currentCat = firstLink.dataset.cat;
             currentLabel = firstLink.dataset.label;
-            loadCategory(currentJsonPath, currentLabel);
+            loadCategory(currentCat, currentLabel);
         }
+
+        /* 顶栏吸顶后，侧栏 / 移动端 tab 栏都要让出它的高度。
+           顶栏高度会随窗口宽度变化（768px 以下 padding 和字号都缩小），写死会错位，
+           所以实测后写进 --topbar-h，CSS 那边统一用 var(--topbar-h)。 */
+        (function syncTopbarHeight() {
+            var bar = document.querySelector('.top-bar');
+            if (!bar) return;
+            var apply = function () {
+                var h = bar.offsetHeight;
+                if (h > 0) document.documentElement.style.setProperty('--topbar-h', h + 'px');
+            };
+            apply();
+            window.addEventListener('resize', apply);
+            window.addEventListener('load', apply);
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(apply);
+        })();
     })();
     </script>
     <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+    <link rel="icon" type="image/png" href="assets/css/images/biglogo.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>站点详情 - 合月亭</title>
+    <!-- hash 路由的单页，内容全靠 JS 渲染，对搜索引擎没有独立价值，不收录 -->
+    <meta name="robots" content="noindex,follow">
+    <!-- Bing 抓取工具会报「元描述标签缺失」错误，虽然 noindex 也补上一条消除报错 -->
+    <meta name="description" content="合月亭收录站点的详情页：站点简介、相关链接与社群入口。">
+    <style>
+        :root {
+            --bg0: #131c31;
+            --bg1: #1a2440;
+            --panel: rgba(255, 255, 255, 0.045);
+            --row: rgba(0, 0, 0, 0.22);
+            --row-hover: rgba(255, 255, 255, 0.07);
+            --border: rgba(255, 255, 255, 0.09);
+            --t-main: #e8edf8;
+            --t-sub: #8b93b8;
+            --t-faint: #6b7394;
+            --accent: #7d9cff;
+            --accent-soft: rgba(125, 156, 255, 0.14);
+            --good: #4ade80;
+            --warn: #fbbf24;
+            --bad: #f87171;
+            --chip-blue: #60a5fa;
+            --chip-green: #4ade80;
+            --chip-gold: #fbbf24;
+            --btn-ink: #101828;
+        }
+        [data-theme="light"] {
+            --bg0: #eef2f9;
+            --bg1: #ffffff;
+            --panel: rgba(19, 28, 49, 0.035);
+            --row: rgba(19, 28, 49, 0.05);
+            --row-hover: rgba(19, 28, 49, 0.1);
+            --border: rgba(19, 28, 49, 0.12);
+            --t-main: #1e293b;
+            --t-sub: #64748b;
+            --t-faint: #94a3b8;
+            --accent: #3b62d4;
+            --accent-soft: rgba(59, 98, 212, 0.1);
+            --btn-ink: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { min-height: 100%; }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            color: var(--t-main);
+            background:
+                radial-gradient(90% 60% at 80% -10%, rgba(96, 129, 255, 0.14) 0%, transparent 60%),
+                radial-gradient(70% 50% at 0% 100%, rgba(125, 156, 255, 0.08) 0%, transparent 60%),
+                var(--bg0);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+        .wrap { max-width: 980px; margin: 0 auto; padding: 2.2rem 1.4rem 3rem; }
+        /* ── 顶部导航（结构抄自 index.html，配色改用本页已有变量） ── */
+        nav {
+            position: sticky; top: 0; z-index: 100; width: 100%;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(19, 28, 49, 0.72);
+            backdrop-filter: blur(8px);
+        }
+        [data-theme="light"] nav { background: rgba(255, 255, 255, 0.78); }
+        .nav-container { max-width: 980px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+        .logo {
+            font-size: 1.25rem; font-weight: 700; color: var(--t-main);
+            letter-spacing: 2px; display: flex; align-items: center; gap: 10px;
+            text-decoration: none; white-space: nowrap;
+        }
+        .logo img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid var(--chip-gold); }
+        .nav-right { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+        .nav-link {
+            color: var(--t-sub); text-decoration: none; font-size: 0.9rem;
+            font-weight: 500; padding: 0 1rem; white-space: nowrap; transition: color 0.2s;
+        }
+        .nav-link:hover { color: var(--chip-gold); }
+        .nav-v-line { width: 1px; height: 16px; background: var(--t-main); opacity: 0.25; flex-shrink: 0; }
+        .icon-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 34px; height: 34px; color: var(--t-main);
+            background: none; border: none; cursor: pointer; margin-left: 1rem;
+            transition: color 0.2s, transform 0.2s;
+        }
+        .icon-btn:hover { color: var(--chip-gold); transform: scale(1.1); }
+        .icon-btn svg { width: 22px; height: 22px; }
+        /* ── 顶部 ── */
+        .eyebrow {
+            display: flex; align-items: center; justify-content: flex-end;
+            gap: 1rem; flex-wrap: wrap;
+            font-size: 0.82rem; letter-spacing: 3px; color: var(--t-faint);
+            text-transform: uppercase; margin-bottom: 1rem;
+        }
+        .eyebrow a { color: var(--t-sub); text-decoration: none; letter-spacing: 1px; }
+        .eyebrow a:hover { color: var(--accent); }
+        .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.4rem; }
+        .chip {
+            font-size: 0.78rem; font-weight: 600; letter-spacing: 0.5px;
+            padding: 0.18rem 0.8rem; border-radius: 999px;
+            border: 1px solid var(--chip-blue); color: var(--chip-blue);
+            background: transparent;
+        }
+        .chip.green { border-color: var(--chip-green); color: var(--chip-green); }
+        .chip.gold  { border-color: var(--chip-gold);  color: var(--chip-gold); }
+        .chip.bad   { border-color: var(--bad);        color: var(--bad); }
+        .chip.plain { border-color: var(--border);     color: var(--t-sub); }
+        /* ── 标题区 ── */
+        .hero {
+            display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+            margin-bottom: 1.2rem;
+        }
+        .hero img.site-logo {
+            width: 56px; height: 56px; border-radius: 14px; object-fit: cover;
+            border: 1px solid var(--border); background: var(--panel);
+        }
+        .hero-text { min-width: 0; }
+        h1.site-name {
+            font-size: 1.7rem; font-weight: 800; letter-spacing: 1px;
+            line-height: 1.25; word-break: break-all;
+        }
+        .hero-sub {
+            display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+            font-size: 0.8rem; color: var(--t-sub); margin-top: 0.2rem;
+        }
+        .hero-sub .uid { font-family: 'Fira Code', 'Consolas', monospace; letter-spacing: 0.5px; }
+        .hero-sub .uid b { color: var(--accent); font-weight: 700; }
+        .visit-btn {
+            margin-left: auto;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--accent); color: var(--btn-ink);
+            font-size: 0.9rem; font-weight: 700;
+            padding: 0.55rem 1.3rem; border-radius: 10px;
+            text-decoration: none; border: none; cursor: pointer;
+            transition: transform 0.15s, opacity 0.15s; white-space: nowrap;
+        }
+        .visit-btn:hover { transform: translateY(-1px); opacity: 0.92; }
+        /* ── 亮点面板 ── */
+        .panel {
+            background: var(--panel); border: 1px solid var(--border);
+            border-radius: 14px; padding: 1.1rem 1.3rem; margin-bottom: 1.6rem;
+        }
+        .panel-title {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 1rem; font-weight: 700; margin-bottom: 0.7rem;
+        }
+        .panel-title .ic { color: var(--accent); font-size: 0.95rem; }
+        .hl-row {
+            display: flex; align-items: baseline; gap: 0.4rem;
+            background: var(--row); border-radius: 9px;
+            padding: 0.5rem 0.9rem; margin-bottom: 0.45rem;
+            font-size: 0.88rem;
+        }
+        .hl-row:last-child { margin-bottom: 0; }
+        .hl-row .dot { color: var(--accent); flex-shrink: 0; }
+        .hl-row .k { color: var(--t-sub); flex-shrink: 0; font-size: 0.82rem; }
+        .hl-row .v { word-break: break-all; }
+        .hl-row .v.problem { color: var(--bad); font-weight: 700; }
+        /* ── 双卡片 ── */
+        .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+        .card {
+            background: var(--panel); border: 1px solid var(--border);
+            border-radius: 14px; padding: 1.1rem 1.3rem 1.3rem;
+        }
+        .card .rows { display: flex; flex-direction: column; gap: 0.55rem; }
+        .row-btn {
+            display: flex; align-items: center; gap: 0.5rem;
+            background: var(--row); border: 1px solid transparent;
+            border-radius: 9px; padding: 0.55rem 0.9rem;
+            color: var(--t-main); text-decoration: none;
+            font-size: 0.88rem; cursor: pointer; text-align: left;
+            transition: background 0.15s, border-color 0.15s, transform 0.15s;
+            width: 100%; font-family: inherit;
+        }
+        .row-btn:hover { background: var(--row-hover); border-color: var(--accent); transform: translateX(2px); }
+        .row-btn .lbl { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .row-btn .val {
+            font-size: 0.72rem; color: var(--t-faint); max-width: 45%;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+        .row-btn .ext { color: var(--t-faint); font-size: 0.75rem; flex-shrink: 0; }
+        .row-btn.is-copy .lbl::after {
+            content: '（点击复制）'; font-size: 0.68rem; color: var(--t-faint); margin-left: 0.4rem;
+        }
+        .none { color: var(--t-faint); font-size: 0.85rem; padding: 0.4rem 0.2rem; }
+        /* 站点信息面板：中间竖线劈成两半，右边放"问题" */
+        .panel.split { display: grid; grid-template-columns: 1fr 1fr; align-items: start; }
+        .panel.split .split-col { padding: 0 1.2rem; min-width: 0; }
+        .panel.split .split-col:first-child { padding-left: 0; }
+        .panel.split .split-col + .split-col { padding-right: 0; border-left: 1px solid var(--border); }
+        /* ── 状态 / 页脚 ── */
+        .state { text-align: center; padding: 5rem 1rem; color: var(--t-sub); }
+        .state .big { font-size: 2.4rem; margin-bottom: 0.8rem; }
+        .state a { color: var(--accent); }
+        footer {
+            margin-top: 2.6rem; padding-top: 1.2rem;
+            border-top: 1px solid var(--border);
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 0.3rem 0.9rem; font-size: 0.78rem; color: var(--t-faint);
+        }
+        footer a { color: var(--t-sub); text-decoration: none; }
+        footer a:hover { color: var(--accent); }
+        footer .sep { opacity: 0.4; }
+        /* ── 复制提示 ── */
+        #toast {
+            position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--accent); color: var(--btn-ink);
+            font-size: 0.85rem; font-weight: 600;
+            padding: 0.5rem 1.2rem; border-radius: 999px;
+            opacity: 0; pointer-events: none; transition: all 0.25s; z-index: 99;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        @media (max-width: 680px) {
+            .wrap { padding: 1.4rem 0.9rem 2.4rem; }
+            .cards { grid-template-columns: 1fr; }
+            h1.site-name { font-size: 1.35rem; }
+            .visit-btn { margin-left: 0; width: 100%; justify-content: center; }
+            .row-btn .val { display: none; }
+            .panel.split { grid-template-columns: 1fr; }
+            .panel.split .split-col { padding: 0; }
+            .panel.split .split-col + .split-col {
+                border-left: 0; padding-left: 0;
+                border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 0.6rem;
+            }
+            nav { padding: 0.8rem 1rem; }
+            .nav-container { flex-wrap: wrap; gap: 0.4rem 0.8rem; }
+            .nav-link { padding: 0 0.6rem; font-size: 0.85rem; }
+            .icon-btn { margin-left: 0.4rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/css/images/biglogo.png" alt="合月亭 Logo">
+                <span>合月亭 Porject</span>
+            </a>
+            <div class="nav-right">
+                <a href="news.html" class="nav-link">公告</a>
+                <div class="nav-v-line"></div>
+                <a href="qq.html" class="nav-link">交流群</a>
+                <div class="nav-v-line"></div>
+                <a href="comments.html" class="nav-link">留言区</a>
+                <div class="nav-v-line"></div>
+                <a href="assets/tools/tool-index.html" class="nav-link">工具箱</a>
+                <button class="icon-btn" id="theme-toggle" title="切换背景模式" aria-label="切换背景模式">
+                    <svg id="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    <svg id="icon-sun" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wrap">
+        <div class="eyebrow">
+            <a href="Navigation.html">← 返回站点导航</a>
+        </div>
+
+        <div id="content">
+            <div class="state"><div class="big">🛰️</div>正在加载数据...</div>
+        </div>
+
+        <footer>
+            <a href="ContactDMCA.html">联系站长</a><span class="sep">|</span>
+            <a href="Friend_Links.html">友情链接</a>
+        </footer>
+    </div>
+
+    <div id="toast">已复制</div>
+
+    <script>
+    (function () {
+        var DATA_URL = 'assets/nav-pages/data.json';
+        var THEME_KEY = 'heyue_nav_theme';   // 与 Navigation.html 共用主题
+        var htmlEl = document.documentElement;
+        var saved = localStorage.getItem(THEME_KEY);
+        if (saved) htmlEl.setAttribute('data-theme', saved);
+
+        /* 顶栏主题按钮：与 Navigation.html 共用 heyue_nav_theme，明暗两态 */
+        var toggleBtn = document.getElementById('theme-toggle');
+        var iconMoon = document.getElementById('icon-moon');
+        var iconSun = document.getElementById('icon-sun');
+        function syncThemeIcon() {
+            var dark = htmlEl.getAttribute('data-theme') !== 'light';
+            if (iconMoon) iconMoon.style.display = dark ? '' : 'none';
+            if (iconSun) iconSun.style.display = dark ? 'none' : '';
+        }
+        if (toggleBtn) {
+            syncThemeIcon();
+            toggleBtn.addEventListener('click', function () {
+                var next = htmlEl.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                htmlEl.setAttribute('data-theme', next);
+                try { localStorage.setItem(THEME_KEY, next); } catch (e) {}
+                syncThemeIcon();
+            });
+        }
+
+        var content = document.getElementById('content');
+        var toastEl = document.getElementById('toast');
+        var toastTimer = null;
+        function toast(msg) {
+            toastEl.textContent = msg;
+            toastEl.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(function () { toastEl.classList.remove('show'); }, 1600);
+        }
+        function esc(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        function copyText(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function () { toast('已复制：' + text); },
+                    function () { fallbackCopy(text); });
+            } else { fallbackCopy(text); }
+        }
+        function fallbackCopy(text) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); toast('已复制：' + text); }
+            catch (e) { toast('复制失败，请手动复制'); }
+            document.body.removeChild(ta);
+        }
+        /* related / community 兼容读取：新格式 {标签:链接}，兼容旧格式（逗号分隔URL字符串 / URL数组） */
+        function parseLinkPairs(field) {
+            var pairs = [];
+            if (!field) return pairs;
+            if (Array.isArray(field)) {
+                field.forEach(function (x) { pairs.push([null, x]); });
+            } else if (typeof field === 'object') {
+                Object.keys(field).forEach(function (k) { pairs.push([k, field[k]]); });
+            } else {
+                String(field).split(/[,;，；]+/).forEach(function (x) { pairs.push([null, x.trim()]); });
+            }
+            return pairs.map(function (p) {
+                var label = p[0], val = String(p[1] || '').trim().replace(/^["']+|["']+$/g, '');
+                if (label === null) {
+                    if (val.indexOf('|') >= 0) { label = val.slice(0, val.indexOf('|')).trim(); val = val.slice(val.indexOf('|') + 1).trim(); }
+                    else label = '';
+                }
+                return { label: label, url: val };
+            }).filter(function (p) { return p.url; });
+        }
+        function hostOf(u) {
+            try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return u; }
+        }
+        function chipClassFor(cat) {
+            var hues = ['green', '', 'gold'];
+            var n = 0;
+            for (var i = 0; i < cat.length; i++) n = (n + cat.charCodeAt(i)) % 997;
+            return hues[n % hues.length];
+        }
+
+        function renderCard(title, icon, pairs, opts) {
+            opts = opts || {};
+            var rows;
+            if (!pairs.length) {
+                rows = '<div class="none">暂无内容</div>';
+            } else {
+                rows = pairs.map(function (p) {
+                    var label = p.label || hostOf(p.url);
+                    var isUrl = /^https?:\/\//i.test(p.url);
+                    if (isUrl) {
+                        return '<a class="row-btn" href="' + esc(p.url) + '" target="_blank" rel="noopener" title="' + esc(p.url) + '">'
+                            + '<span class="lbl">' + esc(label) + '</span>'
+                            + '<span class="val">' + esc(p.url) + '</span>'
+                            + '<span class="ext">↗</span></a>';
+                    }
+                    // 不是链接（QQ群号、频道号等）：点击复制
+                    return '<button class="row-btn is-copy" type="button" data-copy="' + esc(p.url) + '" title="点击复制">'
+                        + '<span class="lbl">' + esc(label) + '</span>'
+                        + '<span class="val">' + esc(p.url) + '</span>'
+                        + '<span class="ext">⧉</span></button>';
+                }).join('');
+            }
+            return '<section class="card"><div class="panel-title"><span class="ic">' + icon + '</span>' + esc(title) + '</div>'
+                + '<div class="rows">' + rows + '</div></section>';
+        }
+
+        function render(site, cat, catLabel) {
+            document.title = (site.name || '站点详情') + ' - 合月亭';
+            /* 备注：带 | 分隔的当标签做成 chips，纯文本则放进信息面板 */
+            var remarkTags = [];
+            var remarkText = '';
+            if (site.remark && String(site.remark).trim()) {
+                var rs = String(site.remark).trim();
+                if (rs.indexOf('|') >= 0 || rs.indexOf('｜') >= 0) {
+                    remarkTags = rs.split(/[|｜]/).map(function (t) { return t.trim(); }).filter(Boolean);
+                } else {
+                    remarkText = rs;
+                }
+            }
+            var hasIssue = site.issue && String(site.issue).trim();
+
+            /* 分类 / 状态 / 标签 chips */
+            var h = '<div class="chips">';
+            if (catLabel) h += '<span class="chip ' + chipClassFor(cat) + '">' + esc(catLabel) + '</span>';
+            if (hasIssue) h += '<span class="chip bad">⚠ ' + esc(site.issue) + '</span>';
+            remarkTags.forEach(function (tag) {
+                h += '<span class="chip plain">' + esc(tag) + '</span>';
+            });
+            h += '</div>';
+
+            /* 标题 + 访问按钮 */
+            h += '<div class="hero">';
+            if (site.logo && String(site.logo).trim()) {
+                h += '<img class="site-logo" src="' + esc(site.logo.trim()) + '" alt="" onerror="this.style.display=\'none\'">';
+            }
+            h += '<div class="hero-text"><h1 class="site-name">' + esc(site.name || '未命名站点') + '</h1>'
+                + '<div class="hero-sub">';
+            if (site.uid && String(site.uid).trim()) h += '<span class="uid">UID <b>' + esc(site.uid) + '</b></span>';
+            if (site.url) h += '<span>' + esc(site.url) + '</span>';
+            h += '</div></div>';
+            if (site.url) {
+                h += '<a class="visit-btn" href="' + esc(site.url) + '" target="_blank" rel="noopener">🔗 访问站点</a>';
+            }
+            h += '</div>';
+
+            /* 信息面板：左半 = 站点信息（备注），右半 = 问题（issue），中间竖线劈开 */
+            if (remarkText || hasIssue) {
+                h += '<section class="panel split">';
+                h += '<div class="split-col"><div class="panel-title"><span class="ic">✦</span>站点信息</div>';
+                h += remarkText
+                    ? '<div class="hl-row"><span class="dot">●</span><span class="k">备注</span><span class="v">' + esc(remarkText) + '</span></div>'
+                    : '<div class="none">暂无备注</div>';
+                h += '</div>';
+                h += '<div class="split-col"><div class="panel-title"><span class="ic">⚠</span>问题</div>';
+                h += hasIssue
+                    ? '<div class="hl-row"><span class="dot">●</span><span class="v problem">' + esc(site.issue) + '</span></div>'
+                    : '<div class="none">暂无已知问题</div>';
+                h += '</div></section>';
+            }
+
+            /* 底部双卡片：相关 / 社群 */
+            var relatedPairs = parseLinkPairs(site.related);
+            var communityPairs = parseLinkPairs(site.community);
+            if (site.url) {
+                /* 主站作为"官网"放第一行；related 里若已塞过同一个地址则去掉，避免重复 */
+                relatedPairs = relatedPairs.filter(function (p) { return p.url !== site.url; });
+                relatedPairs = [{ label: '官网', url: site.url }].concat(relatedPairs);
+            }
+            h += '<div class="cards">'
+                + renderCard('相关', '🌐', relatedPairs)
+                + renderCard('社群', '👥', communityPairs)
+                + '</div>';
+
+            content.innerHTML = h;
+
+            /* 非链接按钮 → 点击复制 */
+            content.querySelectorAll('[data-copy]').forEach(function (btn) {
+                btn.addEventListener('click', function () { copyText(btn.getAttribute('data-copy')); });
+            });
+        }
+
+        function renderNotFound(hash) {
+            content.innerHTML = '<div class="state"><div class="big">🔭</div>'
+                + '<p>没有找到对应的站点' + (hash ? '（' + esc(decodeURIComponent(hash)) + '）' : '') + '</p>'
+                + '<p style="margin-top:0.6rem">数据可能已更新，条目被移除或编号有误。</p>'
+                + '<p style="margin-top:1rem"><a href="Navigation.html">去站点导航逛逛 →</a></p></div>';
+            document.title = '未找到站点 - 合月亭';
+        }
+
+        function resolveHash(hash) {
+            /* 支持 detail.html#gal/0001 和 detail.html#0001 两种格式 */
+            var raw = decodeURIComponent((hash || '').replace(/^#/, '')).trim();
+            if (!raw || !globalData) return { cat: '', uid: raw, site: null };
+            var cat = '', uid = raw;
+            if (raw.indexOf('/') >= 0) {
+                cat = raw.slice(0, raw.indexOf('/')).trim();
+                uid = raw.slice(raw.indexOf('/') + 1).trim();
+            }
+            var searchCats = cat ? [cat] : Object.keys(globalData);
+            for (var i = 0; i < searchCats.length; i++) {
+                var list = globalData[searchCats[i]];
+                if (!Array.isArray(list)) continue;
+                for (var j = 0; j < list.length; j++) {
+                    if (String(list[j].uid || '').trim() === uid) {
+                        return { cat: searchCats[i], uid: uid, site: list[j] };
+                    }
+                }
+            }
+            /* 带分类前缀但没找到：退回全局搜一遍，防止分类写错时误报"未找到" */
+            if (cat) {
+                for (var c2 = 0; c2 < Object.keys(globalData).length; c2++) {
+                    var ck = Object.keys(globalData)[c2];
+                    var l2 = globalData[ck];
+                    if (!Array.isArray(l2)) continue;
+                    for (var j2 = 0; j2 < l2.length; j2++) {
+                        if (String(l2[j2].uid || '').trim() === uid) {
+                            return { cat: ck, uid: uid, site: l2[j2] };
+                        }
+                    }
+                }
+            }
+            return { cat: cat, uid: uid, site: null };
+        }
+
+        function renderFromHash() {
+            var hash = location.hash;
+            var r = resolveHash(hash);
+            if (!r.site) { renderNotFound(hash); return; }
+            render(r.site, r.cat, labelOf(r.cat));
+        }
+
+        function labelOf(cat) {
+            if (!cat) return '';
+            var link = document.querySelector('.sidebar-link[data-cat="' + cat + '"]');
+            if (link) return link.dataset.label;   /* detail 页没有侧栏，走下面兜底 */
+            var FALLBACK = { 'gal': 'GAL', 'voice_music': '音声/音乐', 'comic_illustration': '漫画/插画/本子', 'hub': '综合资源站', 'gal-info': 'GAL情报/入正', 'ln': '轻小说', 'anime': '动漫', 'mmd': 'MMD', 'wiki': 'WIKI', 'acg-nav': '二次元导航站', 'tools': '工具', 'search': '搜索引擎', 'valhalla': '英灵殿' };
+            return FALLBACK[cat] || cat;
+        }
+
+        function boot() {
+            fetch(DATA_URL)
+                .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+                .then(function (json) {
+                    if (!json || typeof json !== 'object' || Array.isArray(json)) throw new Error('格式不对');
+                    globalData = json;
+                    renderFromHash();
+                })
+                .catch(function (e) {
+                    content.innerHTML = '<div class="state"><div class="big">📡</div>'
+                        + '<p>数据加载失败：' + esc(e.message) + '</p>'
+                        + '<p style="margin-top:1rem"><a href="javascript:location.reload()">重试</a></p></div>';
+                });
+        }
+
+        window.addEventListener('hashchange', function () {
+            if (globalData) renderFromHash();
+        });
+        boot();
+    })();
+    </script>
+</body>
+</html>
