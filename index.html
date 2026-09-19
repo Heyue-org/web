@@ -773,6 +773,69 @@
   }
 </style>
 
+<style>
+  #model-list-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 99999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+  }
+  #model-list-overlay.show { display: flex; }
+  #model-list-panel {
+    background: #1e293b;
+    border: none;
+    border-radius: 12px;
+    padding: 1.5rem;
+    max-width: 400px;
+    width: 90%;
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  #model-list-panel h3 {
+    color: #fbbf24;
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+  .model-list-item {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    margin-bottom: 0.4rem;
+    background: #0f172a;
+    border: none;
+    border-radius: 6px;
+    color: #e2e8f0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .model-list-item:hover {
+    background: rgba(251,191,36,0.15);
+    color: #fbbf24;
+  }
+  .model-list-item.active {
+    background: rgba(251,191,36,0.2);
+    color: #fbbf24;
+  }
+  #model-list-close {
+    display: block;
+    margin: 1rem auto 0;
+    padding: 0.4rem 1.5rem;
+    background: #fbbf24;
+    color: #0f172a;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+</style>
+
 <div id="model-list-overlay">
   <div id="model-list-panel">
     <h3>选择模型</h3>
@@ -781,14 +844,11 @@
   </div>
 </div>
 
-<!-- Live2D 脚本改为按需加载：移动端完全不加载，桌面端只加载当前选中的那一个模型 -->
+<script src="https://cdn.jsdelivr.net/npm/live2dcubismcore@6.0.0/dist/live2dcubismcore.min.js"></script>
+<script src="assets/l2d/l2d-widget.min.js"></script>
 
 <script>
   (() => {
-    const isMobile = window.matchMedia('(max-width: 768px)').matches ||
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile/i.test(navigator.userAgent);
-    if (isMobile) return;
-
     const baseModelOptions = [
       { path: 'assets/l2d/models/HK416-1-normal/model.json', scale: 1, offset: [0, 0] },
       { path: 'assets/l2d/models/HK416-2-destroy/model.json', scale: 1, offset: [0, 0] },
@@ -851,17 +911,6 @@ const modelOptions = baseModelOptions.map(opt => ({
     let isSwitching = false;
     let widget = null;
 
-    function loadScript(src) {
-      return new Promise((resolve, reject) => {
-        const el = document.createElement('script');
-        el.src = src;
-        el.async = false;
-        el.onload = resolve;
-        el.onerror = () => reject(new Error('加载失败: ' + src));
-        document.head.appendChild(el);
-      });
-    }
-
     function showModelList() {
       const overlay = document.getElementById('model-list-overlay');
       const itemsContainer = document.getElementById('model-list-items');
@@ -901,54 +950,49 @@ const modelOptions = baseModelOptions.map(opt => ({
       isSwitching = false;
     }
 
-    loadScript('https://cdn.jsdelivr.net/npm/live2dcubismcore@6.0.0/dist/live2dcubismcore.min.js')
-      .then(() => loadScript('assets/l2d/l2d-widget.min.js'))
-      .then(() => {
-        widget = L2D_WIDGET.createWidget({
-          position: 'bottom-right',
-          size: { width: 300, height: 400 },
-          transitionType: 'slide',
-          transitionDuration: 1000,
-          primaryColor: 'rgba(251, 191, 36, 0.9)',
-          model: modelOptions,
-          menus: {
-            items: [
-              {
-                icon: 'mdi:format-list-bulleted',
-                label: '模型列表',
-                onClick: showModelList
-              },
-              {
-                icon: 'mdi:shuffle-variant',
-                label: '切换模型',
-                onClick: async () => {
-                  const next = (currentIndex + 1) % modelOptions.length;
-                  await switchToModel(next);
-                }
-              },
-              {
-                icon: 'mdi:bed',
-                label: '休眠',
-                onClick: (w) => w.sleep()
-              }
-            ]
+    widget = L2D_WIDGET.createWidget({
+      position: 'bottom-right',
+      size: { width: 300, height: 400 },
+      transitionType: 'slide',
+      transitionDuration: 1000,
+      primaryColor: 'rgba(251, 191, 36, 0.9)',
+      model: modelOptions,
+      menus: {
+        items: [
+          {
+            icon: 'mdi:format-list-bulleted',
+            label: '模型列表',
+            onClick: showModelList
+          },
+          {
+            icon: 'mdi:shuffle-variant',
+            label: '切换模型',
+            onClick: async () => {
+              const next = (currentIndex + 1) % modelOptions.length;
+              await switchToModel(next);
+            }
+          },
+          {
+            icon: 'mdi:bed',
+            label: '休眠',
+            onClick: (w) => w.sleep()
           }
-        });
+        ]
+      }
+    });
 
-        setTimeout(() => {
-          const canvas = document.querySelector('canvas');
-          if (canvas) {
-            let container = canvas.parentElement;
-            while (container && container !== document.body && getComputedStyle(container).position !== 'fixed') {
-              container = container.parentElement;
-            }
-            if (container) {
-              container.classList.add('l2d-widget-container');
-            }
-          }
-        }, 800);
-      })
-      .catch((e) => console.warn('Live2D 未加载：', e));
+    setTimeout(() => {
+      const canvas = document.querySelector('canvas');
+      if (canvas) {
+        let container = canvas.parentElement;
+        while (container && container !== document.body && getComputedStyle(container).position !== 'fixed') {
+          container = container.parentElement;
+        }
+        if (container) {
+          container.classList.add('l2d-widget-container');
+        }
+      }
+    }, 800);
   })();
 </script>
     <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
