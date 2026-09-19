@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-
-Disallow: /assets/tools/admin.html
-Disallow: /assets/tools/data-maintainer.html
-
-Sitemap: https://heyue-org.github.io/web/sitemap.xml
