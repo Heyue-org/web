@@ -426,20 +426,20 @@
             }
             h += '</div>';
 
-            /* 信息面板：左半 = 站点信息（备注），右半 = 问题（issue），中间竖线劈开 */
-            if (remarkText || hasIssue) {
-                h += '<section class="panel split">';
-                h += '<div class="split-col"><div class="panel-title"><span class="ic">✦</span>站点信息</div>';
-                h += remarkText
-                    ? '<div class="hl-row"><span class="dot">●</span><span class="k">备注</span><span class="v">' + esc(remarkText) + '</span></div>'
-                    : '<div class="none">暂无备注</div>';
-                h += '</div>';
-                h += '<div class="split-col"><div class="panel-title"><span class="ic">⚠</span>问题</div>';
-                h += hasIssue
-                    ? '<div class="hl-row"><span class="dot">●</span><span class="v problem">' + esc(site.issue) + '</span></div>'
-                    : '<div class="none">暂无已知问题</div>';
-                h += '</div></section>';
-            }
+            /* 信息面板：左半 = 站点信息（备注），右半 = 问题（issue），中间竖线劈开。
+               固定显示 —— 不再判断有没有内容（原来 remark 和 issue 都空就整块不渲染，
+               页面结构会跳），空的时候各占位一行「暂无内容」 */
+            h += '<section class="panel split">';
+            h += '<div class="split-col"><div class="panel-title"><span class="ic">✦</span>站点信息</div>';
+            h += remarkText
+                ? '<div class="hl-row"><span class="dot">●</span><span class="k">备注</span><span class="v">' + esc(remarkText) + '</span></div>'
+                : '<div class="none">暂无内容</div>';
+            h += '</div>';
+            h += '<div class="split-col"><div class="panel-title"><span class="ic">⚠</span>问题</div>';
+            h += hasIssue
+                ? '<div class="hl-row"><span class="dot">●</span><span class="v problem">' + esc(site.issue) + '</span></div>'
+                : '<div class="none">暂无内容</div>';
+            h += '</div></section>';
 
             /* 底部双卡片：相关 / 社群 */
             var relatedPairs = parseLinkPairs(site.related);
