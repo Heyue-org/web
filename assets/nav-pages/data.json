@@ -62,6 +62,22 @@
       "issue": "",
       "uid": "0227",
       "logo": ""
+    },
+    {
+      "name": "合月亭",
+      "url": "https://heyue-org.github.io/web/",
+      "related": {
+        "旧址": "https://sway.cloud.microsoft/A2Dx2rs9wRllxvv0",
+        "测试": "https://heyue-org.github.io/web/ContactDMCA.html"
+      },
+      "community": {
+        "交流群": "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=wWZqzX8EPYK_BG1KVvuLzzrG9SvFhwz5&authKey=JroR1GKyTQL79NyndpCaO3Hb%2BUxRf9Q6ZSK9vM6vgRcH%2FiVGG0%2FudkPwx8MU1we0&noverify=0&group_code=853996356"
+      },
+      "remark": "二次元萌新资源导航站",
+      "tag": "",
+      "issue": "",
+      "uid": "0082",
+      "logo": "https://heyue-org.github.io/web/assets/css/images/biglogo.png"
     }
   ],
   "anime": [
@@ -87,17 +103,19 @@
       "name": "ACG.RIP",
       "url": "https://acg.rip/",
       "related": {},
-      "remark": "BT",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
-      "uid": "0094",
+      "uid": "0083",
       "logo": ""
     },
     {
       "name": "Animesharing",
       "url": "http://www.anime-sharing.com/",
       "related": {},
-      "remark": "bt 外国动漫论坛",
-      "issue": "",
+      "remark": "外国大型ACG论坛，有中文区",
+      "tag": "BT 需翻墙",
+      "issue": "资源盘可能付费 资源安全性较低",
       "uid": "0095",
       "logo": ""
     },
@@ -105,7 +123,8 @@
       "name": "Animoe",
       "url": "https://animoe.org/",
       "related": {},
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "",
       "uid": "0096",
       "logo": ""
@@ -117,7 +136,8 @@
       "community": {
         "Telegram": "https://t.me/+z_bwv8ytyb5iNjM1"
       },
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "",
       "uid": "0097",
       "logo": ""
@@ -126,7 +146,8 @@
       "name": "蜜柑计划",
       "url": "https://mikanani.me/",
       "related": {},
-      "remark": "bt",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
       "uid": "0098",
       "logo": ""
@@ -135,7 +156,8 @@
       "name": "MioBT",
       "url": "http://miobt.com/",
       "related": {},
-      "remark": "bt",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
       "uid": "0099",
       "logo": ""
@@ -144,7 +166,8 @@
       "name": "MuteFun",
       "url": "https://www.mute01.com/",
       "related": {},
-      "remark": "在线 画质不佳",
+      "remark": "画质不佳",
+      "tag": "在线",
       "issue": "",
       "uid": "0100",
       "logo": ""
@@ -155,7 +178,8 @@
       "related": {
         "fb.omoo.tv": "https://fb.omoo.tv/"
       },
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "",
       "uid": "0101",
       "logo": ""
@@ -173,7 +197,8 @@
       "name": "OMOO.TV",
       "url": "https://fb.omoo.tv/",
       "related": {},
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "",
       "uid": "0103",
       "logo": ""
@@ -182,7 +207,8 @@
       "name": "爱恋动漫",
       "url": "http://www.kisssub.org/",
       "related": {},
-      "remark": "bt",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
       "uid": "0104",
       "logo": ""
@@ -191,7 +217,8 @@
       "name": "巴哈姆特動畫瘋",
       "url": "https://ani.gamer.com.tw/",
       "related": {},
-      "remark": "在线 限地区",
+      "remark": "限地区",
+      "tag": "在线",
       "issue": "",
       "uid": "0105",
       "logo": ""
@@ -200,7 +227,8 @@
       "name": "次元城动漫",
       "url": "https://www.cycani.org/",
       "related": {},
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "",
       "uid": "0106",
       "logo": ""
@@ -209,7 +237,8 @@
       "name": "動漫花園",
       "url": "http://share.dmhy.org/",
       "related": {},
-      "remark": "bt",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
       "uid": "0107",
       "logo": ""
@@ -238,7 +267,8 @@
       "name": "菲特动漫",
       "url": "https://fitacg.com/",
       "related": {},
-      "remark": "bt 可以看涩图",
+      "remark": "可以看涩图",
+      "tag": "BT",
       "issue": "",
       "uid": "0110",
       "logo": ""
@@ -247,7 +277,8 @@
       "name": "漫猫动漫",
       "url": "http://comicat.org/",
       "related": {},
-      "remark": "bt",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
       "uid": "0111",
       "logo": ""
@@ -256,7 +287,8 @@
       "name": "喵",
       "url": "https://nyaa.si/",
       "related": {},
-      "remark": "BT",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
       "uid": "0112",
       "logo": ""
@@ -265,10 +297,8 @@
       "name": "末日動漫資源庫",
       "url": "https://share.acgnx.se/",
       "related": {},
-      "community": {
-        "Telegram": "https://t.me/acgnxtorrent"
-      },
-      "remark": "bt 音乐 游戏 动漫",
+      "remark": "音乐 游戏 动漫",
+      "tag": "BT",
       "issue": "",
       "uid": "0113",
       "logo": ""
@@ -282,7 +312,8 @@
       "community": {
         "Telegram": "https://t.me/pekolovegroup"
       },
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "",
       "uid": "0114",
       "logo": ""
@@ -291,7 +322,8 @@
       "name": "柒番",
       "url": "https://www.kisssub.org/",
       "related": {},
-      "remark": "bt",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
       "uid": "0115",
       "logo": ""
@@ -334,7 +366,8 @@
       "name": "南+ South Plus",
       "url": "https://www.south-plus.net/",
       "related": {},
-      "remark": "论坛|需翻墙|需登录",
+      "remark": "论坛",
+      "tag": "需翻墙|需登录",
       "issue": "",
       "uid": "0119",
       "logo": ""
@@ -352,7 +385,8 @@
       "name": "漫画柜",
       "url": "https://www.manhuagui.com/",
       "related": {},
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "",
       "uid": "0121",
       "logo": ""
@@ -363,7 +397,8 @@
       "related": {
         "copy3000.com": "https://www.copy3000.com/"
       },
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "",
       "uid": "0122",
       "logo": ""
@@ -480,10 +515,11 @@
       "name": "2DFan",
       "url": "https://www.2dfan.com/",
       "related": {},
-      "remark": "中文/攻略/介绍",
+      "remark": "新作资讯/下载 论坛",
       "issue": "",
-      "uid": "0069",
-      "logo": ""
+      "uid": "0003",
+      "logo": "",
+      "tag": "需翻墙|积分制"
     },
     {
       "name": "bangumi",
@@ -608,19 +644,20 @@
       "logo": "https://s1.ax1x.com/2023/04/07/ppTiFpQ.png"
     },
     {
-      "name": "0721galgame",
+      "name": "0721Galgame",
       "url": "https://nn0721.icu/",
       "related": {},
       "remark": "库存不多",
       "issue": "",
-      "uid": "0002",
+      "uid": "0058",
       "logo": ""
     },
     {
       "name": "2DFan",
       "url": "https://www.2dfan.com/",
       "related": {},
-      "remark": "新作资讯/下载 翻墙 论坛 会员积分制",
+      "remark": "新作资讯/下载 论坛",
+      "tag": "需翻墙|积分制",
       "issue": "",
       "uid": "0003",
       "logo": ""
@@ -647,7 +684,8 @@
       "name": "GalgameBox",
       "url": "https://galgamebox.com/",
       "related": {},
-      "remark": "需登录",
+      "remark": "",
+      "tag": "需登录",
       "issue": "",
       "uid": "0006",
       "logo": ""
@@ -656,7 +694,8 @@
       "name": "Galgamex",
       "url": "https://www.galgamex.net/",
       "related": {},
-      "remark": "需开启NSFW",
+      "remark": "",
+      "tag": "需开启NSFW",
       "issue": "",
       "uid": "0007",
       "logo": ""
@@ -692,7 +731,8 @@
       "name": "NekoGAL",
       "url": "https://www.nekogal.com/",
       "related": {},
-      "remark": "需登录 | 需回复",
+      "remark": "",
+      "tag": "需登录|需回复",
       "issue": "",
       "uid": "0011",
       "logo": ""
@@ -701,7 +741,8 @@
       "name": "nutaku",
       "url": "https://www.nutaku.net/home/",
       "related": {},
-      "remark": "需翻墙|国外在线黄油",
+      "remark": "国外在线黄油",
+      "tag": "需翻墙",
       "issue": "",
       "uid": "0012",
       "logo": ""
@@ -710,7 +751,8 @@
       "name": "Nysoure",
       "url": "https://res.nyne.dev/",
       "related": {},
-      "remark": "翻墙",
+      "remark": "",
+      "tag": "需翻墙",
       "issue": "",
       "uid": "0013",
       "logo": ""
@@ -719,7 +761,8 @@
       "name": "Otomi Games",
       "url": "https://otomi-games.com/",
       "related": {},
-      "remark": "翻墙",
+      "remark": "",
+      "tag": "需翻墙",
       "issue": "",
       "uid": "0014",
       "logo": ""
@@ -727,10 +770,9 @@
     {
       "name": "Sharotto 喵源领域",
       "url": "https://www.sharotto.com/",
-      "related": {
-        "nyantaku.com": "https://www.nyantaku.com/"
-      },
-      "remark": "wiki 需登录下载 |每日限次",
+      "related": {},
+      "remark": "GALwiki 下载 每日限次",
+      "tag": "需登录",
       "issue": "",
       "uid": "0015",
       "logo": ""
@@ -761,7 +803,8 @@
       "related": {
         "s.miku.cyou": "https://s.miku.cyou/2"
       },
-      "remark": "需登录 需开启NSFW可见",
+      "remark": "",
+      "tag": "需登录|需开启NSFW",
       "issue": "",
       "uid": "0018",
       "logo": ""
@@ -824,7 +867,8 @@
       "name": "绯月ScarletMoon",
       "url": "https://bbs.kfmax.com/",
       "related": {},
-      "remark": "需挂梯 需登录",
+      "remark": "",
+      "tag": "需翻墙|需登录",
       "issue": "",
       "uid": "0025",
       "logo": ""
@@ -833,7 +877,8 @@
       "name": "宮代千紗",
       "url": "https://gdqs.org/",
       "related": {},
-      "remark": "需登录",
+      "remark": "",
+      "tag": "需登录",
       "issue": "",
       "uid": "0026",
       "logo": ""
@@ -842,7 +887,8 @@
       "name": "玖黎ACG",
       "url": "https://jiuliacg.com/",
       "related": {},
-      "remark": "需登录 | 需回复",
+      "remark": "",
+      "tag": "需登录|需回复",
       "issue": "",
       "uid": "0027",
       "logo": ""
@@ -878,7 +924,7 @@
       "name": "猫猫网盘",
       "url": "https://catcat.cloud/",
       "related": {},
-      "remark": "",
+      "remark": "游戏较少，漫画多但是有性能问题",
       "issue": "性能依托",
       "uid": "0031",
       "logo": ""
@@ -925,7 +971,8 @@
       "name": "失落小站",
       "url": "https://www.shinnku.com/",
       "related": {},
-      "remark": "翻墙",
+      "remark": "",
+      "tag": "需翻墙",
       "issue": "",
       "uid": "0036",
       "logo": ""
@@ -1001,7 +1048,8 @@
       "name": "青桔网",
       "url": "https://www.qingju.org/",
       "related": {},
-      "remark": "BT/网盘",
+      "remark": "网盘",
+      "tag": "BT",
       "issue": "",
       "uid": "0044",
       "logo": ""
@@ -1013,7 +1061,8 @@
       "community": {
         "Telegram": "https://t.me/xhacg_chat"
       },
-      "remark": "积分制",
+      "remark": "",
+      "tag": "积分制",
       "issue": "",
       "uid": "0045",
       "logo": ""
@@ -1090,7 +1139,8 @@
       "name": "四叶草与雏菊的GAL小站",
       "url": "https://g.杏铃.top/",
       "related": {},
-      "remark": "需登录 | 需回复",
+      "remark": "",
+      "tag": "需登录|需回复",
       "issue": "",
       "uid": "0053",
       "logo": ""
@@ -1132,15 +1182,6 @@
       "logo": ""
     },
     {
-      "name": "0721_Galgame",
-      "url": "https://nn0721.icu/",
-      "related": {},
-      "remark": "",
-      "issue": "",
-      "uid": "0058",
-      "logo": ""
-    },
-    {
       "name": "追寻繁星的少年（百度贴吧）",
       "url": "https://tieba.baidu.com/f?ie=utf-8&kw=追寻繁星的少年",
       "related": {},
@@ -1171,18 +1212,10 @@
       "name": "芯幻",
       "url": "https://xhcyra.com/",
       "related": {},
-      "remark": "需注册",
+      "remark": "",
+      "tag": "需注册",
       "issue": "",
       "uid": "0062",
-      "logo": ""
-    },
-    {
-      "name": "天游二次元",
-      "url": "https://cn.tiangal.com/",
-      "related": {},
-      "remark": "资源站/情报站 检索系统不佳",
-      "issue": "",
-      "uid": "0063",
       "logo": ""
     },
     {
@@ -1198,7 +1231,8 @@
       "name": "IGG GAMES",
       "url": "http://igg-games.com/list-game.html",
       "related": {},
-      "remark": "BT 英文 游戏",
+      "remark": "英文 游戏",
+      "tag": "BT",
       "issue": "性能依托",
       "uid": "0065",
       "logo": ""
@@ -1207,7 +1241,8 @@
       "name": "GGBases",
       "url": "https://www.ggbases.com/",
       "related": {},
-      "remark": "h游 磁链为主|需翻墙",
+      "remark": "h游 磁链为主",
+      "tag": "需翻墙",
       "issue": "",
       "uid": "0066",
       "logo": ""
@@ -1232,7 +1267,8 @@
       "name": "次元茶馆（主站）",
       "url": "https://www.cycg.xyz/",
       "related": {},
-      "remark": "需登录 | 需回复",
+      "remark": "",
+      "tag": "需登录|需回复",
       "issue": "",
       "uid": "0143",
       "logo": ""
@@ -1242,8 +1278,8 @@
       "url": "https://catcat.cloud/",
       "related": {},
       "remark": "游戏较少，漫画多但是有性能问题",
-      "issue": "检索故障",
-      "uid": "0144",
+      "issue": "性能依托",
+      "uid": "0031",
       "logo": ""
     },
     {
@@ -1256,12 +1292,13 @@
       "logo": ""
     },
     {
-      "name": "Activity Stream",
-      "url": "http://www.anime-sharing.com/forum/",
+      "name": "Animesharing",
+      "url": "http://www.anime-sharing.com/",
       "related": {},
-      "remark": "外国大型ACG论坛，需翻墙 ，有中文区",
-      "issue": "",
-      "uid": "0146",
+      "remark": "外国大型ACG论坛，有中文区",
+      "tag": "BT 需翻墙",
+      "issue": "资源盘可能付费 资源安全性较低",
+      "uid": "0095",
       "logo": ""
     },
     {
@@ -1275,11 +1312,11 @@
     },
     {
       "name": "hentai4daily",
-      "url": "http://hentai4daily.com/category/hentai-games-%E5%90%8C%E4%BA%BA%E3%82%B2%E3%83%BC%E3%83%A0/",
+      "url": "https://hentai4daily.com/",
       "related": {},
       "remark": "黄油 动画 同人音声 3D动画",
       "issue": "",
-      "uid": "0148",
+      "uid": "0086",
       "logo": ""
     },
     {
@@ -1300,7 +1337,8 @@
       "name": "東京図書館",
       "url": "https://www.tokyotosho.info/",
       "related": {},
-      "remark": "BT站 动漫、漫画、音声、游戏",
+      "remark": "动漫、漫画、音声、游戏",
+      "tag": "BT",
       "issue": "",
       "uid": "0150",
       "logo": ""
@@ -1328,13 +1366,11 @@
     {
       "name": "南+ South Plus",
       "url": "https://www.south-plus.net/",
-      "related": {
-        "bbs.imoutolove.me": "https://bbs.imoutolove.me/",
-        "bbs.level-plus.net": "https://bbs.level-plus.net/"
-      },
-      "remark": "论坛|需翻墙|需登录",
+      "related": {},
+      "remark": "论坛",
+      "tag": "需翻墙|需登录",
       "issue": "",
-      "uid": "0153",
+      "uid": "0119",
       "logo": ""
     },
     {
@@ -1374,30 +1410,12 @@
       "logo": ""
     },
     {
-      "name": "Anime-Sharing Community",
-      "url": "https://www.anime-sharing.com/",
-      "related": {},
-      "remark": "欧美老牌ACG论坛",
-      "issue": "",
-      "uid": "0158",
-      "logo": ""
-    },
-    {
       "name": "天使动漫",
       "url": "https://www.tsdm39.com/forum.php",
       "related": {},
       "remark": "资源庞大、数据混杂，个人推荐用来下载音乐",
       "issue": "",
-      "uid": "0159",
-      "logo": ""
-    },
-    {
-      "name": "Hentai4daily",
-      "url": "https://hentai4daily.com/",
-      "related": {},
-      "remark": "Games/CG/动画/同人志/音声作品/3D动画",
-      "issue": "",
-      "uid": "0160",
+      "uid": "0087",
       "logo": ""
     },
     {
@@ -1438,7 +1456,8 @@
       "name": "次元w",
       "url": "https://acgnw.top/",
       "related": {},
-      "remark": "h需登录",
+      "remark": "",
+      "tag": "需登录",
       "issue": "",
       "uid": "0164",
       "logo": ""
@@ -1450,7 +1469,8 @@
         "mikuclub.org": "https://www.mikuclub.org/",
         "mikuclub.xyz": "https://www.mikuclub.xyz/?ivk_sa=1024320u"
       },
-      "remark": "h需登录",
+      "remark": "",
+      "tag": "需登录",
       "issue": "",
       "uid": "0165",
       "logo": ""
@@ -1461,7 +1481,7 @@
       "related": {},
       "remark": "国外网盘 漫画 游戏 动画",
       "issue": "",
-      "uid": "0166",
+      "uid": "0046",
       "logo": ""
     },
     {
@@ -1490,15 +1510,6 @@
       "logo": ""
     },
     {
-      "name": "Anime-Sharing",
-      "url": "http://www.anime-sharing.com/",
-      "related": {},
-      "remark": "海外资源分享论坛",
-      "issue": "资源盘可能付费 资源安全性较低",
-      "uid": "0169",
-      "logo": ""
-    },
-    {
       "name": "F95zone",
       "url": "https://f95zone.to/",
       "related": {},
@@ -1520,7 +1531,8 @@
       "name": "旋风分享站",
       "url": "https://share.xfsub.org/",
       "related": {},
-      "remark": "bt 动漫 音乐 漫画 GAL",
+      "remark": "动漫 音乐 漫画 GAL",
+      "tag": "BT",
       "issue": "",
       "uid": "0172",
       "logo": ""
@@ -1529,19 +1541,18 @@
       "name": "末日動漫資源庫",
       "url": "https://share.acgnx.se/",
       "related": {},
-      "community": {
-        "Telegram": "https://t.me/acgnxtorrent"
-      },
-      "remark": "bt 音乐 游戏 动漫",
+      "remark": "音乐 游戏 动漫",
+      "tag": "BT",
       "issue": "",
-      "uid": "0173",
+      "uid": "0113",
       "logo": ""
     },
     {
       "name": "とある种子の发布系统",
       "url": "https://bt.orzx.im/list.php?BoardID=5",
       "related": {},
-      "remark": "BT 游戏 漫画 轻小说 动漫",
+      "remark": "游戏 漫画 轻小说 动漫",
+      "tag": "BT",
       "issue": "",
       "uid": "0174",
       "logo": ""
@@ -1550,7 +1561,8 @@
       "name": "2DJGAME",
       "url": "https://bbs4.2djgame.net/",
       "related": {},
-      "remark": "老牌ACG论坛 BT 漫画 游戏",
+      "remark": "老牌ACG论坛漫画 游戏",
+      "tag": "BT",
       "issue": "",
       "uid": "0175",
       "logo": ""
@@ -1897,12 +1909,10 @@
     {
       "name": "Foobar2000",
       "url": "https://www.foobar2000.org/",
-      "related": {
-        "Bilibili": "https://www.bilibili.com/opus/1101280157882122264"
-      },
+      "related": {},
       "remark": "高级免费音频播放器，baka系列为二次元美化版",
       "issue": "助听器预定",
-      "uid": "0200",
+      "uid": "0091",
       "logo": ""
     },
     {
@@ -2006,7 +2016,8 @@
       "name": "（暂无）",
       "url": "http://bt.acg.gg/sort-2-1.html",
       "related": {},
-      "remark": "中文/bt资源",
+      "remark": "中文",
+      "tag": "BT",
       "issue": "",
       "uid": "",
       "logo": ""
@@ -2015,7 +2026,8 @@
       "name": "（暂无）",
       "url": "http://share.xfsub.com:88/",
       "related": {},
-      "remark": "bt",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
       "uid": "",
       "logo": ""
@@ -2267,7 +2279,8 @@
       "name": "AGE动漫",
       "url": "https://www.agedm.io/",
       "related": {},
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "后端故障",
       "uid": "",
       "logo": ""
@@ -2339,7 +2352,8 @@
       "name": "（暂无）",
       "url": "https://www.nicemoe.com/video/",
       "related": {},
-      "remark": "在线",
+      "remark": "",
+      "tag": "在线",
       "issue": "",
       "uid": "",
       "logo": ""
@@ -2467,7 +2481,8 @@
       "name": "xacg",
       "url": "https://xxacg.net/",
       "related": {},
-      "remark": "需登录",
+      "remark": "",
+      "tag": "需登录",
       "issue": "",
       "uid": "",
       "logo": ""
@@ -2748,7 +2763,8 @@
       "name": "Hsteam游戏平台",
       "url": "https://www.hgamedown.com/",
       "related": {},
-      "remark": "需注册，需下应用",
+      "remark": "需下应用",
+      "tag": "需注册",
       "issue": "",
       "uid": "",
       "logo": ""
@@ -2784,7 +2800,8 @@
       "name": "（暂无）",
       "url": "https://bbs.2dkf.com/thread.php?fid=68",
       "related": {},
-      "remark": "中文/需注册",
+      "remark": "中文",
+      "tag": "需注册",
       "issue": "域名过期",
       "uid": "",
       "logo": ""
@@ -2919,7 +2936,8 @@
       "name": "（暂无）",
       "url": "http://hentaihaven.org/",
       "related": {},
-      "remark": "里番 在线 英语生肉",
+      "remark": "里番英语生肉",
+      "tag": "在线",
       "issue": "服务器故障",
       "uid": "",
       "logo": ""
@@ -2948,7 +2966,8 @@
       "related": {
         "fapforfun.cc": "https://fapforfun.cc/"
       },
-      "remark": "同人作品 bt",
+      "remark": "同人作品",
+      "tag": "BT",
       "issue": "",
       "uid": "",
       "logo": ""
@@ -2957,7 +2976,8 @@
       "name": "（暂无）",
       "url": "https://anidex.info/?id=12",
       "related": {},
-      "remark": "英文bt站、同人作品偏多",
+      "remark": "英文、同人作品偏多",
+      "tag": "BT",
       "issue": "",
       "uid": "",
       "logo": ""
@@ -3101,9 +3121,10 @@
   "voice_music": [
     {
       "name": "ACG.RIP",
-      "url": "https://acg.rip/4",
+      "url": "https://acg.rip/",
       "related": {},
-      "remark": "bt",
+      "remark": "",
+      "tag": "BT",
       "issue": "",
       "uid": "0083",
       "logo": ""
@@ -3112,7 +3133,8 @@
       "name": "ASMR Online",
       "url": "https://asmr.one/",
       "related": {},
-      "remark": "同人音声可在线/下载，wav/flac/MP3，需翻墙",
+      "remark": "同人音声可在线/下载，wav/flac/MP3",
+      "tag": "需翻墙",
       "issue": "",
       "uid": "0084",
       "logo": ""
@@ -3128,9 +3150,9 @@
     },
     {
       "name": "hentai4daily",
-      "url": "https://hentai4daily.com/category/ht-audio-works-音声作品/",
+      "url": "https://hentai4daily.com/",
       "related": {},
-      "remark": "仅下载",
+      "remark": "黄油 动画 同人音声 3D动画",
       "issue": "",
       "uid": "0086",
       "logo": ""
@@ -3170,17 +3192,6 @@
       "issue": "",
       "uid": "0090",
       "logo": ""
-    },
-    {
-      "name": "Foobar2000",
-      "url": "https://www.foobar2000.org/",
-      "related": {
-        "Bilibili": "https://www.bilibili.com/opus/1101280157882122264"
-      },
-      "remark": "高级免费音频播放器，baka系列为二次元美化版",
-      "issue": "",
-      "uid": "0091",
-      "logo": ""
     }
   ],
   "wiki": [
@@ -3196,12 +3207,13 @@
       "logo": ""
     },
     {
-      "name": "Sharotto",
+      "name": "Sharotto 喵源领域",
       "url": "https://www.sharotto.com/",
       "related": {},
-      "remark": "GALwiki 需登录下载 |每日限次",
+      "remark": "GALwiki 下载 每日限次",
+      "tag": "需登录",
       "issue": "",
-      "uid": "0216",
+      "uid": "0015",
       "logo": ""
     },
     {
