@@ -277,12 +277,12 @@
     <script>
     (function () {
         var DATA_URL = 'assets/nav-pages/data.json';
-        var THEME_KEY = 'heyue_nav_theme';   // 与 Navigation.html 共用主题
+        var THEME_KEY = 'heyue_nav_theme';   
         var htmlEl = document.documentElement;
         var saved = localStorage.getItem(THEME_KEY);
         if (saved) htmlEl.setAttribute('data-theme', saved);
 
-        /* 顶栏主题按钮：与 Navigation.html 共用 heyue_nav_theme，明暗两态 */
+        
         var toggleBtn = document.getElementById('theme-toggle');
         var iconMoon = document.getElementById('icon-moon');
         var iconSun = document.getElementById('icon-sun');
@@ -315,6 +315,16 @@
                 .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
+        
+
+
+
+        function siteTags(s) {
+            var v = s && s.tag;
+            if (!v) return [];
+            if (Array.isArray(v)) return v.map(function (t) { return String(t).trim(); }).filter(Boolean);
+            return String(v).split(/[|｜]/).map(function (t) { return t.trim(); }).filter(Boolean);
+        }
         function copyText(text) {
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(text).then(function () { toast('已复制：' + text); },
@@ -331,7 +341,7 @@
             catch (e) { toast('复制失败，请手动复制'); }
             document.body.removeChild(ta);
         }
-        /* related / community 兼容读取：新格式 {标签:链接}，兼容旧格式（逗号分隔URL字符串 / URL数组） */
+        
         function parseLinkPairs(field) {
             var pairs = [];
             if (!field) return pairs;
@@ -376,7 +386,7 @@
                             + '<span class="val">' + esc(p.url) + '</span>'
                             + '<span class="ext">↗</span></a>';
                     }
-                    // 不是链接（QQ群号、频道号等）：点击复制
+                    
                     return '<button class="row-btn is-copy" type="button" data-copy="' + esc(p.url) + '" title="点击复制">'
                         + '<span class="lbl">' + esc(label) + '</span>'
                         + '<span class="val">' + esc(p.url) + '</span>'
@@ -389,29 +399,21 @@
 
         function render(site, cat, catLabel) {
             document.title = (site.name || '站点详情') + ' - 合月亭';
-            /* 备注：带 | 分隔的当标签做成 chips，纯文本则放进信息面板 */
-            var remarkTags = [];
-            var remarkText = '';
-            if (site.remark && String(site.remark).trim()) {
-                var rs = String(site.remark).trim();
-                if (rs.indexOf('|') >= 0 || rs.indexOf('｜') >= 0) {
-                    remarkTags = rs.split(/[|｜]/).map(function (t) { return t.trim(); }).filter(Boolean);
-                } else {
-                    remarkText = rs;
-                }
-            }
+            
+            var tags = siteTags(site);
+            var remarkText = site.remark == null ? '' : String(site.remark).trim();
             var hasIssue = site.issue && String(site.issue).trim();
 
-            /* 分类 / 状态 / 标签 chips */
+            
             var h = '<div class="chips">';
             if (catLabel) h += '<span class="chip ' + chipClassFor(cat) + '">' + esc(catLabel) + '</span>';
             if (hasIssue) h += '<span class="chip bad">⚠ ' + esc(site.issue) + '</span>';
-            remarkTags.forEach(function (tag) {
+            tags.forEach(function (tag) {
                 h += '<span class="chip plain">' + esc(tag) + '</span>';
             });
             h += '</div>';
 
-            /* 标题 + 访问按钮 */
+            
             h += '<div class="hero">';
             if (site.logo && String(site.logo).trim()) {
                 h += '<img class="site-logo" src="' + esc(site.logo.trim()) + '" alt="" onerror="this.style.display=\'none\'">';
@@ -426,9 +428,9 @@
             }
             h += '</div>';
 
-            /* 信息面板：左半 = 站点信息（备注），右半 = 问题（issue），中间竖线劈开。
-               固定显示 —— 不再判断有没有内容（原来 remark 和 issue 都空就整块不渲染，
-               页面结构会跳），空的时候各占位一行「暂无内容」 */
+            
+
+
             h += '<section class="panel split">';
             h += '<div class="split-col"><div class="panel-title"><span class="ic">✦</span>站点信息</div>';
             h += remarkText
@@ -441,11 +443,11 @@
                 : '<div class="none">暂无内容</div>';
             h += '</div></section>';
 
-            /* 底部双卡片：相关 / 社群 */
+            
             var relatedPairs = parseLinkPairs(site.related);
             var communityPairs = parseLinkPairs(site.community);
             if (site.url) {
-                /* 主站作为"官网"放第一行；related 里若已塞过同一个地址则去掉，避免重复 */
+                
                 relatedPairs = relatedPairs.filter(function (p) { return p.url !== site.url; });
                 relatedPairs = [{ label: '官网', url: site.url }].concat(relatedPairs);
             }
@@ -456,7 +458,7 @@
 
             content.innerHTML = h;
 
-            /* 非链接按钮 → 点击复制 */
+            
             content.querySelectorAll('[data-copy]').forEach(function (btn) {
                 btn.addEventListener('click', function () { copyText(btn.getAttribute('data-copy')); });
             });
@@ -471,7 +473,7 @@
         }
 
         function resolveHash(hash) {
-            /* 支持 detail.html#gal/0001 和 detail.html#0001 两种格式 */
+            
             var raw = decodeURIComponent((hash || '').replace(/^#/, '')).trim();
             if (!raw || !globalData) return { cat: '', uid: raw, site: null };
             var cat = '', uid = raw;
@@ -489,7 +491,7 @@
                     }
                 }
             }
-            /* 带分类前缀但没找到：退回全局搜一遍，防止分类写错时误报"未找到" */
+            
             if (cat) {
                 for (var c2 = 0; c2 < Object.keys(globalData).length; c2++) {
                     var ck = Object.keys(globalData)[c2];
@@ -515,7 +517,7 @@
         function labelOf(cat) {
             if (!cat) return '';
             var link = document.querySelector('.sidebar-link[data-cat="' + cat + '"]');
-            if (link) return link.dataset.label;   /* detail 页没有侧栏，走下面兜底 */
+            if (link) return link.dataset.label;   
             var FALLBACK = { 'gal': 'GAL', 'voice_music': '音声/音乐', 'comic_illustration': '漫画/插画/本子', 'hub': '综合资源站', 'gal-info': 'GAL情报/入正', 'ln': '轻小说', 'anime': '动漫', 'mmd': 'MMD', 'wiki': 'WIKI', 'acg-nav': '二次元导航站', 'tools': '工具', 'search': '搜索引擎', 'valhalla': '英灵殿' };
             return FALLBACK[cat] || cat;
         }

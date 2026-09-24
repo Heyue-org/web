@@ -226,26 +226,105 @@
                再按用户要求整体上移 10px → 0.625rem */
             padding: 0.625rem 2rem 4rem;
         }
+        /* 排布（按用户指定）：分区名 + 搜索框并排；
+           「共 N 个站点」落在分区名下面，「+」标签按钮落在搜索框下面 */
         .content-header {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 0.833rem; flex-wrap: wrap; gap: 0.8rem;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(200px, 1.5fr);
+            grid-template-areas:
+                "title  search"
+                "count  tagbtn";
+            align-items: center;
+            column-gap: 1rem; row-gap: 0.4rem;
+            margin-bottom: 0.833rem;
         }
         .current-category {
+            grid-area: title; min-width: 0;
             font-size: 1.4rem; font-weight: 700;
             color: var(--accent-gold); letter-spacing: 1px;
         }
-        .site-count { color: var(--text-sub); font-size: 0.85rem; }
-        .toolbar {
-            display: flex; gap: 1rem; align-items: center;
-            flex-wrap: wrap; margin-bottom: 1.5rem;
-        }
+        .site-count { grid-area: count; color: var(--text-sub); font-size: 0.85rem; }
         .search-box {
-            flex: 1; min-width: 200px; padding: 0.6rem 1rem;
+            grid-area: search; width: 100%; min-width: 0;
+            padding: 0.6rem 1rem;
             background: var(--input-bg); border: 1px solid var(--border-color);
             border-radius: 8px; color: var(--text-main);
             font-size: 0.9rem; outline: none; transition: all 0.3s;
         }
         .search-box:focus { border-color: var(--accent-gold); }
+
+        /* ── 标签筛选 ────────────────────────────────────────── */
+        .tag-wrap { grid-area: tagbtn; justify-self: end; position: relative; }
+        .tag-add-btn {
+            width: 30px; height: 30px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--input-bg); border: 1px solid var(--border-color);
+            color: var(--text-main); font-size: 1.1rem; line-height: 1;
+            cursor: pointer; padding: 0; user-select: none;
+            transition: all 0.25s;
+        }
+        .tag-add-btn:hover, .tag-add-btn.active {
+            border-color: var(--accent-gold); color: var(--accent-gold);
+            background: rgba(251,191,36,0.12);
+        }
+        /* 有生效的标签时按钮上挂一个小点，收起弹层也能看出来 */
+        .tag-add-btn.has-tags::after {
+            content: ''; position: absolute; top: -2px; right: -2px;
+            width: 8px; height: 8px; border-radius: 50%;
+            background: var(--accent-gold);
+        }
+        .tag-pop {
+            position: absolute; top: calc(100% + 6px); right: 0;
+            z-index: 60; display: none;
+            min-width: 190px; max-width: 300px; max-height: 280px;
+            overflow-y: auto; padding: 0.4rem;
+            background: var(--bg-card); backdrop-filter: blur(4px);
+            border: 1px solid var(--border-color); border-radius: 10px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.28);
+        }
+        .tag-pop.open { display: block; }
+        .tag-pop-item {
+            display: flex; align-items: center; gap: 0.35rem;
+            padding: 0.2rem 0.25rem 0.2rem 0.45rem; border-radius: 6px;
+        }
+        .tag-pop-item:hover { background: rgba(128,128,128,0.12); }
+        .tag-pop-name {
+            flex: 1; min-width: 0; font-size: 0.82rem; color: var(--text-main);
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .tag-pop-n { font-size: 0.72rem; color: var(--text-sub); flex-shrink: 0; }
+        .tag-pop-op {
+            width: 22px; height: 22px; flex-shrink: 0; padding: 0;
+            border-radius: 50%; border: 1px solid var(--border-color);
+            background: transparent; color: var(--text-sub);
+            font-size: 0.9rem; line-height: 1; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .tag-pop-op:hover { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .tag-pop-op.minus:hover { border-color: var(--danger); color: var(--danger); }
+        .tag-pop-op.on { border-color: var(--accent-gold); color: var(--accent-gold); background: rgba(251,191,36,0.18); font-weight: 700; }
+        .tag-pop-op.minus.on { border-color: var(--danger); color: var(--danger); background: rgba(248,113,113,0.18); }
+        .tag-pop-empty { padding: 0.4rem; font-size: 0.78rem; color: var(--text-sub); text-align: center; line-height: 1.5; }
+
+        /* 已选标签：点一下移除 */
+        .tag-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0 0 0.833rem; }
+        .tag-chips:empty { display: none; }
+        .tag-chip {
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            padding: 0.15rem 0.5rem; border-radius: 999px;
+            font-size: 0.78rem; line-height: 1.5; cursor: pointer; user-select: none;
+            background: rgba(251,191,36,0.12); border: 1px solid var(--accent-gold);
+            color: var(--accent-gold); transition: all 0.2s;
+        }
+        .tag-chip.neg { background: rgba(248,113,113,0.12); border-color: var(--danger); color: var(--danger); }
+        .tag-chip .op { font-weight: 700; }
+        .tag-chip .x { opacity: 0.55; }
+        .tag-chip:hover .x { opacity: 1; }
+        .toolbar {
+            display: flex; gap: 1rem; align-items: center;
+            flex-wrap: wrap; margin-bottom: 1.5rem;
+        }
         .sort-select {
             padding: 0.6rem 1rem; background: var(--input-bg);
             border: 1px solid var(--border-color); border-radius: 8px;
@@ -486,7 +565,15 @@
             .theme-toggle { padding: 0.3rem 0.5rem; font-size: 1rem; }
             .main-content { padding: 0.8rem 0.6rem 3rem; }
             .toolbar { gap: 0.6rem; }
-            .search-box { min-width: 0; padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+            /* 搜索框那一列在窄屏放宽下限，否则 200px 会把分区名挤没 */
+            .content-header {
+                grid-template-columns: minmax(0, 1fr) minmax(130px, 1.4fr);
+                column-gap: 0.5rem; row-gap: 0.25rem;
+            }
+            .current-category { font-size: 1.15rem; letter-spacing: 0; }
+            .search-box { min-width: 0; padding: 0.5rem 0.7rem; font-size: 0.82rem; }
+            .tag-add-btn { width: 26px; height: 26px; font-size: 0.95rem; }
+            .tag-pop { min-width: 160px; max-width: 76vw; }
             .sort-select { padding: 0.5rem 0.6rem; font-size: 0.85rem; }
             .grid-toggle-btn { display: none !important; }
             .grid {
@@ -576,10 +663,15 @@
         <main class="main-content">
             <div class="content-header">
                 <div class="current-category" id="categoryTitle">GAL</div>
-                <span class="site-count" id="siteCount"></span>
-            </div>
-            <div class="toolbar">
                 <input type="text" class="search-box" id="searchInput" placeholder="搜索站点名称、备注或链接或UID...">
+                <span class="site-count" id="siteCount"></span>
+                <div class="tag-wrap">
+                    <button class="tag-add-btn" id="tagAddBtn" type="button" title="按标签筛选站点">+</button>
+                    <div class="tag-pop" id="tagPop"></div>
+                </div>
+            </div>
+            <div class="tag-chips" id="tagChips"></div>
+            <div class="toolbar">
                 <select class="sort-select" id="sortSelect">
                     <option value="random" selected>默认</option>
                     <option value="name">按名称排序 (A-Z)</option>
@@ -653,8 +745,8 @@
         var GRID_COLS_KEY = 'heyue_nav_grid_cols';
         var gridToggleBtn = document.getElementById('gridToggleBtn');
         var cardContainer = document.getElementById('cardContainer');
-        /* 默认 4 列（无 .cols-3 类），按钮在 3 / 4 之间切。
-           老存档可能是 2 或 3：只有 3 还认，其余一律按 4 列处理。 */
+        
+
         var savedCols = parseInt(localStorage.getItem(GRID_COLS_KEY));
         var currentCols = savedCols === 3 ? 3 : 4;
         function applyGridCols(cols) {
@@ -675,10 +767,10 @@
         gridToggleBtn.addEventListener('click', function() {
             applyGridCols(currentCols === 4 ? 3 : 4);
         });
-        /* ── 数据加载：单个 data.json，分类作为顶层 key ── */
+        
         var DATA_URL = 'assets/nav-pages/data.json';
-        var globalData = null;      // 原始 JSON：{ gal: [...], mmd: [...] }
-        var globalCache = {};       // cat -> 带 _category/_cat/_search 的站点数组
+        var globalData = null;      
+        var globalCache = {};       
         var dataPromise = null;
         function loadData() {
             if (!dataPromise) {
@@ -693,7 +785,7 @@
                         }
                         globalData = json;
                         buildCache();
-                        /* 用户一进来就洗一次牌，保证每次打开页面顺序都不一样 */
+                        
                         reshuffleRandom();
                     })
                     .catch(function(e) { dataPromise = null; throw e; });
@@ -733,7 +825,7 @@
             if (!str) return '';
             return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
         }
-        /* related / community 兼容读取：新格式 {标签:链接}，兼容旧格式（逗号分隔URL字符串 / URL数组） */
+        
         function parseLinkPairs(field) {
             var pairs = [];
             if (!field) return pairs;
@@ -747,15 +839,33 @@
             return pairs.map(function(p) {
                 var label = p[0], val = String(p[1] || '').trim().replace(/^["']+|["']+$/g, '');
                 if (label === null) {
-                    // 旧格式：纯 URL，没有标签。若形如 "标签|链接" 也顺手拆开
+                    
                     if (val.indexOf('|') >= 0) { label = val.slice(0, val.indexOf('|')).trim(); val = val.slice(val.indexOf('|') + 1).trim(); }
                     else label = '';
                 }
                 return { label: label, url: val };
             }).filter(function(p) { return p.url; });
         }
+        
+
+
+
+
+
+        function siteTags(s) {
+            var v = s && s.tag;
+            if (!v) return [];
+            if (Array.isArray(v)) return v.map(function(t) { return String(t).trim(); }).filter(Boolean);
+            return String(v).split(/[|｜]/).map(function(t) { return t.trim(); }).filter(Boolean);
+        }
+        function attrEsc(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+        function txtEsc(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
         function siteSearchBlob(s) {
-            var blob = [s.name, s.url, s.remark, s.issue, s.uid];
+            var blob = [s.name, s.url, s.remark, s.issue, s.uid].concat(siteTags(s));
             ['related', 'community'].forEach(function(k) {
                 parseLinkPairs(s[k]).forEach(function(p) { blob.push(p.label, p.url); });
             });
@@ -938,25 +1048,53 @@
             }).join('');
             bindRatingEvents();
         }
-        /* 随机排序用建缓存时一次性生成的 _rand，保证同一次会话里顺序稳定，
-           不会因为你多敲一个搜索字就整页重新洗牌 */
+        
+
         function applySort(list, mode) {
             if (mode === 'name') list.sort(function(a, b) { return a._sortName.localeCompare(b._sortName); });
             else if (mode === 'random') list.sort(function(a, b) { return (a._rand || 0) - (b._rand || 0); });
             return list;
         }
-        /* 重新洗牌：给所有条目换一批 _rand，下次按 random 排就是新顺序 */
+        
         function reshuffleRandom() {
             Object.keys(globalCache).forEach(function(cat) {
                 (globalCache[cat] || []).forEach(function(s) { s._rand = Math.random(); });
             });
             allSites.forEach(function(s) { s._rand = Math.random(); });
         }
+        
+
+        function tagMatch(s) {
+            var keys = Object.keys(activeTags);
+            if (!keys.length) return true;
+            var mine = siteTags(s);
+            for (var i = 0; i < keys.length; i++) {
+                var want = activeTags[keys[i]] > 0;
+                var has = mine.indexOf(keys[i]) >= 0;
+                if (want !== has) return false;
+            }
+            return true;
+        }
         function filterAndSort() {
             var keyword = document.getElementById('searchInput').value.trim().toLowerCase();
             var sortMode = document.getElementById('sortSelect').value;
             var titleEl = document.getElementById('categoryTitle');
-            if (keyword) {
+            var hasTags = Object.keys(activeTags).length > 0;
+            if (hasTags) {
+                
+
+
+                isGlobalSearch = false;
+                titleEl.textContent = currentLabel + (keyword ? ' · 🏷 标签 + 搜索' : ' · 🏷 标签筛选');
+                var scoped = allSites.filter(function(s) {
+                    if (!tagMatch(s)) return false;
+                    if (!keyword) return true;
+                    return (s._search || '').toLowerCase().includes(keyword);
+                });
+                applySort(scoped, sortMode);
+                renderCards(scoped);
+            } else if (keyword) {
+                
                 isGlobalSearch = true;
                 titleEl.textContent = '🔍 全局搜索结果';
                 var allData = Object.values(globalCache).flat();
@@ -968,9 +1106,9 @@
             } else {
                 isGlobalSearch = false;
                 titleEl.textContent = currentLabel;
-                var filtered = allSites.slice();
-                applySort(filtered, sortMode);
-                renderCards(filtered);
+                var plain = allSites.slice();
+                applySort(plain, sortMode);
+                renderCards(plain);
             }
         }
         document.getElementById('searchInput').addEventListener('input', filterAndSort);
@@ -978,6 +1116,114 @@
             if (this.value === 'random') reshuffleRandom();
             filterAndSort();
         });
+
+        
+        
+
+        var activeTags = Object.create(null);   
+        var tagAddBtn = document.getElementById('tagAddBtn');
+        var tagPop = document.getElementById('tagPop');
+        var tagChips = document.getElementById('tagChips');
+
+        
+
+
+        function allTagCounts() {
+            var m = Object.create(null);
+            (allSites || []).forEach(function(s) {
+                siteTags(s).forEach(function(t) { m[t] = (m[t] || 0) + 1; });
+            });
+            return Object.keys(m).map(function(t) { return { tag: t, n: m[t] }; })
+                .sort(function(a, b) { return b.n - a.n || a.tag.localeCompare(b.tag, 'zh'); });
+        }
+
+        
+
+
+
+
+        function renderTagPop() {
+            if (!tagPop) return;
+            var list = allTagCounts();
+            if (!list.length) {
+                
+
+                tagPop.innerHTML = '<div class="tag-pop-empty">本分区没有标签<br>'
+                    + '<span style="font-size:0.72rem">（标签只在当前分区里找）<br>'
+                    + '若你确定数据里有 tag，请 <b>Ctrl+F5 强制刷新</b><br>'
+                    + '（多半是浏览器还在用缓存的旧 data.json）</span></div>';
+                return;
+            }
+            tagPop.innerHTML = list.map(function(it) {
+                var st = activeTags[it.tag];
+                return '<div class="tag-pop-item">'
+                    + '<span class="tag-pop-name" title="' + attrEsc(it.tag) + '">' + txtEsc(it.tag) + '</span>'
+                    + '<span class="tag-pop-n">' + it.n + '</span>'
+                    + '<button class="tag-pop-op plus' + (st === 1 ? ' on' : '') + '" type="button"'
+                    + ' data-tag="' + attrEsc(it.tag) + '" data-op="1"'
+                    + ' title="只看有这个标签的站点（再点一次取消）">+</button>'
+                    + '<button class="tag-pop-op minus' + (st === -1 ? ' on' : '') + '" type="button"'
+                    + ' data-tag="' + attrEsc(it.tag) + '" data-op="-1"'
+                    + ' title="排除有这个标签的站点（再点一次取消）">−</button>'
+                    + '</div>';
+            }).join('');
+        }
+
+        function renderTagChips() {
+            if (!tagChips) return;
+            var keys = Object.keys(activeTags);
+            tagChips.innerHTML = keys.map(function(t) {
+                var neg = activeTags[t] < 0;
+                return '<span class="tag-chip' + (neg ? ' neg' : '') + '" data-tag="' + attrEsc(t) + '" title="点击移除这个标签">'
+                    + '<span class="op">' + (neg ? '−' : '+') + '</span>'
+                    + txtEsc(t) + '<span class="x">✕</span></span>';
+            }).join('');
+            if (tagAddBtn) tagAddBtn.classList.toggle('has-tags', keys.length > 0);
+        }
+
+        
+
+        function setTag(tag, op) {
+            if (activeTags[tag] === op) delete activeTags[tag];
+            else activeTags[tag] = op;
+            renderTagPop();
+            renderTagChips();
+            filterAndSort();
+        }
+
+        if (tagPop) tagPop.addEventListener('click', function(e) {
+            var btn = e.target.closest ? e.target.closest('.tag-pop-op') : null;
+            if (!btn) return;
+            setTag(btn.getAttribute('data-tag'), parseInt(btn.getAttribute('data-op'), 10));
+        });
+        if (tagChips) tagChips.addEventListener('click', function(e) {
+            var chip = e.target.closest ? e.target.closest('.tag-chip') : null;
+            if (!chip) return;
+            delete activeTags[chip.getAttribute('data-tag')];
+            renderTagPop();
+            renderTagChips();
+            filterAndSort();
+        });
+        if (tagAddBtn && tagPop) tagAddBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var open = tagPop.classList.toggle('open');
+            tagAddBtn.classList.toggle('active', open);
+            if (open) renderTagPop();
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!tagPop || !tagPop.classList.contains('open')) return;
+            if (tagPop.contains(e.target) || (tagAddBtn && tagAddBtn.contains(e.target))) return;
+            tagPop.classList.remove('open');
+            if (tagAddBtn) tagAddBtn.classList.remove('active');
+        });
+        function resetTags() {
+            activeTags = Object.create(null);
+            if (tagPop) tagPop.classList.remove('open');
+            if (tagAddBtn) tagAddBtn.classList.remove('active');
+            renderTagChips();
+        }
+
         function loadCategory(cat, label) {
             var container = document.getElementById('cardContainer');
             var titleEl = document.getElementById('categoryTitle');
@@ -985,6 +1231,9 @@
             currentLabel = label;
             titleEl.textContent = label;
             searchInput.value = '';
+            
+
+            resetTags();
             isGlobalSearch = false;
             allSites = [];
             syncMobileTabsActive(cat);
@@ -1003,10 +1252,10 @@
                 }
                 allSites = cached.map(function(item) { var copy = Object.assign({}, item); delete copy._category; return copy; });
                 prepareSites(allSites);
-                /* 必须走 filterAndSort()，不能直接 renderCards(allSites)：
-                   那条路不会调 applySort，卡片就是 data.json 的原始顺序 ——
-                   表现为"刷新页面根本没随机"（洗牌洗了但没人排）。
-                   filterAndSort 会读下拉的当前值（默认 random）排序后再渲染。 */
+                
+
+
+
                 filterAndSort();
             }).catch(function(e) {
                 container.innerHTML = '<div class="loading" style="color:var(--danger)">数据加载失败: ' + e.message
@@ -1031,9 +1280,9 @@
             loadCategory(currentCat, currentLabel);
         }
 
-        /* 顶栏吸顶后，侧栏 / 移动端 tab 栏都要让出它的高度。
-           顶栏高度会随窗口宽度变化（768px 以下 padding 和字号都缩小），写死会错位，
-           所以实测后写进 --topbar-h，CSS 那边统一用 var(--topbar-h)。 */
+        
+
+
         (function syncTopbarHeight() {
             var bar = document.querySelector('.top-bar');
             if (!bar) return;
