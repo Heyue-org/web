@@ -162,11 +162,16 @@
         .hl-row .v.problem { color: var(--bad); font-weight: 700; }
         /* ── 双卡片 ── */
         .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; align-items: start; }
+        /* 网格项默认 min-width:auto —— 里面只要有超长 URL，这一列就会被撑到内容宽度，
+           整页横向溢出、按钮被拉得老长。必须显式允许收缩。 */
+        .cards > .card { min-width: 0; }
         .card {
             background: var(--panel); border: 1px solid var(--border);
             border-radius: 14px; padding: 1.1rem 1.3rem 1.3rem;
         }
-        .card .rows { display: flex; flex-direction: column; gap: 0.55rem; }
+        /* 按钮按内容自适应宽度（不再撑满整卡），超长 URL 在剩余空间里用省略号折叠。
+           align-items:flex-start 让每行各自收窄，短标签不会把链接顶到卡片另一头。 */
+        .card .rows { display: flex; flex-direction: column; gap: 0.55rem; align-items: flex-start; }
         .row-btn {
             display: flex; align-items: center; gap: 0.5rem;
             background: var(--row); border: 1px solid transparent;
@@ -174,12 +179,14 @@
             color: var(--t-main); text-decoration: none;
             font-size: 0.88rem; cursor: pointer; text-align: left;
             transition: background 0.15s, border-color 0.15s, transform 0.15s;
-            width: 100%; font-family: inherit;
+            width: auto; max-width: 100%; font-family: inherit;
         }
         .row-btn:hover { background: var(--row-hover); border-color: var(--accent); transform: translateX(2px); }
-        .row-btn .lbl { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* 标签保持自身宽度（上限 50%，太长的标签自己折叠），不吃剩余空间 */
+        .row-btn .lbl { flex: 0 0 auto; max-width: 50%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .row-btn .val {
-            font-size: 0.72rem; color: var(--t-faint); max-width: 45%;
+            flex: 1 1 auto; min-width: 0;   /* 链接吃掉剩下的宽度，不够就省略号 */
+            font-size: 0.72rem; color: var(--t-faint);
             overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
             font-family: 'Fira Code', 'Consolas', monospace;
         }
@@ -278,6 +285,9 @@
     (function () {
         var DATA_URL = 'assets/nav-pages/data.json';
         var THEME_KEY = 'heyue_nav_theme';   
+        /* 维护页「详情页预览」用的通道：父窗口会把当前工作区的数据推过来，
+           这样还没导出到 data.json 的改动也能预览。普通访问不会触发，行为不变。 */
+        var previewMode = false;
         var htmlEl = document.documentElement;
         var saved = localStorage.getItem(THEME_KEY);
         if (saved) htmlEl.setAttribute('data-theme', saved);
@@ -526,6 +536,7 @@
             fetch(DATA_URL)
                 .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
                 .then(function (json) {
+                    if (previewMode) return;   /* 已经在预览模式，别让磁盘数据盖掉 */
                     if (!json || typeof json !== 'object' || Array.isArray(json)) throw new Error('格式不对');
                     globalData = json;
                     renderFromHash();
@@ -540,6 +551,30 @@
         window.addEventListener('hashchange', function () {
             if (globalData) renderFromHash();
         });
+
+        /* 预览模式下在页面底部挂一条提示条 —— 用来一眼确认"内存数据通道"是否生效 */
+        function markPreview(count) {
+            var el = document.getElementById('previewBanner');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = 'previewBanner';
+                el.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:99999;padding:5px 10px;font-size:12px;'
+                    + 'text-align:center;background:#1b2a4a;color:#d6e4ff;border-top:1px solid #3d5c8f;font-family:system-ui,sans-serif';
+                (document.body || document.documentElement).appendChild(el);
+            }
+            el.textContent = '👁 预览模式 · 数据来自维护页当前工作区（' + (count || '?') + ' 条，含未导出改动）';
+        }
+
+        /* 收到维护页推来的数据 → 用它渲染（优先级高于磁盘上的 data.json） */
+        window.addEventListener('message', function (ev) {
+            var d = ev && ev.data;
+            if (!d || d.type !== 'heyue:preview-data' || !d.data || typeof d.data !== 'object' || Array.isArray(d.data)) return;
+            previewMode = true;
+            globalData = d.data;
+            markPreview(d.count);
+            renderFromHash();
+        });
+
         boot();
     })();
     </script>
