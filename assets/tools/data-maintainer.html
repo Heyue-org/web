@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <link rel="icon" type="image/png" href="../../assets/css/images/biglogo.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>数据管理器</title>
+<!-- 维护工具页，robots.txt 的 Disallow 在 GitHub Pages 项目站点上根本不生效
+     （爬虫只看域名根 /robots.txt），只能在这里用 meta 兜底不让收录 -->
+<meta name="robots" content="noindex">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -18,7 +22,7 @@
   --cf:#ff4444;--cfd:rgba(255,68,68,.12);
   --hl-uid:#ff6b9d;--hl-uid-bg:rgba(255,107,157,.12);
   --hl-site:#c084fc;--hl-site-bg:rgba(192,132,252,.12);
-  --hl-dup:#4ecdc4;--hl-dup-bg:rgba(78,205,196,.12);
+  --hl-dup:#6c8cff;--hl-dup-bg:rgba(108,140,255,.14);
   --val-err:#ffb347;--val-err-bg:rgba(255,179,71,.1);
   --r:8px;--rl:12px;--sh:0 4px 24px rgba(0,0,0,.3);--tr:.2s ease;
   --sw:260px;--hh:56px;
@@ -38,6 +42,11 @@ input:focus,select:focus,textarea:focus{border-color:var(--ac)}
 .p-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:var(--r);cursor:pointer;transition:all var(--tr);margin-bottom:2px}
 .p-item:hover{background:var(--bg3)}
 .p-item.active{background:var(--acd);color:var(--ac)}
+/* 「全部数据」是左侧列表的总入口，单独给一套强调样式，和下面这些分区区分开 */
+.p-item.p-all{font-weight:600;margin-bottom:10px;padding-bottom:11px;border-bottom:1px solid var(--bd);border-radius:var(--r) var(--r) 0 0}
+.p-item.p-all .p-name{letter-spacing:.4px}
+.p-item.p-all.active{background:var(--ac);color:#fff}
+.p-item.p-all.active .p-cnt{background:rgba(255,255,255,.28);color:#fff}
 .p-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}
 .p-cnt{font-size:11px;color:var(--t3);background:var(--bg2);padding:2px 8px;border-radius:10px;min-width:28px;text-align:center}
 .p-item.active .p-cnt{background:var(--ac);color:#fff}
@@ -58,6 +67,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--ac)}
 .search-box input{width:100%;padding-left:32px}
 .search-box::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none}
 .tb-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.more-wrap{position:relative}
+.more-menu{position:absolute;right:0;top:calc(100% + 6px);min-width:190px;background:var(--bg1);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:4px;display:none;flex-direction:column;z-index:60}
+.more-menu.open{display:flex}
+.mm-item{background:none;border:0;text-align:left;padding:8px 12px;font-size:13px;color:var(--t1);cursor:pointer;border-radius:6px;white-space:nowrap}
+.mm-item:hover{background:var(--bg3)}
+.uid-chip{display:inline-block;padding:2px 8px;border:1px solid var(--bd);border-radius:5px;font-size:12px;font-family:ui-monospace,Consolas,monospace;background:var(--bg2)}
 .badge{font-size:12px;color:var(--t3);padding:4px 10px;background:var(--bg2);border-radius:10px}
 .batch-bar{height:48px;background:var(--ac);color:#fff;display:flex;align-items:center;padding:0 20px;gap:12px;font-size:13px;font-weight:600;animation:slideDown .2s ease}
 .batch-bar .btn{background:rgba(255,255,255,.2);color:#fff;border:none}
@@ -77,14 +92,34 @@ input:focus,select:focus,textarea:focus{border-color:var(--ac)}
 .ftag.conflict{border-color:var(--wn);color:var(--wn)}
 .ftag.hidden{opacity:.4}
 .tbl-wrap{flex:1;overflow:auto;margin:0 20px 16px;border:1px solid var(--bd);border-radius:var(--rl);background:var(--bg1)}
-.tbl-wrap table{width:100%;border-collapse:collapse;min-width:600px}
+.tbl-wrap table{width:100%;border-collapse:collapse;min-width:640px}
 .tbl-wrap thead{position:sticky;top:0;z-index:10}
-.tbl-wrap th{background:var(--bg2);padding:10px 14px;text-align:left;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);border-bottom:1px solid var(--bd);white-space:nowrap;cursor:pointer;user-select:none}
+.tbl-wrap th{background:var(--bg2);padding:7px 9px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t3);border-bottom:1px solid var(--bd);white-space:nowrap;cursor:pointer;user-select:none}
 .tbl-wrap th:hover{color:var(--t1)}
 .tbl-wrap th.sa::after{content:' ▲';font-size:10px}
 .tbl-wrap th.sd::after{content:' ▼';font-size:10px}
-.tbl-wrap td{padding:8px 14px;border-bottom:1px solid var(--bd);font-size:13px;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+.tbl-wrap td{padding:5px 9px;border-bottom:1px solid var(--bd);font-size:12.5px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
 .tbl-wrap tr:hover td{background:var(--bg3)}
+/* ── 紧凑列：勾选 / 编号 / 来源 三者几乎紧贴 ── */
+.tbl-wrap col.c-chk,.tbl-wrap .c-chk{width:26px;min-width:26px;padding-left:10px;padding-right:7px}
+/* 条目里的勾选框相对行内文字下移 1px（表头的全选框不动） */
+.tbl-wrap tbody .c-chk input[type="checkbox"]{position:relative;top:1px}
+.tbl-wrap col.c-idx,.tbl-wrap .c-idx{width:38px;min-width:38px;max-width:38px;padding-left:0;padding-right:2px;color:var(--t3);font-variant-numeric:tabular-nums}
+/* ── 来源列改成「贴合内容」的宽度 ──
+   以前写死 94px，而文件名（如 acg-nav）只占 41px，右边空掉一大截：
+   实测「来源」文字右边缘到 name 文字左边缘隔着 **62px**。
+   改成 width:1% + nowrap 让列宽跟着内容走，再把两侧内距收到最小，
+   单分区视图下间距 ≈15px。
+   （「全部」视图下同列要容纳最长的文件名（comic_illustrat…），列宽被它撑开，
+     名字短的那些行空隙会大一些 —— 表格一列只有一个宽度，这个躲不掉。） */
+.tbl-wrap col.c-src,.tbl-wrap .c-src{width:1%;min-width:0;max-width:none;padding-left:2px;padding-right:2px;font-size:11px;color:var(--t3)}
+/* ── UID 与 URL 间隔拉近(12px)，URL 与 RELATED 间隔减 1/7(15px) ── */
+.tbl-wrap col.c-uid,.tbl-wrap .c-uid{width:86px;min-width:70px;max-width:110px;padding-right:6px}
+.tbl-wrap col.c-url,.tbl-wrap .c-url{min-width:125px;max-width:250px;padding-left:6px;padding-right:8px}
+.tbl-wrap col.c-rel,.tbl-wrap .c-rel{max-width:200px;padding-left:7px}
+.tbl-wrap col.c-name,.tbl-wrap .c-name{max-width:190px;padding-left:6px}
+/* 操作列已取消（列太占宽度）：✏️👁🗑 挪到图例那一行的最右边，
+   作用于「单击选中的那一行」，见 paintSel() / actOnSel() */
 .tbl-wrap tr:last-child td{border-bottom:none}
 .tbl-wrap tr.uc td{background:var(--hl-uid-bg)}
 .tbl-wrap tr.uc td.uid-c{color:var(--hl-uid);font-weight:600}
@@ -92,15 +127,77 @@ input:focus,select:focus,textarea:focus{border-color:var(--ac)}
 .tbl-wrap tr.sc td.site-c{color:var(--hl-site);font-weight:600}
 .tbl-wrap tr.dup td{background:var(--hl-dup-bg)}
 .tbl-wrap tr.val-err td{background:var(--val-err-bg)}
-.cell-act{opacity:0;transition:opacity var(--tr)}
-.tbl-wrap tr:hover .cell-act{opacity:1}
+/* 被选中的操作目标行：左侧一条金色竖条 + 淡金底 + 序号变金（和 hover 的浅色底区分开） */
+.tbl-wrap tbody tr.row-sel td{background:var(--acd)}
+.tbl-wrap tbody tr.row-sel td:first-child{box-shadow:inset 3px 0 0 var(--ac)}
+.tbl-wrap tbody tr.row-sel td.c-idx{color:var(--ac);font-weight:600}
 .ce-btn{font-size:12px;padding:2px 6px;border-radius:4px;color:var(--ac)}.ce-btn:hover{background:var(--acd)}
 .cd-btn{font-size:12px;padding:2px 6px;border-radius:4px;color:var(--dg)}.cd-btn:hover{background:var(--dgd)}
+/* 详情页预览按钮（蓝色系，和编辑/删除区分开） */
+.cp-btn{font-size:12px;padding:2px 6px;border-radius:4px;color:var(--t2)}.cp-btn:hover{background:var(--bg3);color:var(--ac)}
+/* 预览弹窗里的 iframe */
+.pv-tip{font-size:12px;color:var(--t3);line-height:1.8;margin-bottom:10px}
+.pv-tip b{color:var(--t2)}
+.pv-frame{width:100%;height:74vh;border:1px solid var(--bd);border-radius:var(--r);background:#0f172a}
 .empty{padding:60px 20px;text-align:center;color:var(--t3)}
 .empty .ei{font-size:48px;margin-bottom:12px}
 .no-res{padding:40px;text-align:center;color:var(--t3);font-size:14px}
 a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
-.legend{display:flex;gap:16px;padding:8px 20px;font-size:12px;color:var(--t3)}
+/* 图例行同时兼「行操作」工具条：三个按钮贴在最右边 */
+.legend{display:flex;gap:16px;padding:8px 20px;font-size:12px;color:var(--t3);align-items:center}
+.lg-act{margin-left:auto;display:flex;align-items:center;gap:4px}
+.lg-cur{font-size:11px;color:var(--t3);margin-right:6px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg-cur.has{color:var(--ac)}
+.lg-act button:disabled{opacity:.28;cursor:not-allowed}
+.lg-act button:disabled:hover{background:transparent;color:inherit}
+/* ── ❓ 知识库：折叠标题式（原生 <details>，不用 JS）── */
+.kb-sec{border:1px solid var(--bd);border-radius:var(--r);margin-bottom:8px;background:var(--bg1);overflow:hidden}
+.kb-sec[open]{border-color:var(--acd)}
+.kb-hd{cursor:pointer;user-select:none;padding:9px 12px;font-size:13px;font-weight:600;color:var(--t2);display:flex;align-items:center;gap:8px;list-style:none}
+.kb-hd::-webkit-details-marker{display:none}
+.kb-hd::before{content:'▶';font-size:9px;color:var(--t3);transition:transform .2s;flex-shrink:0}
+.kb-sec[open] .kb-hd::before{transform:rotate(90deg);color:var(--ac)}
+.kb-sec[open] .kb-hd{color:var(--t1)}
+.kb-hd:hover{background:var(--bg3)}
+.kb-bd{padding:0 14px 12px 30px;font-size:13px;line-height:1.9;color:var(--t2)}
+.kb-bd p{margin:4px 0}
+.kb-bd b{color:var(--t1)}
+.kb-bd code{background:var(--bg3);padding:1px 5px;border-radius:3px;font-size:12px;color:var(--t1)}
+.kb-bd pre{margin:8px 0;padding:10px 12px;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);overflow:auto;font-size:12px;line-height:1.7;font-family:'Menlo','Consolas','Courier New',monospace}
+.kb-bd table{border-collapse:collapse;margin:10px 0;font-size:12.5px;width:100%}
+.kb-bd th,.kb-bd td{border:1px solid var(--bd);padding:5px 9px;text-align:left;vertical-align:top}
+.kb-bd th{background:var(--bg2);color:var(--t3);font-size:11px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.kb-bd td:first-child{white-space:nowrap;color:var(--ac)}
+.kb-bd .kb-warn{color:var(--wn)}
+/* ── tag 字段控件（编辑 / 新建面板共用）──
+   字段框里是「− 标签」小按钮（点一下移除）；点空白弹出库里已有的 tag 列表（「+ 标签」）。
+   真正的值仍写在一个 hidden 的 data-f="tag" 里（竖线分隔），保存逻辑不用改。 */
+.tag-field{border:1px solid var(--bd);border-radius:var(--r);background:var(--bg2);min-height:34px;padding:5px 8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;cursor:pointer}
+.tag-field:hover{border-color:var(--ac)}
+.tf-tag{font-size:12px;padding:2px 8px;border-radius:999px;background:var(--acd);color:var(--ac);cursor:pointer;user-select:none}
+.tf-tag:hover{background:var(--dg);color:#fff}
+.tf-empty{font-size:12px;color:var(--t3)}
+.tp-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;max-height:46vh;overflow:auto;padding:1px}
+.tp-item{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid var(--bd);border-radius:999px;background:var(--bg2);color:var(--t2);font-size:12.5px;cursor:pointer}
+.tp-item:hover{border-color:var(--ac);color:var(--ac)}
+/* 已选中的：金底 + 前缀变 −，悬停变红提示「点一下是移除」，仍然可点 */
+.tp-item.on{border-color:var(--ac);background:var(--acd);color:var(--ac)}
+.tp-item.on .tp-op{color:var(--dg)}
+.tp-item.on:hover{border-color:var(--dg);color:var(--dg)}
+.tp-op{font-weight:700;color:var(--ac)}
+.tp-n{font-size:11px;color:var(--t3)}
+.tp-none{font-size:12.5px;color:var(--t3);padding:6px 0}
+.tp-new{border-top:1px solid var(--bd);padding-top:12px}
+.tp-new label{display:block;font-size:11px;color:var(--t3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+/* ── 勾选分区替换 ── */
+.pp-wrap{display:flex;flex-direction:column;gap:6px;max-height:48vh;overflow:auto;margin-bottom:10px;padding:1px}
+.pp-row{display:flex;align-items:center;gap:8px;padding:6px 9px;border:1px solid var(--bd);border-radius:var(--r);background:var(--bg2);cursor:pointer;font-size:12.5px;user-select:none}
+.pp-row:hover{border-color:var(--ac)}
+.pp-row input{position:relative;top:1px}
+.pp-name{font-weight:600;color:var(--t1)}
+.pp-key{font-size:11px;color:var(--t3)}
+.pp-n{margin-left:auto;font-size:11px;color:var(--t3)}
+.pp-tip{font-size:11.5px;color:var(--t3);margin-top:10px;line-height:1.8}
 .lg-i{display:flex;align-items:center;gap:6px}
 .lg-d{width:10px;height:10px;border-radius:50%}
 .lg-d.u{background:var(--hl-uid)}.lg-d.s{background:var(--hl-site)}.lg-d.d{background:var(--hl-dup)}.lg-d.v{background:var(--val-err)}
@@ -172,6 +269,9 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
 .preview-tbl-wrap td{padding:6px 12px;border-bottom:1px solid var(--bd);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
 .preview-tbl-wrap tr:hover td{background:var(--bg3)}
 .preview-tbl-wrap tr.selected td{background:var(--acd)}
+.preview-tbl-wrap .sel-cell{cursor:pointer}
+.preview-tbl-wrap .field-select.field-edited{border-color:var(--ac);color:var(--ac)}
+.preview-tbl-wrap .field-manual{width:100%;box-sizing:border-box}
 .preview-tbl-wrap .tag-uid{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;background:var(--hl-uid-bg);color:var(--hl-uid)}
 .preview-tbl-wrap .tag-dup{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;background:var(--hl-dup-bg);color:var(--hl-dup)}
 .preview-tbl-wrap .tag-site{display:inline-block;padding:1px 6px;border-radius:3px;font-size:10px;font-weight:700;background:var(--hl-site-bg);color:var(--hl-site)}
@@ -201,7 +301,7 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
 <body>
 <div class="app">
   <div class="sidebar" id="sidebar">
-    <div class="sidebar-hd"><h2>数据维护器 v1.7</h2><button class="m-close" onclick="toggleSidebar()" style="display:none" id="sidebarClose" title="关闭侧边栏">✕</button></div>
+    <div class="sidebar-hd"><h2>数据维护器 v2.1</h2><button class="m-close" onclick="toggleSidebar()" style="display:none" id="sidebarClose" title="关闭侧边栏">✕</button></div>
     <div class="sidebar-act">
       <button class="btn btn-p" onclick="document.getElementById('fileInput').click()" style="width:100%;justify-content:center" title="加载JSON数据文件">📂 加载数据文件</button>
       <input type="file" id="fileInput" multiple accept=".json" style="display:none">
@@ -214,7 +314,6 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
     <div class="sec-title"><span>系统设置</span></div>
     <div class="p-list" style="flex:0 0 auto;padding-bottom:12px">
       <div class="p-item" onclick="showHistoryPanel()"><span class="p-name">操作历史</span></div>
-      <div class="p-item" onclick="showWhitelistModal()"><span class="p-name">域名白名单</span></div>
     </div>
   </div>
 
@@ -223,6 +322,7 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
       <span>已选择 <b id="batchCount">0</b> 条</span>
       <div style="flex:1"></div>
       <button class="btn btn-sm" onclick="clearSelection()" title="取消所有选择">取消选择</button>
+      <button class="btn btn-sm" onclick="batchAddWhitelist()" title="把选中条目（按 UID）加入白名单，之后不再参与任何检测">🛡 加入白名单</button>
       <button class="btn btn-sm" onclick="batchDelete()" style="background:rgba(255,92,108,.8)" title="批量删除选中条目">批量删除</button>
     </div>
 
@@ -232,30 +332,47 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
       <div class="sep"></div>
       <label class="chk" title="仅显示冲突或违规数据"><input type="checkbox" id="showConflictsOnly"><span>仅异常</span></label>
       <div class="tb-r">
-        <span class="badge" id="statsTotal">总计: 0</span>
+        <span class="badge" id="statsTotal">UID: 0</span>
         <span class="badge" id="statsConflicts">冲突: 0</span>
         <span class="badge" id="statsValidation" style="color:var(--wn)">违规: 0</span>
         <div class="sep"></div>
         <button class="btn btn-p btn-sm" onclick="startAutoProcessFromSelection()" title="仅处理当前勾选的异常数据">自动处理</button>
-        <button class="btn btn-o btn-sm" onclick="showAutoProcessHelp()" title="自动处理逻辑说明">❓</button>
         <div class="sep"></div>
-        <button class="btn btn-o btn-sm" onclick="exportSourceData()" title="导出原始JSON文件">📥</button>
-        <button class="btn btn-o btn-sm" onclick="exportPartitionData()" title="按分区导出数据">📤</button>
+        <button class="btn btn-o btn-sm" onclick="exportDataJson(false)" title="导出全部数据为 data.json（分类作为顶层 key）">导出数据</button>
+        <button class="btn btn-o btn-sm" onclick="exportDataJson(true)" title="只导出表格中勾选的数据（同样格式）">导出勾选</button>
         <div class="sep"></div>
-        <button class="btn btn-o btn-sm" onclick="exportAllBundle()" title="保存完整工程包">💾</button>
-        <button class="btn btn-o btn-sm" onclick="document.getElementById('bundleInput').click()" title="加载完整工程包">📦</button>
+        <button class="btn btn-o btn-sm" onclick="document.getElementById('bundleInput').click()" title="导入数据（支持 data.json / 旧版工程包）">导入数据</button>
         <input type="file" id="bundleInput" accept=".json" style="display:none">
+        <div class="sep"></div>
+        <div class="more-wrap">
+          <button class="btn btn-o btn-sm" id="moreMenuBtn" onclick="toggleMoreMenu(event)" title="更多工具">☰</button>
+          <div class="more-menu" id="moreMenu">
+            <button class="mm-item" onclick="showFreeUids()">查询空闲 UID</button>
+            <button class="mm-item" onclick="exportKickedUids()">导出被换掉的 UID</button>
+            <button class="mm-item" onclick="showCrossPartitionDupes()">查找跨分区同实体</button>
+            <button class="mm-item" onclick="showWhitelistModal()">UID 白名单</button>
+          </div>
+        </div>
+        <button class="btn btn-o btn-sm" onclick="showAutoProcessHelp()" title="帮助">❓</button>
       </div>
     </div>
 
     <div class="content">
-      <div class="drop-zone" id="dropZone"><div class="dz-icon">📁</div><div class="dz-text">拖拽 JSON 文件到此处，或点击选择（可多选）</div><div class="dz-hint">支持: gal / voice_music / comic_illustration / hub / gal-info / ln / anime / mmd / wiki / acg-nav / tools / search / valhalla</div></div>
+      <div class="drop-zone" id="dropZone"><div class="dz-icon">📁</div><div class="dz-text">拖拽 JSON 文件到此处，或点击选择（可多选）</div><div class="dz-hint">推荐 data.json（{"gal":[...],"mmd":[...]} 按分类分层）；也兼容旧的按分类单数组 JSON 和工程包</div></div>
       <div class="file-bar" id="fileStatusBar"></div>
-      <div class="legend" id="conflictLegend" style="display:none">
+      <!-- 图例行：左边是冲突颜色说明，右边是当前行的操作按钮（原「操作」列已取消） -->
+      <div class="legend" id="conflictLegend">
         <div class="lg-i"><div class="lg-d u"></div><span>UID冲突</span></div>
         <div class="lg-i"><div class="lg-d s"></div><span>站点冲突</span></div>
         <div class="lg-i"><div class="lg-d d"></div><span>同分区重复</span></div>
         <div class="lg-i"><div class="lg-d v"></div><span>验证违规</span></div>
+        <div class="lg-act">
+          <span class="lg-cur" id="legendCur">未选中条目（单击表格中的一行）</span>
+          <button class="ce-btn" id="btnNewRow" onclick="openNew()" title="新建一个条目（默认放到当前行所在分区）">➕</button>
+          <button class="ce-btn" id="btnEditRow" onclick="actOnSel('edit')" title="编辑这一行" disabled>✏️</button>
+          <button class="cp-btn" id="btnPvRow" onclick="actOnSel('pv')" title="预览这一行的详情页（弹窗，不新开页面）" disabled>👁</button>
+          <button class="cd-btn" id="btnDelRow" onclick="actOnSel('del')" title="删除这一行" disabled>🗑️</button>
+        </div>
       </div>
       <div class="tbl-wrap" id="tableContainer"><div class="empty" id="emptyState"><div class="ei">📋</div><div>暂无数据，请加载数据文件</div></div></div>
       <div class="pg" id="pagination" style="display:none"></div>
@@ -294,6 +411,100 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
 <script>
 const DEFAULT_PARTITIONS=['GAL','音声/音乐','漫画/插画/本子','综合资源站','GAL情报/入正','轻小说','动漫','MMD','WIKI','二次元导航站','工具','搜索引擎','英灵殿'];
 const FILE_PARTITION_MAP={'gal':'GAL','voice_music':'音声/音乐','comic_illustration':'漫画/插画/本子','hub':'综合资源站','gal-info':'GAL情报/入正','ln':'轻小说','anime':'动漫','mmd':'MMD','wiki':'WIKI','acg-nav':'二次元导航站','tools':'工具','search':'搜索引擎','valhalla':'英灵殿'};
+
+
+const PART_KEY_MAP=Object.fromEntries(Object.entries(FILE_PARTITION_MAP).map(([k,v])=>[v,k]));
+function partKey(partName){return PART_KEY_MAP[partName]||String(partName||'').trim()||'未分类';}
+function keyToPart(key){const k=String(key||'').trim().toLowerCase();for(const[pk,pn]of Object.entries(FILE_PARTITION_MAP)){if(pk===k)return pn;}return null;}
+
+function relUrls(v){
+  let parts=[];
+  if(!v)parts=[];
+  else if(Array.isArray(v))parts=v;
+  else if(typeof v==='object')parts=Object.entries(v).map(([l,u])=>`${l}|${u}`);
+  else parts=String(v).split(/[,;，；\s]+/);
+  return parts.map(s=>String(s).trim().replace(/^["']+|["']+$/g,''))
+    .map(s=>s.includes('|')?s.split('|').pop():s)
+    .filter(u=>/^https?:\/\//i.test(u));
+}
+
+const AUTO_LABEL_RULES=[['github.com','GitHub'],['gitlab.com','GitLab'],['gitee.com','Gitee'],['t.me','Telegram'],['telegram.org','Telegram'],['telegram.me','Telegram'],['discord','Discord'],['x.com','X'],['twitter.com','Twitter'],['bilibili.com','Bilibili'],['apps.apple.com','App Store'],['play.google.com','Google Play'],['steamcommunity.com','Steam'],['store.steampowered.com','Steam'],['weibo.com','微博'],['youtube.com','YouTube']];
+function autoLabel(u){const h=normUrl(u).toLowerCase();for(const[f,l]of AUTO_LABEL_RULES){if(h.includes(f))return l;}return h||'链接';}
+function isCommunityUrl(u){const h=normUrl(u).toLowerCase();return ['t.me','telegram.org','telegram.me','discord.com','discord.gg','qm.qq.com','jq.qq.com','qq.com'].some(c=>h===c||h.endsWith('.'+c));}
+/* 把「一个元素」归一成 [label, url]。兼容这些写法：
+     {label:'发布页', url:'https://x'} / {name, link} / {名称, 链接} / {'发布页':'https://x'}
+     ['发布页', 'https://x']
+   不是对象就返回 null，交给外层的字符串逻辑处理。 */
+const PAIR_LABEL_KEYS=['label','name','title','text','名称','名','按钮名','站点','说明'];
+const PAIR_URL_KEYS=['url','link','href','value','链接','地址','网址','站点地址'];
+function normPairObj(o){
+  if(!o||typeof o!=='object'||Array.isArray(o))return null;
+  const lk=PAIR_LABEL_KEYS.find(k=>k in o),uk=PAIR_URL_KEYS.find(k=>k in o);
+  if(uk)return[lk?o[lk]:'',o[uk]];
+  const e=Object.entries(o);
+  return e.length?[e[0][0],e[0][1]]:null;
+}
+/* 把「被存成 JSON 字符串」的值解析回对象 —— 旧编辑器 bug 的产物，形如 '{"交流群":"http://…"}'。
+   只对以 { 或 [ 开头的字符串尝试解析，普通 URL / QQ 群号 / 纯文本一律原样返回。 */
+function parseMaybeJson(v){
+  if(typeof v!=='string')return v;
+  const s=v.trim();
+  if(s.charAt(0)!=='{'&&s.charAt(0)!=='[')return v;
+  try{const p=JSON.parse(s);if(p&&typeof p==='object')return p;}catch(e){}
+  return v;
+}
+function linkPairs(v){ 
+  /* 自愈：related/community 被存成"JSON 字符串"时先解析回对象，
+     避免整串 JSON 被当成一条链接渲染出来。 */
+  v=parseMaybeJson(v);
+  let parts=[];
+  if(!v)parts=[];
+  else if(Array.isArray(v))parts=v.map(x=>[null,x]);
+  else if(typeof v==='object')parts=Object.entries(v);
+  else parts=String(v).split(/[,;，；]+/).map(x=>[null,x.trim()]);
+  return parts.map(p=>{
+    let label=p[0],raw=p[1];
+    /* 元素本身还是对象/数组（如 related:[{label,url}]）→ 再解一层。
+       以前这里直接把元素 String() 了，对象会变成 "[object Object]" 混进结果。 */
+    if(raw&&typeof raw==='object'){
+      const inner=Array.isArray(raw)?(raw.length>=2?[raw[0],raw[1]]:(raw.length?[null,raw[0]]:null)):normPairObj(raw);
+      if(inner){if(label===null||label===undefined||label==='')label=inner[0];raw=inner[1];}
+    }
+    let val=String(raw??'').trim().replace(/^["']+|["']+$/g,'');
+    if(label===null||label===undefined)label='';
+    label=String(label).trim().replace(/^["']+|["']+$/g,'');
+    if(!label&&val.includes('|')){label=val.slice(0,val.indexOf('|')).trim();val=val.slice(val.indexOf('|')+1).trim();}
+    return {label:label,url:val};
+  }).filter(p=>p.url&&!/^\[object /i.test(p.url));   /* 丢掉 "[object Object]" 这类被字符串化的脏值 */
+}
+function pairsToObj(pairs,filter){
+  const out={};const used=new Map();
+  for(const p of pairs){
+    if(filter&&!filter(p))continue;
+    let label=p.label||autoLabel(p.url);
+    if(used.has(label)){const n=used.get(label)+1;used.set(label,n);label=label+' '+n;}else used.set(label,1);
+    out[label]=p.url;
+  }
+  return out;
+}
+function normalizeItem(it){
+  const o=Object.assign({},it);
+  /* 分拣规则（2026-09-25 改）：
+     - 原本就在 community 里的值，一律留在社群 —— 包括 QQ 群号 / 腾讯频道这类非 http 的值。
+       旧逻辑只看域名，isCommunityUrl() 认不出非 http 值 → 会被当成"非社群"塞进 related，
+       表现就是 community 跑到「相关」里去。
+     - 保留单向补救：related 里混进的社群域名链接（t.me / discord / qq 群）仍挪到社群。
+     - 绝不反向把社群内容塞回相关。 */
+  const relPairs=linkPairs(o.related);
+  const commPairs=linkPairs(o.community);
+  const commUrls=new Set(commPairs.map(p=>p.url));
+  const moved=relPairs.filter(p=>isCommunityUrl(p.url)&&!commUrls.has(p.url));
+  const relKeep=relPairs.filter(p=>!isCommunityUrl(p.url)&&!commUrls.has(p.url));
+  o.related=pairsToObj(relKeep);
+  const comm=pairsToObj(commPairs.concat(moved));
+  if(Object.keys(comm).length)o.community=comm;else delete o.community;
+  return o;
+}
 const UID_FIELDS=['uid','id','UID','userId','user_id','siteId','site_id','rid','UUID','uuid','编号','标识'];
 const URL_FIELDS=['url','URL','link','website','domain','href','site','站点','网址','地址'];
 const NAME_FIELDS=['name','Name','title','Title','名称','标题','siteName','site_name','网站名','站名'];
@@ -304,7 +515,8 @@ const NAME_SIMILARITY_THRESHOLD=0.35;
 let S={
   db:null, partitions:[], files:[], activePartition:'all', page:1, pageSize:50, query:'', sortField:null, sortDir:'asc',
   editing:null, allFields:[], conflicts:{uid:new Set(), site:new Set()}, duplicates:new Set(), validationErrors:new Set(),
-  fileOffsets:new Map(), logs:[], selection:new Set(), history:[], domainWhitelist:[], hiddenPartitions:new Set(),
+  fileOffsets:new Map(), logs:[], selection:new Set(), history:[], uidWhitelist:[], hiddenPartitions:new Set(),
+  selGi:null,          
   issueGroups:{uidConflicts:[], siteConflicts:[], duplicates:[]}
 };
 
@@ -314,11 +526,18 @@ function dbGet(k){return new Promise((res,rej)=>{const tx=S.db.transaction('appd
 function dbAddHistory(entry){return new Promise((res,rej)=>{const tx=S.db.transaction('history','readwrite');tx.objectStore('history').put(entry);tx.oncomplete=()=>res();tx.onerror=e=>rej(e.target.error);});}
 function dbGetAllHistory(){return new Promise((res,rej)=>{const tx=S.db.transaction('history','readonly');const r=tx.objectStore('history').getAll();r.onsuccess=()=>res(r.result||[]);r.onerror=e=>rej(e.target.error);});}
 function dbDeleteHistory(id){return new Promise((res,rej)=>{const tx=S.db.transaction('history','readwrite');tx.objectStore('history').delete(id);tx.oncomplete=()=>res();tx.onerror=e=>rej(e.target.error);});}
-async function saveState(){try{await dbSaveAll({partitions:S.partitions,files:S.files,activePartition:S.activePartition,domainWhitelist:S.domainWhitelist,hiddenPartitions:[...S.hiddenPartitions]});}catch(e){log(`存储失败: ${e.message}`,'error');}}
+async function saveState(){try{await dbSaveAll({partitions:S.partitions,files:S.files,activePartition:S.activePartition,uidWhitelist:S.uidWhitelist,hiddenPartitions:[...S.hiddenPartitions]});}catch(e){log(`存储失败: ${e.message}`,'error');}}
 async function loadState(){
   try{
-    const p=await dbGet('partitions');const f=await dbGet('files');const a=await dbGet('activePartition');const wl=await dbGet('domainWhitelist');const hp=await dbGet('hiddenPartitions');
-    if(p)S.partitions=p;if(f)S.files=f;if(a)S.activePartition=a;if(wl)S.domainWhitelist=wl;if(hp)S.hiddenPartitions=new Set(hp);
+    const p=await dbGet('partitions');const f=await dbGet('files');const a=await dbGet('activePartition');const wl=await dbGet('uidWhitelist');const wlOld=await dbGet('domainWhitelist');const hp=await dbGet('hiddenPartitions');
+    if(p)S.partitions=p;if(f)S.files=f;if(a)S.activePartition=a;if(hp)S.hiddenPartitions=new Set(hp);
+    if(Array.isArray(wl)&&wl.length){
+      S.uidWhitelist=wl.map(u=>String(u).trim()).filter(Boolean);
+    }else if(Array.isArray(wlOld)&&wlOld.length){
+      /* 兼容旧版：白名单原本存的是域名 → 迁移成 UID 制 */
+      S.uidWhitelist=migrateDomainWhitelist(wlOld);
+      log(`🛡 白名单由旧版（域名制）迁移为 UID 制：${wlOld.length} 个域名 → ${S.uidWhitelist.length} 个 UID，请核对后重新扫描。`,'warn');
+    }
     S.history=await dbGetAllHistory();
   }catch(e){log(`加载状态失败: ${e.message}`,'error');}
   DEFAULT_PARTITIONS.forEach(n=>{if(!S.partitions.find(p=>p.name===n))S.partitions.push({name:n,id:gid()});});
@@ -332,9 +551,37 @@ function debounce(fn,ms){let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>f
 function dlBlob(b,n){const u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(u),100);}
 function jsonBlock(obj){return `<span class="log-json">${esc(JSON.stringify(obj,null,2))}</span>`;}
 function stripHtml(s){return s.replace(/<[^>]*>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");}
-function normUrl(u){if(!u)return '';try{return new URL(u).hostname.replace(/^www\./,'');}catch{return u.replace(/^https?:\/\/(www\.)?/,'').split('/')[0];}}
+function normUrl(u){if(!u)return '';const s=String(u).trim();if(!s)return '';try{return new URL(s).hostname.replace(/^www\./,'');}catch{return s.replace(/^https?:\/\/(www\.)?/,'').split('/')[0];}}
 function isPlatformDomain(domain){if(!domain)return false;const d=domain.toLowerCase();for(const pd of PLATFORM_DOMAINS){if(d===pd||d.endsWith('.'+pd))return true;}return false;}
-function isWhitelistedDomain(domain){if(!domain)return false;return S.domainWhitelist.some(w=>w.toLowerCase()===domain.toLowerCase());}
+/* 白名单现在按 UID 识别：判断的是"这个条目在不在白名单里" */
+function isWhitelistedUid(uid){const u=String(uid||'').trim();if(!u)return false;return S.uidWhitelist.includes(u);}
+/* 旧版白名单存的是域名 → 迁移成 UID：把该域名能匹配到的条目 uid 全部收进来。
+   files 可显式传入（导入 JSON 时用 b.files），不传则用当前的 S.files。 */
+function migrateDomainWhitelist(domains,files){
+  const want=new Set((domains||[]).map(d=>String(d||'').trim().toLowerCase()).filter(Boolean));
+  if(!want.size)return[];
+  const all=((files||S.files||[])).flatMap(f=>f.data||[]);
+  if(!all.length)return[];
+  const sf=detectField(all,URL_FIELDS)?.field;
+  if(!sf)return[];
+  const out=new Set();
+  all.forEach(it=>{
+    const d=normUrl(String(it[sf]||'').trim()).toLowerCase();
+    if(d&&want.has(d)){const u=String(it.uid||'').trim();if(u)out.add(u);}
+  });
+  return[...out];
+}
+/* 从导入的 JSON 里读白名单：新格式 uidWhitelist 直接用；
+   旧格式 domainWhitelist 则用导入文件里的条目就地迁移成 UID。 */
+function readImportedWhitelist(b){
+  if(Array.isArray(b.uidWhitelist))return b.uidWhitelist.map(u=>String(u).trim()).filter(Boolean);
+  if(Array.isArray(b.domainWhitelist)&&b.domainWhitelist.length){
+    const uids=migrateDomainWhitelist(b.domainWhitelist,b.files);
+    log(`🛡 导入的白名单是旧版（域名制），已迁移为 UID 制：${b.domainWhitelist.length} 个域名 → ${uids.length} 个 UID`,'warn');
+    return uids;
+  }
+  return[];
+}
 function stringSimilarity(a,b){if(!a||!b)return 0;a=String(a).toLowerCase().trim();b=String(b).toLowerCase().trim();if(a===b)return 1;if(a.length<2||b.length<2)return 0;const bigrams=new Map();for(let i=0;i<a.length-1;i++){const bg=a.substring(i,i+2);bigrams.set(bg,(bigrams.get(bg)||0)+1);}let matches=0;for(let i=0;i<b.length-1;i++){const bg=b.substring(i,i+2);const cnt=bigrams.get(bg);if(cnt&&cnt>0){matches++;bigrams.set(bg,cnt-1);}}return(2*matches)/(a.length-1+b.length-1);}
 function isSameEntity(a,b,nameField){if(!nameField)return{same:true,reason:'无名称字段，无法区分实体',similarity:-1};const nameA=String(a[nameField]||'').trim();const nameB=String(b[nameField]||'').trim();if(!nameA||!nameB)return{same:true,reason:'名称字段至少一方为空',similarity:-1};const sim=stringSimilarity(nameA,nameB);if(sim>=NAME_SIMILARITY_THRESHOLD)return{same:true,reason:'名称相似度 '+(sim*100).toFixed(1)+'% ≥ 阈值'+(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)+'%',similarity:sim};return{same:false,reason:'名称相似度 '+(sim*100).toFixed(1)+'% < 阈值'+(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)+'%，判定为不同实体',similarity:sim};}
 function detectField(items,cands){if(!items.length)return null;const freq=new Map();for(const it of items){for(const k of Object.keys(it)){const lk=k.toLowerCase();const e=freq.get(lk)||{key:k,count:0};e.count++;freq.set(lk,e);}}for(const c of cands){const e=freq.get(c.toLowerCase());if(e)return{field:e.key,count:e.count,total:items.length};}return null;}
@@ -375,7 +622,19 @@ function renderLog(){
 }
 function clearLog(){S.logs=[];renderLog();}
 function resetLog(){S.logs=[];renderLog();}
-function toggleLog(){const p=document.getElementById('logPanel');p.classList.toggle('open');p.classList.toggle('closed');}
+const LOG_OPEN_KEY='heyue_maintainer_logOpen';
+function setLogOpen(open){
+  const p=document.getElementById('logPanel');if(!p)return;
+  p.classList.toggle('open',!!open);
+  p.classList.toggle('closed',!open);
+  try{localStorage.setItem(LOG_OPEN_KEY,open?'1':'0');}catch(e){}
+}
+function restoreLogState(){
+  let open=true;
+  try{const v=localStorage.getItem(LOG_OPEN_KEY);if(v!==null)open=(v==='1');}catch(e){}
+  setLogOpen(open);
+}
+function toggleLog(){const p=document.getElementById('logPanel');setLogOpen(!(p&&p.classList.contains('open')));}
 function exportLog(){
   if(!S.logs.length){toast('日志为空','wn');return;}
   const lines=S.logs.map(l=>{let line=`[${l.time}] [${l.tag.toUpperCase()}] ${stripHtml(l.msg)}`;if(l.detail)line+=`\n--- DETAIL START ---\n${stripHtml(l.detail)}\n--- DETAIL END ---`;return line;});
@@ -386,7 +645,7 @@ function exportLog(){
 
 function runValidation(){
   S.validationErrors.clear();
-  let totalChecked=0,totalViolations=0;
+  let totalChecked=0,totalViolations=0,skippedWhitelist=0;
   const violationDetails=[];
   S.files.forEach((f,fi)=>{
     f.data.forEach((item,ii)=>{
@@ -394,6 +653,8 @@ function runValidation(){
       const uidField=detectField([item],UID_FIELDS)?.field;
       const urlField=detectField([item],URL_FIELDS)?.field;
       const nameField=detectField([item],NAME_FIELDS)?.field;
+      /* 白名单按 UID：命中的条目跳过"缺名称/URL/UID"的验证违规 */
+      if(isWhitelistedUid(uidField?item[uidField]:'')){skippedWhitelist++;return;}
       const errors=[];
       if(!nameField || !String(item[nameField]||'').trim()) errors.push('名称缺失');
       if(!urlField || !String(item[urlField]||'').trim()) errors.push('URL缺失');
@@ -405,6 +666,9 @@ function runValidation(){
       }
     });
   });
+  if(skippedWhitelist){
+    log(`<span class="log-skip-tag">⏭️ 验证违规跳过 ${skippedWhitelist} 条</span> 这些条目在白名单里`,'skip',`【跳过原因】已加入白名单，不参与"缺名称/URL/UID"校验`);
+  }
   if(totalViolations>0){
     log(`⚠️ 验证违规: ${totalViolations}/${totalChecked} 条缺少核心字段`,'warn',violationDetails.join('\n')+(totalViolations>10?`\n...及其他 ${totalViolations-10} 条违规`:''));
   } else {
@@ -415,8 +679,8 @@ function runValidation(){
 
 function detectConflicts(){
   resetLog();
-  log(`🔍 ═══ 开始扫描 (v1.7) ═══`,'analysis',
-    `总文件数: ${S.files.length}\n总条目数: ${S.files.reduce((s,f)=>s+f.data.length,0)}\n平台域名白名单: ${PLATFORM_DOMAINS.length}个\n名称相似度阈值: ${(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)}%`);
+  log(`🔍 ═══ 开始扫描 (v1.8) ═══`,'analysis',
+    `总文件数: ${S.files.length}\n总条目数: ${S.files.reduce((s,f)=>s+f.data.length,0)}\n平台域名白名单: ${PLATFORM_DOMAINS.length}个\nUID白名单: ${S.uidWhitelist.length}个\n名称相似度阈值: ${(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)}%`);
 
   const uc=new Set(), sc=new Set(), dupSet=new Set();
   S.issueGroups={uidConflicts:[], siteConflicts:[], duplicates:[]};
@@ -453,8 +717,11 @@ function detectConflicts(){
       if(entries.length<=1)continue;
       const urls=new Set(entries.map(e=>e.url).filter(Boolean));
       if(urls.size<=1)continue;
-      const firstDomain=entries[0]?.url;
-      if(isWhitelistedDomain(firstDomain)){skippedWhitelist++;continue;}
+      if(isWhitelistedUid(uid)){
+        skippedWhitelist++;
+        log(`<span class="log-skip-tag">⏭️ UID冲突跳过 #${uid}</span> 该 UID 在白名单里`,'skip',`【跳过原因】UID "${uid}" 已加入白名单，不参与任何检测`);
+        continue;
+      }
       const platformUrls=[...urls].filter(u=>isPlatformDomain(u));
       if(platformUrls.length===urls.size){
         skippedPlatform++;
@@ -474,7 +741,7 @@ function detectConflicts(){
         const relatedDomains = nonPlatformEntries.map(e=>{
           const related = String(e.item['related']||'');
           if(!related) return new Set();
-          const links = related.split(/[,;，；\s]+/).filter(Boolean);
+          const links = relUrls(related);
           const domains = new Set();
           links.forEach(link=>{
             const dom=normUrl(link);
@@ -521,11 +788,17 @@ function detectConflicts(){
       sm[url].push({gi:r.gi,fi:r.fi,ii:r.ii,uid:u,related:r.item['related']||'',fn:r.fn,item:r.item});
     });
     let scc=0,skippedPlatform=0,skippedSimilarity=0,skippedWhitelist=0;
-    for(const[domain,entries]of Object.entries(sm)){
+    for(const[domain,allEntries]of Object.entries(sm)){
+      if(allEntries.length<=1)continue;
+      /* 白名单按 UID：先把白名单里的条目从这一组剔出去，剩下的才参与比对 */
+      const entries=allEntries.filter(e=>!isWhitelistedUid(e.uid));
+      if(entries.length!==allEntries.length){
+        skippedWhitelist++;
+        log(`<span class="log-skip-tag">站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" 有 ${allEntries.length-entries.length} 条在白名单里`,'skip',`【跳过原因】已从比对中剔除白名单 UID`);
+      }
       if(entries.length<=1)continue;
       const uids=new Set(entries.map(e=>e.uid));
       if(uids.size<=1)continue;
-      if(isWhitelistedDomain(domain)){skippedWhitelist++;continue;}
       if(isPlatformDomain(domain)){
         skippedPlatform++;
         log(`<span class="log-skip-tag">站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" (${uids.size}个UID)`,'skip',`【跳过原因】"${domain}" 是平台型域名`);
@@ -543,7 +816,7 @@ function detectConflicts(){
         const relatedDomains = entries.map(e=>{
           const related = String(e.item['related']||'');
           if(!related) return new Set();
-          const links = related.split(/[,;，；\s]+/).filter(Boolean);
+          const links = relUrls(related);
           const domains = new Set();
           links.forEach(link=>{
             const dom=normUrl(link);
@@ -592,7 +865,7 @@ function detectConflicts(){
   let dupGroups=0;
   for(const[key,group]of dupMap.entries()){
     if(group.length<=1) continue;
-    // 按非空字段数量降序排序，使字段最全的条目成为保留项
+    
     group.sort((a,b)=>{
       const fa = Object.keys(a.item).filter(k => String(a.item[k]).trim() !== '').length;
       const fb = Object.keys(b.item).filter(k => String(b.item[k]).trim() !== '').length;
@@ -636,6 +909,62 @@ function startAutoProcessFromSelection(){
   showAutoProcessPreview(relevantGroups);
 }
 
+
+
+
+
+function autoFieldSet(type,uidF){const s=new Set();if(type==='site')return s;if(uidF)s.add(uidF);return s;}
+
+function minUidOf(items,uidF){
+  if(!uidF)return '';
+  let bestNum=Infinity,best='';
+  for(const it of items){
+    const raw=String((it.item||it)[uidF]??'').trim();
+    if(!raw)continue;
+    const n=parseInt(raw,10);
+    if(!isNaN(n)&&n>0){if(n<bestNum){bestNum=n;best=raw;}}
+    else if(bestNum===Infinity&&(!best||raw<best))best=raw;
+  }
+  if(!best){const c=items.map(it=>String((it.item||it)[uidF]??'').trim()).filter(Boolean).sort();best=c[0]||'';}
+  return best;
+}
+
+function beginSelectEdit(sel){
+  if(!sel||sel.dataset.editing==='1')return;
+  const cur=sel.value, cell=sel.parentNode;
+  sel.dataset.editing='1';
+  sel.style.display='none';
+  const inp=document.createElement('input');
+  inp.type='text';inp.className='field-manual';inp.value=cur;
+  cell.appendChild(inp);
+  inp.focus();inp.select();
+  let finished=false;
+  const done=commit=>{
+    if(finished)return;finished=true;
+    const v=commit?inp.value:cur;
+    inp.remove();
+    sel.style.display='';
+    sel.dataset.editing='';
+    if(!commit)return;
+    let opt=[...sel.options].find(o=>o.value===v);
+    if(!opt){opt=document.createElement('option');opt.value=v;sel.appendChild(opt);}
+    opt.textContent=trunc(v,30);
+    sel.value=v;
+    sel.classList.add('field-edited');
+  };
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();done(true);}
+    else if(e.key==='Escape'){e.preventDefault();done(false);}
+  });
+  inp.addEventListener('blur',()=>done(true));
+}
+document.addEventListener('dblclick',e=>{
+  const cell=e.target&&e.target.closest?e.target.closest('.sel-cell'):null;
+  if(!cell)return;
+  const sel=cell.querySelector('select.field-select');
+  if(sel){e.preventDefault();beginSelectEdit(sel);}
+});
+
 function showAutoProcessPreview(groups){
   let html=`<div style="margin-bottom:12px;color:var(--t2)">共 ${groups.length} 个问题组，请确认处理方案。</div>`;
   groups.forEach(({type, group}, idx)=>{
@@ -645,23 +974,11 @@ function showAutoProcessPreview(groups){
     html+=`<div class="preview-card"><div class="preview-card-header"><span class="preview-card-title">${esc(title)}</span></div>`;
     
     const allFields = [...new Set(group.items.flatMap(it=>Object.keys(it.item)))];
-    let showFieldSelector = false;
-    if(type === 'dup'){
-      const fields = Object.keys(group.items[0].item);
-      const keyFields = [detectField(group.items.map(it=>it.item), UID_FIELDS)?.field];
-      for(const f of fields){
-        if(keyFields.includes(f)) continue;
-        const vals = new Set(group.items.map(it=>it.item[f]));
-        if(vals.size > 1){ showFieldSelector = true; break; }
-      }
-    } else {
-      const keyFields = type==='uid' ? ['uid','url'] : ['uid','url'];
-      for(const f of allFields){
-        if(keyFields.includes(f)) continue;
-        const vals = new Set(group.items.map(it=>it.item[f]));
-        if(vals.size > 1){ showFieldSelector = true; break; }
-      }
-    }
+    const uidF = detectField(group.items.map(it=>it.item), UID_FIELDS)?.field;
+    const autoFields = autoFieldSet(type, uidF);
+    
+
+    const showFieldSelector = true;
 
     html+=`<div class="preview-tbl-wrap"><table><thead><tr>`;
     html+=`<th style="width:40px">处理</th>`;
@@ -673,15 +990,14 @@ function showAutoProcessPreview(groups){
       html+=`<tr class="field-selector-row">`;
       html+=`<td></td><td></td>`; 
       allFields.forEach(f=>{
-        const keyFields = type==='uid' ? ['uid','url'] : (type==='site' ? ['uid','url'] : ['uid']);
-        if(keyFields.includes(f)){
+        if(autoFields.has(f)){
           html+=`<td><span style="color:var(--t3)">自动</span></td>`;
         } else {
           const values = [...new Set(group.items.map(it=>it.item[f]))];
-          const defaultVal = group.items[0].item[f];
-          html+=`<td><select class="field-select" data-field="${esc(f)}">`;
+          const defaultVal = (type==='site'&&f===uidF) ? minUidOf(group.items,uidF) : group.items[0].item[f];
+          html+=`<td class="sel-cell" title="单击选择，双击手填"><select class="field-select" data-idx="${idx}" data-field="${esc(f)}">`;
           values.forEach(v=>{
-            const selected = (v === defaultVal) ? 'selected' : '';
+            const selected = (String(v) === String(defaultVal)) ? 'selected' : '';
             html+=`<option value="${esc(String(v))}" ${selected}>${esc(trunc(String(v),30))}</option>`;
           });
           html+=`</select></td>`;
@@ -694,43 +1010,89 @@ function showAutoProcessPreview(groups){
     group.items.forEach((item, i)=>{
       const isKept = (type==='dup' && i===0) || (type==='uid' && i===0) || (type==='site' && i===0);
       html+=`<tr style="${isKept?'opacity:0.6;':''}">`;
-      html+=`<td>${isKept?'<span style="color:var(--t3)">-</span>':`<input type="checkbox" class="process-check" data-gi="${item.gi}" checked>`}</td>`;
+      
+
+      const defChk = (type === 'dup') ? ' checked' : '';
+      html+=`<td>${isKept?'<span style="color:var(--t3)">-</span>':`<input type="checkbox" class="process-check" data-idx="${idx}" data-gi="${item.gi}"${defChk}>`}</td>`;
       html+=`<td style="font-size:11px">${esc(getPartNameByFi(item.fi))}</td>`;
       allFields.forEach(f=>{
-        const val=item.item[f];
-        html+=`<td title="${esc(String(val??''))}">${esc(trunc(String(val??''),40))}</td>`;
+        const val=String(item.item[f]??'');
+        html+=`<td title="${esc(val)}">${esc(trunc(val,40))}</td>`;
       });
       html+=`</tr>`;
     });
     html+=`</tbody></table></div></div>`;
   });
-  html+=`<div style="margin-top:12px;font-size:12px;color:var(--t3)">说明：首行的灰色条目为系统默认保留的，勾选复选框表示将删除该项，若不勾选将会保留并在下次扫描继续报警；字段选择仅适用于存在差异的冲突组。</div>`;
+  html+=`<div style="margin-top:12px;font-size:12px;color:var(--t3)">说明：首行灰底条目为系统默认保留项。<b>勾选 = 无条件删除</b>（不再区分冲突类型）；<b>不勾选 = 保留并改号</b> —— 站点冲突（同域名不同 UID）统一成同一个号，UID 冲突（同号不同域名）默认保留项留原号、其余各领一个新号，同分区重复里没勾的也各领一个新号。每组上方那行选项框：<b>单击</b>在组内已有取值之间选，<b>双击</b>可手填任意值（回车或点到别处生效，Esc 取消；填完变高亮并作为新选项留在下拉里）。默认值为自动处理结果，各组的选项框互相独立。</div>`;
   showModal('自动处理预览',html,`<button class="btn btn-o" onclick="closeModal()">取消</button><button class="btn btn-p" id="confirmAutoProcess">✅ 确认执行</button>`);
   
   document.getElementById('confirmAutoProcess').onclick=()=>{
-    const checkedGis = new Set(Array.from(document.querySelectorAll('.process-check:checked')).map(cb=>Number(cb.dataset.gi)));
+    const checkedByGroup = {};
+    document.querySelectorAll('.process-check:checked').forEach(cb=>{
+      const k=cb.dataset.idx;
+      (checkedByGroup[k]=checkedByGroup[k]||new Set()).add(Number(cb.dataset.gi));
+    });
     const fieldChoices = {};
     document.querySelectorAll('.field-select').forEach(sel=>{
-      fieldChoices[sel.dataset.field] = sel.value;
+      const k=sel.dataset.idx;
+      (fieldChoices[k]=fieldChoices[k]||{})[sel.dataset.field]=sel.value;
     });
-    executeAutoProcess(groups, checkedGis, fieldChoices);
+    executeAutoProcess(groups, checkedByGroup, fieldChoices);
     closeModal();
     S.selection.clear();
     updateBatchBar();
   };
 }
 
-function executeAutoProcess(groups, checkedGis, fieldChoices = {}){
+let LAST_UID_CHANGES = [];
+function executeAutoProcess(groups, checkedByGroup = {}, fieldChoices = {}){
   const snapshot = JSON.parse(JSON.stringify(S.files));
-  let totalUidUnify = 0, totalUidReassign = 0, totalDupDelete = 0, totalFieldUpdate = 0;
+  LAST_UID_CHANGES = [];
+  let totalUidUnify = 0, totalUidReassign = 0, totalCheckedDelete = 0, totalFieldUpdate = 0;
   const uidField = detectField(S.files.flatMap(f => f.data), UID_FIELDS)?.field;
+  const NO_CHECKED = new Set();
+  
 
-  groups.forEach(({type, group}) => {
+
+  const DEL_OBJS = new Set();
+  
+
+  function setUid(it, val){
+    const f=S.files[it.fi];
+    if(!f||!f.data[it.ii])return false;
+    const oldUid=String(f.data[it.ii][uidField]??'').trim();
+    if(oldUid===val)return false;
+    LAST_UID_CHANGES.push({old:oldUid,now:val,name:String(it.item.name||''),url:String(it.item.url||'')});
+    f.data[it.ii][uidField]=val;
+    return true;
+  }
+  function reassignUids(list, fixedUid){
+    if(!list||!list.length)return 0;
+    if(fixedUid){let n=0;list.forEach(it=>{if(setUid(it,fixedUid))n++;});return n;}
+    const used=new Set();
+    S.files.forEach(f=>f.data.forEach(x=>{if(x[uidField]!==undefined)used.add(String(x[uidField]).trim());}));
+    let num=1,n=0;
+    list.forEach(it=>{
+      while(used.has(String(num).padStart(4,'0')))num++;
+      const s=String(num).padStart(4,'0');
+      if(setUid(it,s))n++;
+      used.add(s);num++;
+    });
+    return n;
+  }
+
+  groups.forEach(({type, group}, idx) => {
+    const fc = fieldChoices[idx] || {};
+    const checkedGis = checkedByGroup[idx] || NO_CHECKED;
+    
+    const toDel = group.items.filter(it => checkedGis.has(it.gi));
+    toDel.forEach(it=>{const f=S.files[it.fi];if(f&&f.data[it.ii])DEL_OBJS.add(f.data[it.ii]);});
+    totalCheckedDelete += toDel.length;
+
     if (type === 'dup') {
       const kept = group.items[0];
-      const toDelete = group.items.filter(it => !it.isKept && checkedGis.has(it.gi));
-      if (Object.keys(fieldChoices).length > 0) {
-        Object.entries(fieldChoices).forEach(([field, value]) => {
+      if (Object.keys(fc).length > 0) {
+        Object.entries(fc).forEach(([field, value]) => {
           if (field !== uidField) {
             const fi = kept.fi, ii = kept.ii;
             if (S.files[fi] && S.files[fi].data[ii]) S.files[fi].data[ii][field] = value;
@@ -738,71 +1100,48 @@ function executeAutoProcess(groups, checkedGis, fieldChoices = {}){
         });
         totalFieldUpdate++;
       }
-      const deleteSet = new Set(toDelete.map(it => it.gi));
-      S.files.forEach(f => { f.data = f.data.filter((_, ii) => !deleteSet.has(getGI(f, ii))); });
-      totalDupDelete += toDelete.length;
+      
+      totalUidReassign += reassignUids(group.items.filter(it=>!it.isKept&&!checkedGis.has(it.gi)), null);
     } else {
-      const keyFields = type === 'uid' ? [uidField, 'url'] : [uidField, 'url'];
-      const updateFields = Object.keys(fieldChoices).filter(f => !keyFields.includes(f));
+      const autoFields = autoFieldSet(type, uidField);
+      
+
+      const updateFields = Object.keys(fc).filter(f => !autoFields.has(f) && f !== uidField);
 
       group.items.forEach(item => {
+        if (checkedGis.has(item.gi)) return;   
         const fi = item.fi, ii = item.ii;
         if (!S.files[fi] || !S.files[fi].data[ii]) return;
         updateFields.forEach(field => {
-          S.files[fi].data[ii][field] = fieldChoices[field];
+          S.files[fi].data[ii][field] = fc[field];
         });
         totalFieldUpdate++;
       });
 
       if (type === 'site') {
-        let minUidNum = Infinity;
-        let minUidStr = '';
-        group.items.forEach(it => {
-          const num = parseInt(it.item[uidField]) || 0;
-          if (num > 0 && num < minUidNum) {
-            minUidNum = num;
-            minUidStr = String(it.item[uidField]).trim();
-          }
-        });
-        const toChange = group.items.filter(it => !it.isKept && checkedGis.has(it.gi));
-        toChange.forEach(it => {
-          const fi = it.fi, ii = it.ii;
-          if (S.files[fi] && S.files[fi].data[ii]) {
-            S.files[fi].data[ii][uidField] = minUidStr;
-          }
-        });
-        totalUidUnify += toChange.length;
-      } else if (type === 'uid') {
-        const toReassign = group.items.filter(it => !it.isKept && checkedGis.has(it.gi));
-        if (toReassign.length > 0) {
-          const usedUids = new Set();
-          S.files.forEach(f => f.data.forEach(item => {
-            if (item[uidField] !== undefined) usedUids.add(String(item[uidField]).trim());
-          }));
-          let newUidNum = 1;
-          toReassign.forEach(it => {
-            while (usedUids.has(String(newUidNum).padStart(4, '0'))) {
-              newUidNum++;
-            }
-            const newUidStr = String(newUidNum).padStart(4, '0');
-            const fi = it.fi, ii = it.ii;
-            if (S.files[fi] && S.files[fi].data[ii]) {
-              S.files[fi].data[ii][uidField] = newUidStr;
-            }
-            usedUids.add(newUidStr);
-            newUidNum++;
-          });
-          totalUidReassign += toReassign.length;
+        
+        const manual = Object.prototype.hasOwnProperty.call(fc, uidField) ? String(fc[uidField]).trim() : '';
+        const targetUid = manual || minUidOf(group.items, uidField);
+        if (!targetUid) {
+          log(`⚠️ 站点冲突组 "${esc(group.domain||'')}" 找不到有效 UID，已跳过统一`,'warn');
+        } else {
+          totalUidUnify += reassignUids(group.items.filter(it => !checkedGis.has(it.gi)), targetUid);
         }
+      } else if (type === 'uid') {
+        
+        totalUidReassign += reassignUids(group.items.filter(it => !it.isKept && !checkedGis.has(it.gi)), null);
       }
     }
   });
 
+  if(DEL_OBJS.size){
+    S.files.forEach(f => { f.data = f.data.filter(it => !DEL_OBJS.has(it)); });
+  }
   rebuildOffsets();
   detectConflicts();
   refreshUI();
   saveState();
-  const desc = `自动处理: 字段更新${totalFieldUpdate}条, UID统一${totalUidUnify}条, UID重分配${totalUidReassign}条, 删除重复${totalDupDelete}条`;
+  const desc = `自动处理: 字段更新${totalFieldUpdate}条, UID统一${totalUidUnify}条, UID重分配${totalUidReassign}条, 勾选删除${totalCheckedDelete}条`;
   addHistory(desc, snapshot);
   toast(`✅ ${esc(desc)}`, 'ok', 5000, () => undoLast(snapshot));
 }
@@ -855,12 +1194,42 @@ function batchDelete(){
   toast(`✅ ${esc(desc)}`,'ok',5000,()=>undoLast(snapshot));
 }
 
+
+function batchAddWhitelist(){
+  if(!S.selection.size){toast('还没勾选任何条目','wn');return;}
+  const rows=[];
+  S.files.forEach((f,fi)=>f.data.forEach((item,ii)=>{if(S.selection.has(getGI(f,ii)))rows.push(item);}));
+  const uids=[];const noUid=[];
+  rows.forEach(it=>{
+    const u=String(it.uid||'').trim();
+    if(!u){noUid.push(String(it.name||'(无名)'));return;}
+    if(!uids.includes(u))uids.push(u);
+  });
+  if(!uids.length){toast('选中条目都没有 UID','wn');return;}
+  const fresh=uids.filter(u=>!S.uidWhitelist.includes(u));
+  if(!fresh.length){toast(`这 ${uids.length} 个 UID 已经在白名单里了`,'wn');return;}
+  const body=`<div style="line-height:1.9;font-size:13px">
+    <div>选中 <b>${rows.length}</b> 条，解析出 <b>${uids.length}</b> 个 UID，其中 <b style="color:var(--ac)">${fresh.length}</b> 个是新加入的：</div>
+    <div style="margin:10px 0;display:flex;flex-wrap:wrap;gap:6px">${fresh.map(u=>`<span class="uid-chip">${esc(u)}</span>`).join('')}</div>
+    ${noUid.length?`<div style="color:var(--wn)">另有 ${noUid.length} 条没有 UID，已跳过。</div>`:''}
+    <div style="color:var(--t3);font-size:12px">加入后这些条目（按 UID 识别）不参与 UID 冲突 / 站点冲突 / 重复检测，需要重新扫描才会生效。</div>
+  </div>`;
+  showModal('🛡 加入白名单',body,`<button class="btn btn-o" onclick="closeModal()">取消</button><button class="btn btn-p" id="bawlOk">确认加入</button>`);
+  document.getElementById('bawlOk').onclick=()=>{
+    closeModal();
+    fresh.forEach(u=>{if(!S.uidWhitelist.includes(u))S.uidWhitelist.push(u);});
+    saveState();detectConflicts();refreshUI();
+    log(`🛡 批量加入白名单 ${fresh.length} 个 UID: ${fresh.join(', ')}`,'ok');
+    toast(`✅ 已加入 ${fresh.length} 个 UID 到白名单`,'ok');
+  };
+}
+
 function refreshUI(){renderPartitions();renderFileBar();detectAllFields();renderTable();updateStats();updateDropZone();}
 function updateDropZone(){const dz=document.getElementById('dropZone');if(S.files.length>0)dz.classList.add('compact');else dz.classList.remove('compact');}
 function renderPartitions(){
   const el=document.getElementById('partitionList');
   const allCnt=S.files.reduce((s,f)=>s+f.data.length,0);
-  let h=`<div class="p-item ${S.activePartition==='all'?'active':''}" data-part="all"><span class="p-name">📋 全部数据</span><span class="p-cnt">${allCnt}</span></div>`;
+  let h=`<div class="p-item p-all ${S.activePartition==='all'?'active':''}" data-part="all"><span class="p-name">全部数据</span><span class="p-cnt">${allCnt}</span></div>`;
   S.partitions.forEach(p=>{
     const cnt=S.files.filter(f=>f.partitionId===p.id).reduce((s,f)=>s+f.data.length,0);
     if(cnt===0&&!S.files.some(f=>f.partitionId===p.id))return;
@@ -921,27 +1290,75 @@ function getFD(){
   if(S.sortField){rows.sort((a,b)=>{const va=a.item[S.sortField]??'',vb=b.item[S.sortField]??'';const c=typeof va==='number'&&typeof vb==='number'?va-vb:String(va).localeCompare(String(vb),'zh');return S.sortDir==='asc'?c:-c;});}
   return rows;
 }
+
+
+
+
+
+function giToFiIi(gi){
+  for(let i=0;i<S.files.length;i++){
+    const f=S.files[i];const off=S.fileOffsets.get(f)??0;
+    if(gi>=off&&gi<off+f.data.length)return{fi:i,ii:gi-off};
+  }
+  return null;
+}
+function updateLegendCur(){
+  const el=document.getElementById('legendCur');
+  const m=(S.selGi==null)?null:giToFiIi(S.selGi);
+  const it=m?S.files[m.fi].data[m.ii]:null;
+  const on=!!it;
+  if(el){el.textContent=on?('当前行：'+trunc(it.name||'(未命名)',18)):'未选中条目（单击表格中的一行）';el.classList.toggle('has',on);}
+  ['btnEditRow','btnPvRow','btnDelRow'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=!on;});
+}
+function paintSel(){
+  const tr=(S.selGi==null)?null:document.querySelector('#tableContainer tbody tr[data-gi="'+S.selGi+'"]');
+  document.querySelectorAll('#tableContainer tbody tr.row-sel').forEach(x=>x.classList.remove('row-sel'));
+  if(tr)tr.classList.add('row-sel');
+  updateLegendCur();
+}
+function setSelRow(gi){if(S.selGi===gi)return;S.selGi=gi;paintSel();}
+function actOnSel(kind){
+  if(S.selGi==null){toast('先单击表格中要操作的那一行','wn');return;}
+  const m=giToFiIi(S.selGi);
+  if(!m){toast('那一行已经不在当前视图里了','wn');S.selGi=null;paintSel();return;}
+  if(kind==='edit')openEd(m.fi,m.ii);
+  else if(kind==='pv')previewDetail(m.fi,m.ii);
+  
+  else delItem(m.fi,m.ii).then(()=>{S.selGi=null;paintSel();});
+}
+
 function renderTable(){
   const ct=document.getElementById('tableContainer');const all=getFD();
-  if(!all.length){ct.innerHTML=S.files.length===0?'<div class="empty"><div class="ei">📋</div><div>暂无数据，请加载数据文件</div></div>':'<div class="no-res">🔍 没有匹配的数据</div>';document.getElementById('pagination').style.display='none';document.getElementById('conflictLegend').style.display='none';return;}
-  const hc=all.some(r=>S.conflicts.uid.has(r.gi)||S.conflicts.site.has(r.gi)||S.duplicates.has(r.gi)||S.validationErrors.has(r.gi));
-  document.getElementById('conflictLegend').style.display=hc?'flex':'none';
+  
+  document.getElementById('conflictLegend').style.display='flex';
+  if(!all.length){ct.innerHTML=S.files.length===0?'<div class="empty"><div class="ei">📋</div><div>暂无数据，请加载数据文件</div></div>':'<div class="no-res">🔍 没有匹配的数据</div>';document.getElementById('pagination').style.display='none';S.selGi=null;paintSel();return;}
   const tp=Math.ceil(all.length/S.pageSize);if(S.page>tp)S.page=tp;if(S.page<1)S.page=1;const si=(S.page-1)*S.pageSize,pr=all.slice(si,si+S.pageSize);
   const uf=detectField(all.map(r=>r.item),UID_FIELDS);const sf=detectField(all.map(r=>r.item),URL_FIELDS);const nf=detectField(all.map(r=>r.item),NAME_FIELDS);
   const cols=[...new Set([nf?nf.field:null,uf?uf.field:null,sf?sf.field:null,...S.allFields].filter(Boolean))].slice(0,10);
   const allPageSelected=pr.length>0&&pr.every(r=>S.selection.has(r.gi));
-  let h=`<table><thead><tr><th style="width:40px"><input type="checkbox" ${allPageSelected?'checked':''} onclick="toggleSelectAll()" title="全选/取消全选当前页"></th><th style="width:40px">#</th><th style="width:100px">来源</th>`;
-  cols.forEach(c=>{const sc=S.sortField===c?(S.sortDir==='asc'?'sa':'sd'):'';h+=`<th class="${sc}" data-sort="${esc(c)}">${esc(c)}</th>`;});
-  h+='<th style="width:80px">操作</th></tr></thead><tbody>';
+  const ccls=c=>{
+    const lc=String(c).toLowerCase();
+    if(uf&&c===uf.field)return 'c-uid';
+    if(sf&&c===sf.field)return 'c-url';
+    if(nf&&c===nf.field)return 'c-name';
+    if(lc==='related'||lc==='relate'||lc==='relateds'||lc==='links'||lc==='相关')return 'c-rel';
+    return '';
+  };
+  let h=`<table><colgroup><col class="c-chk"><col class="c-idx"><col class="c-src">`;
+  cols.forEach(c=>{h+=`<col class="${ccls(c)}">`;});
+  h+=`</colgroup><thead><tr><th class="c-chk"><input type="checkbox" ${allPageSelected?'checked':''} onclick="toggleSelectAll()" title="全选/取消全选当前页"></th><th class="c-idx">#</th><th class="c-src">来源</th>`;
+  cols.forEach(c=>{const sc=S.sortField===c?(S.sortDir==='asc'?'sa':'sd'):'';h+=`<th class="${ccls(c)} ${sc}" data-sort="${esc(c)}">${esc(c)}</th>`;});
+  h+='</tr></thead><tbody>';
   pr.forEach((r,di)=>{
     const iuc=S.conflicts.uid.has(r.gi),isc=S.conflicts.site.has(r.gi),idup=S.duplicates.has(r.gi),ival=S.validationErrors.has(r.gi);
     const isSel=S.selection.has(r.gi);
     let rc='';if(iuc)rc+=' uc';if(isc)rc+=' sc';if(idup)rc+=' dup';if(ival)rc+=' val-err';
-    h+=`<tr class="${rc.trim()}"><td><input type="checkbox" ${isSel?'checked':''} onclick="event.stopPropagation();toggleSelect(${r.gi})"></td><td style="color:var(--t3)">${si+di+1}</td><td style="font-size:11px;color:var(--t3)">${esc(trunc(r.fn,15))}</td>`;
-    cols.forEach(c=>{const v=r.item[c],cc=(uf&&c===uf.field&&iuc)?'uid-c':(sf&&c===sf.field&&isc)?'site-c':'';let dv='';if(v!=null){const sv=String(v);dv=(sf&&c===sf.field&&(sv.startsWith('http://')||sv.startsWith('https://')))?`<a href="${esc(sv)}" target="_blank" rel="noopener">${esc(trunc(sv,45))}</a>`:esc(trunc(sv,50));}h+=`<td class="${cc}" title="${esc(String(v??''))}">${dv}</td>`;});
-    h+=`<td><div class="cell-act"><button class="ce-btn" data-edit="${r.fi},${r.ii}" title="编辑条目">✏️</button><button class="cd-btn" data-del="${r.fi},${r.ii}" title="删除条目">🗑️</button></div></td></tr>`;
+    
+    h+=`<tr class="${rc.trim()}" data-gi="${r.gi}"><td class="c-chk"><input type="checkbox" ${isSel?'checked':''} onclick="event.stopPropagation();toggleSelect(${r.gi})"></td><td class="c-idx">${si+di+1}</td><td class="c-src" title="${esc(r.fn)}">${esc(trunc(r.fn,15))}</td>`;
+    cols.forEach(c=>{const v=r.item[c],hc=(uf&&c===uf.field&&iuc)?'uid-c':(sf&&c===sf.field&&isc)?'site-c':'',cc=(ccls(c)+' '+hc).trim();let dv='';if(v!=null){const sv=String(v);dv=esc(trunc(sv,50));}h+=`<td class="${cc}" title="${esc(String(v??''))}">${dv}</td>`;});
+    h+=`</tr>`;
   });
-  h+='</tbody></table>';ct.innerHTML=h;renderPg(all.length,tp);
+  h+='</tbody></table>';ct.innerHTML=h;renderPg(all.length,tp);paintSel();
 }
 function renderPg(total,tp){const pg=document.getElementById('pagination');if(tp<=1){pg.style.display='none';return;}pg.style.display='flex';let h=`<button ${S.page<=1?'disabled':''} data-pg="1" title="首页">«</button><button ${S.page<=1?'disabled':''} data-pg="${S.page-1}" title="上一页">‹</button>`;const mv=7;let st=Math.max(1,S.page-Math.floor(mv/2)),en=Math.min(tp,st+mv-1);if(en-st<mv-1)st=Math.max(1,en-mv+1);if(st>1){h+=`<button data-pg="1">1</button>`;if(st>2)h+=`<span class="pi">...</span>`;}for(let i=st;i<=en;i++)h+=`<button class="${i===S.page?'pa':''}" data-pg="${i}">${i}</button>`;if(en<tp){if(en<tp-1)h+=`<span class="pi">...</span>`;h+=`<button data-pg="${tp}">${tp}</button>`;}h+=`<button ${S.page>=tp?'disabled':''} data-pg="${S.page+1}" title="下一页">›</button><button ${S.page>=tp?'disabled':''} data-pg="${tp}" title="末页">»</button><span class="pi">${total}条</span>`;pg.innerHTML=h;}
 function updateStats(){
@@ -953,7 +1370,12 @@ function updateStats(){
   const siteC = [...S.conflicts.site].filter(gi=>visibleGis.has(gi)).length;
   const dupC = [...S.duplicates].filter(gi=>visibleGis.has(gi)).length;
   const valC = [...S.validationErrors].filter(gi=>visibleGis.has(gi)).length;
-  document.getElementById('statsTotal').textContent=`总计: ${t}`;
+  const uidF=detectField(visibleFiles.flatMap(f=>f.data),UID_FIELDS)?.field;
+  const uidSet=new Set();
+  if(uidF)visibleFiles.forEach(f=>f.data.forEach(it=>{const u=String(it[uidF]??'').trim();if(u)uidSet.add(u);}));
+  const stEl=document.getElementById('statsTotal');
+  stEl.textContent=`UID: ${uidSet.size}`;
+  stEl.title=`当前视图共 ${t} 条数据，其中有 UID 的 ${uidSet.size} 个（已去重）`;
   document.getElementById('statsConflicts').textContent=`冲突: ${uidC+siteC}`;
   document.getElementById('statsValidation').textContent=`违规: ${valC}`;
 }
@@ -965,43 +1387,144 @@ async function processFiles(fileList){
     try{
       const text=await readText(file);let data;
       try{data=JSON.parse(text);}catch(pe){toast(`❌ ${esc(file.name)} 不是有效JSON`,'error');continue;}
-      let items;
-      if(Array.isArray(data)){items=data;}
-      else if(typeof data==='object'){const ak=Object.keys(data).find(k=>Array.isArray(data[k])&&data[k].length>0);items=ak?data[ak]:[data];}
-      else{toast(`❌ ${esc(file.name)} 不支持的类型`,'error');continue;}
-      if(!items.length){toast(`⚠️ ${esc(file.name)} 数据为空`,'warn');continue;}
       const normName=file.name.replace(/\.[^.]+$/,'').trim();
-      const existIdx=S.files.findIndex(f=>f.name===normName);
-      const mr=matchFileToPartition(file.name);
-      if(existIdx>=0){
-        const ef=S.files[existIdx];const ep=S.partitions.find(p=>p.id===ef.partitionId);const partName=ep?ep.name:mr.partition;
-        const action=await showConfirm(`文件"${esc(normName)}"已存在`,'选择操作：',[{text:'🔄 替换',value:'replace'},{text:'➕ 合并',value:'merge'},{text:'取消',value:'cancel'}]);
-        if(action==='cancel')continue;
-        if(action==='replace'){ef.data=items;ef.lastModified=Date.now();toast(`✅ ${esc(normName)} 已替换`,'ok');}
-        else{ef.data=[...ef.data,...items];ef.lastModified=Date.now();toast(`✅ ${esc(normName)} 已合并`,'ok');}
-      }else{
-        let partName=mr.partition;
-        if(!partName){partName=await showNewPartModal(normName);if(!partName)continue;}
-        let part=S.partitions.find(p=>p.name===partName);
-        if(!part){part={name:partName,id:gid()};S.partitions.push(part);}
-        S.files.push({name:normName,partitionId:part.id,data:items,lastModified:Date.now()});
-        toast(`✅ ${esc(normName)} → ${esc(partName)}`,'ok');
+      
+      if(data&&typeof data==='object'&&!Array.isArray(data)&&Array.isArray(data.files)){await importBundle(data,normName);continue;}
+      if(Array.isArray(data)){await importSingle(normName,data);}
+      else if(data&&typeof data==='object'){
+        
+        const entries=entriesOfData(data);
+        if(!entries.length){toast(`❌ ${esc(file.name)} 对象里没有数组字段`,'error');continue;}
+        const how=await askReplaceMode(entries);
+        if(!how||!how.entries.length)continue;
+        if(how.mode==='replace')await replacePartitions(how.entries);
+        else await mergeEntries(how.entries);
       }
+      else{toast(`❌ ${esc(file.name)} 不支持的类型`,'error');}
     }catch(e){toast(`❌ ${esc(file.name)}: ${esc(e.message)}`,'error');}
   }
   rebuildOffsets();await saveState();detectConflicts();refreshUI();
+}
+
+
+
+
+
+
+function entriesOfData(data){
+  return Object.keys(data).filter(k=>Array.isArray(data[k]))
+    .map(k=>({key:k,partName:keyToPart(k)||k,items:data[k]}));
+}
+function countOfPart(partName){
+  const p=S.partitions.find(x=>x.name===partName);
+  if(!p)return 0;
+  return S.files.filter(f=>f.partitionId===p.id).reduce((s,f)=>s+f.data.length,0);
+}
+async function askReplaceMode(entries){
+  if(!entries.length)return null;
+  if(!S.files.length)return {mode:'replace',entries:entries};       
+  const total=entries.reduce((s,e)=>s+e.items.length,0);
+  const act=await showConfirm('导入数据：选择方式',
+    `文件里有 ${entries.length} 个分类 / ${total} 条；当前库有 ${S.files.reduce((s,f)=>s+f.data.length,0)} 条。`,
+    [{text:'🔄 一键替换',value:'replace',primary:true},
+     {text:'☑️ 勾选分区替换',value:'pick'},
+     {text:'➕ 合并（只补新的，不删）',value:'merge'},
+     {text:'取消',value:'cancel'}]);
+  if(act==='cancel')return null;
+  if(act==='replace')return {mode:'replace',entries:entries};
+  if(act==='pick'){
+    const picked=await showPickPartitions(entries);
+    return (picked&&picked.length)?{mode:'replace',entries:picked}:null;
+  }
+  return {mode:'merge',entries:entries};
+}
+let __ppResolve=null;
+let __ppEntries=[];   // ⚠️ 内联 onclick 只能看到全局，entries 必须先挂到这里再渲染按钮
+function showPickPartitions(entries){
+  return new Promise(resolve=>{
+    __ppResolve=resolve;
+    __ppEntries=entries;
+    const rows=entries.map((e,i)=>{
+      const ex=countOfPart(e.partName);
+      return `<label class="pp-row"><input type="checkbox" class="pp-chk" value="${i}" checked>`
+        +`<span class="pp-name">${esc(e.partName)}</span><span class="pp-key">key: ${esc(e.key)}</span>`
+        +`<span class="pp-n">导入 ${e.items.length} 条${ex?`　现有 ${ex} 条`:'　（库里还没有）'}</span></label>`;
+    }).join('');
+    const body=`<div class="pp-wrap">${rows}</div>`
+      +`<div style="display:flex;gap:8px"><button class="btn btn-o btn-sm" onclick="document.querySelectorAll('.pp-chk').forEach(c=>c.checked=true)">全选</button>`
+      +`<button class="btn btn-o btn-sm" onclick="document.querySelectorAll('.pp-chk').forEach(c=>c.checked=false)">全不选</button></div>`
+      +`<div class="pp-tip">只替换勾选的分区；没勾的分区保持原样，一条都不会动。</div>`;
+    showModal('☑️ 勾选要替换的分区', body,
+      `<button class="btn btn-o" onclick="closeModal();if(__ppResolve){__ppResolve(null);__ppResolve=null;}">取消</button>`
+      +`<button class="btn btn-p" onclick="var a=[];document.querySelectorAll('.pp-chk:checked').forEach(function(c){a.push(+c.value);});closeModal();if(__ppResolve){__ppResolve(a.map(function(i){return __ppEntries[i];}));__ppResolve=null;}">替换选中的分区</button>`);
+  });
+}
+async function replacePartitions(entries){
+  const snap=JSON.parse(JSON.stringify(S.files));
+  let oldCount=0,newCount=0;
+  entries.forEach(e=>{
+    let part=S.partitions.find(p=>p.name===e.partName);
+    if(!part){part={name:e.partName,id:gid()};S.partitions.push(part);}
+    oldCount+=S.files.filter(f=>f.partitionId===part.id).reduce((s,f)=>s+f.data.length,0);
+    S.files=S.files.filter(f=>f.partitionId!==part.id);
+    S.files.push({name:e.key,partitionId:part.id,data:e.items,lastModified:Date.now()});
+    newCount+=e.items.length;
+  });
+  rebuildOffsets();await saveState();detectConflicts();refreshUI();
+  addHistory(`替换 ${entries.length} 个分区（${newCount} 条）`,snap);
+  log('🔄 分区替换完成','ok',`覆盖掉 ${oldCount} 条\n导入 ${newCount} 条\n涉及分区: ${entries.map(e=>e.partName).join('、')}`);
+  toast(`✅ 已替换 ${entries.length} 个分区（原 ${oldCount} 条 → 现 ${newCount} 条）`,'ok');
+}
+async function mergeEntries(entries){
+  const snap=JSON.parse(JSON.stringify(S.files));
+  let added=0;
+  entries.forEach(e=>{
+    let part=S.partitions.find(p=>p.name===e.partName);
+    if(!part){part={name:e.partName,id:gid()};S.partitions.push(part);}
+    const ex=S.files.find(f=>f.name===e.key&&f.partitionId===part.id);
+    if(ex){ex.data=[...ex.data,...e.items];ex.lastModified=Date.now();}
+    else S.files.push({name:e.key,partitionId:part.id,data:e.items,lastModified:Date.now()});
+    added+=e.items.length;
+  });
+  rebuildOffsets();await saveState();detectConflicts();refreshUI();
+  addHistory(`合并导入 ${entries.length} 个分类（${added} 条）`,snap);
+  log('📥 合并导入完成','ok',`追加 ${added} 条（现有数据一条未删）\n涉及分区: ${entries.map(e=>e.partName).join('、')}`);
+  toast(`✅ 合并完成（追加 ${added} 条，现有数据保留）`,'ok');
+}
+async function importSingle(normName,items){
+  if(!Array.isArray(items)||!items.length){toast(`⚠️ ${esc(normName)} 数据为空`,'warn');return;}
+  const mr=matchFileToPartition(normName+'.json');
+  const entries=[{key:normName,partName:mr.partition||normName,items:items}];
+  const how=await askReplaceMode(entries);
+  if(!how||!how.entries.length)return;
+  if(how.mode==='replace')await replacePartitions(how.entries);
+  else await mergeEntries(how.entries);
 }
 
 function openEd(fi,ii){
   const item=S.files[fi].data[ii];
   S.editing={fi,ii,orig:item,item:{...item}};
   const bd=document.getElementById('editorBody');
-  const keys=new Set([...Object.keys(item),...S.allFields]);
+  /* 用数组而非 Set —— 要按 NEW_FIELD_ORDER 排序，让 community 紧跟在 related 后面。
+     条目本身没有 community 这个 key 时它是从 S.allFields 补进来的，不排会掉到最末尾。 */
+  const keys=[...new Set([...Object.keys(item),...S.allFields])];
+  keys.sort((a,b)=>{const ia=NEW_FIELD_ORDER.indexOf(a),ib=NEW_FIELD_ORDER.indexOf(b);return(ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b);});
   let h='';
   keys.forEach(k=>{
-    const v=item[k]??'';const isC=typeof v==='object'&&v!==null;const long=isC||String(v).length>80;
-    const dv=isC?JSON.stringify(v,null,2):String(v);
-    h+=`<div class="ed-field"><label>${esc(k)}${isC?' (JSON)':''}</label>${long?`<textarea data-f="${esc(k)}" data-complex="${isC}">${esc(dv)}</textarea>`:`<input type="text" data-f="${esc(k)}" value="${esc(dv)}">`}</div>`;
+    let v=item[k]??'';
+    if(k==='tag'){h+=tagFieldHtml(v);return;}
+    /* related / community 是 JSON 字段 —— 必须**按字段名**判定，不能按"当前值的类型"判定：
+       条目原本没有这个字段（值为空串）时，按类型判会退化成普通单行 input，
+       用户输入的 {"按钮名":"链接"} 会被原样存成字符串，渲染时整串 JSON 当链接显示出来。
+       isJSONF 的字段再套一层 parseMaybeJson：历史上已经存坏的字符串，打开时就修回对象并格式化，
+       省得"related 有多行、community 没有"这种不一致。 */
+    const isJSONF=(k==='related'||k==='community');
+    if(isJSONF)v=parseMaybeJson(v);
+    const isObj=(typeof v==='object'&&v!==null);
+    const isC=isJSONF||isObj;const long=isC||String(v).length>80;
+    const dv=isObj?JSON.stringify(v,null,2):String(v);
+    const hint=(k==='related'||k==='community')?`<div style="font-size:11px;color:var(--t3);margin-top:3px">格式：{"按钮名":"链接"}，如 {"发布页":"https://x.com","备用域名":"https://y.com"}；链接不是 http 开头时，详情页会做成「点击复制」按钮（如QQ群号）</div>`:'';
+    h+=`<div class="ed-field"><label>${esc(k)}${isC?' (JSON)':''}</label>${long?`<textarea data-f="${esc(k)}" data-complex="${isC}">${esc(dv)}</textarea>`:`<input type="text" data-f="${esc(k)}" value="${esc(dv)}">`}${hint}</div>`;
   });
   if(S.partitions.length>1){
     const currentPart=S.partitions.find(p=>p.id===S.files[fi].partitionId);
@@ -1010,6 +1533,7 @@ function openEd(fi,ii){
   }
   h+=`<div class="ed-field" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bd)"><label>➕ 添加新字段</label><div style="display:flex;gap:8px"><input type="text" id="nfN" placeholder="字段名" style="flex:1"><input type="text" id="nfV" placeholder="值" style="flex:1"><button class="btn btn-o btn-sm" onclick="addEF()" title="添加字段">添加</button></div></div>`;
   bd.innerHTML=h;
+  paintTagField();
   document.getElementById('editorTitle').textContent='✏️ 编辑数据';
   document.getElementById('editorPanel').classList.add('open');
   document.getElementById('editorBackdrop').classList.add('show');
@@ -1031,7 +1555,9 @@ async function moveItemToPartition(fi,ii){
 function addEF(){const n=document.getElementById('nfN').value.trim(),v=document.getElementById('nfV').value.trim();if(!n){toast('请输入字段名','wn');return;}const bd=document.getElementById('editorBody'),d=document.createElement('div');d.className='ed-field';d.innerHTML=`<label>${esc(n)}</label><input type="text" data-f="${esc(n)}" value="${esc(v)}">`;bd.insertBefore(d,bd.querySelector('.ed-field:last-child'));document.getElementById('nfN').value='';document.getElementById('nfV').value='';toast(`已添加"${esc(n)}"`,'ok');}
 function closeEditor(){document.getElementById('editorPanel').classList.remove('open');document.getElementById('editorBackdrop').classList.remove('show');S.editing=null;}
 async function saveEditor(){
-  if(!S.editing)return;const{fi,ii,orig}=S.editing;const snapshot=JSON.parse(JSON.stringify(S.files));
+  if(!S.editing)return;
+  if(S.editing.create)return saveNewItem();      
+  const{fi,ii,orig}=S.editing;const snapshot=JSON.parse(JSON.stringify(S.files));
   const ni={};const inputs=document.querySelectorAll('#editorBody [data-f]');
   for(const el of inputs){const k=el.getAttribute('data-f');const v=el.value;const isC=el.getAttribute('data-complex')==='true';if(isC){try{ni[k]=JSON.parse(v);}catch{ni[k]=v;}}else if(v===''){ni[k]='';}else if(typeof orig[k]==='number'&&v.trim()!==''&&!isNaN(v)){ni[k]=Number(v);}else if(v==='true'){ni[k]=true;}else if(v==='false'){ni[k]=false;}else{ni[k]=v;}}
   S.files[fi].data[ii]=ni;S.files[fi].lastModified=Date.now();
@@ -1039,54 +1565,350 @@ async function saveEditor(){
   addHistory(`编辑条目 ${S.files[fi].name}[${ii}]`,snapshot);toast('✅ 已保存','ok');
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+function dbTagList(){
+  const m=new Map();
+  S.files.forEach(f=>f.data.forEach(it=>{
+    String(it.tag||'').split(/[|｜]/).map(t=>t.trim()).filter(Boolean).forEach(t=>{
+      const k=t.toLowerCase();const hit=m.get(k);
+      if(hit)hit.n++;else m.set(k,{tag:t,n:1});
+    });
+  }));
+  return [...m.values()].sort((a,b)=>b.n-a.n||a.tag.localeCompare(b.tag,'zh'));
+}
+function tagArray(){
+  const el=document.querySelector('#editorBody input[data-f="tag"]');
+  return el?String(el.value||'').split(/[|｜]/).map(t=>t.trim()).filter(Boolean):[];
+}
+function setTagArray(arr){
+  const el=document.querySelector('#editorBody input[data-f="tag"]');
+  if(el)el.value=arr.join('|');
+  paintTagField();
+}
+function paintTagField(){
+  const box=document.getElementById('tagFieldBody');
+  if(!box)return;
+  const arr=tagArray();
+  box.innerHTML=arr.length
+    ? arr.map(t=>`<span class="tf-tag" data-tag="${esc(t)}" title="点击移除">− ${esc(t)}</span>`).join('')
+    : '<span class="tf-empty">尚未选择标签，点此从库中挑选或新建</span>';
+}
+
+function tagFieldHtml(v){
+  return `<div class="ed-field"><label>tag　（点框挑标签，点标签移除）</label>`
+    +`<div class="tag-field" onclick="if(!(event.target.closest&&event.target.closest('.tf-tag')))openTagPicker()">`
+    +`<div class="tf-body" id="tagFieldBody"></div></div>`
+    +`<input type="hidden" data-f="tag" value="${esc(v==null?'':v)}"></div>`;
+}
+
+
+function openTagPicker(){
+  const cur=new Set(tagArray().map(t=>t.toLowerCase()));
+  const list=dbTagList();
+  const rows=list.map(o=>{
+    const on=cur.has(o.tag.toLowerCase());
+    return `<button class="tp-item${on?' on':''}" onclick="togglePickTag(this.dataset.tag)" `
+      +`data-tag="${esc(o.tag)}" title="${on?'点击移除该标签':'点击加入当前条目'}">`
+      +`<span class="tp-op">${on?'−':'+'}</span><span class="tp-name">${esc(o.tag)}</span><span class="tp-n">${o.n}</span></button>`;
+  }).join('');
+  const body=`<div class="tp-wrap">${rows||'<div class="tp-none">库中尚无任何 tag</div>'}</div>`
+    +`<div class="tp-new"><label>新建 tag（如新增标签请先保存文件，在群里报备并等待审核，批准后方可提交，反之需要返工修改）</label>`
+    +`<div style="display:flex;gap:8px"><input type="text" id="tpNewInput" placeholder="输入新标签名" style="flex:1">`
+    +`<button class="btn btn-p btn-sm" onclick="createTag()">＋ 新建</button></div></div>`;
+  showModal('🏷 选择标签', body, '<button class="btn btn-o" onclick="closeModal()">完成</button>');
+}
+
+function togglePickTag(tag){
+  const arr=tagArray();
+  const i=arr.findIndex(t=>t.toLowerCase()===String(tag).toLowerCase());
+  if(i>=0)arr.splice(i,1);else arr.push(tag);
+  setTagArray(arr);
+  openTagPicker();
+}
+function createTag(){
+  const el=document.getElementById('tpNewInput');
+  const v=el?String(el.value||'').trim():'';
+  if(!v){toast('请输入标签名','wn');return;}
+  const arr=tagArray();
+  if(arr.indexOf(v)<0)arr.push(v);
+  setTagArray(arr);
+  openTagPicker();
+}
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest?e.target.closest('.tf-tag'):null;
+  if(!t)return;
+  e.stopPropagation();
+  const tag=t.getAttribute('data-tag');
+  setTagArray(tagArray().filter(x=>x!==tag));
+});
+
+/* 把当前工作区拼成 data.json 的形状（分类 key → 条目数组）。
+   每条都过一遍 normalizeItem —— 与「导出数据」走同一条路，
+   所以 related/community 的分拣（谁进「相关」谁进「社群」）跟导出后完全一致。 */
+function currentDataset(){
+  const out={};
+  S.files.forEach(f=>{
+    const pn=(S.partitions.find(p=>p.id===f.partitionId)||{}).name||'未分类';
+    const key=partKey(pn);
+    (out[key]=out[key]||[]).push(...f.data.map(normalizeItem));
+  });
+  return JSON.parse(JSON.stringify(out));
+}
+function previewDetail(fi,ii){
+  const f=S.files[fi];const item=f&&f.data[ii];
+  if(!item){toast('这条读不到了','wn');return;}
+  const pn=(S.partitions.find(p=>p.id===f.partitionId)||{}).name||'未分类';
+  const key=partKey(pn);
+  const uf=detectField([item],UID_FIELDS)?.field;
+  const uid=uf?String(item[uf]??'').trim():'';
+  if(!uid){toast('这条没有 UID —— 没有 UID 的条目在站点里也没有详情页','wn',4500);return;}
+  /* ?v= 是缓存穿透：iframe 里的 detail.html 单独缓存，不跟着维护页的刷新更新，
+     不加这个可能加载到没有预览通道的旧版本。query 必须排在 # 前面。 */
+  const url='../../detail.html?v='+Date.now()+'#'+encodeURIComponent(key)+'/'+encodeURIComponent(uid);
+  const body=`<div class="pv-tip">`
+    +`<div style="margin-bottom:4px"><b>${esc(item.name||'(未命名)')}</b> · UID ${esc(uid)} · 分区 ${esc(pn)}（key: <code>${esc(key)}</code>）</div>`
+    +`<div>预览的是<b>当前工作区的数据</b>（含还没导出的改动），走的是和「导出数据」相同的规整流程 —— 与磁盘上的 <code>data.json</code> 无关。</div>`
+    +`</div><iframe class="pv-frame" id="pvFrame" src="${url}" loading="lazy"></iframe>`;
+  showModal('👁 详情页预览', body,
+    `<a class="btn btn-o" href="${url}" target="_blank" rel="noopener">在新标签打开（读磁盘 data.json）</a>`
+    +`<button class="btn btn-p" onclick="closeModal()">关闭</button>`);
+  /* iframe 里的 detail.html 就绪后，把当前数据推过去让它用内存数据渲染。
+     推两次是保险：load 事件负责正常情况，定时器兜住"已经加载完/缓存命中"的情况，
+     重复推送是幂等的。数据推达后详情页底部会出现「👁 预览模式」提示条 —— 没出现就是没推达。 */
+  const fr=document.getElementById('pvFrame');
+  if(!fr)return;
+  const push=()=>{
+    try{
+      const ds=currentDataset();
+      const n=Object.keys(ds).reduce((s,k)=>s+ds[k].length,0);
+      fr.contentWindow.postMessage({type:'heyue:preview-data',data:ds,count:n},'*');
+    }catch(e){}
+  };
+  fr.addEventListener('load',push);
+  setTimeout(push,80);
+}
+
+
+
+
+
+
+const NEW_FIELD_ORDER=['name','url','related','community','remark','tag','issue','uid','logo'];
+function filesOfPart(pid){return S.files.filter(f=>f.partitionId===pid);}
+
+function suggestUid(){
+  const items=S.files.flatMap(f=>f.data);
+  if(!items.length)return '0001';
+  const uf=detectField(items,UID_FIELDS)?.field||'uid';
+  const used=new Set();
+  items.forEach(it=>{const raw=String(it[uf]??'').trim();if(raw)used.add(raw);});
+  for(let n=1;n<=9999;n++){const s=String(n).padStart(4,'0');if(!used.has(s))return s;}
+  return '';
+}
+function openNew(){
+  if(!S.files.length){toast('请先加载数据文件','wn');return;}
+  if(!S.partitions.length){toast('当前没有可用分区','wn');return;}
+  
+
+  let def=null;
+  const m=(S.selGi==null)?null:giToFiIi(S.selGi);
+  if(m){const f=S.files[m.fi];def=f&&S.partitions.find(p=>p.id===f.partitionId);}
+  if(!def)def=S.partitions.find(p=>p.name===S.activePartition);
+  if(!def)def=S.partitions[0];
+  S.editing={create:true,partitionId:def.id};
+  renderNewPanel();
+  document.getElementById('editorPanel').classList.add('open');
+  document.getElementById('editorBackdrop').classList.add('show');
+}
+function renderNewPanel(){
+  const ed=S.editing;const pid=ed.partitionId;
+  const pn=(S.partitions.find(p=>p.id===pid)||{}).name||'未分类';
+  const files=filesOfPart(pid);
+  const sample=files.length?files[0].data:[];
+  const uidF=detectField(S.files.flatMap(f=>f.data),UID_FIELDS)?.field||'uid';
+  const keys=[...new Set([...sample.flatMap(it=>Object.keys(it)),...S.allFields])];
+  keys.sort((a,b)=>{const ia=NEW_FIELD_ORDER.indexOf(a),ib=NEW_FIELD_ORDER.indexOf(b);return(ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b);});
+  let h='';
+  h+=`<div class="ed-field" style="padding-bottom:14px;border-bottom:1px solid var(--bd);margin-bottom:16px"><label>放到哪个分区</label>`
+    +`<select id="nePart" onchange="S.editing.partitionId=this.value;renderNewPanel()">`
+    +S.partitions.map(p=>`<option value="${esc(p.id)}" ${p.id===pid?'selected':''}>${esc(p.name)}　key: ${esc(partKey(p.name))}</option>`).join('')
+    +`</select></div>`;
+  
+
+
+  keys.forEach(k=>{
+    if(k==='tag'){h+=tagFieldHtml('');return;}
+    let v='';
+    if(k===uidF)v=suggestUid();
+    else if(k==='related')v='{}';
+    const long=(k==='related'||k==='community'||String(v).length>80);
+    const hint=(k===uidF)?'　（已自动填了全局未用的最小号）':'';
+    h+=`<div class="ed-field"><label>${esc(k)}${hint}</label>`
+      +`${long?`<textarea data-f="${esc(k)}">${esc(v)}</textarea>`:`<input type="text" data-f="${esc(k)}" value="${esc(v)}">`}`
+      +`</div>`;
+  });
+  h+=`<div class="ed-field" style="margin-top:20px;padding-top:16px;border-top:1px solid var(--bd)"><label>➕ 添加新字段</label><div style="display:flex;gap:8px"><input type="text" id="nfN" placeholder="字段名" style="flex:1"><input type="text" id="nfV" placeholder="值" style="flex:1"><button class="btn btn-o btn-sm" onclick="addEF()" title="添加字段">添加</button></div></div>`;
+  document.getElementById('editorTitle').textContent='➕ 新建条目';
+  document.getElementById('editorBody').innerHTML=h;
+  paintTagField();
+}
+async function saveNewItem(){
+  const ed=S.editing;const pid=ed.partitionId;
+  const pn=(S.partitions.find(p=>p.id===pid)||{}).name||'未分类';
+  const files=filesOfPart(pid);
+  const raw={};
+  document.querySelectorAll('#editorBody [data-f]').forEach(el=>{
+    const k=el.getAttribute('data-f');const v=el.value;
+    if(v===''){raw[k]='';return;}
+    if(k==='related'||k==='community'){try{raw[k]=JSON.parse(v);}catch{raw[k]=v;}return;}
+    raw[k]=v;
+  });
+  if(!String(raw.name??'').trim()){toast('name 不能为空','wn');return;}
+  
+
+  const ni={};
+  NEW_FIELD_ORDER.forEach(k=>{
+    if(!(k in raw))return;
+    const v=raw[k];
+    if(k==='tag'&&!String(v).trim())return;
+    if(k==='community'&&(v===''||(v&&typeof v==='object'&&!Object.keys(v).length)))return;
+    ni[k]=v;
+  });
+  Object.keys(raw).forEach(k=>{if(!(k in ni)&&k!=='tag'&&k!=='community')ni[k]=raw[k];});
+  const snapshot=JSON.parse(JSON.stringify(S.files));
+  
+  let target=files[0];
+  if(!target){
+    target={name:partKey(pn),partitionId:pid,data:[],lastModified:Date.now()};
+    S.files.push(target);
+  }
+  target.data.push(ni);target.lastModified=Date.now();
+  rebuildOffsets();await saveState();detectConflicts();closeEditor();refreshUI();
+  addHistory(`新建条目 ${target.name}：${ni.name}`,snapshot);
+  log(`➕ 新建条目「${ni.name}」→ ${pn}（${target.name}，现 ${target.data.length} 条）`,'ok');
+  toast(`✅ 已新建「${ni.name}」→ ${pn}`,'ok');
+}
+
 function showWhitelistModal(){
-  let html=`<div class="fg"><label>忽略域名白名单（以下域名将被完全忽略，不参与任何检测）</label></div>`;
+  let html=`<div class="fg"><label>忽略白名单（按 UID 识别，以下条目将被完全忽略，不参与任何检测）</label></div>`;
   html+=`<div id="whitelistList" style="margin-bottom:12px">`;
-  if(S.domainWhitelist.length===0){
-    html+=`<div style="color:var(--t3);padding:8px 0">暂无白名单域名</div>`;
+  if(S.uidWhitelist.length===0){
+    html+=`<div style="color:var(--t3);padding:8px 0">暂无白名单 UID</div>`;
   } else {
-    S.domainWhitelist.forEach((domain,idx)=>{
+    S.uidWhitelist.forEach((uid,idx)=>{
+      const label=whitelistUidLabel(uid);
       html+=`<div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
-        <span style="flex:1">${esc(domain)}</span>
-        <button class="btn btn-d btn-sm" onclick="removeWhitelistDomain(${idx})">✕</button>
+        <span style="flex:1"><code>${esc(uid)}</code>${label?` <span style="color:var(--t3);font-size:12px">${esc(label)}</span>`:''}</span>
+        <button class="btn btn-d btn-sm" onclick="removeWhitelistUid(${idx})">✕</button>
       </div>`;
     });
   }
   html+=`</div>`;
   html+=`<div style="display:flex;gap:8px">
-    <input type="text" id="newWhitelistDomain" placeholder="输入域名，如 example.com" style="flex:1">
-    <button class="btn btn-p btn-sm" onclick="addWhitelistDomain()">添加</button>
+    <input type="text" id="newWhitelistUid" placeholder="输入 UID" style="flex:1">
+    <button class="btn btn-p btn-sm" onclick="addWhitelistUid()">添加</button>
   </div>`;
-  showModal('🔖 域名白名单', html, `<button class="btn btn-o" onclick="closeModal()">关闭</button>`);
+  showModal('🔖 UID 白名单', html, `<button class="btn btn-o" onclick="closeModal()">关闭</button>`);
 }
-function addWhitelistDomain(){
-  const input=document.getElementById('newWhitelistDomain');
-  const domain=input.value.trim().toLowerCase();
-  if(!domain){toast('请输入域名','wn');return;}
-  if(S.domainWhitelist.includes(domain)){toast('域名已存在','wn');return;}
-  S.domainWhitelist.push(domain);
+/* 在已加载的条目里找这个 uid 的名字，给白名单列表当副标题提示 */
+function whitelistUidLabel(uid){
+  for(const f of (S.files||[])){
+    const hit=(f.data||[]).find(it=>String(it.uid||'').trim()===uid);
+    if(hit)return String(hit.name||'').trim();
+  }
+  return '';
+}
+function addWhitelistUid(){
+  const input=document.getElementById('newWhitelistUid');
+  const uid=input.value.trim();
+  if(!uid){toast('请输入 UID','wn');return;}
+  if(S.uidWhitelist.includes(uid)){toast('该 UID 已在白名单里','wn');return;}
+  S.uidWhitelist.push(uid);
   saveState();
   showWhitelistModal();
-  toast(`已添加白名单域名: ${esc(domain)}`,'ok');
+  toast(`已添加白名单 UID: ${esc(uid)}`,'ok');
   detectConflicts();refreshUI();
 }
-function removeWhitelistDomain(idx){
-  const removed=S.domainWhitelist.splice(idx,1)[0];
+function removeWhitelistUid(idx){
+  const removed=S.uidWhitelist.splice(idx,1)[0];
   saveState();
   showWhitelistModal();
-  toast(`已移除白名单域名: ${esc(removed)}`,'ok');
+  toast(`已移除白名单 UID: ${esc(removed)}`,'ok');
   detectConflicts();refreshUI();
 }
 
+
+
+
+
+
+
+
+
 function showAutoProcessHelp(){
-  const body=`<div style="line-height:2;font-size:13px">
-    <h4 style="color:var(--ac);margin-bottom:8px">自动处理逻辑</h4>
-    <p><b>1. UID冲突（同UID不同站）</b><br>多个条目具有相同UID但域名不同，且名称相似度达到阈值（≥35%）或RELATED字段有共同链接时，系统判定它们为同一网站的不同域名，但错误地使用了相同的UID。自动处理时，保留一个站点的原UID，其余站点条目重新分配一个全局未使用的最小四位UID。</p>
-    <p style="margin-top:12px"><b>2. 站点冲突（同站不同UID）</b><br>多个条目具有相同域名但UID不同，且名称相似度达到阈值或RELATED字段有共同链接时，系统判定它们为同一实体的重复记录。自动处理时，将UID统一为组内数值最小的UID（保留四位格式）；若条目间存在其他字段差异，用户可通过字段选择合并最终条目。</p>
-    <p style="margin-top:12px"><b>3. 同分区重复</b><br>在同一分区内，相同UID的条目被视为重复。自动处理时，保留一个条目（默认为第一个），用户可通过字段选择合并其他条目的差异化字段，然后删除多余条目。</p>
-    <p style="margin-top:12px"><b>4. 选择性处理</b><br>在主表格中勾选需要处理的条目后点击“自动处理”，系统会弹出预览，仅对勾选的待处理项执行操作。所有操作支持撤销。</p>
+  const body=`<div class="kb">
+
+  <details class="kb-sec"><summary class="kb-hd">条目格式（教程）</summary><div class="kb-bd">
+    <p><code>data.json</code> 的结构是「分类 key → 条目数组」，一份条目即一个 JSON 对象：</p>
+    <pre>{
+  "name": "合月亭",
+  "url": "https://heyue-org.github.io/web/",
+  "related": { "旧址": "https://aabbcc" },
+  "community": { "QQ群": "1145141919", "TG": "114514" },
+  "remark": "站长太帅了",
+  "tag": "导航|示例1|示例2",
+  "issue": "站长是神人",
+  "uid": "0001",
+  "logo": "https://114514/logo.png/png"
+}</pre>
+    <table>
+      <tr><th>字段</th><th>含义</th><th>说明</th></tr>
+      <tr><td>name</td><td>站名</td><td>顾名思义</td></tr>
+      <tr><td>url</td><td>主站地址</td><td>http/https 开头；为空时卡片显示「—」，详情页不渲染「访问站点」按钮</td></tr>
+      <tr><td>uid</td><td>唯一编号</td><td>可取范围 0001-9999。新建条目时自动填入当前库中空闲的最小值。没有 uid 的条目无法分配详情页</td></tr>
+      <tr><td>tag</td><td>标签</td><td>新增标签请先保存文件，在群里报备并等待审核，批准后方可提交，反之需要返工修改</td></tr>
+      <tr><td>remark</td><td>介绍文本</td><td>随便写</td></tr>
+      <tr><td>issue</td><td>问题</td><td>站点出问题了写这里（例：直链暂时无法使用、停更）</td></tr>
+      <tr><td>related</td><td>相关站点</td><td>如导航页、备用域名、镜像站等</td></tr>
+      <tr><td>community</td><td>社区</td><td>如 TG、discord、QQ群、腾讯频道等</td></tr>
+      <tr><td>logo</td><td>站点图标</td><td>图片直链，没有就留空</td></tr>
+    </table>
+    <p><b>注意</b></p>
+    <p>· 原则上任何一项都可以不填，如果确实找不到就算了，但最好不要填“暂无”等。</p>
+  </div></details>
+
+  <details class="kb-sec"><summary class="kb-hd">导出/导出数据</summary><div class="kb-bd">
+    <p>1. 平台未进行联网，数据均存在本地浏览器缓存中（IndexedDB）。</p>
+    <p>2. 载入数据：将 <code>data.json</code> 拖入本页。</p>
+    <p>3. 导出数据：点击「导出数据」生成 <code>data.json</code> 并妥当保存，请在每次下工休息前进行保存，以防浏览器缓存被意外清理（虽然概率很低）。</p>
+    <p>4. 所有写入操作均记录于「操作历史」，支持逐步回滚。</p>
+    <p>5. 提交数据：将 <code>data.json</code> 数据文件发到编辑群里。</p>
+  </div></details>
+
+  <details class="kb-sec"><summary class="kb-hd">批处理-自动处理逻辑</summary><div class="kb-bd">
+    <p><b>1. UID 冲突（同号不同站）</b><br>多个条目 UID 相同但域名不同，且名称相似度 ≥35% 或 RELATED 字段存在共同链接时，判定为同一站点的不同域名误用了同一 UID。处理策略：保留其中一个站点的原 UID，其余条目各自重新分配全局未占用的最小四位 UID。</p>
+    <p><b>2. 站点冲突（同站不同号）</b><br>多个条目域名相同但 UID 不同，且名称相似度达阈值或 RELATED 存在共同链接时，判定为同一实体的重复记录。处理策略：默认将 UID 归一为组内数值最小的 UID（保留四位格式），亦可通过下拉手动指定；其余存在差异的字段（含 URL）同样提供下拉，可选定最终值。</p>
+    <p><b>3. 同分区重复</b><br>同一分区内 UID 相同的条目视为重复。处理策略：保留字段最完整的一条，可通过字段下拉合并其他条目的差异化字段，随后删除冗余条目。</p>
+  </div></details>
+
+  <details class="kb-sec"><summary class="kb-hd">批处理-操作</summary><div class="kb-bd">
+    <p>每个冲突组上方均有一行选项框，默认值为自动处理的结果。<b>单击</b>在组内既有取值之间切换；<b>双击</b>进入编辑态可手工填入任意值（回车或失焦提交，Esc 取消）。手工填入的值会高亮，并作为新选项保留在下拉中。</p>
+  </div></details>
+
   </div>`;
-  showModal('❓ 自动处理说明',body,'<button class="btn btn-p" onclick="closeModal()">我知道了</button>');
+  showModal('新人手册', body, '<button class="btn btn-p" onclick="closeModal()">我知道了</button>');
 }
 
 function selPart(n){S.activePartition=n;S.page=1;saveState();refreshUI();}
@@ -1120,25 +1942,293 @@ async function delPart(pid){
   toast(`"${esc(p.name)}"已删除`,'info',5000,()=>undoLast(snap));
 }
 
-function exportSourceData(){if(!S.files.length){toast('无数据','wn');return;}S.files.forEach(f=>dlBlob(new Blob([JSON.stringify(f.data,null,2)],{type:'application/json'}),`${f.name}.json`));toast(`已导出${S.files.length}个源文件`,'ok');}
-function exportPartitionData(){if(!S.files.length){toast('无数据','wn');return;}const pd={};S.files.forEach(f=>{const pn=(S.partitions.find(p=>p.id===f.partitionId)||{}).name||'未分类';if(!pd[pn])pd[pn]=[];pd[pn]=[...pd[pn],...f.data];});for(const[n,d]of Object.entries(pd))dlBlob(new Blob([JSON.stringify(d,null,2)],{type:'application/json'}),`partition_${n.replace(/[\/\\:*?"<>|]/g,'_')}.json`);toast(`已导出${Object.keys(pd).length}个分区`,'ok');}
-function exportAllBundle(){const b={version:3,date:new Date().toISOString(),partitions:S.partitions,files:S.files.map(f=>({name:f.name,partitionId:f.partitionId,data:f.data,lastModified:f.lastModified}))};dlBlob(new Blob([JSON.stringify(b,null,2)],{type:'application/json'}),`data_bundle_v3_${new Date().toISOString().slice(0,10)}.json`);toast('数据包已导出','ok');}
+
+
+
+function exportDataJson(selectedOnly){
+ try{
+  if(selectedOnly&&S.selection.size===0){toast('请先在表格中勾选要导出的数据','wn');return;}
+  if(!S.files||!S.files.length){toast('无数据','wn');return;}
+  const groups={};               
+  const order=[];                
+  S.files.forEach(f=>{
+    const pn=(S.partitions.find(p=>p.id===f.partitionId)||{}).name||'未分类';
+    const key=partKey(pn);
+    if(!(key in groups)){groups[key]=[];order.push(key);}
+    f.data.forEach((item,ii)=>{
+      if(selectedOnly&&!S.selection.has(getGI(f,ii)))return;
+      groups[key].push(normalizeItem(item));   
+    });
+  });
+  if(selectedOnly){
+    for(const k of [...order]){if(!groups[k].length){delete groups[k];order.splice(order.indexOf(k),1);}}
+    if(!order.length){toast('勾选的数据为空','wn');return;}
+  }
+  const out={};order.forEach(k=>out[k]=groups[k]);
+  const name=selectedOnly?`data_selected_${new Date().toISOString().slice(0,10)}.json`:'data.json';
+  dlBlob(new Blob([JSON.stringify(out,null,2)],{type:'application/json'}),name);
+  const total=order.reduce((s,k)=>s+groups[k].length,0);
+  log(`📤 导出${selectedOnly?'勾选数据':'data.json'}：${order.length} 个分类 / ${total} 条`,'ok',`分类: ${order.map(k=>`${k}(${groups[k].length})`).join(', ')}`);
+  toast(`✅ 已导出 ${order.length} 个分类 / ${total} 条`,'ok');
+ }catch(err){
+  console.error('[exportDataJson]',err);
+  try{log(`❌ 导出失败: ${err&&err.message}`,'error',String((err&&err.stack)||err||''));}catch(_){}
+  toast(`❌ 导出失败: ${(err&&err.message)||err}`,'er',8000);
+ }
+}
 async function handleBundleImport(e){
   const f=e.target.files[0];e.target.value='';if(!f)return;
   try{
     const t=await readText(f),b=JSON.parse(t);
-    if(!b.partitions||!b.files){toast('无效数据包','er');return;}
-    const act=await showConfirm('导入数据包',`${b.partitions.length}个分区，${b.files.length}个文件`,[{text:'🔄 替换',value:'replace'},{text:'➕ 合并',value:'merge'},{text:'取消',value:'cancel'}]);
-    if(act==='cancel')return;
+    await importBundle(b,f.name.replace(/\.[^.]+$/,'').trim());
+  }catch(err){toast('导入失败:'+err.message,'er');}
+}
+async function importBundle(b,fileName){
+  try{
+    let inParts=[],inFiles=[];
+    if(Array.isArray(b)){ 
+      inFiles=[{name:fileName,partition:matchFileToPartition(fileName+'.json').partition||'',data:b}];
+    }else if(b&&Array.isArray(b.files)){ 
+      inParts=Array.isArray(b.partitions)?b.partitions.filter(p=>p&&p.name):[];
+      inFiles=b.files.filter(x=>x&&Array.isArray(x.data));
+    }else if(b&&typeof b==='object'){ 
+      inFiles=Object.entries(b)
+        .filter(([,v])=>Array.isArray(v))
+        .map(([k,v])=>({name:k,partition:keyToPart(k)||k,data:v}));
+      if(!inFiles.length){toast('无效数据：对象里没有数组字段','error');return;}
+    }else{toast('无效数据包：未找到 files 数组','error');return;}
+    if(!inFiles.length){toast('数据包内无有效数据','error');return;}
+
+    
+
+    const inEntries=inFiles.map(f=>({key:f.name,partName:String(f.partition||'').trim()||keyToPart(f.name)||f.name,items:f.data}));
+    const how=await askReplaceMode(inEntries);
+    if(!how||!how.entries.length)return;
+    if(how.mode==='replace'&&how.entries.length<inEntries.length){await replacePartitions(how.entries);return;}
+    const act=(how.mode==='replace')?'replace':'merge';
     const snap=JSON.parse(JSON.stringify(S.files));
-    if(act==='replace'){S.partitions=b.partitions;S.files=b.files.map(f=>({...f}));}
-    else{b.partitions.forEach(p=>{if(!S.partitions.find(ep=>ep.name===p.name))S.partitions.push(p);});b.files.forEach(f=>{const ex=S.files.find(ef=>ef.name===f.name);if(ex)ex.data=[...ex.data,...f.data];else S.files.push({...f});});}
-    rebuildOffsets();await saveState();detectConflicts();refreshUI();addHistory('导入数据包',snap);toast('导入成功','ok');
+    const idMap=new Map();
+    const ensurePart=(name,oldId)=>{
+      let nm=String(name||'').trim();
+      if(!nm&&oldId){const ip=inParts.find(p=>p.id===oldId);if(ip)nm=String(ip.name||'').trim();}
+      if(!nm)nm='未分类';
+      let p=S.partitions.find(x=>x.name===nm);
+      if(!p&&oldId&&idMap.has(oldId))p=S.partitions.find(x=>x.id===idMap.get(oldId));
+      if(!p&&oldId&&act==='replace')p=S.partitions.find(x=>x.id===oldId);
+      if(!p){const keepId=oldId&&!S.partitions.some(x=>x.id===oldId)&&!idMap.has(oldId);p={name:nm,id:keepId?oldId:gid()};S.partitions.push(p);}
+      if(oldId)idMap.set(oldId,p.id);
+      return p;
+    };
+    if(act==='replace'){
+      S.partitions=[];S.hiddenPartitions=new Set();
+      inParts.forEach(p=>ensurePart(p.name,p.id));
+      if(Array.isArray(b.hiddenPartitions))b.hiddenPartitions.forEach(n=>{const p=S.partitions.find(x=>x.name===n);if(p)S.hiddenPartitions.add(p.id);});
+      S.files=[];S.activePartition='all';S.page=1;
+      S.uidWhitelist=readImportedWhitelist(b);
+    }else{
+      inParts.forEach(p=>ensurePart(p.name,p.id));
+      readImportedWhitelist(b).forEach(u=>{if(!S.uidWhitelist.includes(u))S.uidWhitelist.push(u);});
+    }
+    const resolvePid=(f)=>{
+      let nm=String(f.partition||'').trim();
+      let p=nm?S.partitions.find(x=>x.name===nm):null;
+      if(!p&&f.partitionId){const nid=idMap.get(f.partitionId);p=S.partitions.find(x=>x.id===(nid||f.partitionId));}
+      if(!p)p=ensurePart(nm,f.partitionId);
+      return p.id;
+    };
+    const ufName=detectField(inFiles.flatMap(x=>x.data.slice(0,20)),UID_FIELDS)?.field;
+    const sfName=detectField(inFiles.flatMap(x=>x.data.slice(0,20)),URL_FIELDS)?.field;
+    let added=0,merged=0,skipped=0,newParts=S.partitions.length;
+    inFiles.forEach(f=>{
+      const pid=resolvePid(f);
+      const fname=f.name||'未命名';
+      const ex=S.files.find(ef=>ef.name===fname&&ef.partitionId===pid);
+      if(act==='replace'||!ex){
+        S.files.push({name:fname,partitionId:pid,data:f.data,lastModified:f.lastModified||Date.now()});
+        added+=f.data.length;
+      }else{
+        const keys=new Set(ex.data.map(it=>`${ufName?String(it[ufName]??'').trim():''}|${sfName?String(it[sfName]??'').trim():''}`));
+        let cnt=0;
+        f.data.forEach(it=>{
+          const k=`${ufName?String(it[ufName]??'').trim():''}|${sfName?String(it[sfName]??'').trim():''}`;
+          if(k!=='|'&&keys.has(k)){skipped++;return;}
+          keys.add(k);ex.data.push(it);cnt++;
+        });
+        ex.lastModified=Date.now();merged+=cnt;
+      }
+    });
+    rebuildOffsets();await saveState();detectConflicts();refreshUI();
+    addHistory(`导入数据包(${act==='replace'?'替换':'合并'}) ${inFiles.length}个文件`,snap);
+    log(`📦 数据包导入完成`,'ok',`模式: ${act==='replace'?'替换':'合并'}\n新增: ${added} 条\n合并: ${merged} 条${skipped?`\n跳过重复: ${skipped} 条`:''}\n当前分区总数: ${S.partitions.length}`);
+    toast(`✅ 导入成功（新增${added}条${merged?` / 合并${merged}条`:''}）`,'ok');
   }catch(err){toast('导入失败:'+err.message,'er');}
 }
 
 function showModal(title,body,footer){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').innerHTML=body;document.getElementById('modalFooter').innerHTML=footer;document.getElementById('modalOverlay').classList.add('show');}
 function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
+function toggleMoreMenu(e){if(e)e.stopPropagation();const m=document.getElementById('moreMenu');if(m)m.classList.toggle('open');}
+document.addEventListener('click',e=>{
+  const m=document.getElementById('moreMenu');
+  if(m&&m.classList.contains('open')&&!(e.target&&e.target.closest&&e.target.closest('.more-wrap')))m.classList.remove('open');
+});
+
+function showFreeUids(){
+  const mm=document.getElementById('moreMenu');if(mm)mm.classList.remove('open');
+  const items=S.files.flatMap(f=>f.data);
+  if(!items.length){toast('当前没有数据','wn');return;}
+  const uf=detectField(items,UID_FIELDS)?.field;
+  if(!uf){toast('未识别到 UID 字段','wn');return;}
+  const used=new Set();const odd=[];let max=-1;
+  items.forEach(it=>{
+    const raw=String(it[uf]??'').trim();
+    if(!raw)return;
+    used.add(raw);
+    if(/^\d+$/.test(raw)){const n=parseInt(raw,10);if(n>max)max=n;}
+    else odd.push(raw);
+  });
+  if(max<0){toast('没有纯数字 UID，无法计算区间','wn');return;}
+  const W=Math.max(4,String(max).length);
+  const pad=n=>String(n).padStart(W,'0');
+  const free=[];
+  for(let i=0;i<=max;i++){if(!used.has(pad(i)))free.push(i);}
+  const segs=[];
+  free.forEach(n=>{const last=segs[segs.length-1];if(last&&n===last.e+1)last.e=n;else segs.push({s:n,e:n});});
+  const chips=segs.map(g=>g.s===g.e
+    ?`<span class="uid-chip">${pad(g.s)}</span>`
+    :`<span class="uid-chip">${pad(g.s)} – ${pad(g.e)}</span>`).join('');
+  const body=`<div style="line-height:2;font-size:13px">
+    <div>扫描范围：<b>${pad(0)} — ${pad(max)}</b>（共 ${max+1} 个号，基于当前已加载的全部数据）</div>
+    <div>已占用：<b>${used.size}</b> 个 UID${odd.length?`，其中 <b>${odd.length}</b> 个不是纯数字，未参与区间扫描`:''}</div>
+    <div>空出来：<b style="color:var(--ac)">${free.length}</b> 个</div>
+    <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;max-height:46vh;overflow:auto">${free.length?chips:'<span style="color:var(--t3)">这个区间内没有空号</span>'}</div>
+  </div>`;
+  showModal('🔍 空闲 UID 查询',body,'<button class="btn btn-p" onclick="closeModal()">关闭</button>');
+}
+
+function exportKickedUids(){
+  const mm=document.getElementById('moreMenu');if(mm)mm.classList.remove('open');
+  if(!LAST_UID_CHANGES.length){toast('本次还没有换掉过任何 UID','wn');return;}
+  const ts=new Date().toISOString();
+  const lines=[
+    '# 被换掉的 UID 名单',
+    '# 生成时间: '+ts,
+    '# 这些旧 UID 已不再指向对应站点，评分数据需要清空或迁移到新 UID',
+    '# 格式: 旧UID -> 新UID | 站点名 | 网址',
+    '='.repeat(64),''
+  ];
+  LAST_UID_CHANGES.forEach(c=>{lines.push(`${c.old} -> ${c.now} | ${c.name} | ${c.url}`);});
+  const olds=LAST_UID_CHANGES.map(c=>c.old);
+  lines.push('','='.repeat(64),'# 仅旧 UID（共 '+olds.length+' 个，每行一个）',olds.join('\n'));
+  dlBlob(new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}),`被换掉的UID_${ts.replace(/[:.]/g,'-')}.txt`);
+  toast(`已导出 ${olds.length} 个被换掉的 UID`,'ok');
+}
+
+
+
+
+
+
+
+
+
+
+const CROSS_REL_MAX = 2;
+function crossRelSet(item){
+  const s=new Set();
+  relUrls(String(item['related']||'')).forEach(l=>{
+    const d=normUrl(l).toLowerCase();
+    if(d&&!isPlatformDomain(d))s.add(d);
+  });
+  return s;
+}
+function crossMainDomain(item, sf){
+  const d=sf?normUrl(String(item[sf]||'').trim()).toLowerCase():'';
+  return (d&&!isPlatformDomain(d))?d:'';
+}
+function showCrossPartitionDupes(){
+  const mm=document.getElementById('moreMenu');if(mm)mm.classList.remove('open');
+  const rows=[];
+  S.files.forEach((f,fi)=>f.data.forEach((item,ii)=>rows.push({gi:getGI(f,ii),fi,ii,item,pid:f.partitionId,part:getPartNameByFi(fi)})));
+  if(rows.length<2){toast('当前数据不足两条','wn');return;}
+  const uf=detectField(rows.map(r=>r.item),UID_FIELDS)?.field;
+  const sf=detectField(rows.map(r=>r.item),URL_FIELDS)?.field;
+  const nf=detectField(rows.map(r=>r.item),NAME_FIELDS)?.field;
+  if(!nf&&!sf){toast('既没有名称字段也没有 URL 字段，无法比对','wn');return;}
+
+  const relSets=rows.map(r=>crossRelSet(r.item));
+  const relCnt=new Map();
+  relSets.forEach(s=>s.forEach(d=>relCnt.set(d,(relCnt.get(d)||0)+1)));
+  const doms=rows.map(r=>crossMainDomain(r.item,sf));
+
+  const scan=(th)=>{
+    const out=[];
+    for(let i=0;i<rows.length;i++){
+      for(let j=i+1;j<rows.length;j++){
+        if(rows[i].pid===rows[j].pid)continue;
+        const a=rows[i].item,b=rows[j].item;
+        let sim=0;
+        if(nf){
+          const na=String(a[nf]||'').trim(), nb=String(b[nf]||'').trim();
+          if(na&&nb)sim=stringSimilarity(na,nb);
+        }
+        const sameDom=(doms[i]&&doms[i]===doms[j])?doms[i]:'';
+        let rel='';
+        if(!sameDom){
+          for(const d of relSets[i]){ if(relSets[j].has(d)&&relCnt.get(d)<=CROSS_REL_MAX){rel=d;break;} }
+        }
+        if(sim<th&&!sameDom&&!rel)continue;
+        out.push({x:rows[i],y:rows[j],sim,sameDom,rel});
+      }
+    }
+    out.sort((p,q)=>{
+      if(!!p.sameDom!==!!q.sameDom)return p.sameDom?-1:1;
+      return q.sim-p.sim;
+    });
+    return out;
+  };
+
+  let logged=false;
+  const render=(th)=>{
+    const pairs=scan(th);
+    const uidOf=r=>uf?String(r.item[uf]??'').trim():'';
+    const sameUidCnt=uf?pairs.filter(p=>{const a=uidOf(p.x),b=uidOf(p.y);return a&&a===b;}).length:0;
+    const cell=r=>`<div style="min-width:0;flex:1">
+        <div style="font-size:11px;color:var(--t3)">${esc(r.part)}${uf?` · <b style="color:var(--hl-uid)">${esc(uidOf(r)||'—')}</b>`:''}</div>
+        <div style="font-size:13px">${esc(trunc(String(nf?r.item[nf]??'':''),28))}</div>
+        <div style="font-size:11px;color:var(--t2)">${esc(trunc(String(sf?r.item[sf]??'':''),40))}</div>
+      </div>`;
+    const rowHtml=p=>{
+      const ua=uidOf(p.x),ub=uidOf(p.y),same=uf&&ua&&ua===ub;
+      const why=p.sameDom?`同域名 <code>${esc(p.sameDom)}</code>`
+        :(p.rel?`共有罕见关联域名 <code>${esc(p.rel)}</code>`
+        :`名称相似度 ${(p.sim*100).toFixed(0)}%`);
+      return `<div style="border:1px solid var(--bd);border-radius:8px;padding:9px 10px;margin-bottom:8px">
+        <div style="display:flex;gap:10px;align-items:center">${cell(p.x)}<span style="color:var(--t3)">⇄</span>${cell(p.y)}</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--t3)">${why} · ${same?'<span style="color:var(--ok)">已共用同一 UID（跨分区同号，正常）</span>':'<span style="color:var(--wn)">UID 不一致 —— 需要合并</span>'}</div>
+      </div>`;
+    };
+    const body=`<div style="font-size:13px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+        <span>名称相似度阈值</span>
+        <select id="crossTh" style="padding:4px 8px">${[0.6,0.7,0.8,0.9].map(v=>`<option value="${v}" ${v===th?'selected':''}>${(v*100).toFixed(0)}%</option>`).join('')}</select>
+        <span style="flex:1"></span>
+        <span>共 <b style="color:var(--ac)">${pairs.length}</b> 对${uf?`，其中 <b style="color:var(--wn)">${pairs.length-sameUidCnt}</b> 对 UID 不一致`:''}</span>
+      </div>
+      <div style="color:var(--t3);font-size:12px;margin-bottom:10px">判定：不同分区 +（名称相似度达阈值 / 主域名相同 / 共有罕见关联域名）。同名不同站（各种 Galgame 站）在 70% 附近会有误报，调到 90% 可只看几乎同名的。</div>
+      <div style="max-height:50vh;overflow:auto">${pairs.length?pairs.map(rowHtml).join(''):'<div style="color:var(--t3)">这个阈值下没有命中。</div>'}</div>
+    </div>`;
+    showModal('🧩 跨分区同实体',body,'<button class="btn btn-p" onclick="closeModal()">关闭</button>');
+    const sel=document.getElementById('crossTh');
+    if(sel)sel.onchange=()=>render(parseFloat(sel.value));
+    if(!logged){
+      logged=true;
+      log(`🧩 跨分区同实体扫描（阈值 ${(th*100).toFixed(0)}%）: ${pairs.length} 对${uf?`，${pairs.length-sameUidCnt} 对 UID 不一致`:''}`,pairs.length?'warn':'ok',
+        pairs.map(p=>`${p.x.part}/${nf?String(p.x.item[nf]??''):''}${uf?`(${uidOf(p.x)})`:''}  ⇄  ${p.y.part}/${nf?String(p.y.item[nf]??''):''}${uf?`(${uidOf(p.y)})`:''}  ← ${p.sameDom?'同域名 '+p.sameDom:(p.rel?'关联 '+p.rel:'相似度 '+(p.sim*100).toFixed(0)+'%')}`).join('\n'));
+    }
+  };
+  toast(`正在比对 ${rows.length} 条…`,'ok',1200);
+  setTimeout(()=>render(0.7),40);
+}
 function showConfirm(title,msg,btns){
   const safeTitle=esc(title);
   const safeMsg=esc(msg);
@@ -1163,7 +2253,11 @@ function initEvents(){
     const i=e.target.closest('.p-item');if(i)selPart(i.dataset.part);
   });
   document.getElementById('fileStatusBar').addEventListener('click',e=>{const d=e.target.closest('[data-rmfile]');if(d)rmFile(parseInt(d.dataset.rmfile));});
-  document.getElementById('tableContainer').addEventListener('click',e=>{const th=e.target.closest('[data-sort]');if(th){toggleSort(th.dataset.sort);return;}const eb=e.target.closest('[data-edit]');if(eb){const[fi,ii]=eb.dataset.edit.split(',').map(Number);openEd(fi,ii);return;}const db=e.target.closest('[data-del]');if(db){const[fi,ii]=db.dataset.del.split(',').map(Number);delItem(fi,ii);return;}});
+  
+
+
+
+  document.getElementById('tableContainer').addEventListener('click',e=>{const th=e.target.closest('[data-sort]');if(th){toggleSort(th.dataset.sort);return;}const tr=e.target.closest('tbody tr[data-gi]');if(tr)setSelRow(Number(tr.dataset.gi));});
   document.getElementById('pagination').addEventListener('click',e=>{const b=e.target.closest('[data-pg]');if(b&&!b.disabled)goPg(parseInt(b.dataset.pg));});
   document.getElementById('searchInput').addEventListener('input',debounce(()=>{S.query=document.getElementById('searchInput').value.trim();S.page=1;renderTable();},200));
   document.getElementById('showConflictsOnly').addEventListener('change',()=>{S.page=1;renderTable();});
@@ -1178,12 +2272,41 @@ function initEvents(){
   document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();document.getElementById('searchInput').focus();}if(e.key==='Escape'){closeEditor();closeModal();}});
 }
 
+
+async function autoLoadDataJson(){
+  if(S.files.length)return;
+  try{
+    const res=await fetch('../nav-pages/data.json');
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('格式不对');
+    log('📥 自动加载 assets/nav-pages/data.json','info');
+    const keys=Object.keys(data).filter(k=>Array.isArray(data[k]));
+    for(const k of keys){
+      const partName=keyToPart(k)||k;
+      let part=S.partitions.find(p=>p.name===partName);
+      if(!part){part={name:partName,id:gid()};S.partitions.push(part);}
+      S.files.push({name:k,partitionId:part.id,data:data[k],lastModified:Date.now()});
+    }
+    log(`已载入 ${keys.length} 个分类 / ${keys.reduce((s,k)=>s+data[k].length,0)} 条`,'ok');
+  }catch(e){
+    log(`未能自动加载 data.json（${e.message}）。可直接把 data.json 拖进窗口，或用「导入数据」按钮`,'warn');
+  }
+}
+
 async function init(){
   try{
-    await openDB();await loadState();rebuildOffsets();detectConflicts();refreshUI();initDD();initEvents();
+    await openDB();await loadState();restoreLogState();await autoLoadDataJson();rebuildOffsets();detectConflicts();refreshUI();initDD();initEvents();
     toast('✅ 就绪','ok',2000);
   }catch(e){console.error(e);toast('初始化失败:'+e.message,'er');}
 }
+
+window.addEventListener('error',function(e){
+  try{toast('❌ 脚本错误: '+(e.message||'未知')+(e.lineno?' (第'+e.lineno+'行)':''),'er',8000);}catch(_){}
+});
+window.addEventListener('unhandledrejection',function(e){
+  try{toast('❌ 异步错误: '+((e.reason&&e.reason.message)||String(e.reason)),'er',8000);}catch(_){}
+});
 init();
 </script>
 </body>
