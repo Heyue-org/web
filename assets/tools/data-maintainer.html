@@ -103,8 +103,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--ac)}
 /* ── 紧凑列：勾选 / 编号 / 来源 三者几乎紧贴 ── */
 .tbl-wrap col.c-chk,.tbl-wrap .c-chk{width:26px;min-width:26px;padding-left:10px;padding-right:7px}
 /* 条目里的勾选框相对行内文字下移 1px（表头的全选框不动） */
-.tbl-wrap tbody .c-chk input[type="checkbox"]{position:relative;top:1px}
-.tbl-wrap col.c-idx,.tbl-wrap .c-idx{width:38px;min-width:38px;max-width:38px;padding-left:0;padding-right:2px;color:var(--t3);font-variant-numeric:tabular-nums}
+.tbl-wrap tbody .c-chk input[type="checkbox"]{position:relative;top:3px}
+.tbl-wrap col.c-idx,.tbl-wrap .c-idx{width:24px;min-width:24px;max-width:24px;padding-left:0;padding-right:0;color:var(--t3);font-variant-numeric:tabular-nums}
 /* ── 来源列改成「贴合内容」的宽度 ──
    以前写死 94px，而文件名（如 acg-nav）只占 41px，右边空掉一大截：
    实测「来源」文字右边缘到 name 文字左边缘隔着 **62px**。
@@ -112,12 +112,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--ac)}
    单分区视图下间距 ≈15px。
    （「全部」视图下同列要容纳最长的文件名（comic_illustrat…），列宽被它撑开，
      名字短的那些行空隙会大一些 —— 表格一列只有一个宽度，这个躲不掉。） */
-.tbl-wrap col.c-src,.tbl-wrap .c-src{width:1%;min-width:0;max-width:none;padding-left:2px;padding-right:2px;font-size:11px;color:var(--t3)}
+.tbl-wrap col.c-src,.tbl-wrap .c-src{width:1%;min-width:0;max-width:none;padding-left:0;padding-right:2px;font-size:11px;color:var(--t3)}
 /* ── UID 与 URL 间隔拉近(12px)，URL 与 RELATED 间隔减 1/7(15px) ── */
-.tbl-wrap col.c-uid,.tbl-wrap .c-uid{width:86px;min-width:70px;max-width:110px;padding-right:6px}
-.tbl-wrap col.c-url,.tbl-wrap .c-url{min-width:125px;max-width:250px;padding-left:6px;padding-right:8px}
+.tbl-wrap col.c-uid,.tbl-wrap .c-uid{width:1%;min-width:44px;max-width:110px;padding-right:3px}
+/* URL 列收掉五分之一（实测 250px → 200px）：长链接本来就有 ellipsis，省出来的宽度给别的列 */
+.tbl-wrap col.c-url,.tbl-wrap .c-url{min-width:125px;max-width:200px;padding-left:3px;padding-right:8px}
 .tbl-wrap col.c-rel,.tbl-wrap .c-rel{max-width:200px;padding-left:7px}
 .tbl-wrap col.c-name,.tbl-wrap .c-name{max-width:190px;padding-left:6px}
+/* LOGO 列缩到原来的三分之二（实测 189px → 约 126px）：里面只是个图片路径，不值那么宽 */
+.tbl-wrap col.c-logo,.tbl-wrap .c-logo{max-width:126px}
 /* 操作列已取消（列太占宽度）：✏️👁🗑 挪到图例那一行的最右边，
    作用于「单击选中的那一行」，见 paintSel() / actOnSel() */
 .tbl-wrap tr:last-child td{border-bottom:none}
@@ -296,12 +299,29 @@ a{color:var(--ac);text-decoration:none}a:hover{text-decoration:underline}
   .drop-zone{margin:8px 12px;padding:20px}
   .tbl-wrap{margin:0 12px 12px}
 }
+
+    /* ── 导入对比（v2.2） ── */
+    .di-sum{font-size:12px;color:var(--t2);padding:2px 0 10px}
+    .di-sum b{color:var(--ac)}
+    .di-h{font-size:12px;font-weight:500;color:var(--t1);margin:10px 0 4px;padding-bottom:4px;border-bottom:1px solid var(--bd)}
+    .di-wrap{max-height:230px;overflow:auto;border:1px solid var(--bd);border-radius:6px}
+    .di-row{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--bd)}
+    .di-row:hover{background:var(--bg2)}
+    .di-n{color:var(--t1);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .di-m{color:var(--t3);font-size:11px;margin-left:auto;white-space:nowrap}
+    .di-item{border-bottom:1px solid var(--bd)}
+    .di-f{display:flex;align-items:center;gap:8px;padding:4px 8px 4px 26px;font-size:11px;cursor:pointer}
+    .di-f:hover{background:var(--bg2)}
+    .di-fn{color:var(--t2);min-width:64px;font-family:Consolas,Menlo,monospace}
+    .di-tip{font-size:11px;color:var(--t3);margin-top:8px}
+    /* 表格里「请预览查看」的淡蓝高亮：提示这格是对象，得点开看 */
+    .tbl-wrap .pv-hint{background:rgba(59,130,246,.18);color:#B5D4F4;border:1px solid rgba(133,183,235,.35);border-radius:4px;padding:1px 6px;font-size:11.5px;white-space:nowrap}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="sidebar" id="sidebar">
-    <div class="sidebar-hd"><h2>数据维护器 v2.1</h2><button class="m-close" onclick="toggleSidebar()" style="display:none" id="sidebarClose" title="关闭侧边栏">✕</button></div>
+    <div class="sidebar-hd"><h2>数据维护器 v2.2</h2><button class="m-close" onclick="toggleSidebar()" style="display:none" id="sidebarClose" title="关闭侧边栏">✕</button></div>
     <div class="sidebar-act">
       <button class="btn btn-p" onclick="document.getElementById('fileInput').click()" style="width:100%;justify-content:center" title="加载JSON数据文件">📂 加载数据文件</button>
       <input type="file" id="fileInput" multiple accept=".json" style="display:none">
@@ -677,213 +697,282 @@ function runValidation(){
   updateStats();
 }
 
+/* ============================================================
+   加权相似度（v2.2）
+   · 名字权重占大头。
+   · URL 拆成两段分别算：
+       - 服务商段（github.io / discord.gg / t.me / vercel.app …）是**共用的**，
+         只有"相同"时才给分，而且权重很低（10）—— 免得两条不同站点被共用的服务商拉成"相似"。
+       - 自有标识段（heyue-org、/web 这类）才是站点自己的标志，正常算权重（30）。
+     例：heyue-org.github.io/web vs heri-org.github.io/web —— 服务商相同但自有标识不同，
+         总分约 28%（< 35%）⇒ 不判为同一实体；
+     heyue-org.github.io/web vs heyue-org.vercel.app —— 自有标识相同 ⇒ 约 70% ⇒ 判同一实体
+         （可怀疑一个是主站一个是副站）。
+   · UID 不参与（它是判定依据，不是"内容"）。
+   · 分母固定为全部权重之和；字段缺失该项记 0 分（只会拉低总分，不会反过来放大相似度）。
+   ============================================================ */
+const SERVICE_HOSTS=['github.io','gitlab.io','gitee.io','pages.dev','netlify.app','vercel.app','herokuapp.com','firebaseapp.com','web.app','codeberg.page','sourceforge.net','discord.gg','discord.com','t.me','telegram.me','telegram.org','bilibili.com','steamcommunity.com','itch.io','gamejolt.com','weibo.com','youtube.com','nicovideo.jp','wikipedia.org','fandom.com','archive.org','pastebin.com','gist.github.com','jsdelivr.net','unpkg.com','npmjs.com','pypi.org','crates.io','greasyfork.org','wixsite.com','blogspot.com','wordpress.com','medium.com','notion.site','gitbook.io','readthedocs.io'];
+const SIM_W={name:40,own:30,svc:10,related:15,community:5,remark:5,other:3};
+const SIM_TOTAL=SIM_W.name+SIM_W.own+SIM_W.svc+SIM_W.related+SIM_W.community+SIM_W.remark+SIM_W.other;
+function urlParts(u){
+  const s=String(u||'').trim();
+  let host='',path='';
+  try{const U=new URL(s);host=U.hostname.toLowerCase();path=U.pathname.replace(/\/+$/,'');}
+  catch(e){host=s.replace(/^https?:\/\//i,'').split(/[\/?#]/)[0].toLowerCase();path=s.replace(/^https?:\/\/[^/]*/i,'').replace(/\/+$/,'');}
+  let svc='',own=host;
+  for(const h of SERVICE_HOSTS){if(host===h||host.endsWith('.'+h)){svc=h;own=host.slice(0,host.length-h.length).replace(/\.$/,'');break;}}
+  if(!svc&&host.indexOf('www.')===0)own=host.slice(4);
+  return {svc:svc,own:(own+path)||''};
+}
+function relDomainSet(item){
+  const set=new Set();const v=item&&item['related'];if(!v)return set;
+  relUrls(v).forEach(function(l){const d=normUrl(l);if(d)set.add(d);});
+  return set;
+}
+function weightedSim(a,b,nf,sf){
+  let got=0;const det=[];
+  if(nf){
+    const na=String(a[nf]||'').trim(),nb=String(b[nf]||'').trim();
+    if(na&&nb){const s=idfSim(na,nb);det.push('名称 "'+na+'" vs "'+nb+'" '+(s*100).toFixed(0)+'% → '+(s*SIM_W.name).toFixed(1)+'/'+SIM_W.name);got+=s*SIM_W.name;}
+    else det.push('名称 缺字段 → 0/'+SIM_W.name);
+  }
+  if(sf){
+    const pa=urlParts(a[sf]),pb=urlParts(b[sf]);
+    const so=(pa.own&&pb.own)?idfSim(pa.own,pb.own):0;
+    det.push('URL自有标识 "'+pa.own+'" vs "'+pb.own+'" '+(so*100).toFixed(0)+'% → '+(so*SIM_W.own).toFixed(1)+'/'+SIM_W.own);got+=so*SIM_W.own;
+    const ss=(pa.svc&&pa.svc===pb.svc)?1:0;
+    det.push('URL服务商 '+(pa.svc||'—')+' vs '+(pb.svc||'—')+' '+(ss?'相同':'不同')+' → '+(ss*SIM_W.svc).toFixed(1)+'/'+SIM_W.svc+(ss?'（共用服务商，低权重）':''));got+=ss*SIM_W.svc;
+  }
+  const ra=relDomainSet(a),rb=relDomainSet(b);let common=0;
+  ra.forEach(function(d){if(rb.has(d))common++;});
+  const sr=(ra.size&&rb.size)?(common/Math.max(ra.size,rb.size)):0;
+  det.push('related 共同域名 '+common+'个 → '+(sr*SIM_W.related).toFixed(1)+'/'+SIM_W.related);got+=sr*SIM_W.related;
+  ['community','remark'].forEach(function(k){
+    const va=String(a[k]==null?'':a[k]).trim(),vb=String(b[k]==null?'':b[k]).trim();
+    if(!va&&!vb)return;
+    const s=(va&&vb)?idfSim(va,vb):0;
+    det.push(k+' '+(s*100).toFixed(0)+'% → '+(s*SIM_W[k]).toFixed(1)+'/'+SIM_W[k]);got+=s*SIM_W[k];
+  });
+  let so=0,n=0;
+  ['tag','logo'].forEach(function(k){
+    const va=String(a[k]==null?'':a[k]).trim(),vb=String(b[k]==null?'':b[k]).trim();
+    if(!va&&!vb)return;
+    so+=(va&&vb)?idfSim(va,vb):0;n++;
+  });
+  const sother=n?(so/n):0;
+  det.push('其它(tag/logo) → '+(sother*SIM_W.other).toFixed(1)+'/'+SIM_W.other);got+=sother*SIM_W.other;
+  return {score:got/SIM_TOTAL,detail:det.join('\n│ ')};
+}
+/* ============================================================
+   为什么需要 IDF：这个语料里"名字像"≠"同一实体" —— 鲲Galgame / H萌Galgame / Galgamex / Galgamer
+   全是不同人办的不同站，只是共享 "Galgame" 这种通用词，普通 bigram 相似度能给到 80~85%。
+   所以：① 相似度改成 **IDF 加权**（越常见的片段权重越低，"Galgame""com" 这类几乎不贡献分数，
+   而"茶馆""梓澪""合月亭" 这类罕见片段才给高分）。② 模糊相似度不再单独当判据，必须 **先过硬关联门**。
+   ============================================================ */
+const TWO_LEVEL_SUFFIX=['com.cn','net.cn','org.cn','gov.cn','com.tw','com.hk','co.jp','or.jp','ne.jp','co.uk','org.uk','ac.uk','com.au','co.kr','com.br'];
+let SIM_IDF=null;                    /* bigram → idf，detectConflicts 开头重建 */
+function gramsOf(s){
+  const x=String(s||'').toLowerCase().replace(/[^0-9a-z\u4e00-\u9fa5\u3040-\u30ff]+/g,'');
+  const out=[];for(let i=0;i<x.length-1;i++)out.push(x.substring(i,i+2));
+  return out;
+}
+function buildIdf(rows,nf,sf){
+  const df=new Map();let N=0;
+  rows.forEach(function(r){
+    const s=String(r.item[nf]||'')+' '+urlParts(r.item[sf]).own;
+    const set=new Set(gramsOf(s));
+    if(!set.size)return;
+    N++;
+    set.forEach(function(g){df.set(g,(df.get(g)||0)+1);});
+  });
+  const idf=new Map();
+  df.forEach(function(c,g){idf.set(g,Math.log((N+1)/(c+0.5)));});
+  SIM_IDF=idf;
+  return {N:N,terms:idf.size};
+}
+function idfSim(a,b){
+  const w=function(g){return SIM_IDF?((SIM_IDF.get(g))||Math.log(6)):1;};   /* 语料里没见过的按"较罕见"计 */
+  const ca=new Map(),cb=new Map();
+  gramsOf(a).forEach(function(g){ca.set(g,(ca.get(g)||0)+1);});
+  gramsOf(b).forEach(function(g){cb.set(g,(cb.get(g)||0)+1);});
+  if(!ca.size||!cb.size)return 0;
+  let shared=0,sa=0,sb=0;
+  const ww=function(g){return w(g);};
+  ca.forEach(function(cnt,g){const wg=ww(g);sa+=cnt*wg;const m=Math.min(cnt,cb.get(g)||0);shared+=m*wg;});
+  cb.forEach(function(cnt,g){sb+=cnt*ww(g);});
+  return (sa+sb)?(2*shared/(sa+sb)):0;
+}
+function hostOfUrl(u){
+  try{return new URL(String(u||'').trim()).hostname.toLowerCase();}
+  catch(e){return String(u||'').replace(/^https?:\/\//i,'').split(/[\/?#]/)[0].toLowerCase();}
+}
+/* 注册主域：去掉服务商后缀，再取"最后两段"（com.tw 这类取三段） */
+function mainDomain(u){
+  const h=hostOfUrl(u);if(!h)return '';
+  let core=h;
+  for(const s of SERVICE_HOSTS){if(h===s||h.endsWith('.'+s)){core=h.slice(0,h.length-s.length).replace(/\.$/,'');break;}}
+  const parts=core.split('.').filter(Boolean);
+  if(parts.length<=2)return parts.join('.');
+  const l2=parts.slice(-2).join('.'),l3=parts.slice(-3).join('.');
+  return TWO_LEVEL_SUFFIX.indexOf(l2)>=0?l3:l2;
+}
+/* 名称规范化：去括号及其内容、去空格、全角转半角、小写 */
+function normName(v){
+  let s=String(v||'').trim().toLowerCase();
+  s=s.replace(/[（(][^）)]*[）)]/g,'');
+  s=s.replace(/[\uff01-\uff5e]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xfee0);});
+  s=s.replace(/\s+/g,'');
+  return s;
+}
+function commKeys(item){
+  const set=new Set();const v=item&&item['community'];if(!v)return set;
+  const obj=(typeof v==='object')?v:parseMaybeJson(v);
+  if(obj&&typeof obj==='object'){
+    Object.keys(obj).forEach(function(k){
+      const val=String(obj[k]==null?'':obj[k]).trim();
+      if(val)set.add(val.replace(/^https?:\/\//i,'').split(/[\/?#]/)[0]+'|'+k);
+    });
+  }
+  return set;
+}
+/* 硬关联：命中任一才允许继续打分。返回的数组就是命中的证据（写入日志） */
+function hardLink(a,b,nf,sf){
+  const L=[];
+  const pa=urlParts(a[sf]),pb=urlParts(b[sf]);
+  if(pa.own&&pa.own===pb.own)L.push('URL自有标识完全相同');
+  const da=mainDomain(a[sf]),db=mainDomain(b[sf]);
+  const na=normName(a[nf]),nb=normName(b[nf]);
+  if(na&&na===nb&&da&&da===db)L.push('规范化名称相同 + 同主域');
+  /* related 互指：任一方把对方的域名写进自己的 related */
+  const dba=normUrl(String(b[sf]||'')),dab=normUrl(String(a[sf]||''));
+  let relHit=false;
+  relDomainSet(a).forEach(function(d){if(d===dba||mainDomain('https://'+d)===db)relHit=true;});
+  if(!relHit)relDomainSet(b).forEach(function(d){if(d===dab||mainDomain('https://'+d)===da)relHit=true;});
+  if(relHit)L.push('related 指向对方');
+  /* ⚠️ 这里**故意不把「community 相同」算作硬关联**：同一个交流群只能说明是同一批人运营，
+     不等于同一个站点 —— 实测 H萌漫画(comic.hmgal.com) 和 H萌Galgame(hmgal.com) 共用一个群，
+     但确实是两个站，各自该有自己的 UID。community 仍参与打分（权重 5），只是不能单独开门。 */
+  return L;
+}
 function detectConflicts(){
   resetLog();
   log(`🔍 ═══ 开始扫描 (v1.8) ═══`,'analysis',
     `总文件数: ${S.files.length}\n总条目数: ${S.files.reduce((s,f)=>s+f.data.length,0)}\n平台域名白名单: ${PLATFORM_DOMAINS.length}个\nUID白名单: ${S.uidWhitelist.length}个\n名称相似度阈值: ${(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)}%`);
 
   const uc=new Set(), sc=new Set(), dupSet=new Set();
+  const crossSame=new Set();      /* 跨分区同实体（完全一致）→ 仅标记，不算冲突 */
   S.issueGroups={uidConflicts:[], siteConflicts:[], duplicates:[]};
 
   const rows=[];
-  S.files.forEach((f,fi)=>f.data.forEach((item,ii)=>{rows.push({gi:getGI(f,ii),fi,ii,item,fn:f.name,pid:f.partitionId});}));
+  S.files.forEach(function(f,fi){f.data.forEach(function(item,ii){rows.push({gi:getGI(f,ii),fi:fi,ii:ii,item:item,fn:f.name,pid:f.partitionId});});});
+  const uidR=detectField(rows.map(function(r){return r.item;}),UID_FIELDS);
+  const urlR=detectField(rows.map(function(r){return r.item;}),URL_FIELDS);
+  const nameR=detectField(rows.map(function(r){return r.item;}),NAME_FIELDS);
+  const uf=uidR?uidR.field:null, sf=urlR?urlR.field:null, nf=nameR?nameR.field:null;
+  const idfStat=buildIdf(rows,nf,sf);
+  const fieldCount=function(it){return Object.keys(it||{}).filter(function(k){return String(it[k]==null?'':it[k]).trim()!=='';}).length;};
+  const entryDetailsOf=function(list,fu){return list.map(function(r,i){
+    return '┌─ 条目 #'+(i+1)+'\n│ 来源: '+r.fn+'['+r.ii+']\n│ 分区: '+getPartNameByFi(r.fi)+'\n│ 全局索引: '+r.gi+'\n│ '+fu+': "'+String(r.item[fu]||'')+'"\n│ 完整数据:\n'+jsonBlock(r.item)+'\n└─';
+  }).join('\n\n');};
 
-  const uidR=detectField(rows.map(r=>r.item),UID_FIELDS);
-  const urlR=detectField(rows.map(r=>r.item),URL_FIELDS);
-  const nameR=detectField(rows.map(r=>r.item),NAME_FIELDS);
-
-  if(uidR)log(`🔑 UID字段: "${uidR.field}" (${uidR.count}/${uidR.total}, ${(uidR.count/uidR.total*100).toFixed(1)}%)`,'analysis');
-  else log(`🔑 UID字段未找到，UID冲突检测跳过`,'warn');
-  if(urlR)log(`🌐 URL字段: "${urlR.field}" (${urlR.count}/${urlR.total}, ${(urlR.count/urlR.total*100).toFixed(1)}%)`,'analysis');
-  else log(`🌐 URL字段未找到，站点冲突检测跳过`,'warn');
-  if(nameR)log(`📛 名称字段: "${nameR.field}" (用于实体相似度判断)`,'analysis');
-  else log(`📛 名称字段未找到，实体相似度判断将降级为保守模式`,'warn');
-
-  const uf=uidR?uidR.field:null;
-  const sf=urlR?urlR.field:null;
-  const nf=nameR?nameR.field:null;
-
+  /* ============ 1. 同 UID ============ */
   if(uf){
-    log(`🔍 ── UID冲突检测 ──`,'analysis',`条件: 相同"${uf}" + 不同URL域名`);
-    const um={};
-    rows.forEach(r=>{
-      const u=String(r.item[uf]||'').trim();
-      if(!u)return;
-      if(!um[u])um[u]=[];
-      um[u].push({gi:r.gi,fi:r.fi,ii:r.ii,url:sf?normUrl(String(r.item[sf]||'').trim()):'',rawUrl:sf?String(r.item[sf]||'').trim():'',related:r.item['related']||'',fn:r.fn,item:r.item});
-    });
-    let cc=0,skippedPlatform=0,skippedSimilarity=0,skippedWhitelist=0;
-    for(const[uid,entries]of Object.entries(um)){
-      if(entries.length<=1)continue;
-      const urls=new Set(entries.map(e=>e.url).filter(Boolean));
-      if(urls.size<=1)continue;
-      if(isWhitelistedUid(uid)){
-        skippedWhitelist++;
-        log(`<span class="log-skip-tag">⏭️ UID冲突跳过 #${uid}</span> 该 UID 在白名单里`,'skip',`【跳过原因】UID "${uid}" 已加入白名单，不参与任何检测`);
-        continue;
-      }
-      const platformUrls=[...urls].filter(u=>isPlatformDomain(u));
-      if(platformUrls.length===urls.size){
-        skippedPlatform++;
-        log(`<span class="log-skip-tag">⏭️ UID冲突跳过 #${uid}</span> 全部为平台域名`,'skip',`【跳过原因】所有${urls.size}个域名均为平台型域名: ${[...urls].join(', ')}`);
-        continue;
-      }
-      const nonPlatformEntries=entries.filter(e=>!isPlatformDomain(e.url));
-      if(nonPlatformEntries.length<=1){skippedPlatform++;continue;}
-      let hasRealConflict=false;
-      for(let i=0;i<nonPlatformEntries.length&&!hasRealConflict;i++){
-        for(let j=i+1;j<nonPlatformEntries.length&&!hasRealConflict;j++){
-          const check=isSameEntity(nonPlatformEntries[i].item,nonPlatformEntries[j].item,nf);
-          if(check.same)hasRealConflict=true;
+    log(`🔍 ── 同 UID 检测 ──`,'analysis',`按 UID 分组后再看分区：跨分区完全一致→仅标记；跨分区有差异 / 同分区域名不同→UID冲突；同分区且相似→重复`);
+    const g=new Map();
+    rows.forEach(function(r){const u=String(r.item[uf]||'').trim();if(!u)return;if(!g.has(u))g.set(u,[]);g.get(u).push(r);});
+    let nMark=0,nUidC=0,nDup=0,skipWl=0,skipOne=0;
+    for(const [uid,list] of g.entries()){
+      if(list.length<=1){skipOne++;continue;}
+      if(S.uidWhitelist.includes(uid)){skipWl++;continue;}
+      /* 按分区拆子组 */
+      const byPart=new Map();
+      list.forEach(function(r){if(!byPart.has(r.pid))byPart.set(r.pid,[]);byPart.get(r.pid).push(r);});
+      const parts=[...byPart.values()];
+      /* ① 同一分区里出现多条 */
+      parts.forEach(function(sub){
+        if(sub.length<=1)return;
+        const domains=new Set(sub.map(function(r){return normUrl(String(r.item[sf]||'').trim());}));
+        const names=new Set(sub.map(function(r){return String(r.item[nf]||'').trim();}));
+        if(domains.size>1||names.size>1){
+          nUidC++;sub.forEach(function(r){uc.add(r.gi);});
+          S.issueGroups.uidConflicts.push({uid:uid,reason:'同分区同号但域名/站名不同 ⇒ 不同实体误用同一 UID',items:sub});
+          log(`<span class="log-conflict-tag">⚠️ UID冲突（同分区）</span> uid="<b>${esc(uid)}</b>" ${sub.length}条`,'conflict',`【原因】同一分区内 ${sub.length} 条共用 UID ${uid}，但域名 ${domains.size} 个 / 站名 ${names.size} 个 ⇒ 判定为不同实体误用同一 UID，请人工处理\n\n${entryDetailsOf(sub,uf)}`);
+          return;
+        }
+        const sameName=normName(sub[0].item[nf])===normName(sub[1].item[nf]);
+        const sameDomain=mainDomain(sub[0].item[sf])===mainDomain(sub[1].item[sf]);
+        const w=weightedSim(sub[0].item,sub[1].item,nf,sf);
+        if(sameName&&sameDomain){
+          nDup++;sub.forEach(function(r){dupSet.add(r.gi);});
+          S.issueGroups.duplicates.push({partitionId:sub[0].pid,key:uid,items:sub});
+          log(`<span class="log-conflict-tag">🗑️ 同分区重复</span> uid="${esc(uid)}" ${sub.length}条`,'conflict',`【处理】只保留字段最全的一条，其余删除\n【相似度】${(w.score*100).toFixed(1)}%\n│ ${w.detail}\n\n${entryDetailsOf(sub,uf)}`);
+        }else{
+          /* 同分区 + 同号 + 域名站名都一样，可内容却不相似 ⇒ 一样可疑，交人工 */
+          nUidC++;sub.forEach(function(r){uc.add(r.gi);});
+          S.issueGroups.uidConflicts.push({uid:uid,reason:'同分区同号、域名站名相同但加权相似度不足 ⇒ 疑似不同实体误用同一 UID',items:sub});
+          log(`<span class="log-conflict-tag">⚠️ UID冲突（同分区·内容差异大）</span> uid="${esc(uid)}" ${sub.length}条`,'conflict',`【原因】域名和站名都一样，但加权相似度只有 ${(w.score*100).toFixed(1)}%（< ${(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)}%）⇒ 疑似不同实体误用同一 UID，请人工处理\n│ ${w.detail}\n\n${entryDetailsOf(sub,uf)}`);
+        }
+      });
+      /* ② 同一个 UID 跨了多个分区 */
+      if(parts.length>1){
+        const reps=parts.map(function(p){return p.slice().sort(function(a,b){return fieldCount(b.item)-fieldCount(a.item);})[0];});
+        let allSame=true;
+        for(let i=1;i<reps.length;i++){if(normVal(reps[0].item)!==normVal(reps[i].item)){allSame=false;break;}}
+        if(allSame){
+          nMark++;reps.forEach(function(r){crossSame.add(r.gi);});
+          log(`🧩 跨分区同实体 uid="${esc(uid)}" 跨 ${parts.length} 个分区`,'match',`【处理】仅标记，不算冲突\n【说明】这些条目完全相同，是同一实体出现在多个分区\n\n${entryDetailsOf(reps,uf)}`);
+        }else{
+          nUidC++;reps.forEach(function(r){uc.add(r.gi);});
+          S.issueGroups.uidConflicts.push({uid:uid,reason:'跨分区同号但条目内容有差异 ⇒ 需人工确认是否为同一实体',items:reps});
+          log(`<span class="log-conflict-tag">⚠️ UID冲突（跨分区·内容有差异）</span> uid="${esc(uid)}" 跨 ${parts.length} 个分区`,'conflict',`【原因】同一 UID 的条目分布在不同分区，且内容存在任何差异 ⇒ 上报人工处理\n\n${entryDetailsOf(reps,uf)}`);
         }
       }
-      if(!hasRealConflict && sf){
-        const relatedDomains = nonPlatformEntries.map(e=>{
-          const related = String(e.item['related']||'');
-          if(!related) return new Set();
-          const links = relUrls(related);
-          const domains = new Set();
-          links.forEach(link=>{
-            const dom=normUrl(link);
-            if(dom) domains.add(dom);
-          });
-          return domains;
-        });
-        let commonRelated = false;
-        outerLoop: for(let i=0;i<relatedDomains.length;i++){
-          for(let j=i+1;j<relatedDomains.length;j++){
-            const intersection = [...relatedDomains[i]].filter(d=>relatedDomains[j].has(d));
-            if(intersection.length>0){
-              commonRelated = true;
-              break outerLoop;
-            }
-          }
-        }
-        if(commonRelated) hasRealConflict = true;
-      }
-      if(!hasRealConflict){
-        skippedSimilarity++;
-        log(`<span class="log-skip-tag">⏭️ UID冲突跳过 #${uid}</span> 名称相似度不足且无共同关联链接`,'skip',`【跳过原因】名称差异较大，且RELATED字段无共同域名，判定为不同实体`);
-        continue;
-      }
-      cc++;
-      entries.forEach(e=>uc.add(e.gi));
-      S.issueGroups.uidConflicts.push({uid, items: entries});
-      const entryDetails=entries.map((e,i)=>{
-        return `┌─ 条目 #${i+1}\n│ 来源: ${e.fn}[${e.ii}]\n│ 所属分区: ${getPartNameByFi(e.fi)}\n│ 全局索引: ${e.gi}\n│ ${uf}: "${uid}"\n│ URL原始: "${e.rawUrl}"\n│ URL规范: "${e.url}"\n│ RELATED: "${e.related}"\n│ 完整数据:\n${jsonBlock(e.item)}\n└─`;
-      }).join('\n\n');
-      log(`<span class="log-conflict-tag">⚠️ UID冲突 #${cc}</span> uid="<b>${esc(uid)}</b>" ${urls.size}个不同域名`,'conflict',`【冲突原因】相同UID但域名不同，且名称相似或RELATED字段有共同链接\n\n【涉及的全部条目及完整数据】\n${entryDetails}`);
     }
-    log(`UID冲突检测完成: ${cc}组真实冲突, ${skippedPlatform}组平台域名跳过, ${skippedSimilarity}组低相似度跳过, ${skippedWhitelist}组白名单跳过`,cc?'warn':'ok');
+    log(`同 UID 检测完成: 仅标记 ${nMark} 组, UID冲突 ${nUidC} 组, 同分区重复 ${nDup} 组, 单条跳过 ${skipOne} 组, 白名单跳过 ${skipWl} 组`,(nUidC+nDup)?'warn':'ok');
   }
 
-  if(uf&&sf){
-    log(`🔍 ── 站点冲突检测 ──`,'analysis',`条件: 相同URL域名 + 不同"${uf}"值`);
-    const sm={};
-    rows.forEach(r=>{
-      const url=normUrl(String(r.item[sf]||'').trim());
-      const u=String(r.item[uf]||'').trim();
-      if(!url||!u)return;
-      if(!sm[url])sm[url]=[];
-      sm[url].push({gi:r.gi,fi:r.fi,ii:r.ii,uid:u,related:r.item['related']||'',fn:r.fn,item:r.item});
-    });
-    let scc=0,skippedPlatform=0,skippedSimilarity=0,skippedWhitelist=0;
-    for(const[domain,allEntries]of Object.entries(sm)){
-      if(allEntries.length<=1)continue;
-      /* 白名单按 UID：先把白名单里的条目从这一组剔出去，剩下的才参与比对 */
-      const entries=allEntries.filter(e=>!isWhitelistedUid(e.uid));
-      if(entries.length!==allEntries.length){
-        skippedWhitelist++;
-        log(`<span class="log-skip-tag">站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" 有 ${allEntries.length-entries.length} 条在白名单里`,'skip',`【跳过原因】已从比对中剔除白名单 UID`);
+  /* ============ 2. 不同 UID（站点冲突） ============ */
+  if(uf&&(nf||sf)){
+    log(`🔍 ── 站点冲突检测 ──`,'analysis',`条件: 不同 UID + 加权相似度 ≥ ${(NAME_SIMILARITY_THRESHOLD*100).toFixed(0)}%`);
+    const cand=rows.filter(function(r){return !S.uidWhitelist.includes(String(r.item[uf]||'').trim());});
+    const pairs=new Map();let checked=0;
+    for(let i=0;i<cand.length;i++){
+      for(let j=i+1;j<cand.length;j++){
+        const ua=String(cand[i].item[uf]||'').trim(), ub=String(cand[j].item[uf]||'').trim();
+        if(!ua||!ub||ua===ub)continue;   /* 缺 UID 或同 UID —— 同 UID 由上一节处理 */
+        checked++;
+        const hl=hardLink(cand[i].item,cand[j].item,nf,sf);
+        if(!hl.length)continue;   /* 无硬关联 → 直接排除：名字像不等于同一实体 */
+        const w=weightedSim(cand[i].item,cand[j].item,nf,sf);
+        if(w.score<NAME_SIMILARITY_THRESHOLD)continue;
+        if(!pairs.has(cand[i].gi))pairs.set(cand[i].gi,new Set());
+        pairs.get(cand[i].gi).add(cand[j].gi);
+        if(!pairs.has(cand[j].gi))pairs.set(cand[j].gi,new Set());
+        pairs.get(cand[j].gi).add(cand[i].gi);
       }
-      if(entries.length<=1)continue;
-      const uids=new Set(entries.map(e=>e.uid));
-      if(uids.size<=1)continue;
-      if(isPlatformDomain(domain)){
-        skippedPlatform++;
-        log(`<span class="log-skip-tag">站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" (${uids.size}个UID)`,'skip',`【跳过原因】"${domain}" 是平台型域名`);
-        continue;
-      }
-      let hasRealConflict=false;
-      let conflictPairInfo='';
-      outer:for(let i=0;i<entries.length;i++){
-        for(let j=i+1;j<entries.length;j++){
-          const check=isSameEntity(entries[i].item,entries[j].item,nf);
-          if(check.same){hasRealConflict=true;conflictPairInfo=`触发配对: "${String(entries[i].item[nf]||'')}" vs "${String(entries[j].item[nf]||'')}" (${check.reason})`;break outer;}
-        }
-      }
-      if(!hasRealConflict && sf){
-        const relatedDomains = entries.map(e=>{
-          const related = String(e.item['related']||'');
-          if(!related) return new Set();
-          const links = relUrls(related);
-          const domains = new Set();
-          links.forEach(link=>{
-            const dom=normUrl(link);
-            if(dom) domains.add(dom);
-          });
-          return domains;
-        });
-        let commonRelated = false;
-        outerLoop2: for(let i=0;i<relatedDomains.length;i++){
-          for(let j=i+1;j<relatedDomains.length;j++){
-            const intersection = [...relatedDomains[i]].filter(d=>relatedDomains[j].has(d));
-            if(intersection.length>0){
-              commonRelated = true;
-              break outerLoop2;
-            }
-          }
-        }
-        if(commonRelated) hasRealConflict = true;
-      }
-      if(!hasRealConflict){
-        skippedSimilarity++;
-        log(`<span class="log-skip-tag">⏭️ 站点冲突跳过</span> 域名="<b>${esc(domain)}</b>" (${uids.size}个UID)`,'skip',`【跳过原因】名称差异较大且RELATED无共同链接，判定为同一站点下的不同资源页面`);
-        continue;
-      }
-      scc++;
-      entries.forEach(e=>sc.add(e.gi));
-      S.issueGroups.siteConflicts.push({domain, items: entries});
-      const entryDetails=entries.map((e,i)=>{
-        return `┌─ 条目 #${i+1}\n│ 来源: ${e.fn}[${e.ii}]\n│ 所属分区: ${getPartNameByFi(e.fi)}\n│ 全局索引: ${e.gi}\n│ ${uf}: "${e.uid}"\n│ 域名: "${domain}"\n│ RELATED: "${e.related}"\n│ 完整数据:\n${jsonBlock(e.item)}\n└─`;
-      }).join('\n\n');
-      log(`<span class="log-conflict-tag">⚠️ 站点冲突 #${scc}</span> 域名="<b>${esc(domain)}</b>" ${uids.size}个不同UID`,'conflict',`【冲突原因】相同域名但UID不同，且名称相似或RELATED字段有共同链接\n${conflictPairInfo}\n\n【涉及的全部条目及完整数据】\n${entryDetails}`);
     }
-    log(`站点冲突检测完成: ${scc}组真实冲突, ${skippedPlatform}组平台域名跳过, ${skippedSimilarity}组低相似度跳过, ${skippedWhitelist}组白名单跳过`,scc?'warn':'ok');
+    /* 互相连通的并成一组（同一实体被拆成好几个号） */
+    const seen=new Set();let scc=0;
+    for(const [gi,set] of pairs.entries()){
+      if(seen.has(gi))continue;
+      const group=[gi];const queue=[gi];seen.add(gi);
+      while(queue.length){
+        const cur=queue.pop();
+        (pairs.get(cur)||new Set()).forEach(function(ng){if(!seen.has(ng)){seen.add(ng);group.push(ng);queue.push(ng);}});
+      }
+      if(group.length<2)continue;
+      const items=group.map(function(gg){return rows.find(function(r){return r.gi===gg;});}).filter(Boolean);
+      if(items.length<2)continue;
+      const un=new Set(items.map(function(r){return String(r.item[uf]||'').trim();}));
+      scc++;items.forEach(function(r){sc.add(r.gi);});
+      S.issueGroups.siteConflicts.push({uid:'（多号）',domain:'加权相似度',items:items});
+      const ev=[];items.forEach(function(x){items.forEach(function(y){if(x!==y)hardLink(x.item,y.item,nf,sf).forEach(function(e){if(ev.indexOf(e)<0)ev.push(e);});});});
+      log(`<span class="log-conflict-tag">⚠️ 站点冲突 #${scc}</span> ${items.length}条 / UID ${un.size}个`,'conflict',`【原因】判定为同一实体，但用了 ${un.size} 个不同 UID ⇒ 应归一成一个号\n【硬关联证据】${ev.join(' / ')}\n【UID】${[...un].join('、')}\n\n${entryDetailsOf(items,uf)}`);
+    }
+    log(`站点冲突检测完成: ${scc} 组（共比对 ${checked} 对）`,scc?'warn':'ok');
   }
 
-  log(`🔍 ── 同分区重复检测 ──`,'analysis',`条件: 同一分区内相同UID`);
-  const dupMap=new Map();
-  rows.forEach(r=>{
-    if(!uf)return;
-    const uid=String(r.item[uf]||'').trim();
-    if(!uid)return;
-    const key=`${r.pid}::${uid}`;
-    if(!dupMap.has(key))dupMap.set(key,[]);
-    dupMap.get(key).push(r);
-  });
-  let dupGroups=0;
-  for(const[key,group]of dupMap.entries()){
-    if(group.length<=1) continue;
-    
-    group.sort((a,b)=>{
-      const fa = Object.keys(a.item).filter(k => String(a.item[k]).trim() !== '').length;
-      const fb = Object.keys(b.item).filter(k => String(b.item[k]).trim() !== '').length;
-      return fb - fa;
-    });
-    dupGroups++;
-    group.forEach(r=>dupSet.add(r.gi));
-    S.issueGroups.duplicates.push({partitionId: group[0].pid, key, items: group});
-    const kept=group[0];
-    const partName=getPartNameByFi(kept.fi);
-    const entryDetails=group.map((r,i)=>{
-      return `┌─ ${i===0?'保留项 (字段最全)':'重复项'}\n│ 来源: ${r.fn}[${r.ii}]\n│ 所属分区: ${getPartNameByFi(r.fi)}\n│ 全局索引: ${r.gi}\n│ ${uf}: "${String(r.item[uf]||'')}"\n│ 完整数据:\n${jsonBlock(r.item)}\n└─`;
-    }).join('\n\n');
-    log(`<span class="log-conflict-tag">🗑️ 同分区UID重复 #${dupGroups}</span> 分区="${partName}" UID="${String(kept.item[uf]||'')}" ${group.length}条`,'conflict',`【保留项】${kept.fn}[${kept.ii}] (分区:${getPartNameByFi(kept.fi)}) uid="${String(kept.item[uf]||'')}"\n\n【重复项】\n${group.slice(1).map(r=>`${r.fn}[${r.ii}] (分区:${getPartNameByFi(r.fi)}) uid="${String(r.item[uf]||'')}"`).join('\n')}\n\n完整数据详情:\n${entryDetails}`);
-  }
-  if(dupGroups===0) log(`同分区重复: 无重复数据`,'ok');
-  else log(`同分区重复检测完成: ${dupGroups}组`,'analysis');
-
+  S.crossPartitionSame=crossSame;
   S.conflicts={uid:uc, site:sc};
   S.duplicates=dupSet;
   const totalIssues=new Set([...uc,...sc,...dupSet]).size;
@@ -1327,6 +1416,14 @@ function actOnSel(kind){
   else delItem(m.fi,m.ii).then(()=>{S.selGi=null;paintSel();});
 }
 
+/* related 挪到 community 与 tag 之间（S.allFields 里的原顺序是 related → community → tag） */
+function orderRelated(cols){
+  if(!cols.includes('related'))return cols;
+  const a=cols.filter(c=>c!=='related');
+  const ci=a.indexOf('community'),ti=a.indexOf('tag');
+  a.splice(ci>=0?ci+1:(ti>=0?ti:a.length),0,'related');
+  return a;
+}
 function renderTable(){
   const ct=document.getElementById('tableContainer');const all=getFD();
   
@@ -1334,7 +1431,8 @@ function renderTable(){
   if(!all.length){ct.innerHTML=S.files.length===0?'<div class="empty"><div class="ei">📋</div><div>暂无数据，请加载数据文件</div></div>':'<div class="no-res">🔍 没有匹配的数据</div>';document.getElementById('pagination').style.display='none';S.selGi=null;paintSel();return;}
   const tp=Math.ceil(all.length/S.pageSize);if(S.page>tp)S.page=tp;if(S.page<1)S.page=1;const si=(S.page-1)*S.pageSize,pr=all.slice(si,si+S.pageSize);
   const uf=detectField(all.map(r=>r.item),UID_FIELDS);const sf=detectField(all.map(r=>r.item),URL_FIELDS);const nf=detectField(all.map(r=>r.item),NAME_FIELDS);
-  const cols=[...new Set([nf?nf.field:null,uf?uf.field:null,sf?sf.field:null,...S.allFields].filter(Boolean))].slice(0,10);
+  let cols=[...new Set([nf?nf.field:null,uf?uf.field:null,sf?sf.field:null,...S.allFields].filter(Boolean))].slice(0,10);
+  cols=orderRelated(cols);
   const allPageSelected=pr.length>0&&pr.every(r=>S.selection.has(r.gi));
   const ccls=c=>{
     const lc=String(c).toLowerCase();
@@ -1342,6 +1440,7 @@ function renderTable(){
     if(sf&&c===sf.field)return 'c-url';
     if(nf&&c===nf.field)return 'c-name';
     if(lc==='related'||lc==='relate'||lc==='relateds'||lc==='links'||lc==='相关')return 'c-rel';
+    if(lc==='logo')return 'c-logo';
     return '';
   };
   let h=`<table><colgroup><col class="c-chk"><col class="c-idx"><col class="c-src">`;
@@ -1355,7 +1454,21 @@ function renderTable(){
     let rc='';if(iuc)rc+=' uc';if(isc)rc+=' sc';if(idup)rc+=' dup';if(ival)rc+=' val-err';
     
     h+=`<tr class="${rc.trim()}" data-gi="${r.gi}"><td class="c-chk"><input type="checkbox" ${isSel?'checked':''} onclick="event.stopPropagation();toggleSelect(${r.gi})"></td><td class="c-idx">${si+di+1}</td><td class="c-src" title="${esc(r.fn)}">${esc(trunc(r.fn,15))}</td>`;
-    cols.forEach(c=>{const v=r.item[c],hc=(uf&&c===uf.field&&iuc)?'uid-c':(sf&&c===sf.field&&isc)?'site-c':'',cc=(ccls(c)+' '+hc).trim();let dv='';if(v!=null){const sv=String(v);dv=esc(trunc(sv,50));}h+=`<td class="${cc}" title="${esc(String(v??''))}">${dv}</td>`;});
+    cols.forEach(c=>{
+      const v=r.item[c],hc=(uf&&c===uf.field&&iuc)?'uid-c':(sf&&c===sf.field&&isc)?'site-c':'',cc=(ccls(c)+' '+hc).trim();
+      let dv='',tv='',hint=false;
+      if(v!=null){
+        if(typeof v==='object'){
+          /* 对象字段（related / community）在格子里看不了 —— 不再吐 "[object Object]"，
+             统一提示「请预览查看」；空对象 / 空数组就留空。 */
+          const empty=Array.isArray(v)?v.length===0:Object.keys(v).length===0;
+          dv=empty?'':'请预览查看'; tv=dv; hint=!empty;
+        }else if(isDirtyObjStr(v)){ dv=''; tv=''; }   /* 历史脏字符串当空处理 */
+        else{ tv=String(v); dv=esc(trunc(tv,50)); }
+      }
+      const inner=hint?`<span class="pv-hint">${dv}</span>`:dv;
+      h+=`<td class="${cc}" title="${esc(tv)}">${inner}</td>`;
+    });
     h+=`</tr>`;
   });
   h+='</tbody></table>';ct.innerHTML=h;renderPg(all.length,tp);paintSel();
@@ -1395,10 +1508,7 @@ async function processFiles(fileList){
         
         const entries=entriesOfData(data);
         if(!entries.length){toast(`❌ ${esc(file.name)} 对象里没有数组字段`,'error');continue;}
-        const how=await askReplaceMode(entries);
-        if(!how||!how.entries.length)continue;
-        if(how.mode==='replace')await replacePartitions(how.entries);
-        else await mergeEntries(how.entries);
+        await runImportDiff(entries);
       }
       else{toast(`❌ ${esc(file.name)} 不支持的类型`,'error');}
     }catch(e){toast(`❌ ${esc(file.name)}: ${esc(e.message)}`,'error');}
@@ -1420,85 +1530,179 @@ function countOfPart(partName){
   if(!p)return 0;
   return S.files.filter(f=>f.partitionId===p.id).reduce((s,f)=>s+f.data.length,0);
 }
-async function askReplaceMode(entries){
-  if(!entries.length)return null;
-  if(!S.files.length)return {mode:'replace',entries:entries};       
-  const total=entries.reduce((s,e)=>s+e.items.length,0);
-  const act=await showConfirm('导入数据：选择方式',
-    `文件里有 ${entries.length} 个分类 / ${total} 条；当前库有 ${S.files.reduce((s,f)=>s+f.data.length,0)} 条。`,
-    [{text:'🔄 一键替换',value:'replace',primary:true},
-     {text:'☑️ 勾选分区替换',value:'pick'},
-     {text:'➕ 合并（只补新的，不删）',value:'merge'},
-     {text:'取消',value:'cancel'}]);
-  if(act==='cancel')return null;
-  if(act==='replace')return {mode:'replace',entries:entries};
-  if(act==='pick'){
-    const picked=await showPickPartitions(entries);
-    return (picked&&picked.length)?{mode:'replace',entries:picked}:null;
+/* ============================================================
+   导入对比（v2.2 起取代原来的「一键替换 / 勾选分区替换 / 合并导入」）
+   规则：
+   · 有 UID 的条目：按 UID 配对 → 相同 / 改动（字段级可挑）/ 新增 / 仅我有（可删）
+   · 没有 UID 的条目：整个条目比，完全一样才算相同，**只要有一点不一样就当新增**
+   · 「仅我有」默认不勾（= 不删），勾了才删
+   ============================================================ */
+function normVal(v){
+  if(v===null||v===undefined)return '';
+  if(typeof v==='object'){
+    if(Array.isArray(v))return '['+v.map(normVal).join(',')+']';
+    const o={};Object.keys(v).sort().forEach(k=>{o[k]=normVal(v[k]);});return JSON.stringify(o);
   }
-  return {mode:'merge',entries:entries};
+  return String(v).trim();
 }
-let __ppResolve=null;
-let __ppEntries=[];   // ⚠️ 内联 onclick 只能看到全局，entries 必须先挂到这里再渲染按钮
-function showPickPartitions(entries){
+function dispVal(v){ if(v===null||v===undefined)return ''; if(typeof v==='object')return JSON.stringify(v); return String(v); }
+/* 历史脏值：早年代码把对象直接 String() 过，存成了 "[object Object]" 这种字符串。
+   它不是真数据，表格和填写框一律当空处理（用户只要打开那条保存一次就自动清掉了）。 */
+function isDirtyObjStr(v){ return typeof v==='string'&&/^\s*\[object [A-Za-z]+\]\s*$/.test(v); }
+function itemUid(it){ const k=Object.keys(it||{}).find(x=>/^uid$/i.test(x)); return k?String(it[k]??'').trim():''; }
+function itemName(it){ const k=Object.keys(it||{}).find(x=>/^name$/i.test(x)); return k?String(it[k]??''):''; }
+
+function buildImportDiff(entries){
+  const adds=[],changes=[],only=[]; let same=0;
+  entries.forEach(e=>{
+    const partName=String(e.partName||e.key||'').trim()||'未分类';
+    const items=Array.isArray(e.items)?e.items:[];
+    const p=S.partitions.find(x=>x.name===partName);
+    const files=p?S.files.filter(f=>f.partitionId===p.id):[];
+    const mine=[];
+    files.forEach(f=>{const fi=S.files.indexOf(f);f.data.forEach((it,ii)=>mine.push({it,fi,ii}));});
+    const mineByUid=new Map(),mineNoUid=[];
+    mine.forEach(m=>{const u=itemUid(m.it);if(u)mineByUid.set(u,m);else mineNoUid.push(m);});
+    const inByUid=new Set();
+    items.forEach(it=>{
+      const u=itemUid(it);
+      if(u){
+        inByUid.add(u);
+        const m=mineByUid.get(u);
+        if(!m){adds.push({partName,key:e.key,item:it});return;}
+        const keys=[...new Set([...Object.keys(m.it||{}),...Object.keys(it||{})])];
+        keys.sort((a,b)=>{const ia=NEW_FIELD_ORDER.indexOf(a),ib=NEW_FIELD_ORDER.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib)||a.localeCompare(b);});
+        const fd=[];
+        keys.forEach(k=>{if(normVal(m.it[k])!==normVal(it[k]))fd.push({field:k,old:dispVal(m.it[k]),neu:dispVal(it[k])});});
+        if(!fd.length){same++;return;}
+        changes.push({partName,key:e.key,item:it,target:m,fields:fd});
+        return;
+      }
+      /* 无 UID：整条比对，有一点不一样就当新增 */
+      const nv=normVal(it);
+      /* 必须排除已匹配过的（!m.hit）：数据里若有完全重复的条目，
+         不排除的话多条导入项会全部命中同一条现有项，剩下的重复项就被误判成「仅我有」。 */
+      const hit=mineNoUid.find(m=>!m.hit&&normVal(m.it)===nv);
+      if(hit){same++;hit.hit=true;return;}
+      adds.push({partName,key:e.key,item:it});
+    });
+    mine.forEach(m=>{
+      const u=itemUid(m.it);
+      if(u){ if(!inByUid.has(u))only.push({partName,key:e.key,target:m}); }
+      else if(!m.hit)only.push({partName,key:e.key,target:m});
+    });
+  });
+  return {adds,changes,only,same};
+}
+
+let __di=null,__diResolve=null;
+function showImportDiffModal(d){
   return new Promise(resolve=>{
-    __ppResolve=resolve;
-    __ppEntries=entries;
-    const rows=entries.map((e,i)=>{
-      const ex=countOfPart(e.partName);
-      return `<label class="pp-row"><input type="checkbox" class="pp-chk" value="${i}" checked>`
-        +`<span class="pp-name">${esc(e.partName)}</span><span class="pp-key">key: ${esc(e.key)}</span>`
-        +`<span class="pp-n">导入 ${e.items.length} 条${ex?`　现有 ${ex} 条`:'　（库里还没有）'}</span></label>`;
-    }).join('');
-    const body=`<div class="pp-wrap">${rows}</div>`
-      +`<div style="display:flex;gap:8px"><button class="btn btn-o btn-sm" onclick="document.querySelectorAll('.pp-chk').forEach(c=>c.checked=true)">全选</button>`
-      +`<button class="btn btn-o btn-sm" onclick="document.querySelectorAll('.pp-chk').forEach(c=>c.checked=false)">全不选</button></div>`
-      +`<div class="pp-tip">只替换勾选的分区；没勾的分区保持原样，一条都不会动。</div>`;
-    showModal('☑️ 勾选要替换的分区', body,
-      `<button class="btn btn-o" onclick="closeModal();if(__ppResolve){__ppResolve(null);__ppResolve=null;}">取消</button>`
-      +`<button class="btn btn-p" onclick="var a=[];document.querySelectorAll('.pp-chk:checked').forEach(function(c){a.push(+c.value);});closeModal();if(__ppResolve){__ppResolve(a.map(function(i){return __ppEntries[i];}));__ppResolve=null;}">替换选中的分区</button>`);
+    __di=d;__diResolve=resolve;
+    let h='<div class="di-sum">新增 <b>'+d.adds.length+'</b> 条　改动 <b>'+d.changes.length+'</b> 条　仅我有 <b>'+d.only.length+'</b> 条　相同 <b>'+d.same+'</b> 条（自动跳过）</div>';
+    if(d.adds.length){
+      h+='<div class="di-h">🆕 新增（对方有、我没有）</div><div class="di-wrap">';
+      d.adds.forEach(a=>{h+='<label class="di-row"><input type="checkbox" class="di-add" checked><span class="di-n">'+esc(itemName(a.item)||'(无名称)')+'</span><span class="di-m">'+esc(a.partName)+'　UID '+esc(itemUid(a.item)||'—')+'</span></label>';});
+      h+='</div>';
+    }
+    if(d.changes.length){
+      h+='<div class="di-h">✏️ 改动（同一条，字段不同 —— 可只挑某几个字段）</div><div class="di-wrap">';
+      d.changes.forEach((c,i)=>{
+        h+='<div class="di-item"><label class="di-row"><input type="checkbox" class="di-chg" data-i="'+i+'" checked><span class="di-n">'+esc(itemName(c.item)||itemName(c.target.it)||'(无名称)')+'</span><span class="di-m">UID '+esc(itemUid(c.item))+'</span></label>';
+        c.fields.forEach((f,j)=>{
+          h+='<label class="di-f"><input type="checkbox" class="di-fld" data-i="'+i+'" data-j="'+j+'" checked><span class="di-fn">'+esc(f.field)+'</span><span class="diff-old">'+esc(f.old)+'</span><span class="diff-new">'+esc(f.neu)+'</span></label>';
+        });
+        h+='</div>';
+      });
+      h+='</div>';
+    }
+    if(d.only.length){
+      h+='<div class="di-h">🗑 仅我有（对方没有 —— 默认不删，勾了才删）</div><div class="di-wrap">';
+      d.only.forEach(o=>{h+='<label class="di-row"><input type="checkbox" class="di-only"><span class="di-n">'+esc(itemName(o.target.it)||'(无名称)')+'</span><span class="di-m">'+esc(o.partName)+'　勾选则删除</span></label>';});
+      h+='</div>';
+    }
+    let tip='默认：新增 + 改动全勾（含其字段）；「仅我有」默认不勾 = 不删。';
+    if(d.only.length>20 && d.only.length>(d.adds.length+d.changes.length+d.same)){
+      tip+='<br><b style="color:var(--wn)">⚠️「仅我有」数量偏多 —— 导入的文件可能只是这个分区的一部分，这些多半不是真被删了，勾之前先确认。</b>';
+    }
+    h+='<div class="di-tip">'+tip+'</div>';
+    h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">'
+      +'<button class="btn btn-o btn-sm" onclick="document.querySelectorAll(\'.di-add\').forEach(c=>c.checked=true)">新增全选</button>'
+      +'<button class="btn btn-o btn-sm" onclick="document.querySelectorAll(\'.di-add\').forEach(c=>c.checked=false)">新增全不选</button>'
+      +'<button class="btn btn-o btn-sm" onclick="document.querySelectorAll(\'.di-chg,.di-fld\').forEach(c=>c.checked=true)">改动全选</button>'
+      +'<button class="btn btn-o btn-sm" onclick="document.querySelectorAll(\'.di-chg,.di-fld\').forEach(c=>c.checked=false)">改动全不选</button></div>';
+    showModal('🔍 导入对比', h,
+      '<button class="btn btn-o" onclick="closeModal();if(__diResolve){__diResolve(null);__diResolve=null;}">取消</button>'
+      +'<button class="btn btn-p" onclick="closeModal();if(__diResolve){var p=collectDiffPick();__diResolve(p);__diResolve=null;}">应用选中的改动</button>');
   });
 }
-async function replacePartitions(entries){
+function collectDiffPick(){
+  const d=__di; if(!d)return null;
+  const pick={adds:[],changes:[],only:[]};
+  const byItem=new Map();
+  document.querySelectorAll('.di-fld').forEach(c=>{ if(!c.checked)return; const i=+c.dataset.i,j=+c.dataset.j; if(!byItem.has(i))byItem.set(i,new Set()); byItem.get(i).add(j); });
+  let ai=0;
+  document.querySelectorAll('.di-add').forEach(c=>{ if(c.checked&&d.adds[ai])pick.adds.push(d.adds[ai]); ai++; });
+  document.querySelectorAll('.di-chg').forEach(c=>{
+    const i=+c.dataset.i; if(!c.checked||!d.changes[i])return;
+    const fs=byItem.get(i)||new Set();
+    pick.changes.push({c:d.changes[i],fields:d.changes[i].fields.filter((f,j)=>fs.has(j))});
+  });
+  let oi=0;
+  document.querySelectorAll('.di-only').forEach(c=>{ if(c.checked&&d.only[oi])pick.only.push(d.only[oi]); oi++; });
+  return pick;
+}
+async function applyDiffPick(pick){
+  if(!pick)return;
   const snap=JSON.parse(JSON.stringify(S.files));
-  let oldCount=0,newCount=0;
-  entries.forEach(e=>{
-    let part=S.partitions.find(p=>p.name===e.partName);
-    if(!part){part={name:e.partName,id:gid()};S.partitions.push(part);}
-    oldCount+=S.files.filter(f=>f.partitionId===part.id).reduce((s,f)=>s+f.data.length,0);
-    S.files=S.files.filter(f=>f.partitionId!==part.id);
-    S.files.push({name:e.key,partitionId:part.id,data:e.items,lastModified:Date.now()});
-    newCount+=e.items.length;
+  const ensureFile=(partName,key)=>{
+    let p=S.partitions.find(x=>x.name===partName);
+    if(!p){p={name:partName,id:gid()};S.partitions.push(p);}
+    let f=S.files.find(x=>x.name===key&&x.partitionId===p.id);
+    if(!f){f={name:key,partitionId:p.id,data:[],lastModified:Date.now()};S.files.push(f);}
+    return f;
+  };
+  let na=0,nc=0,no=0;
+  pick.adds.forEach(a=>{ensureFile(a.partName,a.key).data.push(JSON.parse(JSON.stringify(a.item)));na++;});
+  pick.changes.forEach(ch=>{
+    const t=ch.c&&ch.c.target; if(!t)return;
+    const f=S.files[t.fi]; if(!f)return;
+    const it=f.data[t.ii]; if(!it)return;
+    let did=0;
+    ch.fields.forEach(fd=>{
+      if(Object.prototype.hasOwnProperty.call(ch.c.item,fd.field)){it[fd.field]=ch.c.item[fd.field];}
+      else delete it[fd.field];
+      did++;
+    });
+    if(did){nc++;f.lastModified=Date.now();}
+  });
+  /* 删除：下标从大到小，避免错位 */
+  pick.only.map(o=>o.target).sort((a,b)=>(b.fi-a.fi)||(b.ii-a.ii)).forEach(t=>{
+    const f=S.files[t.fi]; if(!f)return;
+    if(t.ii>=0&&t.ii<f.data.length){f.data.splice(t.ii,1);no++;f.lastModified=Date.now();}
   });
   rebuildOffsets();await saveState();detectConflicts();refreshUI();
-  addHistory(`替换 ${entries.length} 个分区（${newCount} 条）`,snap);
-  log('🔄 分区替换完成','ok',`覆盖掉 ${oldCount} 条\n导入 ${newCount} 条\n涉及分区: ${entries.map(e=>e.partName).join('、')}`);
-  toast(`✅ 已替换 ${entries.length} 个分区（原 ${oldCount} 条 → 现 ${newCount} 条）`,'ok');
+  const desc='导入对比：新增 '+na+' / 改动 '+nc+' / 删除 '+no;
+  addHistory(desc,snap);
+  toast('✅ '+desc,'ok',5000,()=>undoLast(snap));
+  log('🔍 导入对比完成','ok',desc+'\n相同跳过 '+(__di?__di.same:0)+' 条');
 }
-async function mergeEntries(entries){
-  const snap=JSON.parse(JSON.stringify(S.files));
-  let added=0;
-  entries.forEach(e=>{
-    let part=S.partitions.find(p=>p.name===e.partName);
-    if(!part){part={name:e.partName,id:gid()};S.partitions.push(part);}
-    const ex=S.files.find(f=>f.name===e.key&&f.partitionId===part.id);
-    if(ex){ex.data=[...ex.data,...e.items];ex.lastModified=Date.now();}
-    else S.files.push({name:e.key,partitionId:part.id,data:e.items,lastModified:Date.now()});
-    added+=e.items.length;
-  });
-  rebuildOffsets();await saveState();detectConflicts();refreshUI();
-  addHistory(`合并导入 ${entries.length} 个分类（${added} 条）`,snap);
-  log('📥 合并导入完成','ok',`追加 ${added} 条（现有数据一条未删）\n涉及分区: ${entries.map(e=>e.partName).join('、')}`);
-  toast(`✅ 合并完成（追加 ${added} 条，现有数据保留）`,'ok');
+async function runImportDiff(entries){
+  if(!entries||!entries.length)return;
+  const d=buildImportDiff(entries);
+  if(!d.adds.length&&!d.changes.length&&!d.only.length){
+    toast('两份数据一致（'+d.same+' 条完全相同），没有可导入的改动','ok');return;
+  }
+  const pick=await showImportDiffModal(d);
+  if(!pick)return;
+  await applyDiffPick(pick);
 }
+
 async function importSingle(normName,items){
   if(!Array.isArray(items)||!items.length){toast(`⚠️ ${esc(normName)} 数据为空`,'warn');return;}
   const mr=matchFileToPartition(normName+'.json');
   const entries=[{key:normName,partName:mr.partition||normName,items:items}];
-  const how=await askReplaceMode(entries);
-  if(!how||!how.entries.length)return;
-  if(how.mode==='replace')await replacePartitions(how.entries);
-  else await mergeEntries(how.entries);
+  await runImportDiff(entries);
 }
 
 function openEd(fi,ii){
@@ -1520,9 +1724,12 @@ function openEd(fi,ii){
        省得"related 有多行、community 没有"这种不一致。 */
     const isJSONF=(k==='related'||k==='community');
     if(isJSONF)v=parseMaybeJson(v);
+    if(isDirtyObjStr(v))v='';   /* 历史脏值 "[object Object]" 不要在填写框里出现 */
     const isObj=(typeof v==='object'&&v!==null);
     const isC=isJSONF||isObj;const long=isC||String(v).length>80;
-    const dv=isObj?JSON.stringify(v,null,2):String(v);
+    /* 空对象 / 空数组在填写框里不要留下 "{}" —— 看着似有似无，用户会以为里面已经有东西 */
+    const emptyObj=isObj&&(Array.isArray(v)?v.length===0:Object.keys(v).length===0);
+    const dv=emptyObj?'':(isObj?JSON.stringify(v,null,2):String(v));
     const hint=(k==='related'||k==='community')?`<div style="font-size:11px;color:var(--t3);margin-top:3px">格式：{"按钮名":"链接"}，如 {"发布页":"https://x.com","备用域名":"https://y.com"}；链接不是 http 开头时，详情页会做成「点击复制」按钮（如QQ群号）</div>`:'';
     h+=`<div class="ed-field"><label>${esc(k)}${isC?' (JSON)':''}</label>${long?`<textarea data-f="${esc(k)}" data-complex="${isC}">${esc(dv)}</textarea>`:`<input type="text" data-f="${esc(k)}" value="${esc(dv)}">`}${hint}</div>`;
   });
@@ -1898,8 +2105,8 @@ function showAutoProcessHelp(){
   </div></details>
 
   <details class="kb-sec"><summary class="kb-hd">批处理-自动处理逻辑</summary><div class="kb-bd">
-    <p><b>1. UID 冲突（同号不同站）</b><br>多个条目 UID 相同但域名不同，且名称相似度 ≥35% 或 RELATED 字段存在共同链接时，判定为同一站点的不同域名误用了同一 UID。处理策略：保留其中一个站点的原 UID，其余条目各自重新分配全局未占用的最小四位 UID。</p>
-    <p><b>2. 站点冲突（同站不同号）</b><br>多个条目域名相同但 UID 不同，且名称相似度达阈值或 RELATED 存在共同链接时，判定为同一实体的重复记录。处理策略：默认将 UID 归一为组内数值最小的 UID（保留四位格式），亦可通过下拉手动指定；其余存在差异的字段（含 URL）同样提供下拉，可选定最终值。</p>
+    <p><b>1. UID 冲突（同号不同站）</b><br>多个条目 UID 相同但域名不同，且名称相似度 ≥35% 或 RELATED 字段存在共同链接时，判定为不同实体误用了同一 UID。处理策略：保留其中一个站点的原 UID，其余条目各自重新分配全局未占用的最小四位 UID。</p>
+    <p><b>2. 站点冲突（同站不同号）</b><br>多个条目域名相同但 UID 不同，且名称相似度达阈值或 RELATED 存在共同链接时，判定为同一实体误用了不同的UID。处理策略：默认将 UID 归一为组内数值最小的 UID（保留四位格式），亦可通过下拉手动指定；其余存在差异的字段（含 URL）同样提供下拉，可选定最终值。</p>
     <p><b>3. 同分区重复</b><br>同一分区内 UID 相同的条目视为重复。处理策略：保留字段最完整的一条，可通过字段下拉合并其他条目的差异化字段，随后删除冗余条目。</p>
   </div></details>
 
@@ -2002,65 +2209,9 @@ async function importBundle(b,fileName){
     
 
     const inEntries=inFiles.map(f=>({key:f.name,partName:String(f.partition||'').trim()||keyToPart(f.name)||f.name,items:f.data}));
-    const how=await askReplaceMode(inEntries);
-    if(!how||!how.entries.length)return;
-    if(how.mode==='replace'&&how.entries.length<inEntries.length){await replacePartitions(how.entries);return;}
-    const act=(how.mode==='replace')?'replace':'merge';
-    const snap=JSON.parse(JSON.stringify(S.files));
-    const idMap=new Map();
-    const ensurePart=(name,oldId)=>{
-      let nm=String(name||'').trim();
-      if(!nm&&oldId){const ip=inParts.find(p=>p.id===oldId);if(ip)nm=String(ip.name||'').trim();}
-      if(!nm)nm='未分类';
-      let p=S.partitions.find(x=>x.name===nm);
-      if(!p&&oldId&&idMap.has(oldId))p=S.partitions.find(x=>x.id===idMap.get(oldId));
-      if(!p&&oldId&&act==='replace')p=S.partitions.find(x=>x.id===oldId);
-      if(!p){const keepId=oldId&&!S.partitions.some(x=>x.id===oldId)&&!idMap.has(oldId);p={name:nm,id:keepId?oldId:gid()};S.partitions.push(p);}
-      if(oldId)idMap.set(oldId,p.id);
-      return p;
-    };
-    if(act==='replace'){
-      S.partitions=[];S.hiddenPartitions=new Set();
-      inParts.forEach(p=>ensurePart(p.name,p.id));
-      if(Array.isArray(b.hiddenPartitions))b.hiddenPartitions.forEach(n=>{const p=S.partitions.find(x=>x.name===n);if(p)S.hiddenPartitions.add(p.id);});
-      S.files=[];S.activePartition='all';S.page=1;
-      S.uidWhitelist=readImportedWhitelist(b);
-    }else{
-      inParts.forEach(p=>ensurePart(p.name,p.id));
-      readImportedWhitelist(b).forEach(u=>{if(!S.uidWhitelist.includes(u))S.uidWhitelist.push(u);});
-    }
-    const resolvePid=(f)=>{
-      let nm=String(f.partition||'').trim();
-      let p=nm?S.partitions.find(x=>x.name===nm):null;
-      if(!p&&f.partitionId){const nid=idMap.get(f.partitionId);p=S.partitions.find(x=>x.id===(nid||f.partitionId));}
-      if(!p)p=ensurePart(nm,f.partitionId);
-      return p.id;
-    };
-    const ufName=detectField(inFiles.flatMap(x=>x.data.slice(0,20)),UID_FIELDS)?.field;
-    const sfName=detectField(inFiles.flatMap(x=>x.data.slice(0,20)),URL_FIELDS)?.field;
-    let added=0,merged=0,skipped=0,newParts=S.partitions.length;
-    inFiles.forEach(f=>{
-      const pid=resolvePid(f);
-      const fname=f.name||'未命名';
-      const ex=S.files.find(ef=>ef.name===fname&&ef.partitionId===pid);
-      if(act==='replace'||!ex){
-        S.files.push({name:fname,partitionId:pid,data:f.data,lastModified:f.lastModified||Date.now()});
-        added+=f.data.length;
-      }else{
-        const keys=new Set(ex.data.map(it=>`${ufName?String(it[ufName]??'').trim():''}|${sfName?String(it[sfName]??'').trim():''}`));
-        let cnt=0;
-        f.data.forEach(it=>{
-          const k=`${ufName?String(it[ufName]??'').trim():''}|${sfName?String(it[sfName]??'').trim():''}`;
-          if(k!=='|'&&keys.has(k)){skipped++;return;}
-          keys.add(k);ex.data.push(it);cnt++;
-        });
-        ex.lastModified=Date.now();merged+=cnt;
-      }
-    });
-    rebuildOffsets();await saveState();detectConflicts();refreshUI();
-    addHistory(`导入数据包(${act==='replace'?'替换':'合并'}) ${inFiles.length}个文件`,snap);
-    log(`📦 数据包导入完成`,'ok',`模式: ${act==='replace'?'替换':'合并'}\n新增: ${added} 条\n合并: ${merged} 条${skipped?`\n跳过重复: ${skipped} 条`:''}\n当前分区总数: ${S.partitions.length}`);
-    toast(`✅ 导入成功（新增${added}条${merged?` / 合并${merged}条`:''}）`,'ok');
+    /* v2.2：数据包同样走「导入对比」，不再整体替换或盲目追加 */
+    readImportedWhitelist(b).forEach(u=>{ if(!S.uidWhitelist.includes(u)) S.uidWhitelist.push(u); });
+    await runImportDiff(inEntries);
   }catch(err){toast('导入失败:'+err.message,'er');}
 }
 
@@ -2165,6 +2316,8 @@ function showCrossPartitionDupes(){
     for(let i=0;i<rows.length;i++){
       for(let j=i+1;j<rows.length;j++){
         if(rows[i].pid===rows[j].pid)continue;
+        /* v2.2：只保留 UID 相同的；UID 不同的已归「站点冲突」，别两处都列 */
+        if(uf&&String(a[uf]==null?'':a[uf]).trim()!==String(b[uf]==null?'':b[uf]).trim())continue;
         const a=rows[i].item,b=rows[j].item;
         let sim=0;
         if(nf){
