@@ -57,11 +57,18 @@
     {
       "name": "GALNAVI",
       "url": "https://galnavi.top/",
-      "related": {},
-      "remark": "",
+      "related": {
+        "Github": "https://github.com/argb6/gal-navigation",
+        "B站": "https://space.bilibili.com/3744946343382123"
+      },
+      "community": {
+        "QQ群": "https://qm.qq.com/q/mYzxtmRVy8"
+      },
+      "remark": "专注于 ACG 二次元资源网站聚合与收录的纯净导航站点",
+      "tag": "",
       "issue": "",
       "uid": "0227",
-      "logo": ""
+      "logo": "https://assets.galnavi.top/logo.png"
     },
     {
       "name": "合月亭",
