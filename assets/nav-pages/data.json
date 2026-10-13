@@ -121,7 +121,7 @@
       "url": "http://www.anime-sharing.com/",
       "related": {},
       "remark": "外国大型ACG论坛，有中文区",
-      "tag": "BT 需翻墙",
+      "tag": "需翻墙|BT",
       "issue": "资源盘可能付费 资源安全性较低",
       "uid": "0095",
       "logo": ""
@@ -1282,7 +1282,7 @@
       "url": "http://www.anime-sharing.com/",
       "related": {},
       "remark": "外国大型ACG论坛，有中文区",
-      "tag": "BT 需翻墙",
+      "tag": "需翻墙|BT",
       "issue": "资源盘可能付费 资源安全性较低",
       "uid": "0095",
       "logo": ""
@@ -1552,6 +1552,20 @@
       "issue": "",
       "uid": "0175",
       "logo": ""
+    },
+    {
+      "name": "ACFAN",
+      "url": "https://acfan.com",
+      "related": {},
+      "community": {
+        "TG": "https://t.me/acfantv",
+        "Discord": "114514",
+        "X": "https://x.com/thatasep"
+      },
+      "remark": "",
+      "issue": "",
+      "uid": "0243",
+      "logo": "https://acf.ccsnak4i.work/logo.png"
     }
   ],
   "ln": [
