@@ -33,46 +33,6 @@
             background-attachment: fixed;
             transition: background 0.4s ease, color 0.4s ease;
         }
-        body.dark-mode { background-image: none; background-color: var(--bg-dark); }
-        body.light-mode { background-image: none; background-color: #f8fafc; color: #1e293b; }
-        body.light-mode nav { background: rgba(248,250,252,0.85); border-color: rgba(0,0,0,0.08); }
-        body.light-mode .logo { color: #1e293b; }
-        body.light-mode .nav-link { color: #64748b; }
-        body.light-mode .nav-link:hover { color: #d97706; }
-        body.light-mode .nav-v-line { background: #1e293b; opacity: 0.2; }
-        body.light-mode .icon-btn { color: #1e293b; }
-        body.light-mode .icon-btn:hover { color: #d97706; }
-        body.light-mode .hero h1 {
-            background: linear-gradient(to right, #1e293b, #475569);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        body.light-mode .hero-slogan { color: #d97706; }
-        body.light-mode .btn { border-color: #d97706; color: #d97706; background: var(--bg-card); }
-        body.light-mode .btn:hover { background: rgba(30,41,59,0.9); box-shadow: 0 0 15px rgba(217,119,6,0.3); }
-        body.light-mode .btn-alt { background: var(--bg-card); border-color: #d97706; color: #d97706; }
-        body.light-mode .btn-alt:hover { background: rgba(30,41,59,0.9); border-color: #d97706; color: #d97706; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
-        body.light-mode .section-title { color: #1e293b; }
-        body.light-mode .projects-wrapper { background: rgba(255,255,255,0.55); border-color: rgba(0,0,0,0.06); }
-        body.light-mode .project-card { background: rgba(255,255,255,0.8); border-color: rgba(0,0,0,0.08); }
-        body.light-mode .future-annotations { color: #64748b; }
-        body.light-mode .future-annotations a { color: #d97706; }
-        body.light-mode .text-links { color: #334155; }
-        body.light-mode .text-links a { color: #334155; }
-        body.light-mode .text-links a:hover { color: #d97706; }
-        body.light-mode .text-links span { color: #94a3b8; }
-        body.light-mode footer { border-color: rgba(0,0,0,0.08); color: #334155; }
-        body.light-mode .project-main-title { color: #1e293b; }
-        body.light-mode .doc-link-box { border-color: #d97706; color: #d97706; background: rgba(217,119,6,0.08); }
-        body.light-mode .doc-link-box:hover { background: rgba(217,119,6,0.18); box-shadow: 0 0 12px rgba(217,119,6,0.25); }
-        body.light-mode .about-intro { color: #475569; }
-        body.light-mode .value-item { background: rgba(217,119,6,0.04); }
-        body.light-mode .value-item:hover { background: rgba(217,119,6,0.08); border-color: rgba(217,119,6,0.2); }
-        body.light-mode .value-item h4 { color: #1e293b; }
-        body.light-mode .value-item p { color: #64748b; }
-        body.light-mode .about-subtitle { color: #1e293b; }
-        body.light-mode .member-name { color: #1e293b; }
-        body.light-mode .member-role { color: #64748b; }
 
         .btn-download {
             display: inline-flex;
@@ -94,15 +54,6 @@
             background: rgba(251,191,36,0.2);
             box-shadow: 0 0 16px rgba(251,191,36,0.3);
             transform: translateY(-2px);
-        }
-        body.light-mode .btn-download {
-            border-color: #d97706;
-            color: #d97706;
-            background: rgba(217,119,6,0.08);
-        }
-        body.light-mode .btn-download:hover {
-            background: rgba(217,119,6,0.2);
-            box-shadow: 0 0 16px rgba(217,119,6,0.3);
         }
         body::before {
             content: '';
@@ -168,38 +119,51 @@
             opacity: 0.3;
             flex-shrink: 0;
         }
-        .icon-btn {
+        .nav-gh {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 40px;
             height: 40px;
+            margin-left: 1.2rem;
             color: var(--text-main);
             transition: transform 0.3s ease, color 0.3s ease;
-            cursor: pointer;
-            background: none;
-            border: none;
-            margin-left: 1.2rem;
+            flex-shrink: 0;
         }
-        .icon-btn:hover { color: var(--accent-gold); transform: scale(1.1); }
-        .icon-btn svg { width: 26px; height: 26px; }
+        .nav-gh:hover { color: var(--accent-gold); transform: scale(1.1); }
+        .nav-gh svg { width: 26px; height: 26px; fill: currentColor; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
         .hero {
-            height: 60vh;
+            height: 100vh;
+            height: 100svh;
+            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding-top: 60px;
         }
         .hero h1 {
-            font-size: 3.5rem;
+            position: relative;
             margin-bottom: 0.5rem;
-            background: linear-gradient(to right, #da9898, #1f6bd4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 14px rgba(31, 107, 212, 0.22));
+        }
+        .h1-wrap .h1-diy {
+            width: min(100%, 800px);
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            overflow: visible;
+        }
+        .h1-sr {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
         .hero-slogan {
             font-size: 1.5rem;
@@ -223,6 +187,17 @@
             box-shadow: 0 0 10px var(--accent-gold);
         }
         .hero-actions { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; }
+        .scroll-hint {
+            position: absolute;
+            left: 50%;
+            top: calc(75% + 77px);
+            transform: translateX(-50%);
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            line-height: 0;
+        }
+        .scroll-hint.is-hidden { opacity: 0; }
         .btn {
             padding: 0.8rem 2rem;
             border-radius: 50px;
@@ -238,19 +213,19 @@
         .btn:hover { background: rgba(30,41,59,0.9); box-shadow: 0 0 15px rgba(251,191,36,0.4); }
         .btn-alt { background: var(--bg-card); border-color: var(--accent-gold); color: var(--accent-gold); }
         .btn-alt:hover { background: rgba(30,41,59,0.9); border-color: var(--accent-gold); color: var(--accent-gold); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-        .projects-section { padding: 4rem 0 6rem; }
+        .projects-section { padding: 1.56rem 0 0; }
         .projects-wrapper {
             background: rgba(15,23,42,0.55);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            padding: 3rem 2rem;
+            padding: 2rem;
             backdrop-filter: blur(6px);
         }
         .about-section-container {
-            margin-top: 4rem;
+            margin-top: 2.67rem;
         }
-        .section-title { text-align: center; font-size: 2rem; margin-bottom: 3rem; }
-        .projects-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        .section-title { text-align: center; font-size: 2rem; margin-bottom: 2rem; }
+        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; align-items: stretch; }
         .project-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -282,11 +257,11 @@
             background: rgba(251,191,36,0.08);
         }
         .doc-link-box:hover { background: rgba(251,191,36,0.18); box-shadow: 0 0 12px rgba(251,191,36,0.25); }
-        .text-links { margin-top: 3rem; text-align: center; font-size: 0.95rem; color: #e2e8f0; }
+        .text-links { margin-top: 1.5rem; text-align: center; font-size: 0.95rem; color: #e2e8f0; border-top: 2px solid var(--border-color); }
         .text-links a { color: #e2e8f0; text-decoration: none; transition: color 0.3s; margin: 0 0.5rem; }
         .text-links a:hover { color: var(--accent-gold); }
         .text-links span { color: #e2e8f0; margin: 0 0.5rem; }
-        footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border-color); color: #e2e8f0; font-size: 0.85rem; }
+        footer { text-align: center; padding: 0.75rem 2rem 2rem; color: #e2e8f0; font-size: 0.85rem; }
         .image-modal {
             display: none;
             position: fixed;
@@ -327,7 +302,6 @@
         }
         .modal-close:hover { background: rgba(255,255,255,0.3); transform: scale(1.1) rotate(90deg); }
 
-        /* ===== 关于我们 ===== */
         .about-intro {
             text-align: center;
             font-size: 1.1rem;
@@ -424,6 +398,35 @@
             flex-wrap: wrap;
         }
 
+        @media (max-width: 1024px) {
+            .projects-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+        }
+
+        .support-text {
+            color: var(--text-sub);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .support-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .support-image {
+            display: block;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .support-image img {
+            display: block;
+            width: 40%;
+            height: auto;
+            margin: 0 auto;
+        }
+
         @media (max-width: 768px) {
             .logo-text { display: none; }
             .logo { gap: 0; }
@@ -435,17 +438,17 @@
             .btn { width: 100%; text-align: center; }
 
             .container { padding: 0 0.5rem; }
-            .projects-section { padding: 2rem 0 3rem; }
+            .projects-section { padding: 1.33rem 0 0; }
             .projects-wrapper {
-                padding: 1rem 0.6rem;
+                padding: 0.67rem 0.6rem;
                 border-radius: 12px;
             }
-            .about-section-container { margin-top: 2rem; }
+            .about-section-container { margin-top: 1.33rem; }
             .section-title {
                 font-size: 1.4rem;
-                margin-bottom: 1.2rem;
+                margin-bottom: 0.8rem;
             }
-            .projects-grid { gap: 1rem; }
+            .projects-grid { grid-template-columns: 1fr; gap: 1rem; }
             .project-card {
                 padding: 1rem 0.8rem;
                 border-radius: 10px;
@@ -482,11 +485,10 @@
                 justify-content: center;
             }
 
-            .icon-btn { width: 32px; height: 32px; }
-            .icon-btn svg { width: 22px; height: 22px; }
             .nav-v-line { display: none; }
             .nav-link { font-size: 0.9rem; padding: 0 0.8rem; }
-            .icon-btn { margin-left: 0.8rem; }
+            .nav-gh { width: 32px; height: 32px; margin-left: 0.8rem; }
+            .nav-gh svg { width: 22px; height: 22px; }
             .modal-content { max-width: 90vw; max-height: 60vh; }
             .text-links { margin-top: 1.5rem; }
 
@@ -497,21 +499,13 @@
             .members-grid { gap: 1.2rem; margin-bottom: 1.5rem; }
             .member-card img { width: 52px; height: 52px; }
             .about-contact { flex-direction: column; align-items: center; }
+            .support-image { margin-top: 0.6rem; margin-bottom: 1rem; }
+            .support-text { font-size: 0.95rem; margin-bottom: 1rem; }
             .about-contact .btn-download { width: 100%; justify-content: center; }
 
             .l2d-widget-container {display: none !important;}
-        }        
+        }
     </style>
-<!-- SEO-AUTO-START -->
-    <link rel="canonical" href="https://heyue-org.github.io/web/">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="合月亭">
-    <meta property="og:url" content="https://heyue-org.github.io/web/">
-    <meta property="og:title" content="合月亭·打造最好的ACG网站地图与指南">
-    <meta property="og:description" content="合月亭收录免费提供二次元资源的网站、常用工具与配套教程，涵盖动漫、漫画、游戏、轻小说等分类，是持续更新的 ACG 资源导航与指南。">
-    <meta name="twitter:title" content="合月亭·打造最好的ACG网站地图与指南">
-    <meta name="twitter:description" content="合月亭收录免费提供二次元资源的网站、常用工具与配套教程，涵盖动漫、漫画、游戏、轻小说等分类，是持续更新的 ACG 资源导航与指南。">
-    <!-- SEO-AUTO-END -->
 </head>
 <body>
     <nav>
@@ -529,38 +523,30 @@
                 <div class="nav-v-line"></div>
                 <a href="assets/tools/tool-index.html" class="nav-link">工具箱</a>
                 <div class="nav-v-line"></div>
-                <button class="icon-btn" id="theme-toggle" title="切换背景模式" aria-label="切换背景模式">
-                    <svg id="icon-img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                        <polyline points="21 15 16 10 5 21"></polyline>
-                    </svg>
-                    <svg id="icon-moon" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="icon-sun" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
+                <a class="nav-gh" href="https://github.com/Heyue-org" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub">
+                    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A7.995 7.995 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+                </a>
             </div>
         </div>
     </nav>
     <header class="hero">
         <div class="container">
-            <h1>合月亭·ACG站点导航</h1>
-            <div class="hero-slogan">旨在收录免费提供ACG资源的网站及常用工具，并提供GAL专用教程</div>
+            <h1 class="h1-wrap">
+                <span class="h1-sr">合月亭·ACG站点导航</span>
+                <svg class="h1-diy" viewBox="-432 -108 860 153" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="h1g0" x1="0.75" y1="0.07" x2="0.25" y2="0.93"><stop offset="0" stop-color="#ec89a3"/><stop offset="0.5" stop-color="#a490f4"/><stop offset="1" stop-color="#3ea2d0"/></linearGradient><filter id="h1f0" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow in="SourceGraphic" dx="0" dy="1.75" stdDeviation="3.5" flood-color="#000000" flood-opacity="0.7" result="sh"/><feComponentTransfer in="SourceAlpha" result="mask"><feFuncA type="linear" slope="255"/></feComponentTransfer><feGaussianBlur in="SourceGraphic" stdDeviation="40" result="b2"/><feComposite in="b2" in2="mask" operator="out" result="g2"/><feGaussianBlur in="SourceGraphic" stdDeviation="14" result="b1"/><feComposite in="b1" in2="mask" operator="out" result="g1"/><feMerge><feMergeNode in="sh"/><feMergeNode in="g2"/><feMergeNode in="g1"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="h1g1" x1="0.91" y1="0.21" x2="0.09" y2="0.79"><stop offset="0" stop-color="#ec89a3"/><stop offset="0.5" stop-color="#a490f4"/><stop offset="1" stop-color="#3ea2d0"/></linearGradient><filter id="h1f1" x="-60%" y="-60%" width="220%" height="220%"><feDropShadow in="SourceGraphic" dx="0" dy="1.75" stdDeviation="3.5" flood-color="#000000" flood-opacity="0.7" result="sh"/><feComponentTransfer in="SourceAlpha" result="mask"><feFuncA type="linear" slope="255"/></feComponentTransfer><feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b2"/><feComposite in="b2" in2="mask" operator="out" result="g2"/><feGaussianBlur in="SourceGraphic" stdDeviation="2.1" result="b1"/><feComposite in="b1" in2="mask" operator="out" result="g1"/><feMerge><feMergeNode in="sh"/><feMergeNode in="g2"/><feMergeNode in="g1"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><g data-all="1"><g transform="translate(0,0)" filter="url(#h1f0)"><text x="0" y="0" text-anchor="middle" font-size="76" font-weight="700" letter-spacing="6.84" font-family="'PingFang SC','Microsoft YaHei',sans-serif" fill="url(#h1g0)" fill-opacity="0.25">合月亭·ACG站点导航</text></g><g transform="translate(0,0)" filter="url(#h1f1)"><text x="0" y="0" text-anchor="middle" font-size="76" font-weight="700" letter-spacing="6.84" font-family="'PingFang SC','Microsoft YaHei',sans-serif" fill="none" stroke="url(#h1g1)" stroke-width="2.6" stroke-linejoin="round">合月亭·ACG站点导航</text></g></g></svg>
+            </h1>
+            <div class="hero-slogan">本企划旨在收录免费提供ACG资源的网站及常用工具，并提供GAL专用信息技术教程</div>
             <div class="hero-actions">
                 <a href="Navigation.html" class="btn">ACG站点目录</a>
                 <a href="WIKI.html" class="btn btn-alt" target="_blank" rel="noopener noreferrer">GAL WIKI</a>
             </div>
+        </div>
+        <div class="scroll-hint" id="scrollHint" aria-hidden="true">
+            <svg viewBox="0 0 24 48" width="24" height="48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <polyline points="3,3 12,12 21,3" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="3,18 12,27 21,18" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="3,33 12,42 21,33" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
         </div>
     </header>
     <section class="projects-section">
@@ -573,12 +559,14 @@
                             <h3 class="project-main-title">ACG免费资源站目录·网页版</h3>
                         </div>
                         <div class="future-annotations">
-                            <p>网页版入口见上。</p>
-                            <p>已收录累计 349 个站点 · 12 个分类 · 存活 个；失效 个</p>
+                            <p>已收录 316 个站点 </p>
+                            <p>共12个分类</p>
+                            <p>存活199个</p>
+                            <p>失效108个</p>
                             <div class="doc-links-row">
                                 <a href="Navigation.html" target="_blank" rel="noopener noreferrer" class="btn-download">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                    ACG站点目录
+                                    网页版
                                 </a>
                             </div>
                         </div>
@@ -588,16 +576,16 @@
                             <h3 class="project-main-title">ACG免费资源站目录·Excel文档</h3>
                         </div>
                         <div class="future-annotations">
-                            <p>现提供在线表格和 Excel 文件下载。</p>
+                            <p>现提供Excel文件下载。</p>
                             <p>可在Github下载有自动统计功能的宏版本。</p>
                             <div class="doc-links-row">
                                 <a href="assets/tools/excel.html" target="_blank" rel="noopener noreferrer" class="btn-download">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                    查看在线文档
+                                    在线查看表格
                                 </a>
                                 <a href="https://github.com/Heyue-org/HYT_ACG-Site-Directory/releases/download/v1.2/HYT-ACG-VBA-v1.2.xlsm" class="btn-download">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                    下载文档
+                                    下载表格
                                 </a>
                             </div>
                         </div>
@@ -646,14 +634,27 @@
                     </div>
 
                     <div class="about-contact">
-                        <a href="https://github.com/Heyue-org" target="_blank" rel="noopener noreferrer" class="btn-download">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-                            GitHub
-                        </a>
                         <a href="" class="btn-download">
                             加入编辑部
                         </a>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="container about-section-container support-section-container">
+            <div class="projects-wrapper">
+                <h2 class="section-title">支持我们</h2>
+                <div class="image-container support-image" data-image="assets/css/images/star.webp">
+                    <img src="assets/css/images/star.webp" alt="在 GitHub 收藏我们的仓库（点亮小星星）">
+                </div>
+                <p class="support-text">
+                    如果这个项目对你有帮助，欢迎到我们的 GitHub 仓库点亮小星星。
+                </p>
+                <div class="support-actions">
+                    <a href="https://github.com/Heyue-org/HYT_ACG-Site-Directory" target="_blank" rel="noopener noreferrer" class="btn-download">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                        前往STAR
+                    </a>
                 </div>
             </div>
         </div>
@@ -675,26 +676,6 @@
         </div>
     </footer>
     <script>
-        const toggleBtn = document.getElementById('theme-toggle');
-        const body = document.body;
-        const icons = {
-            img: document.getElementById('icon-img'),
-            moon: document.getElementById('icon-moon'),
-            sun: document.getElementById('icon-sun')
-        };
-        let mode = 0;
-        function showIcon(name) {
-            Object.values(icons).forEach(i => i.style.display = 'none');
-            icons[name].style.display = 'block';
-        }
-        function applyMode() {
-            body.classList.remove('light-mode', 'dark-mode');
-            if (mode === 1) body.classList.add('dark-mode');
-            if (mode === 2) body.classList.add('light-mode');
-            showIcon(mode === 0 ? 'img' : mode === 1 ? 'moon' : 'sun');
-        }
-        toggleBtn.addEventListener('click', () => { mode = (mode + 1) % 3; applyMode(); });
-        applyMode();
         const modal = document.getElementById('imageModal');
         const modalImg = document.getElementById('modalImage');
         const modalClose = document.getElementById('modalClose');
@@ -773,69 +754,6 @@
   }
 </style>
 
-<style>
-  #model-list-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: 99999;
-    display: none;
-    justify-content: center;
-    align-items: center;
-  }
-  #model-list-overlay.show { display: flex; }
-  #model-list-panel {
-    background: #1e293b;
-    border: none;
-    border-radius: 12px;
-    padding: 1.5rem;
-    max-width: 400px;
-    width: 90%;
-    max-height: 70vh;
-    overflow-y: auto;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-  }
-  #model-list-panel h3 {
-    color: #fbbf24;
-    margin: 0 0 1rem 0;
-    font-size: 1.1rem;
-    text-align: center;
-  }
-  .model-list-item {
-    display: block;
-    width: 100%;
-    padding: 0.6rem 1rem;
-    margin-bottom: 0.4rem;
-    background: #0f172a;
-    border: none;
-    border-radius: 6px;
-    color: #e2e8f0;
-    cursor: pointer;
-    font-size: 0.9rem;
-    text-align: left;
-    transition: all 0.2s;
-  }
-  .model-list-item:hover {
-    background: rgba(251,191,36,0.15);
-    color: #fbbf24;
-  }
-  .model-list-item.active {
-    background: rgba(251,191,36,0.2);
-    color: #fbbf24;
-  }
-  #model-list-close {
-    display: block;
-    margin: 1rem auto 0;
-    padding: 0.4rem 1.5rem;
-    background: #fbbf24;
-    color: #0f172a;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-  }
-</style>
-
 <div id="model-list-overlay">
   <div id="model-list-panel">
     <h3>选择模型</h3>
@@ -844,11 +762,12 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/live2dcubismcore@6.0.0/dist/live2dcubismcore.min.js"></script>
-<script src="assets/l2d/l2d-widget.min.js"></script>
-
 <script>
   (() => {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches ||
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|Mobile/i.test(navigator.userAgent);
+    if (isMobile) return;
+
     const baseModelOptions = [
       { path: 'assets/l2d/models/HK416-1-normal/model.json', scale: 1, offset: [0, 0] },
       { path: 'assets/l2d/models/HK416-2-destroy/model.json', scale: 1, offset: [0, 0] },
@@ -894,7 +813,7 @@ const modelOptions = baseModelOptions.map(opt => ({
     typing: { speed: 100 },
     offset: { x: 20, y: -10 },
     style: {
-    maxWidth: '180px', 
+    maxWidth: '180px',
     width: '180px',
     wordWrap: 'break-word',
     whiteSpace: 'normal',
@@ -910,6 +829,17 @@ const modelOptions = baseModelOptions.map(opt => ({
     let currentIndex = 0;
     let isSwitching = false;
     let widget = null;
+
+    function loadScript(src) {
+      return new Promise((resolve, reject) => {
+        const el = document.createElement('script');
+        el.src = src;
+        el.async = false;
+        el.onload = resolve;
+        el.onerror = () => reject(new Error('加载失败: ' + src));
+        document.head.appendChild(el);
+      });
+    }
 
     function showModelList() {
       const overlay = document.getElementById('model-list-overlay');
@@ -950,51 +880,70 @@ const modelOptions = baseModelOptions.map(opt => ({
       isSwitching = false;
     }
 
-    widget = L2D_WIDGET.createWidget({
-      position: 'bottom-right',
-      size: { width: 300, height: 400 },
-      transitionType: 'slide',
-      transitionDuration: 1000,
-      primaryColor: 'rgba(251, 191, 36, 0.9)',
-      model: modelOptions,
-      menus: {
-        items: [
-          {
-            icon: 'mdi:format-list-bulleted',
-            label: '模型列表',
-            onClick: showModelList
-          },
-          {
-            icon: 'mdi:shuffle-variant',
-            label: '切换模型',
-            onClick: async () => {
-              const next = (currentIndex + 1) % modelOptions.length;
-              await switchToModel(next);
-            }
-          },
-          {
-            icon: 'mdi:bed',
-            label: '休眠',
-            onClick: (w) => w.sleep()
+    loadScript('https://cdn.jsdelivr.net/npm/live2dcubismcore@6.0.0/dist/live2dcubismcore.min.js')
+      .then(() => loadScript('assets/l2d/l2d-widget.min.js'))
+      .then(() => {
+        widget = L2D_WIDGET.createWidget({
+          position: 'bottom-right',
+          size: { width: 300, height: 400 },
+          transitionType: 'slide',
+          transitionDuration: 1000,
+          primaryColor: 'rgba(251, 191, 36, 0.9)',
+          model: modelOptions,
+          menus: {
+            items: [
+              {
+                icon: 'mdi:format-list-bulleted',
+                label: '模型列表',
+                onClick: showModelList
+              },
+              {
+                icon: 'mdi:shuffle-variant',
+                label: '切换模型',
+                onClick: async () => {
+                  const next = (currentIndex + 1) % modelOptions.length;
+                  await switchToModel(next);
+                }
+              },
+              {
+                icon: 'mdi:bed',
+                label: '休眠',
+                onClick: (w) => w.sleep()
+              }
+            ]
           }
-        ]
-      }
-    });
+        });
 
-    setTimeout(() => {
-      const canvas = document.querySelector('canvas');
-      if (canvas) {
-        let container = canvas.parentElement;
-        while (container && container !== document.body && getComputedStyle(container).position !== 'fixed') {
-          container = container.parentElement;
-        }
-        if (container) {
-          container.classList.add('l2d-widget-container');
-        }
-      }
-    }, 800);
+        setTimeout(() => {
+          const canvas = document.querySelector('canvas');
+          if (canvas) {
+            let container = canvas.parentElement;
+            while (container && container !== document.body && getComputedStyle(container).position !== 'fixed') {
+              container = container.parentElement;
+            }
+            if (container) {
+              container.classList.add('l2d-widget-container');
+            }
+          }
+        }, 800);
+      })
+      .catch((e) => console.warn('Live2D 未加载：', e));
   })();
 </script>
+<script>
+      (function () {
+        var hint = document.getElementById('scrollHint');
+        if (!hint) return;
+        var update = function () {
+          var h = window.innerHeight || document.documentElement.clientHeight || 0;
+          var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+          hint.classList.toggle('is-hidden', y > h * 0.2);
+        };
+        window.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        update();
+      })();
+    </script>
     <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"5824bbe371ce4eefbe8027cb86c0d0a6"}'></script>
 </body>
 </html>
