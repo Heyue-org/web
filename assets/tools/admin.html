@@ -4,440 +4,1182 @@
     <link rel="icon" type="image/png" href="../../assets/css/images/biglogo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>评分监控面板</title>
+    <title>评分管理后台</title>
     <meta name="robots" content="noindex">
     <style>
-        :root { --bg: #f8fafc; --card: #ffffff; --primary: #2563eb; --danger: #ef4444; --success: #10b981; --text: #1e293b; --border: #e2e8f0; }
+        :root {
+            --bg: #f8fafc; --card: #ffffff; --primary: #2563eb; --primary-soft: #eff6ff;
+            --danger: #ef4444; --warning: #f59e0b; --success: #10b981;
+            --text: #1e293b; --muted: #64748b; --border: #e2e8f0;
+        }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, sans-serif;
+            background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px;
+        }
+        .wrap { max-width: 1700px; margin: 0 auto; }
 
-        .login-box { max-width: 400px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .login-box h3 { margin-bottom: 15px; text-align: center; }
-        .login-box input { width: 100%; padding: 10px; margin: 10px 0; box-sizing: border-box; border: 1px solid #ddd; border-radius: 4px; outline: none; }
-        .login-box button { width: 100%; padding: 10px; background: #333; color: white; border: none; cursor: pointer; border-radius: 4px; }
-        .login-box button:disabled { opacity: 0.6; cursor: not-allowed; }
-        .login-msg { color: #ef4444; font-size: 13px; min-height: 20px; margin-bottom: 5px; text-align: center; }
+        .statusbar { background: #f1f5f9; border: 1px solid var(--border); color: var(--muted); padding: 9px 16px; border-radius: 8px; font-size: 12.5px; margin-bottom: 12px; }
+        .statusbar.ok { background: #ecfdf5; border-color: #a7f3d0; color: #065f46; }
+        .statusbar.err { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
 
-        .dashboard { display: none; max-width: 1700px; margin: 0 auto; }
-        .toolbar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
-        .toolbar-left { display: flex; gap: 12px; flex-wrap: wrap; flex: 1; }
-        .search-input { max-width: 300px; }
-        input, select { padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.2s; }
+        .topbar { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 12px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .brand { font-size: 18px; font-weight: 700; }
+        .brand span { font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 8px; }
+        .grow { flex: 1; min-width: 220px; }
+
+        .btn-on { background: var(--primary-soft); border: 1px solid #bfdbfe; color: #1e40af; }
+
+        input[type=text], input[type=password], select {
+            padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px;
+            font-size: 13px; outline: none; background: #fff; color: var(--text); font-family: inherit;
+        }
         input:focus, select:focus { border-color: var(--primary); }
-        button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-danger { background: var(--danger); color: white; padding: 6px 12px; font-size: 12px; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 16px; font-size: 13px; }
 
-        .table-wrapper { background: var(--card); border-radius: 12px; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        button {
+            padding: 9px 18px; border: none; border-radius: 8px; cursor: pointer;
+            font-weight: 600; font-size: 13px; background: var(--primary); color: #fff;
+            transition: opacity .2s; font-family: inherit;
+        }
+        button:hover { opacity: .88; }
+        button:disabled { opacity: .5; cursor: not-allowed; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-outline:hover { background: #f1f5f9; }
+        .btn-danger-sm { background: var(--danger); padding: 5px 12px; font-size: 12px; white-space: nowrap; }
+        .btn-mini { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 3px 8px; font-size: 11px; font-weight: 500; }
+
+        .tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--border); }
+        .tab { background: transparent; color: var(--muted); border: none; border-bottom: 2px solid transparent; border-radius: 0; padding: 10px 18px; font-size: 14px; }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab:hover { opacity: 1; background: transparent; color: var(--text); }
+        .tab.active:hover { color: var(--primary); }
+
+        .panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; }
+        .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .toolbar .spacer { flex: 1; }
+        .search-input { min-width: 230px; }
+        .search-wrap { position: relative; display: inline-flex; align-items: center; }
+        .clear-x {
+            position: absolute; right: 6px; width: 20px; height: 20px; padding: 0;
+            border-radius: 50%; background: #e2e8f0; color: #64748b;
+            font-size: 13px; line-height: 1; font-weight: 700; display: none;
+        }
+        .clear-x:hover { background: #cbd5e1; opacity: 1; }
+        .um-meta { margin-bottom: 16px; font-size: 12.5px; display: flex; gap: 22px; flex-wrap: wrap; }
+        .um-meta b { color: var(--text); font-weight: 600; }
+        .um-meta span { color: var(--muted); margin-right: 5px; }
+
+        .batchbar { background: var(--primary-soft); border: 1px solid #bfdbfe; color: #1e40af; border-radius: 8px; padding: 8px 14px; margin-bottom: 12px; font-size: 13px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .batchbar .spacer { flex: 1; }
+        .batchbar button.btn-outline { background: #fff; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 16px; }
+        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+        .stat-value { font-size: 28px; font-weight: 700; color: var(--primary); line-height: 1.2; }
+        .stat-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+        .stat-card.danger .stat-value { color: var(--danger); }
+        .stat-card.ok .stat-value { color: var(--success); }
+
+        .table-wrapper { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: #f1f5f9; padding: 14px 16px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; white-space: nowrap; }
-        td { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; white-space: nowrap; }
-        td.wrap { white-space: normal; word-break: break-all; }
+        th { background: #f1f5f9; padding: 11px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); white-space: nowrap; }
+        th.sortable { cursor: pointer; user-select: none; }
+        th.sortable:hover { color: var(--primary); }
+        th .arrow { font-size: 10px; margin-left: 3px; }
+        td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
         tr:last-child td { border-bottom: none; }
-        tr:hover { background: #f8fafc; }
+        tbody tr.row { cursor: pointer; }
+        tbody tr.row:hover { background: #f8fafc; }
+        tbody tr.lv-high { background: rgba(239,68,68,.09); }
+        tbody tr.lv-high:hover { background: rgba(239,68,68,.15); }
+        tbody tr.lv-medium { background: rgba(245,158,11,.10); }
+        tbody tr.lv-medium:hover { background: rgba(245,158,11,.16); }
+        tr.sel { background: var(--primary-soft) !important; }
+        tr.wl td { opacity: .55; }
+        td.wrap { white-space: normal; word-break: break-all; }
+        .empty { text-align: center; padding: 40px; color: #94a3b8; }
+        .cell-sub { display: block; color: #94a3b8; font-size: 11px; margin-top: 2px; }
+        code.fp { font-size: 11px; background: #f1f5f9; padding: 2px 5px; border-radius: 3px; }
+        .linkish { color: var(--primary); text-decoration: none; border-bottom: 1px dotted var(--primary); cursor: pointer; }
+        .linkish:hover { background: var(--primary-soft); }
+        .rawkey { color: var(--muted); }
 
-        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-right: 4px; }
         .tag-cloud { background: #fee2e2; color: #991b1b; }
         .tag-score { background: #dbeafe; color: #1e40af; }
         .tag-valid { background: #d1fae5; color: #065f46; }
         .tag-invalid { background: #fef3c7; color: #92400e; }
-        .ip-cell small { display: block; color: #94a3b8; font-size: 11px; margin-top: 2px; }
-        .fp-detail { font-size: 12px; color: #64748b; line-height: 1.8; }
-        .fp-detail code { background: #f1f5f9; padding: 1px 4px; border-radius: 3px; font-size: 11px; }
-        .ua-toggle { color: var(--primary); cursor: pointer; user-select: none; }
-        .ua-toggle:hover { text-decoration: underline; }
-        .ua-full { display: none; margin-top: 4px; }
-        .ua-full.show { display: block; }
+        .tag-rerate { background: #fef3c7; color: #92400e; }
+        .tag-cluster { background: #ede9fe; color: #5b21b6; }
+        .tag-wl { background: #d1fae5; color: #065f46; }
 
-        .loading { text-align: center; padding: 40px; color: #94a3b8; }
-        .empty-state { text-align: center; padding: 60px 20px; color: #94a3b8; }
+        .risk-badge { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 11px; font-weight: 700; color: #fff; }
+        .risk-high { background: var(--danger); }
+        .risk-medium { background: var(--warning); }
+        .risk-low { background: #94a3b8; }
 
-        @media (max-width: 768px) {
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .search-input { max-width: 100%; }
-        }
+        .pager { display: flex; gap: 10px; align-items: center; justify-content: center; margin-top: 14px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+        .pager button { padding: 6px 14px; font-size: 12px; }
+        .pager select { padding: 6px 8px; font-size: 12px; }
+        .foot { font-size: 12px; color: var(--muted); margin-top: 12px; }
+        .hidden { display: none; }
+
+        .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        @media (max-width: 1000px) { .charts { grid-template-columns: 1fr; } }
+        .chart-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+        .chart-title { font-size: 13px; font-weight: 600; margin-bottom: 12px; }
+        .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+        .bar-row .lb { width: 42px; color: var(--muted); }
+        .bar-row .bar { height: 14px; background: var(--primary); border-radius: 3px; min-width: 2px; }
+        .bar-row .vv { color: var(--muted); }
+
+        .user-detail { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; margin-top: 16px; }
+        @media (max-width: 1100px) { .user-detail { grid-template-columns: 1fr; } }
+        .ud-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+        .ud-box h4 { font-size: 13px; margin-bottom: 10px; }
+        .ud-line { font-size: 12.5px; padding: 6px 0; border-bottom: 1px dashed var(--border); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+        .ud-line:last-child { border-bottom: none; }
+        .gap-fast { color: var(--danger); font-weight: 700; }
+
+        .modal { position: fixed; inset: 0; background: rgba(15,23,42,.55); display: none; align-items: center; justify-content: center; z-index: 200; padding: 24px; }
+        .modal.show { display: flex; }
+        .modal-box { background: var(--card); border-radius: 14px; max-width: 860px; width: 100%; max-height: 88vh; overflow: auto; }
+        .modal-hd { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--card); }
+        .modal-hd h3 { font-size: 15px; flex: 1; }
+        .modal-bd { padding: 18px 20px 24px; }
+        .close { background: transparent; border: none; color: var(--muted); font-size: 22px; cursor: pointer; padding: 0 6px; }
+        .kv { display: grid; grid-template-columns: 130px 1fr; gap: 8px 14px; font-size: 13px; }
+        .kv dt { color: var(--muted); }
+        .kv dd { word-break: break-all; }
+        .sec-title { font-size: 13px; font-weight: 700; margin: 18px 0 10px; padding-left: 8px; border-left: 3px solid var(--primary); }
+        .rule { display: flex; gap: 10px; align-items: baseline; font-size: 12.5px; padding: 7px 0; border-bottom: 1px dashed var(--border); flex-wrap: wrap; }
+        .rule .hit { font-weight: 700; min-width: 48px; }
+        .rule .hit.y { color: var(--danger); }
+        .rule .hit.n { color: var(--muted); }
+        .rule .pt { color: var(--muted); min-width: 28px; }
+        .rule .desc { color: var(--muted); }
+        .sum-line { font-size: 13px; margin-top: 10px; }
+
+        #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(12px); background: #1e293b; color: #fff; font-size: 13px; padding: 9px 18px; border-radius: 999px; opacity: 0; pointer-events: none; transition: all .22s; z-index: 300; }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
+<div class="wrap">
 
-    <div id="loginBox" class="login-box">
-        <h3>管理员登录</h3>
-        <div id="loginMsg" class="login-msg"></div>
-        <input type="text" id="workerUrl" placeholder="Worker 地址，如 https://xxx.workers.dev">
-        <input type="password" id="adminKey" placeholder="输入管理员密钥">
-        <button onclick="handleLogin()" id="loginBtn">进入后台</button>
+    <div class="statusbar" id="statusBar">未连接：填好 Worker 地址与管理员密钥后点「连接」</div>
+
+    <div class="topbar"></div>
+
+    <div class="topbar">
+        <div class="brand">评分管理后台<span>日志 / 风控 / 用户数据</span></div>
+        <input type="text" id="workerUrl" class="grow" value="https://heyue-rating-worker.heyue-rating-api.workers.dev" placeholder="Worker 地址">
+        <input type="password" id="adminKey" style="max-width:190px;" value="demo-key-0000" placeholder="管理员密钥">
+        <button id="connectBtn">连接</button>
+        <button class="btn-outline" id="autoBtn" onclick="toggleAuto()">自动刷新：关</button>
+        <button class="btn-outline" onclick="openAudit()">操作记录</button>
     </div>
 
-    <div id="dashboard" class="dashboard">
-        <div class="toolbar">
-            <div class="toolbar-left">
-                <input type="text" class="search-input" id="searchInput" placeholder="搜索 IP / ISP / 指纹 / UA..." oninput="onSearchInput()">
-                <select id="scoreFilter" onchange="filterLogs()" style="max-width:140px;">
-                    <option value="">全部评分</option>
-                    <option value="5">5星</option>
-                    <option value="4">4星</option>
-                    <option value="3">3星</option>
-                    <option value="2">2星</option>
-                    <option value="1">1星</option>
-                </select>
-                <select id="fpFilter" onchange="filterLogs()" style="max-width:140px;">
-                    <option value="">全部指纹</option>
-                    <option value="valid">有效指纹</option>
-                    <option value="invalid">无效指纹</option>
-                </select>
-            </div>
-            <div style="display:flex;gap:8px;">
+    <div class="tabs">
+        <button class="tab active" data-tab="logs">日志</button>
+        <button class="tab" data-tab="risk">风控</button>
+        <button class="tab" data-tab="users">用户数据</button>
+    </div>
+
+    <section id="tab-logs">
+        <div class="panel">
+            <div class="toolbar">
+                <span class="search-wrap">
+                    <input type="text" class="search-input" id="searchInput" placeholder="搜索 IP / ISP / 指纹 / 站名 / 语言" oninput="toggleClear('searchInput','clearLogs')">
+                    <button class="clear-x" id="clearLogs" onclick="clearSearch('searchInput','logs')" title="清除">×</button>
+                </span>
+                <select id="scoreFilter"><option value="">全部评分</option><option value="5">5 星</option><option value="4">4 星</option><option value="3">3 星</option><option value="2">2 星</option><option value="1">1 星</option></select>
+                <select id="fpFilter"><option value="">全部指纹</option><option value="valid">有效指纹</option><option value="invalid">无效指纹</option></select>
+                <span class="spacer"></span>
                 <button class="btn-outline" onclick="exportCSV()">导出 CSV</button>
                 <button class="btn-outline" onclick="exportArchive()">导出归档</button>
-                <button class="btn-outline" onclick="fetchLogs()">刷新</button>
-                <button class="btn-outline" onclick="logout()" style="color:#ef4444;border-color:#fecaca;">退出</button>
+                <button class="btn-outline" onclick="reloadLogs()">刷新</button>
             </div>
         </div>
-
+        <div class="batchbar hidden" id="batchBar">
+            <span id="batchInfo">已选 0 条</span>
+            <span class="spacer"></span>
+            <button class="btn-outline" onclick="batchWhitelist()">加入白名单</button>
+            <button class="btn-outline" onclick="clearSel()">取消选择</button>
+            <button style="background:var(--danger);" onclick="batchDelete()">批量删除</button>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="sTotal">0</div><div class="stat-label">日志总数</div></div>
+            <div class="stat-card ok"><div class="stat-value" id="sValid">0</div><div class="stat-label">指纹有效</div></div>
+            <div class="stat-card danger"><div class="stat-value" id="sCloud">0</div><div class="stat-label">云服务商 IP</div></div>
+            <div class="stat-card"><div class="stat-value" id="sAvg">0</div><div class="stat-label">平均评分</div></div>
+        </div>
         <div class="table-wrapper">
             <table>
-                <thead>
-                    <tr>
-                        <th>时间</th>
-                        <th>IP / ISP</th>
-                        <th>语言</th>
-                        <th>设备指纹</th>
-                        <th>评分</th>
-                        <th>Referer</th>
-                        <th style="text-align:right; width:80px;">操作</th>
-                    </tr>
-                </thead>
-                <tbody id="logTable">
-                    <tr><td colspan="7" class="loading">加载中...</td></tr>
-                </tbody>
+                <thead><tr>
+                    <th style="width:34px;"><input type="checkbox" id="chkAllLogs" onchange="toggleAll(this,'logs')"></th>
+                    <th class="sortable" data-sort="timestamp" data-tb="logs">时间<span class="arrow"></span></th>
+                    <th>IP / ISP</th>
+                    <th>语言</th>
+                    <th>设备指纹</th>
+                    <th>评分对象</th>
+                    <th class="sortable" data-sort="ratingScore" data-tb="logs">评分<span class="arrow"></span></th>
+                    <th style="text-align:right;width:96px;">操作</th>
+                </tr></thead>
+                <tbody id="logTable"></tbody>
             </table>
         </div>
-        <div id="statsBar" style="margin-top:12px;font-size:13px;color:#64748b;"></div>
+        <div class="pager" id="pagerLogs"></div>
+        <div class="foot" id="logFoot"></div>
+    </section>
+
+    <section id="tab-risk" class="hidden">
+        <div class="panel">
+            <div class="toolbar">
+                <select id="timeRange"><option value="24">最近 24 小时</option><option value="72">最近 3 天</option><option value="168">最近 7 天</option><option value="all" selected>全部数据</option></select>
+                <select id="riskSort" onchange="changeRiskSort()">
+                    <option value="level">排序：风险 高→低</option>
+                    <option value="timestamp">排序：时间 新→旧</option>
+                    <option value="ratingScore">排序：评分 低→高</option>
+                </select>
+                <button id="analyzeBtn" onclick="runAnalysis()">开始分析</button>
+                <span class="spacer"></span>
+                <span style="font-size:12px;color:var(--muted);" id="riskScope"></span>
+            </div>
+        </div>
+        <div class="charts" id="charts">
+            <div class="chart-box"><div class="chart-title">评分分布</div><div id="chartBars"></div></div>
+            <div class="chart-box"><div class="chart-title">每日评分量趋势</div><div id="chartTrend"></div></div>
+        </div>
+        <div class="batchbar hidden" id="batchBarRisk">
+            <span id="batchInfoRisk">已选 0 条</span>
+            <span class="spacer"></span>
+            <button class="btn-outline" onclick="batchWhitelist()">加入白名单</button>
+            <button class="btn-outline" onclick="clearSel()">取消选择</button>
+            <button style="background:var(--danger);" onclick="batchDelete()">批量删除</button>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="rTotal">-</div><div class="stat-label">分析样本量</div></div>
+            <div class="stat-card danger"><div class="stat-value" id="rHigh">-</div><div class="stat-label">高风险记录</div></div>
+            <div class="stat-card"><div class="stat-value" id="rCloud">-</div><div class="stat-label">云服务商 IP</div></div>
+            <div class="stat-card"><div class="stat-value" id="rRerate">-</div><div class="stat-label">频繁重评</div></div>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr>
+                    <th style="width:34px;"><input type="checkbox" id="chkAllRisk" onchange="toggleAll(this,'risk')"></th>
+                    <th class="sortable" data-sort="timestamp" data-tb="risk">时间<span class="arrow"></span></th>
+                    <th>IP / ISP</th>
+                    <th>评分对象</th>
+                    <th class="sortable" data-sort="ratingScore" data-tb="risk">评分<span class="arrow"></span></th>
+                    <th>命中风险标签</th>
+                    <th style="text-align:right;width:96px;">操作</th>
+                </tr></thead>
+                <tbody id="riskTable"></tbody>
+            </table>
+        </div>
+        <div class="pager" id="pagerRisk"></div>
+        <div class="foot" id="riskFoot"></div>
+    </section>
+
+    <section id="tab-users" class="hidden">
+        <div class="panel">
+            <div class="toolbar">
+                <span class="search-wrap">
+                    <input type="text" class="search-input" id="userSearch" placeholder="搜索 指纹 / IP / ISP / 站名" oninput="toggleClear('userSearch','clearUsers')">
+                    <button class="clear-x" id="clearUsers" onclick="clearSearch('userSearch','users')" title="清除">×</button>
+                </span>
+                <span class="spacer"></span>
+                <span style="font-size:12px;color:var(--muted);" id="userCount"></span>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead><tr>
+                    <th>指纹 Hash</th>
+                    <th>IP 数</th>
+                    <th class="sortable" data-sort="count" data-tb="users">评分次数<span class="arrow"></span></th>
+                    <th>涉及站点</th>
+                    <th>平均分</th>
+                    <th class="sortable" data-sort="level" data-tb="users">风险<span class="arrow"></span></th>
+                    <th class="sortable" data-sort="last" data-tb="users">末次时间<span class="arrow"></span></th>
+                    <th style="text-align:right;width:90px;">操作</th>
+                </tr></thead>
+                <tbody id="userTable"></tbody>
+            </table>
+        </div>
+        <div class="pager" id="pagerUsers"></div>
+
+    </section>
+
+</div>
+
+<div class="modal" id="detailModal">
+    <div class="modal-box">
+        <div class="modal-hd">
+            <h3 id="dmTitle">记录详情</h3>
+            <button class="close" onclick="closeModal('detailModal')">×</button>
+        </div>
+        <div class="modal-bd" id="dmBody"></div>
     </div>
+</div>
+
+<div class="modal" id="auditModal">
+    <div class="modal-box" style="max-width:620px;">
+        <div class="modal-hd">
+            <h3>操作记录</h3>
+            <button class="close" onclick="closeModal('auditModal')">×</button>
+        </div>
+        <div class="modal-bd" id="auditBody"></div>
+    </div>
+</div>
+
+<div class="modal" id="userModal">
+    <div class="modal-box" style="max-width:980px;">
+        <div class="modal-hd">
+            <h3 id="umTitle">用户详情</h3>
+            <button class="close" onclick="closeModal('userModal')">×</button>
+        </div>
+        <div class="modal-bd">
+            <div class="ud-box um-meta" id="umMeta"></div>
+            <div class="user-detail" style="margin-top:0;">
+                <div class="ud-box">
+                    <h4>历史评分（时间轴）</h4>
+                    <div id="umTimeline"></div>
+                </div>
+                <div>
+                    <div class="ud-box" style="margin-bottom:16px;">
+                        <h4>关联 IP</h4>
+                        <div id="umIps"></div>
+                    </div>
+                    <div class="ud-box">
+                        <h4>关联指纹</h4>
+                        <div id="umFps"></div>
+                    </div>
+                    <div class="ud-box" style="margin-top:16px;">
+                        <h4>相似指纹（同设备特征）</h4>
+                        <div id="umSimilar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast"></div>
 
 <script>
-    const DEFAULT_WORKER = "https://heyue-rating-worker.heyue-rating-api.workers.dev";
-    let WORKER_URL = localStorage.getItem("admin_worker_url") || DEFAULT_WORKER;
+var CLOUD_RE = /amazon|aws|digitalocean|vultr|linode|alibaba|aliyun|tencent|huawei|oracle|google cloud|azure|microsoft/i;
+var UID_MAP = {};
+var SITE_ROOT = '../../';
+var token = sessionStorage.getItem('admin_token') || '';
+var connected = false;
+var WORKER_URL = localStorage.getItem('admin_worker_url') || 'https://heyue-rating-worker.heyue-rating-api.workers.dev';
 
-    let token = sessionStorage.getItem("admin_token") || "";
-    let allLogs = [];
-    let filteredLogs = [];
-    let searchTimer = null;
+function setStatus(msg, kind){
+    var el = document.getElementById('statusBar');
+    el.textContent = msg;
+    el.className = 'statusbar' + (kind ? ' ' + kind : '');
+}
 
-    document.getElementById("workerUrl").value = WORKER_URL;
-
-    async function request(path, opts, timeoutMs, retries) {
-        let lastErr = null;
-        for (let i = 0; i <= retries; i++) {
-            const controller = new AbortController();
-            const timer = setTimeout(function () { controller.abort(); }, timeoutMs);
-            try {
-                const res = await fetch(WORKER_URL + path, Object.assign({}, opts, { signal: controller.signal }));
-                clearTimeout(timer);
-                return res;
-            } catch (err) {
-                clearTimeout(timer);
-                lastErr = err;
-                if (i < retries) await new Promise(function (r) { setTimeout(r, 800); });
-            }
-        }
-        throw lastErr;
-    }
-
-    function netErrText(err, timeoutMs) {
-        if (err && err.name === "AbortError") {
-            return "请求超时：" + (timeoutMs / 1000) + " 秒没回应（已重试 1 次）。跨境链路慢或被干扰时常见，可重试或换个 Worker 地址";
-        }
-        return "连不上 Worker：" + escapeHtml((err && err.message) || "未知错误") + "。请检查地址是否正确、网络是否可达";
-    }
-
-    if (token) {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("dashboard").style.display = "block";
-        fetchLogs();
-    }
-
-    document.getElementById("adminKey").addEventListener("keydown", function(e) {
-        if (e.key === "Enter") handleLogin();
-    });
-
-    async function handleLogin() {
-        const keyInput = document.getElementById("adminKey");
-        const urlInput = document.getElementById("workerUrl");
-        const btn = document.getElementById("loginBtn");
-        const msg = document.getElementById("loginMsg");
-        const key = keyInput.value.trim();
-        const url = urlInput.value.trim().replace(/\/+$/, "");
-
-        msg.textContent = "";
-
-        if (!url) {
-            msg.textContent = "请输入 Worker 地址";
-            urlInput.focus();
-            return;
-        }
-        if (!/^https?:\/\//i.test(url)) {
-            msg.textContent = "Worker 地址要以 http:// 或 https:// 开头";
-            urlInput.focus();
-            return;
-        }
-        if (!key) {
-            msg.textContent = "请输入管理员密钥";
-            keyInput.focus();
-            return;
-        }
-
-        WORKER_URL = url;
-        localStorage.setItem("admin_worker_url", WORKER_URL);
-
-        btn.disabled = true;
-        btn.textContent = "验证中...";
-        token = key;
-
+async function request(path, opts, timeoutMs, retries){
+    var lastErr = null;
+    for (var i = 0; i <= retries; i++) {
+        var controller = new AbortController();
+        var timer = setTimeout(function(){ controller.abort(); }, timeoutMs);
         try {
-            const res = await request("/admin/logs", {
-                headers: { "Authorization": `Bearer ${token}` }
-            }, 15000, 1);
-
-            if (res.status === 401) {
-                msg.textContent = "密钥错误（401），请重新输入";
-                keyInput.value = "";
-                keyInput.focus();
-                token = "";
-                sessionStorage.removeItem("admin_token");
-            } else if (res.ok) {
-                sessionStorage.setItem("admin_token", token);
-                document.getElementById("loginBox").style.display = "none";
-                document.getElementById("dashboard").style.display = "block";
-                fetchLogs();
-            } else if (res.status === 404) {
-                msg.textContent = "地址通了但接口不存在（404）：这个地址可能不是评分 Worker";
-                token = "";
-            } else {
-                msg.textContent = "请求失败（HTTP " + res.status + "）";
-                token = "";
-            }
+            var res = await fetch(WORKER_URL + path, Object.assign({}, opts, { signal: controller.signal }));
+            clearTimeout(timer);
+            return res;
         } catch (err) {
-            msg.textContent = netErrText(err, 15000);
-            token = "";
-        } finally {
-            btn.disabled = false;
-            btn.textContent = "进入后台";
+            clearTimeout(timer);
+            lastErr = err;
+            if (i < retries) await new Promise(function(r){ setTimeout(r, 800); });
         }
     }
+    throw lastErr;
+}
 
-    function logout() {
-        token = "";
-        allLogs = [];
-        sessionStorage.removeItem("admin_token");
-        location.reload();
-    }
+function netErrText(err, timeoutMs){
+    if (err && err.name === 'AbortError') return '请求超时：' + (timeoutMs / 1000) + ' 秒没回应（已重试 1 次），跨境链路慢或被干扰时常见';
+    return '连不上 Worker：' + esc((err && err.message) || '未知错误') + '，检查地址是否正确、网络是否可达';
+}
 
-    async function fetchLogs() {
-        const tbody = document.getElementById("logTable");
-        tbody.innerHTML = '<tr><td colspan="7" class="loading">⏳ 正在获取数据...</td></tr>';
-
-        try {
-            const res = await request("/admin/logs", {
-                headers: { "Authorization": `Bearer ${token}` }
-            }, 20000, 1);
-
-            if (res.status === 401) { logout(); return; }
-            if (!res.ok) throw new Error("HTTP " + res.status);
-
-            allLogs = await res.json();
-            filterLogs();
-        } catch (e) {
-            let tip = "";
-            if (e && e.name === "AbortError") {
-                tip = "请求超时：" + (20000 / 1000) + " 秒没回应（已重试 1 次）";
-            } else if (e && /^HTTP \d+$/.test(e.message)) {
-                tip = "服务器返回 " + escapeHtml(e.message);
-            } else {
-                tip = netErrText(e, 20000);
-            }
-            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">' + tip
-                + '<br><small>当前地址：' + escapeHtml(WORKER_URL) + '（退出登录可修改）</small></td></tr>';
-        }
-    }
-
-    function onSearchInput() {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(filterLogs, 300);
-    }
-
-    function filterLogs() {
-        const keyword = document.getElementById("searchInput").value.toLowerCase();
-        const scoreVal = document.getElementById("scoreFilter").value;
-        const fpVal = document.getElementById("fpFilter").value;
-
-        filteredLogs = allLogs.filter(log => {
-            const matchScore = !scoreVal || String(log.ratingScore) === scoreVal;
-            const matchFp = !fpVal || (fpVal === "valid" ? log.fingerprintValid : !log.fingerprintValid);
-            const fp = log.fingerprint || {};
-            const searchText = [log.ip, log.isp, log.acceptLanguage, fp.screen, fp.userAgent, fp.timezone, log.referer]
-                .filter(Boolean).join(" ").toLowerCase();
-            const matchKeyword = !keyword || searchText.includes(keyword);
-            return matchScore && matchFp && matchKeyword;
+async function loadUidMap(){
+    try {
+        var res = await fetch(SITE_ROOT + 'assets/nav-pages/data.json', { cache: 'no-store' });
+        if (!res.ok) return;
+        var d = await res.json();
+        var m = {};
+        Object.keys(d).forEach(function(cat){
+            (d[cat] || []).forEach(function(x){
+                var u = String(x.uid || '').trim();
+                if (u && !m[u]) m[u] = [cat, String(x.name || '').trim()];
+            });
         });
+        UID_MAP = m;
+    } catch (e) { }
+}
 
-        renderTable();
-    }
+async function loadArchive(){
+    try {
+        var r = await request('/admin/archive', { headers: { Authorization: 'Bearer ' + token } }, 20000, 1);
+        ARCHIVE = r.ok ? await r.json() : [];
+    } catch (e) { ARCHIVE = []; }
+}
 
-    function renderTable() {
-        const tbody = document.getElementById("logTable");
+function onUnauthorized(){
+    token = '';
+    sessionStorage.removeItem('admin_token');
+    connected = false;
+    var b = document.getElementById('connectBtn');
+    if (b) { b.disabled = false; b.textContent = '连接'; }
+    setStatus('登录已失效（401），请重新输入密钥连接', 'err');
+}
 
-        if (filteredLogs.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">暂无匹配的日志记录</td></tr>';
-            document.getElementById("statsBar").textContent = "";
+async function doConnect(){
+    var url = document.getElementById('workerUrl').value.trim().replace(/\/+$/, '');
+    var key = document.getElementById('adminKey').value.trim();
+    var btn = document.getElementById('connectBtn');
+    if (!url) return toast('请填 Worker 地址');
+    if (!/^https?:\/\//i.test(url)) return toast('地址要以 http:// 或 https:// 开头');
+    if (!key) return toast('请填管理员密钥');
+
+    WORKER_URL = url;
+    localStorage.setItem('admin_worker_url', url);
+    token = key;
+    btn.disabled = true;
+    btn.textContent = '连接中…';
+    setStatus('正在连接 Worker…');
+
+    try {
+        var res = await request('/admin/logs', { headers: { Authorization: 'Bearer ' + token } }, 15000, 1);
+        if (res.status === 401) {
+            toast('密钥无效（401）');
+            setStatus('密钥无效（401）', 'err');
+            token = '';
+            sessionStorage.removeItem('admin_token');
+            btn.disabled = false;
+            btn.textContent = '连接';
             return;
         }
-
-        tbody.innerHTML = filteredLogs.map((log, i) => {
-            const fp = log.fingerprint || {};
-            const isCloud = /amazon|digitalocean|vultr|linode|alibaba|tencent|huawei/i.test(log.isp || "");
-            const time = log.timestamp ? new Date(log.timestamp).toLocaleString("zh-CN") : "-";
-            const fpTag = log.fingerprintValid
-                ? '<span class="tag tag-valid">有效</span>'
-                : '<span class="tag tag-invalid">无效</span>';
-            const fpDetail = [
-                fp.screen ? `<code>${escapeHtml(fp.screen)}</code>` : null,
-                fp.memory ? `${fp.memory}GB` : null,
-                fp.cores ? `${fp.cores}核` : null,
-                fp.timezone ? escapeHtml(fp.timezone) : null
-            ].filter(Boolean).join(' / ');
-            const ua = fp.userAgent ? escapeHtml(fp.userAgent) : '-';
-            const uaShort = fp.userAgent ? escapeHtml(fp.userAgent.slice(0, 40)) + '...' : '-';
-
-            return `<tr>
-                <td style="white-space:nowrap;">${time}</td>
-                <td class="ip-cell">
-                    ${escapeHtml(log.ip || "-")}
-                    <small>${isCloud ? '<span class="tag tag-cloud">云服务商</span>' : escapeHtml(log.isp || "-")}</small>
-                </td>
-                <td>${escapeHtml(log.acceptLanguage || "-")}</td>
-                <td style="max-width:320px;">
-                    <div>${fpTag} ${fpDetail || '-'}</div>
-                    <div class="fp-detail">
-                        <span class="ua-toggle" onclick="toggleUA(${i})">UA: ${uaShort}</span>
-                        <div class="ua-full" id="ua-${i}">${ua}</div>
-                    </div>
-                </td>
-                <td><span class="tag tag-score">${log.ratingScore || "-"} ★</span></td>
-                <td class="wrap" style="max-width:250px;">${escapeHtml(log.referer || "-")}</td>
-                <td style="text-align:right;">
-                    <button class="btn-danger" onclick="deleteLog('${encodeURIComponent(log.logKey || "")}')">删除</button>
-                </td>
-            </tr>`;
-        }).join("");
-
-        const validCount = filteredLogs.filter(l => l.fingerprintValid).length;
-        document.getElementById("statsBar").textContent =
-            `共 ${allLogs.length} 条记录，当前显示 ${filteredLogs.length} 条（其中 ${validCount} 条指纹有效）`;
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        LOGS = await res.json();
+        sessionStorage.setItem('admin_token', token);
+        await loadArchive();
+        await loadUidMap();
+        connected = true;
+        btn.disabled = false;
+        btn.textContent = '已连接';
+        setStatus('已连接 · 日志 ' + LOGS.length + ' 条 · 归档 ' + ARCHIVE.length + ' 条', 'ok');
+        auditLog('登录', WORKER_URL);
+        refreshAll();
+    } catch (err) {
+        var t = netErrText(err, 15000);
+        toast(t);
+        setStatus(t, 'err');
+        token = '';
+        sessionStorage.removeItem('admin_token');
+        btn.disabled = false;
+        btn.textContent = '连接';
     }
+}
 
-    function toggleUA(i) {
-        document.getElementById("ua-" + i).classList.toggle("show");
+async function reloadLogs(){
+    if (!connected) return toast('请先连接');
+    setStatus('正在刷新…');
+    try {
+        var res = await request('/admin/logs', { headers: { Authorization: 'Bearer ' + token } }, 20000, 1);
+        if (res.status === 401) { onUnauthorized(); return; }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        LOGS = await res.json();
+        await loadArchive();
+        refreshAll();
+        setStatus('已连接 · 日志 ' + LOGS.length + ' 条 · 归档 ' + ARCHIVE.length + ' 条', 'ok');
+        toast('已刷新');
+    } catch (err) {
+        var t2 = netErrText(err, 20000);
+        toast(t2);
+        setStatus(t2, 'err');
     }
+}
+var REF = 'https://heyue-org.github.io/';
+var LAN = 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7';
+var LAN_JA = 'zh-CN,zh;q=0.9,ja;q=0.8,zh-TW;q=0.7';
+var LAN_EN = 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6';
+var LAN_S = 'zh-CN,zh;q=0.9';
+var TZ = 'Asia/Shanghai';
 
-    async function deleteLog(encodedKey) {
-        if (!encodedKey) return;
-        const log = allLogs.find(l => encodeURIComponent(l.logKey) === encodedKey);
-        const detail = log ? `（${log.ratingKey || "?"} / ${log.ratingScore || "?"}★）` : "";
-        if (!confirm("确认删除这条日志并回退评分" + detail + "？\n此操作不可恢复。")) return;
-        try {
-            const res = await request("/admin/log?key=" + encodedKey, {
-                method: "DELETE",
-                headers: { "Authorization": `Bearer ${token}` }
-            }, 20000, 1);
-            if (res.status === 401) { logout(); return; }
-            if (res.ok) {
-                const data = await res.json();
-                allLogs = allLogs.filter(l => encodeURIComponent(l.logKey) !== encodedKey);
-                filterLogs();
-                if (data.rolledBack) {
-                    alert("已删除日志并回退评分");
-                } else {
-                    alert("已删除日志（评分未回退）");
-                }
-            } else {
-                alert("删除失败: " + res.status);
-            }
-        } catch (e) {
-            alert("网络错误: " + e.message);
-        }
+var LOGS=[], ARCHIVE=[], filtered=[], riskRows=[], userRows=[], filteredUsers=[];
+var sel = {};
+var WL = load('admin_wl_v2', {ips:[], fps:[]});
+var AUDIT = load('admin_audit_v2', []);
+var page = {logs:1, risk:1, users:1};
+var size = {logs:100, risk:100, users:100};
+var sortState = {logs:{k:'timestamp',d:-1}, risk:{k:'level',d:-1}, users:{k:'count',d:-1}};
+var searchTimer=null, autoTimer=null, currentUser=null, autoOn=false;
+
+function load(k, def){ try{ var v=JSON.parse(localStorage.getItem(k)); return v||def; }catch(e){ return def; } }
+function save(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function auditLog(action, target){
+    AUDIT.unshift({t:new Date().toISOString(), a:action, g:String(target)});
+    if(AUDIT.length>200) AUDIT.length=200;
+    save('admin_audit_v2', AUDIT);
+}
+
+function wlHas(rec){ return WL.ips.indexOf(rec.ip)>=0 || WL.fps.indexOf(rec.fpHash)>=0; }
+
+function analyzeRisks(records){
+    var fpCount={}, ipKeys={};
+    records.forEach(function(r){
+        fpCount[r.fpHash||'unknown'] = (fpCount[r.fpHash||'unknown']||0)+1;
+        if(!ipKeys[r.ip]) ipKeys[r.ip]={};
+        ipKeys[r.ip][r.ratingKey||'']=1;
+    });
+    return records.map(function(r){
+        var tags=[], score=0, detail=[];
+        var isCloud=CLOUD_RE.test(r.isp||'');
+        var keyCount=Object.keys(ipKeys[r.ip]||{}).length;
+        var singleValid = keyCount===1 && r.fingerprintValid;
+
+        var c1 = isCloud && !singleValid;
+        if(c1){ tags.push('cloud'); score+=2; }
+        detail.push({name:'云服务商 IP', hit:c1, pt:2, desc: isCloud ? ('ISP 命中云厂商关键词，且不是「单站点+有效指纹」') : 'ISP 未命中云厂商关键词'});
+
+        var c2 = !!(r.isRerate && fpCount[r.fpHash]>=3);
+        if(c2){ tags.push('rerate'); score+=3; }
+        detail.push({name:'频繁重评', hit:c2, pt:3, desc:'该指纹在本批出现 '+fpCount[r.fpHash]+' 次，需 ≥3 且本条是重评'});
+
+        var c3 = !r.fingerprintValid;
+        if(c3){ tags.push('invalid'); score+=2; }
+        detail.push({name:'指纹无效', hit:c3, pt:2, desc: c3 ? 'fingerprintValid = false' : '指纹有效'});
+
+        var c4 = keyCount>=3;
+        if(c4){ tags.push('cluster'); score+=4; }
+        detail.push({name:'聚集攻击', hit:c4, pt:4, desc:'该 IP 共评了 '+keyCount+' 个不同对象，需 ≥3'});
+
+        var level = score>=5?'high':score>=3?'medium':'low';
+        var wl = wlHas(r);
+        if(wl){ level='low'; tags=[]; }
+        return Object.assign({}, r, {tags:tags, score:score, level:level, rules:detail, keyCount:keyCount, fpTotal:fpCount[r.fpHash]||0, wl:wl});
+    });
+}
+
+function esc(s){ if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+function fmtTime(v){ if(!v) return '-'; var d=new Date(v); if(isNaN(d.getTime())) return '-'; var p=function(n){return (n<10?'0':'')+n;};
+    return d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate()+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds()); }
+function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');},1800); }
+function isCloud(isp){ return CLOUD_RE.test(isp||''); }
+
+var REGION_RULES = [
+    [/hong\s*kong|\bhk\b|香港/i, '中国香港'],
+    [/taiwan|台北|台湾/i, '中国台湾'],
+    [/macau|macao|澳门/i, '中国澳门'],
+    [/singapore|collyer|新加坡/i, '新加坡'],
+    [/japan|日本|tokyo/i, '日本'],
+    [/korea|韩国/i, '韩国'],
+    [/germany|hetzner|deutsche|德国/i, '德国'],
+    [/france|ovh|法国/i, '法国'],
+    [/netherlands|荷兰|amsterdam/i, '荷兰'],
+    [/romania|m247|\beurope\b/i, '欧洲'],
+    [/britain|\buk\b|英国|london/i, '英国'],
+    [/china\s*telecom|china\s*unicom|china\s*mobile|chinanet|教育网|中国大陆/i, '中国大陆'],
+    [/america|\busa\b|united states|sharktech|cogent|\bntt\b|microsoft|cloudflare|zenlayer|美国/i, '美国'],
+    [/india|印度/i, '印度'],
+    [/russia|俄罗斯/i, '俄罗斯'],
+    [/canada|加拿大/i, '加拿大'],
+    [/australia|澳大利亚/i, '澳大利亚']
+];
+function regionOf(isp){
+    var s=String(isp||'');
+    for(var i=0;i<REGION_RULES.length;i++){ if(REGION_RULES[i][0].test(s)) return REGION_RULES[i][1]; }
+    return '未知';
+}
+function devLine(fp){ return [fp.screen, fp.memory?fp.memory+'GB':null, fp.cores+'核', fp.timezone].filter(Boolean).join(' / '); }
+
+function resolveKey(key){
+    if(!key) return {type:'none', text:'-'};
+    if(key.indexOf('uid:')===0){
+        var uid=key.slice(4).trim();
+        var m=UID_MAP[uid];
+        if(m) return {type:'uid', uid:uid, cat:m[0], name:m[1], href:SITE_ROOT+'detail.html#'+encodeURIComponent(m[0])+'/'+encodeURIComponent(uid)};
+        return {type:'uid', uid:uid, name:null, href:SITE_ROOT+'detail.html#'+encodeURIComponent(uid)};
     }
-
-    function exportCSV() {
-        if (filteredLogs.length === 0) return alert("没有可导出的数据");
-        const headers = ["时间","IP","ISP","语言","屏幕","内存","核心","时区","UA","指纹有效","评分","Referer"];
-        const rows = filteredLogs.map(l => {
-            const fp = l.fingerprint || {};
-            return [l.timestamp, l.ip, l.isp, l.acceptLanguage, fp.screen, fp.memory, fp.cores, fp.timezone, fp.userAgent, l.fingerprintValid, l.ratingScore, l.referer]
-                .map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",");
-        });
-        const csv = "\uFEFF" + [headers.join(","), ...rows].join("\n");
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `rating_logs_${new Date().toISOString().slice(0,10)}.csv`;
-        a.click();
+    return {type:'site', text:key};
+}
+function keyHtml(key){
+    var r=resolveKey(key);
+    if(r.type==='uid'){
+        var label = r.name ? esc(r.name) : esc(key);
+        var sub = r.name ? esc(r.cat)+' · '+esc(key) : '';
+        return '<a class="linkish" href="'+r.href+'" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="打开站点详情页">'+label+'</a>'
+            +(sub?'<span class="cell-sub">'+sub+'</span>':'');
     }
+    return '<span class="rawkey">'+esc(r.text||key)+'</span>';
+}
 
-    async function exportArchive() {
-        try {
-            const res = await request("/admin/archive", {
-                headers: { "Authorization": `Bearer ${token}` }
-            }, 20000, 1);
-            if (res.status === 401) { logout(); return; }
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            if (!data || data.length === 0) { alert("暂无归档记录"); return; }
+function copyText(t){
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(function(){toast('已复制：'+t);},function(){fb(t);}); }
+    else fb(t);
+    function fb(x){ var ta=document.createElement('textarea'); ta.value=x; document.body.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); toast('已复制：'+x); }catch(e){ toast('复制失败'); } ta.remove(); }
+}
+function copyBtn(v){ return '<button class="btn-mini" onclick="event.stopPropagation();copyText(\''+esc(String(v).replace(/'/g,"\\'"))+'\')">复制</button>'; }
 
-            const headers = ["归档时间", "归档原因", "原日志Key", "评分时间", "IP", "ISP", "语言", "评分对象", "评分", "指纹有效", "重评", "指纹Hash", "屏幕", "内存", "UA"];
-            const rows = data.map(r => [
-                r.archivedAt || "",
-                r.archiveReason || "",
-                r.archiveKey || r.logKey || "",
-                r.timestamp || "",
-                r.ip || "",
-                r.isp || "",
-                r.acceptLanguage || "",
-                r.ratingKey || "",
-                r.ratingScore || "",
-                r.fingerprintValid ? "是" : "否",
-                r.isRerate ? "是" : "否",
-                r.fpHash || "",
-                (r.fingerprint || {}).screen || "",
-                (r.fingerprint || {}).memory || "",
-                (r.fingerprint || {}).userAgent || ""
-            ]);
+function sortArr(arr, st){
+    arr.sort(function(a,b){
+        var va=a[st.k], vb=b[st.k];
+        if(st.k==='timestamp'||st.k==='last'){ va=new Date(va||0).getTime(); vb=new Date(vb||0).getTime(); }
+        if(st.k==='level'){ va={low:0,medium:1,high:2}[a.level]; vb={low:0,medium:1,high:2}[b.level]; }
+        if(typeof va==='string') return va.localeCompare(vb)*st.d;
+        return ((va||0)-(vb||0))*st.d;
+    });
+}
 
-            let csv = "\uFEFF" + headers.join(",") + "\n";
-            rows.forEach(row => {
-                csv += row.map(cell => {
-                    const s = String(cell).replace(/"/g, '""');
-                    return /[",\n]/.test(s) ? `"${s}"` : s;
-                }).join(",") + "\n";
-            });
+function filterLogs(){
+    var kw=document.getElementById('searchInput').value.trim().toLowerCase();
+    var sv=document.getElementById('scoreFilter').value;
+    var fv=document.getElementById('fpFilter').value;
+    filtered = LOGS.filter(function(l){
+        if(sv && String(l.ratingScore)!==sv) return false;
+        if(fv==='valid' && !l.fingerprintValid) return false;
+        if(fv==='invalid' && l.fingerprintValid) return false;
+        if(!kw) return true;
+        var nm=(resolveKey(l.ratingKey).name||'')+' '+l.ratingKey;
+        return [l.ip,l.isp,l.fpHash,l.acceptLanguage,nm].join(' ').toLowerCase().indexOf(kw)>=0;
+    });
+    sortArr(filtered, sortState.logs);
+    page.logs=1;
+    renderLogs();
+}
 
-            const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = `archive_${new Date().toISOString().slice(0, 10)}.csv`;
-            a.click();
-            URL.revokeObjectURL(a.href);
-        } catch (e) {
-            alert("导出失败: " + e.message);
-        }
+function renderLogs(){
+    var tbody=document.getElementById('logTable');
+    var total=filtered.length, maxP=Math.max(1,Math.ceil(total/size.logs));
+    if(page.logs>maxP) page.logs=maxP;
+    var slice=filtered.slice((page.logs-1)*size.logs, page.logs*size.logs);
+    if(!slice.length){ tbody.innerHTML='<tr><td colspan="8" class="empty">没有符合条件的记录</td></tr>'; }
+    else {
+        tbody.innerHTML = slice.map(function(l){
+            var fp=l.fingerprint||{};
+            return '<tr class="row'+(sel[l.logKey]?' sel':'')+(wlHas(l)?' wl':'')+'" onclick="openDetail(\''+encodeURIComponent(l.logKey)+'\')">'+
+            '<td onclick="event.stopPropagation()"><input type="checkbox" '+(sel[l.logKey]?'checked':'')+' onchange="toggleSel(\''+encodeURIComponent(l.logKey)+'\',this.checked)"></td>'+
+            '<td style="white-space:nowrap;">'+fmtTime(l.timestamp)+'</td>'+
+            '<td><span class="linkish" onclick="event.stopPropagation();openEntity(\''+esc(l.ip)+'\',\'\')">'+esc(l.ip)+'</span>'+
+              '<span class="cell-sub">'+(isCloud(l.isp)?'<span class="tag tag-cloud">云服务商</span>':esc(l.isp||'-'))+'</span></td>'+
+            '<td class="wrap" style="max-width:170px;">'+esc(l.acceptLanguage||'-')+'</td>'+
+            '<td><span class="tag '+(l.fingerprintValid?'tag-valid':'tag-invalid')+'">'+(l.fingerprintValid?'有效':'无效')+'</span>'+
+              '<span class="cell-sub">'+esc(devLine(fp))+'</span>'+
+              '<span class="linkish" onclick="event.stopPropagation();openEntity(\'\',\''+esc(l.fpHash)+'\')"><code class="fp">'+esc(l.fpHash)+'</code></span></td>'+
+            '<td>'+keyHtml(l.ratingKey)+'</td>'+
+            '<td><span class="tag tag-score">'+(l.ratingScore||'-')+' ★</span></td>'+
+            '<td style="text-align:right;"><button class="btn-danger-sm" onclick="event.stopPropagation();deleteOne(\''+encodeURIComponent(l.logKey)+'\')">删除</button></td>'+
+            '</tr>';
+        }).join('');
     }
+    renderPager('pagerLogs','logs',total);
+    updateLogStats();
+    updateBatchBar();
+}
 
-    function escapeHtml(str) {
-        if (!str) return "";
-        return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+function updateLogStats(){
+    var valid=filtered.filter(function(l){return l.fingerprintValid;}).length;
+    var cloud=filtered.filter(function(l){return isCloud(l.isp);}).length;
+    var sum=filtered.reduce(function(a,l){return a+(l.ratingScore||0);},0);
+    document.getElementById('sTotal').textContent=filtered.length;
+    document.getElementById('sValid').textContent=valid;
+    document.getElementById('sCloud').textContent=cloud;
+    document.getElementById('sAvg').textContent=filtered.length?(sum/filtered.length).toFixed(2):'0';
+    document.getElementById('logFoot').textContent='共 '+LOGS.length+' 条日志，当前筛选 '+filtered.length+
+        ' 条（其中 '+valid+' 条指纹有效），另有 '+ARCHIVE.length+' 条归档';
+}
+
+function renderPager(id, tb, total){
+    var maxP=Math.max(1,Math.ceil(total/size[tb]));
+    document.getElementById(id).innerHTML =
+      '<button class="btn-outline" onclick="goPage(\''+tb+'\',1)"'+(page[tb]<=1?' disabled':'')+'>« 首页</button>'+
+      '<button class="btn-outline" onclick="goPage(\''+tb+'\','+(page[tb]-1)+')"'+(page[tb]<=1?' disabled':'')+'>上一页</button>'+
+      '<span>第 '+page[tb]+' / '+maxP+' 页（共 '+total+' 条）</span>'+
+      '<button class="btn-outline" onclick="goPage(\''+tb+'\','+(page[tb]+1)+')"'+(page[tb]>=maxP?' disabled':'')+'>下一页</button>'+
+      '<button class="btn-outline" onclick="goPage(\''+tb+'\','+maxP+')"'+(page[tb]>=maxP?' disabled':'')+'>末页 »</button>'+
+      '<select onchange="setSize(\''+tb+'\',this.value)">'+
+      [50,100,200].map(function(n){return '<option value="'+n+'"'+(size[tb]===n?' selected':'')+'>每页 '+n+'</option>';}).join('')+'</select>';
+}
+function totalOf(tb){ return tb==='logs'?filtered.length:tb==='risk'?riskRows.length:filteredUsers.length; }
+function goPage(tb,p){
+    var maxP=Math.max(1,Math.ceil(totalOf(tb)/size[tb]));
+    page[tb]=Math.min(Math.max(1,p),maxP);
+    if(tb==='logs') renderLogs(); else if(tb==='risk') renderRisk(); else renderUsers();
+}
+function setSize(tb,n){ size[tb]=+n; page[tb]=1; if(tb==='logs') renderLogs(); else if(tb==='risk') renderRisk(); else renderUsers(); }
+
+function toggleSel(k,on){ if(on) sel[k]=1; else delete sel[k]; updateBatchBar(); if(!document.getElementById('tab-logs').classList.contains('hidden')) renderLogs(); else renderRisk(); }
+function toggleAll(box, tb){
+    var list = tb==='logs'?filtered:riskRows;
+    list.slice((page[tb]-1)*size[tb], page[tb]*size[tb]).forEach(function(r){ if(box.checked) sel[r.logKey]=1; else delete sel[r.logKey]; });
+    if(tb==='logs') renderLogs(); else renderRisk();
+}
+function clearSel(){ sel={}; updateBatchBar(); renderLogs(); renderRisk(); }
+function selCount(){ return Object.keys(sel).length; }
+function updateBatchBar(){
+    var n=selCount();
+    document.getElementById('batchBar').classList.toggle('hidden', n===0);
+    document.getElementById('batchBarRisk').classList.toggle('hidden', n===0);
+    document.getElementById('batchInfo').textContent='已选 '+n+' 条';
+    document.getElementById('batchInfoRisk').textContent='已选 '+n+' 条';
+}
+
+async function batchDelete(){
+    var n=selCount();
+    if(!n) return;
+    if(!connected) return toast('请先连接');
+    if(!confirm('确认删除选中的 '+n+' 条日志并回退评分？\n此操作不可恢复。')) return;
+    var keys=Object.keys(sel), done=0;
+    for(var i=0;i<keys.length;i++){
+        var l=findRec(keys[i]);
+        if(!l) continue;
+        try{
+            var res=await request('/admin/log?key='+encodeURIComponent(l.logKey), {method:'DELETE', headers:{Authorization:'Bearer '+token}}, 20000, 1);
+            if(res.status===401){ onUnauthorized(); return; }
+            if(res.ok) done++;
+        }catch(e){ }
     }
+    auditLog('批量删除', done+'/'+keys.length+' 条');
+    sel={};
+    await reloadLogs();
+    toast('已删除 '+done+' 条');
+}
+function findRec(k){
+    return LOGS.concat(ARCHIVE).filter(function(x){ return encodeURIComponent(x.logKey)===k; })[0];
+}
+function batchWhitelist(){
+    var n=selCount();
+    if(!n) return;
+    var ips={}, fps={};
+    LOGS.concat(ARCHIVE).forEach(function(l){ if(sel[l.logKey]){ ips[l.ip]=1; fps[l.fpHash]=1; } });
+    Object.keys(ips).forEach(function(ip){ if(WL.ips.indexOf(ip)<0) WL.ips.push(ip); });
+    Object.keys(fps).forEach(function(fp){ if(WL.fps.indexOf(fp)<0) WL.fps.push(fp); });
+    save('admin_wl_v2', WL);
+    auditLog('加入白名单', Object.keys(ips).length+' IP / '+Object.keys(fps).length+' 指纹');
+    toast('已加入白名单：'+Object.keys(ips).length+' 个 IP、'+Object.keys(fps).length+' 个指纹');
+    sel={};
+    refreshAll();
+}
+async function deleteOne(k){
+    var l=findRec(k);
+    if(!l) return;
+    if(!connected) return toast('请先连接');
+    if(!confirm('确认删除这条日志并回退评分（'+(l.ratingKey||'?')+' / '+l.ip+'）？\n此操作不可恢复。')) return;
+    try{
+        var res=await request('/admin/log?key='+encodeURIComponent(l.logKey), {method:'DELETE', headers:{Authorization:'Bearer '+token}}, 20000, 1);
+        if(res.status===401){ onUnauthorized(); return; }
+        if(!res.ok){ alert('删除失败：HTTP '+res.status); return; }
+        LOGS=LOGS.filter(function(x){return encodeURIComponent(x.logKey)!==k;});
+        ARCHIVE=ARCHIVE.filter(function(x){return encodeURIComponent(x.logKey)!==k;});
+        auditLog('删除单条', l.ratingKey+' / '+l.ip);
+        refreshAll();
+        toast('已删除并回退评分');
+    }catch(err){ alert('删除失败：'+netErrText(err, 20000)); }
+}
+function refreshAll(){ filterLogs(); runAnalysis(true); buildUsers(); }
+
+var TAG_LABELS={cloud:['云服务商','tag-cloud'],rerate:['频繁重评','tag-rerate'],invalid:['指纹无效','tag-invalid'],cluster:['聚集攻击','tag-cluster']};
+
+function runAnalysis(silent){
+    var btn=document.getElementById('analyzeBtn');
+    if(!silent){ btn.disabled=true; btn.textContent='分析中…'; }
+    var range=document.getElementById('timeRange').value;
+    var all=LOGS.concat(ARCHIVE);
+    var scope=all;
+    if(range!=='all'){
+        var latest=all.reduce(function(m,r){ var t=new Date(r.timestamp).getTime(); return t>m?t:m; },0);
+        var cutoff=latest-parseInt(range,10)*3600*1000;
+        scope=all.filter(function(r){ return new Date(r.timestamp).getTime()>=cutoff; });
+    }
+    riskRows=analyzeRisks(scope);
+    sortArr(riskRows, sortState.risk);
+    page.risk=1;
+
+    var high=riskRows.filter(function(r){return r.level==='high';}).length;
+    var med=riskRows.filter(function(r){return r.level==='medium';}).length;
+    var low=riskRows.filter(function(r){return r.level==='low';}).length;
+    document.getElementById('rTotal').textContent=scope.length;
+    document.getElementById('rHigh').textContent=high;
+    document.getElementById('rCloud').textContent=riskRows.filter(function(r){return r.tags.indexOf('cloud')>=0;}).length;
+    document.getElementById('rRerate').textContent=riskRows.filter(function(r){return r.tags.indexOf('rerate')>=0;}).length;
+    document.getElementById('riskScope').textContent='范围：'+scope.length+' 条（日志 '+LOGS.length+' + 归档 '+ARCHIVE.length+'）';
+    document.getElementById('riskFoot').textContent='高风险 '+high+' 条 · 中风险 '+med+' 条 · 低风险 '+low+' 条｜条目底色：红=高风险，橙=中风险，无色=低风险｜白名单：'+WL.ips.length+' IP / '+WL.fps.length+' 指纹';
+
+    renderCharts(scope);
+    renderRisk();
+    if(!silent){ btn.disabled=false; btn.textContent='开始分析'; toast('分析完成'); }
+}
+
+function renderRisk(){
+    var tbody=document.getElementById('riskTable');
+    var total=riskRows.length, maxP=Math.max(1,Math.ceil(total/size.risk));
+    if(page.risk>maxP) page.risk=maxP;
+    var slice=riskRows.slice((page.risk-1)*size.risk, page.risk*size.risk);
+    if(!slice.length){ tbody.innerHTML='<tr><td colspan="7" class="empty">该时间范围内没有数据</td></tr>'; }
+    else {
+        tbody.innerHTML=slice.map(function(r){
+            var lv=r.level==='high'?' lv-high':r.level==='medium'?' lv-medium':'';
+            var tags=r.tags.map(function(t){ var m=TAG_LABELS[t]||[t,'tag-invalid']; return '<span class="tag '+m[1]+'">'+m[0]+'</span>'; }).join('')
+                +(r.wl?'<span class="tag tag-wl">已加白</span>':'');
+            return '<tr class="row'+lv+(sel[r.logKey]?' sel':'')+(r.wl?' wl':'')+'" onclick="openDetail(\''+encodeURIComponent(r.logKey)+'\')">'+
+              '<td onclick="event.stopPropagation()"><input type="checkbox" '+(sel[r.logKey]?'checked':'')+' onchange="toggleSel(\''+encodeURIComponent(r.logKey)+'\',this.checked)"></td>'+
+              '<td style="white-space:nowrap;">'+fmtTime(r.timestamp)+'</td>'+
+              '<td><span class="linkish" onclick="event.stopPropagation();openEntity(\''+esc(r.ip)+'\',\'\')">'+esc(r.ip||'-')+'</span>'+
+                '<span class="cell-sub">'+esc(r.isp||'-')+'</span></td>'+
+              '<td>'+keyHtml(r.ratingKey)+'</td>'+
+              '<td>'+(r.ratingScore||'-')+' ★</td>'+
+              '<td>'+(tags||'<span style="color:#94a3b8;font-size:12px;">无异常</span>')+'</td>'+
+              '<td style="text-align:right;">'+(r.level==='high'?'<button class="btn-danger-sm" onclick="event.stopPropagation();deleteOne(\''+encodeURIComponent(r.logKey)+'\')">删除</button>':'')+'</td>'+
+              '</tr>';
+        }).join('');
+    }
+    renderPager('pagerRisk','risk',total);
+    updateBatchBar();
+}
+
+function changeRiskSort(){
+    var k=document.getElementById('riskSort').value;
+    sortState.risk={k:k, d:(k==='level'||k==='timestamp')?-1:1};
+    sortArr(riskRows, sortState.risk);
+    page.risk=1;
+    renderRisk();
+}
+
+function renderCharts(scope){
+    document.getElementById('charts').classList.remove('hidden');
+    var dist=[0,0,0,0,0];
+    scope.forEach(function(r){ if(r.ratingScore>=1&&r.ratingScore<=5) dist[r.ratingScore-1]++; });
+    var max=Math.max.apply(null,dist)||1;
+    document.getElementById('chartBars').innerHTML=[5,4,3,2,1].map(function(s){
+        var i=s-1, w=Math.round(dist[i]/max*100);
+        return '<div class="bar-row"><span class="lb">'+s+' 星</span><span class="bar" style="width:'+w+'%"></span><span class="vv">'+dist[i]+'</span></div>';
+    }).join('');
+
+    var byDay={};
+    scope.forEach(function(r){ var d=new Date(r.timestamp); var k=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); byDay[k]=(byDay[k]||0)+1; });
+    var keys=Object.keys(byDay).sort();
+    var vals=keys.map(function(k){return byDay[k];});
+    var mx=Math.max.apply(null,vals)||1;
+    var W=520,H=140,pad=10;
+    var pts=vals.map(function(v,i){
+        var x=pad+i*((W-2*pad)/Math.max(1,vals.length-1));
+        var y=H-pad-(v/mx)*(H-2*pad-14);
+        return x.toFixed(1)+','+y.toFixed(1);
+    }).join(' ');
+    document.getElementById('chartTrend').innerHTML=
+      '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto;"><polyline points="'+pts+'" fill="none" stroke="#2563eb" stroke-width="2"/>'+
+      '<text x="'+pad+'" y="11" font-size="10" fill="#64748b">'+keys[0]+'</text>'+
+      '<text x="'+(W-72)+'" y="11" font-size="10" fill="#64748b">'+keys[keys.length-1]+'</text>'+
+      '<text x="'+pad+'" y="'+(H-2)+'" font-size="10" fill="#64748b">峰值 '+mx+' 条/天 · 共 '+keys.length+' 天</text></svg>';
+}
+
+function buildUsers(){
+    var map={};
+    var analyzed=analyzeRisks(LOGS.concat(ARCHIVE));
+    var levelBy={};
+    analyzed.forEach(function(a){ var k=a.fpHash||('ip:'+a.ip); var ord={low:0,medium:1,high:2};
+        if(!levelBy[k]||ord[a.level]>ord[levelBy[k]]) levelBy[k]=a.level; });
+
+    LOGS.concat(ARCHIVE).forEach(function(r){
+        var k=r.fpHash||('ip:'+r.ip);
+        if(!map[k]) map[k]={fp:r.fpHash, ips:{}, count:0, sites:{}, scores:[], last:0, recs:[], dev:r.fingerprint, level:'low'};
+        var u=map[k];
+        u.count++;
+        u.ips[r.ip]=(u.ips[r.ip]||0)+1;
+        u.sites[r.ratingKey]=1;
+        u.scores.push(r.ratingScore||0);
+        var t=new Date(r.timestamp).getTime();
+        if(t>u.last) u.last=t;
+        u.recs.push(r);
+        u.level = levelBy[k] || 'low';
+    });
+    userRows=Object.keys(map).map(function(k){ var u=map[k];
+        u.ipList=Object.keys(u.ips);
+        u.siteList=Object.keys(u.sites);
+        u.avg=u.scores.length?(u.scores.reduce(function(a,b){return a+b;},0)/u.scores.length):0;
+        return u; });
+    sortArr(userRows, sortState.users);
+    filterUsers();
+}
+function filterUsers(){
+    var kw=document.getElementById('userSearch').value.trim().toLowerCase();
+    filteredUsers = userRows.filter(function(u){
+        if(!kw) return true;
+        var names=u.siteList.map(function(k){ return resolveKey(k).name||k; }).join(' ');
+        return [u.fp, u.ipList.join(' '), names].join(' ').toLowerCase().indexOf(kw)>=0;
+    });
+    page.users=1;
+    document.getElementById('userCount').textContent='共 '+userRows.length+' 个用户（按指纹聚合）';
+    renderUsers();
+}
+function renderUsers(){
+    var tbody=document.getElementById('userTable');
+    var total=filteredUsers.length, maxP=Math.max(1,Math.ceil(total/size.users));
+    if(page.users>maxP) page.users=maxP;
+    var slice=filteredUsers.slice((page.users-1)*size.users, page.users*size.users);
+    if(!slice.length){ tbody.innerHTML='<tr><td colspan="8" class="empty">没有匹配的用户</td></tr>'; }
+    else {
+        tbody.innerHTML=slice.map(function(u){
+            var cls=u.level==='high'?'risk-high':u.level==='medium'?'risk-medium':'risk-low';
+            var text=u.level==='high'?'高':u.level==='medium'?'中':'低';
+            return '<tr class="row" onclick="selectUser(\''+esc(u.fp||'')+'\')">'+
+              '<td><code class="fp">'+esc(u.fp||'-')+'</code></td>'+
+              '<td>'+u.ipList.length+'</td>'+
+              '<td>'+u.count+'</td>'+
+              '<td class="wrap" style="max-width:220px;">'+u.siteList.slice(0,3).map(function(k){return esc(resolveKey(k).name||k);}).join('、')+(u.siteList.length>3?' 等 '+u.siteList.length+' 个':'')+'</td>'+
+              '<td>'+u.avg.toFixed(1)+'</td>'+
+              '<td><span class="risk-badge '+cls+'">'+text+'</span></td>'+
+              '<td style="white-space:nowrap;">'+fmtTime(u.last)+'</td>'+
+              '<td style="text-align:right;"><button class="btn-mini" onclick="event.stopPropagation();selectUser(\''+esc(u.fp||'')+'\')">查看</button></td>'+
+              '</tr>';
+        }).join('');
+    }
+    renderPager('pagerUsers','users',total);
+}
+
+function descT(a,b){ return new Date(b.timestamp)-new Date(a.timestamp); }
+
+function buildEntity(ip, fp){
+    if(fp) return userRows.filter(function(x){ return x.fp===fp; })[0] || null;
+    var recs=LOGS.concat(ARCHIVE).filter(function(r){ return r.ip===ip; }).sort(descT);
+    if(!recs.length) return null;
+    var fps={}, sites={}, scores=[];
+    recs.forEach(function(r){ fps[r.fpHash]=(fps[r.fpHash]||0)+1; sites[r.ratingKey]=1; scores.push(r.ratingScore||0); });
+    var an=analyzeRisks(recs), lv='low', ord={low:0,medium:1,high:2};
+    an.forEach(function(a){ if(ord[a.level]>ord[lv]) lv=a.level; });
+    var ips={}; ips[ip]=recs.length;
+    return { fp:null, ip:ip, isIp:true, isp:recs[0].isp, ips:ips, ipList:[ip], recs:recs,
+        dev:recs[0].fingerprint, level:lv, count:recs.length, siteList:Object.keys(sites), scores:scores,
+        avg:scores.length?scores.reduce(function(a,b){return a+b;},0)/scores.length:0,
+        fpList:Object.keys(fps), fpCounts:fps };
+}
+
+function openEntity(ip, fp){
+    var u = buildEntity(ip, fp);
+    if(!u){ toast('没有找到相关记录'); return; }
+    if(u.fp) currentUser=u;
+
+    var badge='<span class="risk-badge '+(u.level==='high'?'risk-high':u.level==='medium'?'risk-medium':'risk-low')+'">'+
+        (u.level==='high'?'高风险':u.level==='medium'?'中风险':'低风险')+'</span>';
+    var key=u.fp||u.ip;
+    document.getElementById('umTitle').innerHTML=(u.isIp?'IP 详情 · ':'用户详情 · ')+
+        (u.fp?'<code class="fp">'+esc(u.fp)+'</code>':esc(u.ip))+' '+badge+' '+
+        '<button class="btn-mini" onclick="copyText(\''+esc(key)+'\')">复制</button>';
+
+    var recs=u.recs.slice().sort(descT);
+    var last=recs[0], fpd=last.fingerprint||{};
+    document.getElementById('umMeta').innerHTML=
+        '<div><span>设备</span><b>'+esc(devLine(fpd))+'</b></div>'+
+        '<div><span>语言</span><b>'+esc(last.acceptLanguage||'-')+'</b></div>'+
+        '<div><span>ISP</span><b>'+esc(last.isp||'-')+'</b></div>'+
+        '<div><span>地区</span><b>'+esc(regionOf(last.isp))+'（按 ISP 推断）</b></div>'+
+        '<div><span>评分</span><b>'+u.count+' 条 · '+u.siteList.length+' 个对象 · 平均 '+(u.avg||0).toFixed(1)+' 分</b></div>';
+
+    document.getElementById('umTimeline').innerHTML=recs.slice(0,40).map(function(r,i){
+        var gap='';
+        if(i<recs.length-1){ var d=Math.abs((new Date(r.timestamp)-new Date(recs[i+1].timestamp))/1000);
+            gap=' <span class="'+(d<10?'gap-fast':'')+'">间隔 '+Math.round(d)+'s</span>'; }
+        var tag = u.isIp
+            ? '<span class="linkish" onclick="openEntity(\'\',\''+esc(r.fpHash)+'\')"><code class="fp">'+esc(r.fpHash)+'</code></span>'
+            : '<span class="linkish" onclick="openEntity(\''+esc(r.ip)+'\',\'\')">'+esc(r.ip)+'</span>';
+        return '<div class="ud-line"><span style="color:#64748b;">'+fmtTime(r.timestamp)+'</span>'+
+          '<span>'+keyHtml(r.ratingKey)+'</span><span>'+(r.ratingScore||'-')+' ★</span>'+tag+gap+'</div>';
+    }).join('');
+
+    document.getElementById('umIps').innerHTML=u.ipList.map(function(x){
+        return '<div class="ud-line"><span class="linkish" onclick="openEntity(\''+esc(x)+'\',\'\')">'+esc(x)+'</span>'+
+          '<span style="color:#64748b;">'+(u.ips[x]||0)+' 次</span></div>';
+    }).join('');
+
+    var fpMap = u.isIp ? u.fpCounts : (function(){
+        var m={};
+        LOGS.concat(ARCHIVE).forEach(function(r){ if(u.ipList.indexOf(r.ip)>=0 && r.fpHash!==u.fp) m[r.fpHash]=(m[r.fpHash]||0)+1; });
+        return m;
+    })();
+    var fks=Object.keys(fpMap);
+    document.getElementById('umFps').innerHTML = fks.length ? fks.slice(0,20).map(function(f){
+        return '<div class="ud-line"><span class="linkish" onclick="openEntity(\'\',\''+esc(f)+'\')"><code class="fp">'+esc(f)+'</code></span>'+
+          '<span style="color:#64748b;">'+fpMap[f]+' 次</span></div>';
+    }).join('') : '<div class="ud-line" style="color:#94a3b8;">没有关联的其它指纹</div>';
+
+    if(u.fp) renderSimilar(u);
+    else document.getElementById('umSimilar').innerHTML='<div class="ud-line" style="color:#94a3b8;">按 IP 查看时不聚类，点上面任意指纹可进入用户视图</div>';
+
+    document.getElementById('userModal').classList.add('show');
+}
+
+function selectUser(fp){ openEntity('', fp); }
+
+function renderSimilar(u){
+    var sig=function(d){ return [d.screen,d.memory,d.cores,d.timezone].join('|'); };
+    var mine=sig(u.dev||{});
+    var hits=[];
+    userRows.forEach(function(o){ if(o.fp!==u.fp && sig(o.dev||{})===mine) hits.push(o.fp); });
+    document.getElementById('umSimilar').innerHTML = hits.length ? hits.map(function(f){
+        return '<div class="ud-line"><span class="linkish" onclick="openEntity(\'\',\''+esc(f)+'\')"><code class="fp">'+esc(f)+'</code></span>'+
+          '<span style="color:#64748b;">设备特征完全一致</span></div>';
+    }).join('') : '<div class="ud-line" style="color:#94a3b8;">没有设备特征完全一致的其它指纹</div>';
+}
+
+function openDetail(k){
+    var rec = LOGS.concat(ARCHIVE).filter(function(x){ return encodeURIComponent(x.logKey)===k; })[0];
+    if(!rec) return;
+    var a = analyzeRisks([rec].concat(LOGS, ARCHIVE))[0];
+    var fp=rec.fingerprint||{};
+    var rk=resolveKey(rec.ratingKey);
+    document.getElementById('dmTitle').textContent=(rk.name||rec.ratingKey)+' · '+rec.ip;
+    var all=LOGS.concat(ARCHIVE);
+    var sameFp=all.filter(function(x){ return x.fpHash===rec.fpHash; }).length;
+    var sameIp=all.filter(function(x){ return x.ip===rec.ip; });
+    var ipKeys={}; sameIp.forEach(function(x){ ipKeys[x.ratingKey]=1; });
+
+    var html='<div class="sec-title">基本信息</div><dl class="kv">'+
+      '<dt>时间</dt><dd>'+fmtTime(rec.timestamp)+'</dd>'+
+      '<dt>评分对象</dt><dd>'+(rk.name?esc(rk.name)+' <span style="color:#64748b">('+esc(rec.ratingKey)+')</span>':'<span class="rawkey">'+esc(rec.ratingKey)+'</span>')+
+        (rk.href?' <a class="linkish" href="'+rk.href+'" target="_blank" rel="noopener">打开详情页 ↗</a>':'')+'</dd>'+
+      '<dt>评分</dt><dd>'+(rec.ratingScore||'-')+' ★'+(rec.isRerate?' <span class="tag tag-rerate">重评</span>':'')+'</dd>'+
+      '<dt>IP</dt><dd>'+esc(rec.ip)+' '+copyBtn(rec.ip)+' <span class="linkish" onclick="openEntity(\''+esc(rec.ip)+'\',\'\')">查看此 IP</span></dd>'+
+      '<dt>ISP</dt><dd>'+esc(rec.isp||'-')+(isCloud(rec.isp)?' <span class="tag tag-cloud">云服务商</span>':'')+'</dd>'+
+      '<dt>IP 地区</dt><dd>'+esc(regionOf(rec.isp))+'<span style="color:#64748b;margin-left:6px;">（按 ISP 推断）</span></dd>'+
+      '<dt>指纹 Hash</dt><dd><code class="fp">'+esc(rec.fpHash)+'</code> '+copyBtn(rec.fpHash)+' <span class="linkish" onclick="openEntity(\'\',\''+esc(rec.fpHash)+'\')">查看此指纹</span></dd>'+
+      '<dt>指纹有效</dt><dd>'+(rec.fingerprintValid?'<span class="tag tag-valid">有效</span>':'<span class="tag tag-invalid">无效</span>')+'</dd>'+
+      '<dt>设备</dt><dd>'+esc(devLine(fp))+'</dd>'+
+      '<dt>语言</dt><dd>'+esc(rec.acceptLanguage||'-')+'</dd>'+
+      '<dt>Referer</dt><dd>'+esc(rec.referer||'-')+'</dd>'+
+      '<dt>日志 Key</dt><dd>'+esc(rec.logKey)+' '+copyBtn(rec.logKey)+'</dd>'+
+      '</dl>'+
+      '<div class="sec-title">系统分析</div>'+
+      (rec.wl?'<div style="font-size:12.5px;color:#065f46;margin-bottom:8px;">该记录的 IP 或指纹已在白名单，风险判定被强制降级为低风险。</div>':'')+
+      a.rules.map(function(r){
+        return '<div class="rule"><span class="hit '+(r.hit?'y':'n')+'">'+(r.hit?'命中':'未命中')+'</span>'+
+          '<span style="min-width:78px;">'+esc(r.name)+'</span><span class="pt">'+(r.hit?'+'+r.pt:'+0')+'</span>'+
+          '<span class="desc">'+esc(r.desc)+'</span></div>';
+      }).join('')+
+      '<div class="sum-line">合计 <b>'+a.score+'</b> 分 → '+
+        '<span class="risk-badge '+(a.level==='high'?'risk-high':a.level==='medium'?'risk-medium':'risk-low')+'">'+
+        (a.level==='high'?'高风险':a.level==='medium'?'中风险':'低风险')+'</span>'+
+        '<span style="color:#64748b;margin-left:8px;">（≥5 高，≥3 中，其余低）</span></div>'+
+      '<div class="sec-title">关联</div>'+
+      '<div style="font-size:12.5px;">该指纹在本批出现 <b>'+sameFp+'</b> 次；该 IP 共评了 <b>'+Object.keys(ipKeys).length+'</b> 个不同对象。</div>';
+
+    var tl = all.filter(function(x){ return x.fpHash===rec.fpHash; })
+        .sort(function(x,y){ return new Date(y.timestamp)-new Date(x.timestamp); }).slice(0,12);
+    if(tl.length>1){
+        html += '<div class="sec-title">该指纹时间轴（最近 '+tl.length+' 条）</div>'+
+        tl.map(function(r,i){
+            var gap='';
+            if(i<tl.length-1){ var d=Math.abs((new Date(r.timestamp)-new Date(tl[i+1].timestamp))/1000);
+                gap=' <span class="'+(d<10?'gap-fast':'')+'">间隔 '+Math.round(d)+'s</span>'; }
+            return '<div class="ud-line"><span style="color:#64748b;">'+fmtTime(r.timestamp)+'</span><span>'+keyHtml(r.ratingKey)+'</span>'+
+              '<span>'+(r.ratingScore||'-')+' ★</span>'+gap+'</div>';
+        }).join('');
+    }
+    document.getElementById('dmBody').innerHTML=html;
+    document.getElementById('detailModal').classList.add('show');
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function openAudit(){
+    document.getElementById('auditBody').innerHTML = AUDIT.length ? AUDIT.slice(0,30).map(function(a){
+        return '<div class="ud-line"><span style="color:#64748b;">'+fmtTime(a.t)+'</span><span>'+esc(a.a)+'</span><span style="color:#64748b;">'+esc(a.g)+'</span></div>';
+    }).join('') : '<div class="empty">还没有任何操作</div>';
+    document.getElementById('auditModal').classList.add('show');
+}
+
+function exportCSV(){
+    if(!filtered.length) return toast('没有可导出的数据');
+    var head=['时间','IP','ISP','语言','屏幕','内存','核心','时区','指纹有效','评分对象','站名','评分','Referer'];
+    var rows=filtered.map(function(l){ var fp=l.fingerprint||{};
+        return [fmtTime(l.timestamp),l.ip,l.isp,l.acceptLanguage,fp.screen,fp.memory,fp.cores,fp.timezone,
+            l.fingerprintValid?'是':'否',l.ratingKey,(resolveKey(l.ratingKey).name||''),l.ratingScore,l.referer]; });
+    download('rating_logs_preview.csv',[head].concat(rows));
+    toast('已导出 '+filtered.length+' 条');
+}
+function exportArchive(){
+    if(!ARCHIVE.length) return toast('暂无归档记录');
+    var head=['归档时间','归档原因','原日志Key','评分时间','IP','ISP','评分对象','站名','评分','指纹Hash'];
+    var rows=ARCHIVE.map(function(r){ return [fmtTime(r.archivedAt),r.archiveReason,r.logKey,fmtTime(r.timestamp),
+        r.ip,r.isp,r.ratingKey,(resolveKey(r.ratingKey).name||''),r.ratingScore,r.fpHash]; });
+    download('archive_preview.csv',[head].concat(rows));
+    toast('已导出 '+ARCHIVE.length+' 条归档');
+}
+function download(name, rows){
+    var csv=rows.map(function(r){ return r.map(function(v){ return '"'+String(v===undefined||v===null?'':v).replace(/"/g,'""')+'"'; }).join(','); }).join('\n');
+    var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; a.click(); URL.revokeObjectURL(a.href);
+}
+
+function clearSearch(id, which){
+    var el=document.getElementById(id);
+    el.value='';
+    toggleClear(id, which==='logs'?'clearLogs':'clearUsers');
+    if(which==='logs') filterLogs(); else filterUsers();
+    toast('已清除搜索条件');
+}
+function toggleClear(inputId, btnId){
+    var el=document.getElementById(inputId), b=document.getElementById(btnId);
+    b.style.display = el.value ? 'flex' : 'none';
+}
+
+function toggleAuto(){
+    var b=document.getElementById('autoBtn');
+    autoOn = !autoOn;
+    clearInterval(autoTimer); autoTimer=null;
+    if(autoOn){
+        autoTimer=setInterval(function(){ if(connected) reloadLogs(); }, 60000);
+        b.textContent='自动刷新：开（60s）';
+        b.classList.remove('btn-outline');
+        b.classList.add('btn-on');
+        toast('自动刷新已开启，每 60 秒重跑一次分析');
+    } else {
+        b.textContent='自动刷新：关';
+        b.classList.add('btn-outline');
+        b.classList.remove('btn-on');
+        toast('自动刷新已关闭');
+    }
+}
+
+[].forEach.call(document.querySelectorAll('.tab'), function(btn){
+    btn.addEventListener('click', function(){
+        [].forEach.call(document.querySelectorAll('.tab'), function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        var n=btn.getAttribute('data-tab');
+        ['logs','risk','users'].forEach(function(t){ document.getElementById('tab-'+t).classList.toggle('hidden', n!==t); });
+    });
+});
+[].forEach.call(document.querySelectorAll('th.sortable'), function(th){
+    th.addEventListener('click', function(){
+        var tb=th.getAttribute('data-tb'), k=th.getAttribute('data-sort');
+        if(sortState[tb].k===k) sortState[tb].d = -sortState[tb].d;
+        else { sortState[tb].k=k; sortState[tb].d = (k==='timestamp'||k==='count'||k==='last'||k==='level') ? -1 : 1; }
+        [].forEach.call(document.querySelectorAll('th.sortable'), function(o){ o.querySelector('.arrow').textContent=''; });
+        th.querySelector('.arrow').textContent = sortState[tb].d===1?'▲':'▼';
+        if(tb==='logs'){ sortArr(filtered, sortState.logs); renderLogs(); }
+        else if(tb==='risk'){ sortArr(riskRows, sortState.risk); renderRisk(); }
+        else { sortArr(userRows, sortState.users); filterUsers(); }
+    });
+});
+document.getElementById('searchInput').addEventListener('input', function(){ clearTimeout(searchTimer); searchTimer=setTimeout(filterLogs,300); });
+document.getElementById('scoreFilter').addEventListener('change', filterLogs);
+document.getElementById('fpFilter').addEventListener('change', filterLogs);
+document.getElementById('userSearch').addEventListener('input', function(){ clearTimeout(searchTimer); searchTimer=setTimeout(filterUsers,300); });
+document.getElementById('connectBtn').addEventListener('click', doConnect);
+document.getElementById('adminKey').addEventListener('keydown', function(e){ if(e.key==='Enter') doConnect(); });
+document.getElementById('detailModal').addEventListener('click', function(e){ if(e.target===this) closeModal('detailModal'); });
+document.getElementById('auditModal').addEventListener('click', function(e){ if(e.target===this) closeModal('auditModal'); });
+document.getElementById('userModal').addEventListener('click', function(e){ if(e.target===this) closeModal('userModal'); });
+document.addEventListener('keydown', function(e){
+    if(e.key==='Escape'){ closeModal('detailModal'); closeModal('auditModal'); closeModal('userModal'); }
+});
+
+document.getElementById('workerUrl').value = WORKER_URL;
+if (token) doConnect();
+else setStatus('未连接：填好 Worker 地址与管理员密钥后点「连接」');
 </script>
 </body>
 </html>
