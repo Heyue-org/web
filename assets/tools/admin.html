@@ -169,13 +169,14 @@
 
     <div class="statusbar" id="statusBar">未连接：填好 Worker 地址与管理员密钥后点「连接」</div>
 
-    <div class="topbar"></div>
-
     <div class="topbar">
-        <div class="brand">评分管理后台<span>日志 / 风控 / 用户数据</span></div>
-        <input type="text" id="workerUrl" class="grow" value="https://heyue-rating-worker.heyue-rating-api.workers.dev" placeholder="Worker 地址">
-        <input type="password" id="adminKey" style="max-width:190px;" value="demo-key-0000" placeholder="管理员密钥">
-        <button id="connectBtn">连接</button>
+        <div class="brand">评分管理后台</div>
+        <span class="grow" id="loginGroup" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <input type="text" id="workerUrl" style="flex:1;min-width:240px;" placeholder="Worker 地址">
+            <input type="password" id="adminKey" style="max-width:190px;" placeholder="管理员密钥">
+            <button id="connectBtn">连接</button>
+        </span>
+        <button class="btn-outline hidden" id="logoutBtn" onclick="doLogout()">断开</button>
         <button class="btn-outline" id="autoBtn" onclick="toggleAuto()">自动刷新：关</button>
         <button class="btn-outline" onclick="openAudit()">操作记录</button>
     </div>
@@ -374,7 +375,7 @@ var UID_MAP = {};
 var SITE_ROOT = '../../';
 var token = sessionStorage.getItem('admin_token') || '';
 var connected = false;
-var WORKER_URL = localStorage.getItem('admin_worker_url') || 'https://heyue-rating-worker.heyue-rating-api.workers.dev';
+var WORKER_URL = localStorage.getItem('admin_worker_url') || '';
 
 function setStatus(msg, kind){
     var el = document.getElementById('statusBar');
@@ -434,7 +435,28 @@ function onUnauthorized(){
     connected = false;
     var b = document.getElementById('connectBtn');
     if (b) { b.disabled = false; b.textContent = '连接'; }
+    document.getElementById('loginGroup').classList.remove('hidden');
+    document.getElementById('logoutBtn').classList.add('hidden');
     setStatus('登录已失效（401），请重新输入密钥连接', 'err');
+}
+
+function doLogout(){
+    if (!confirm('确认断开连接？')) return;
+    if (autoOn) toggleAuto();
+    token = '';
+    sessionStorage.removeItem('admin_token');
+    connected = false;
+    LOGS = [];
+    ARCHIVE = [];
+    sel = {};
+    var b = document.getElementById('connectBtn');
+    b.disabled = false;
+    b.textContent = '连接';
+    document.getElementById('loginGroup').classList.remove('hidden');
+    document.getElementById('logoutBtn').classList.add('hidden');
+    setStatus('已断开');
+    refreshAll();
+    toast('已断开连接');
 }
 
 async function doConnect(){
@@ -471,6 +493,8 @@ async function doConnect(){
         connected = true;
         btn.disabled = false;
         btn.textContent = '已连接';
+        document.getElementById('loginGroup').classList.add('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
         setStatus('已连接 · 日志 ' + LOGS.length + ' 条 · 归档 ' + ARCHIVE.length + ' 条', 'ok');
         auditLog('登录', WORKER_URL);
         refreshAll();
